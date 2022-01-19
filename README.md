@@ -4,4 +4,4 @@ Wir entwickeln Sportyweb, eine integrierte webbasierte Anwendungssoftware für A
 
 Sportyweb ist Ziel des [Forschungs- und Entwicklungsprojekts SPORT](https://www.fernuni-hagen.de/evis/forschung/projekte/sportyweb.shtml) der  [Enterprise Modelling Research Group](https://www.fernuni-hagen.de/evis) an der FernUniversität in Hagen. 
 
-Weitere Erläuterungen zu Sportyweb enthält das [GitLab Wiki zu Sportyweb](https://gitlab.com/fuhevis/sportyweb/-/wikis/home).
+Weitere Erläuterungen zu Sportyweb in [doc/README.md](https://gitlab.com/fuhevis/sportyweb/-/blob/main/doc/README.md) und im [GitLab Wiki zu Sportyweb](https://gitlab.com/fuhevis/sportyweb/-/wikis/home) (deprecated).
