@@ -25,8 +25,16 @@ erDiagram
           MEMBER ||--|{ MEMBER-HOUSEHOLD : "belongs to"
           HOUSEHOLD ||--|{ MEMBER-HOUSEHOLD : "consists of"
           MEMBER {
-            string last_name
-            string first_name
+            varchar(255) last_name
+            varchar(255) first_name
             date date_of_birth
+            char(1) gender
+            text phone1
+            text phone2
+            varchar(319) email
+            varchar(34) account_holder
+            varchar(34) iban
+            membershipstatus membership_status
+            date entry_date 
           }
 ````
