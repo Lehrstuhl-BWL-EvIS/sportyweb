@@ -2,7 +2,7 @@
 title: Sportyweb - ER diagram of early database design
 language: yaml
 license:
-Copyright (C) 22022 Stefan Strecker
+Copyright (C) 2022 Stefan Strecker
 https://gitlab.com/fuhevis/sportyweb
 
 This program is free software: you can redistribute it and/or modify
@@ -27,26 +27,28 @@ https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
 
 ```mermaid
 erDiagram
-          MEMBER ||--|{ MEMBER-HOUSEHOLD : "belongs to"
-          HOUSEHOLD ||--|{ MEMBER-HOUSEHOLD : "consists of"
-          MEMBER {
-            string last_name
-            string first_name
-            date date_of_birth
-            string gender
-            string phone1
-            string phone2
+          mitglied ||--|{ mitglied-haushalt : "gehört zu"
+          haushalt ||--|{ mitglied-haushalt : "besteht aus"
+
+          mitglied {
+            string nachname
+            string vorname
+            date geburtsdatum
+            geschlecht_kuerzel geschlecht
+            string telefonnummer1
+            string telefonnummer2
             string email
-            string account_holder
+            string kontoinhaber
             string iban
-            date entry_date 
+            date eintrittsdatum
           }
 
-          HOUSEHOLD {
-            text household_name
-            text household_street
-            text household_number
-            text household_postalcode
-            text household_city
+          haushalt {
+            string haushalt_name
+            string haushalt_strasse
+            string haushalt_hausnummer
+            string haushalt_adresszusatz
+            string haushalt_plz
+            string haushalt_ort
           }
 ````
