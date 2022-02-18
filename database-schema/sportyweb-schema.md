@@ -1,8 +1,7 @@
 ---
-title: Sportyweb - ER diagram of database design
-example:
+title: Sportyweb - ER diagram of early database design
 language: yaml
-
+license:
 Copyright (C) 22022 Stefan Strecker
 https://gitlab.com/fuhevis/sportyweb
 
@@ -20,21 +19,34 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---
 
+# ER diagram 
+
+Note that data types are NOT properly modeled due to Mermaid.js limitations, see 
+https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
+
+
 ```mermaid
 erDiagram
           MEMBER ||--|{ MEMBER-HOUSEHOLD : "belongs to"
           HOUSEHOLD ||--|{ MEMBER-HOUSEHOLD : "consists of"
           MEMBER {
-            varchar(255) last_name
-            varchar(255) first_name
+            string last_name
+            string first_name
             date date_of_birth
-            char(1) gender
-            text phone1
-            text phone2
-            varchar(319) email
-            varchar(34) account_holder
-            varchar(34) iban
-            membershipstatus membership_status
+            string gender
+            string phone1
+            string phone2
+            string email
+            string account_holder
+            string iban
             date entry_date 
+          }
+
+          HOUSEHOLD {
+            text household_name
+            text household_street
+            text household_number
+            text household_postalcode
+            text household_city
           }
 ````
