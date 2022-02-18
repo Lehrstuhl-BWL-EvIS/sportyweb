@@ -1,4 +1,4 @@
-## Sportyweb - Dokumentation der Anforderungserhebung
+## Sportyweb - Dokumentation der Anforderungserhebung / Requirements
 
 ## Ziele und Zielgruppen von Sportyweb
 
