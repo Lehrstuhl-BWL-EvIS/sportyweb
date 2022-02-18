@@ -29,6 +29,7 @@ https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
 erDiagram
           mitglied ||--|{ mitglied-haushalt : "gehört zu"
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
+          mitglied ||--|{ mitgliedsvertrag : "schließt ab"
 
           mitglied {
             string nachname
