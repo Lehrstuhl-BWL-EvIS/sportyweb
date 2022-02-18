@@ -30,6 +30,7 @@ erDiagram
           mitglied ||--|{ mitglied-haushalt : "gehört zu"
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
           mitglied ||--|{ mitgliedsvertrag : "schließt ab"
+          
 
           mitglied {
             string nachname
@@ -52,4 +53,9 @@ erDiagram
             string haushalt_plz
             string haushalt_ort
           }
-````
+
+          mitgliedsvertrag {
+            date vertragsbeginn
+            date vertragsende
+          }
+```
