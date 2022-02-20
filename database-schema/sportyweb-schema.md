@@ -30,9 +30,9 @@ erDiagram
 
           mitglied ||--|{ mitglied-haushalt : "gehört zu"
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
-          mitglied ||--|{ mitgliedsvertrag : "schließt ab"
+          mitglied ||--|{ mitgliedsvertrag : "ist Vertragspartner"
           mitgliedsvertrag ||--|| verein : "ist Vertragspartner"
-          verein ||--|{ geschaeftsstelle : "gehört zu"
+          verein ||--|{ geschaeftsstelle : "betreibt"
 
           mitglied {
             string nachname
@@ -75,6 +75,33 @@ erDiagram
             string geschaeftsstelle_telefonnumer1_typ "mobil ODER festnetz ODER ..."
           }
 
+%%
+%% Vereinseinheit : ein Verein ist in Organisationseinheiten unterteilt
+%% Bsp. Vereinseinheit : Abteilung, Unterabteilung, usw.
+%%
+          vereinseinheit {
+            string vereinseinheit_bezeichner
+          }
 
+%%
+%% Sportangebot : ein Sportangebot, dass der Verein anbietet
+%%
+%% ein Sportangebot muss von mindestens einer Organisationseinheit ausgerichtet werden
+%% ein Sportangebot kann von mehreren Organisationseinheiten ausgerichtet werden
+%% ein Sportangebot muss mindestens einer Sparte zugeordnet sein
+%% ein Sportangebot kann mehreren Sparten zugeordnet sein 
 
+          sportangebot {
+            string sportangebot_bezeichner
+          }
+
+          
+%%
+%% Sparte : eine Vereinssparte, die einer Abteilung entsprechen kann, aber nicht muss 
+%% Beispiele für Sparte: Breitensport, Fitnesssport, Reha-Sport, Fussball, Handball, ...
+%%
+          sparte {
+            string sparte_bezeichner
+          }
+          
 ```
