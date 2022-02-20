@@ -42,7 +42,7 @@ erDiagram
             string email
             string kontoinhaber
             string iban
-            date eintrittsdatum
+            date eintrittsdatum "Eintrittsdatum in den Verein / Hinweis: Es kann zwischenzeitliche temporäre Austritte geben"
           }
 
           haushalt {
@@ -57,5 +57,23 @@ erDiagram
           mitgliedsvertrag {
             date vertragsbeginn
             date vertragsende
+          }
+
+
+
+          verein ||--|{ geschaeftsstelle : "gehört zu"
+
+          verein {
+            string landessportbund-vereinsnummer
+            string vereinsname_vollstaendig
+            string vereinsname_kurzfassung
+            string verein_url "URL der Vereinswebsite"
+          }
+
+          geschaeftsstelle {
+            string geschaeftsstelle_bezeichner
+            string geschaeftsstelle_adresse "vorerst nur Dummy-Modellierung"
+            string geschaeftsstelle_telefonnummer1
+            string geschaeftsstelle_telefonnumer1_typ "mobil ODER festnetz ODER ..."
           }
 ```
