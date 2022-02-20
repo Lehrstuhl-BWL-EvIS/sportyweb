@@ -27,11 +27,6 @@ https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
 
 ```mermaid
 erDiagram
-          mitglied ||--|{ mitglied-haushalt : "gehört zu"
-          haushalt ||--|{ mitglied-haushalt : "besteht aus"
-          mitglied ||--|{ mitgliedsvertrag : "schließt ab"
-          
-
           mitglied {
             string nachname
             string vorname
@@ -59,10 +54,6 @@ erDiagram
             date vertragsende
           }
 
-
-
-          verein ||--|{ geschaeftsstelle : "gehört zu"
-
           verein {
             string landessportbund-vereinsnummer
             string vereinsname_vollstaendig
@@ -76,4 +67,15 @@ erDiagram
             string geschaeftsstelle_telefonnummer1
             string geschaeftsstelle_telefonnumer1_typ "mobil ODER festnetz ODER ..."
           }
+
+          mitglied ||--|{ mitglied-haushalt : "gehört zu>"
+          haushalt ||--|{ mitglied-haushalt : "besteht aus"
+          mitglied ||--|{ mitgliedsvertrag : "schließt ab"
+          
+"Vertragspartner sind genau ein Mitglied und genau dieser eine Verein"
+
+          mitgliedsvertrag ||--|| verein : "ist Vertragspartner"
+
+          verein ||--|{ geschaeftsstelle : "<gehört zu"
+
 ```
