@@ -88,17 +88,17 @@ erDiagram
           }
 
 
-          sportangebot {
-            string sportangebot_bezeichner
+          vereinseinheit-sparte {
+            date sparte_beginn
+            date sparte_loeschung
           }
 
-          
-%%
-%% Sparte : eine Vereinssparte, die einer Abteilung entsprechen kann, aber nicht muss 
-%% Beispiele für Sparte: Breitensport, Fitnesssport, Reha-Sport, Fussball, Handball, ...
-%%
           sparte {
             string sparte_bezeichner
+          }
+
+          sportangebot {
+            string sportangebot_bezeichner
           }
           
 ```
@@ -175,11 +175,14 @@ erDiagram
     und diese anderen Vereinseinheiten unterzuordnen)
 
 
-- Sparte : eine (Sport-)Sparte dient der Gruppierung von Sportarten nach Sportvereinswesen-bezogenen Kriterien
+- Sparte : eine (Vereins-)Sparte dient der Gruppierung von Sportarten nach Sportvereinswesen-bezogenen Kriterien
   - eine Sparte ist mindestens einer Vereinseinheit (mittels Vereinseinheit-Sparte) zugeordnet
   - eine Sparte kann von mehreren Vereinseinheiten getragen/ausgerichtet werden = 
     mehrere Vereinseinheiten können eine Sparte organisieren und verantworten
   - einer Sparte können mehrere Sportarten zugeordnet sein
+  - Beispiele für Sparte: Breitensport, Fitnesssport, Reha-Sport, Fussball, Handball, ...
+  - Hinweis: eine Vereinssparte kann einer Vereinseinheit (z.B. Abteilung) entsprechen, muss aber nicht 
+
 
 
 - Sportart : eine Sportart dient der Gruppierung von Sportangeboten nach Sportvereinswesen-bezogenen Kriterien
@@ -193,9 +196,10 @@ erDiagram
   - "Sportangebot" ist der vorläufig gewählte Begriff für konkrete Einzelangebote des Vereins
   - Beispiel: Jumping Fitness, samstags 10 bis 11 Uhr, Trainer: Marie Mustermann
   - TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
-    erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können
+    erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
+    dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
 
-- Sportangebot : ein Sportangebot, dass der Verein anbietet
+- Deprecated: Sportangebot : ein Sportangebot, dass der Verein anbietet
   - ein Sportangebot muss von mindestens einer Organisationseinheit ausgerichtet werden
   - ein Sportangebot kann von mehreren Organisationseinheiten ausgerichtet werden
   - ein Sportangebot muss mindestens einer Sparte zugeordnet sein
