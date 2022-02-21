@@ -39,6 +39,8 @@ erDiagram
           sparte ||--|{ vereinseinheit-sparte : "wird ausrichtet von"
           sparte ||--o{ sportart : "ist zugeordnet zu"
           sportart ||--o{ sportangebot : "ist zugeordnet zu"
+          sportangebot ||--o{ belegung-sportstaette-zeitslot : "belegt Sportstaette von bis"
+          sportstaette ||--o{ belegung-sportstaette-zeitslot : "ist belegt"
 
           mitglied {
             string nachname
@@ -237,5 +239,6 @@ erDiagram
   - eine Sportstätte kann zu einem Zeitslot "gebucht" / belegt werden
 
 
-- Belegung-Zeitslot-Sportstaette
-  - 
+- Belegung-Sportstaette-Zeitslot
+  - An welchem Wochentag oder Datum ist eine Sportstätte von wann bis wann durch welches Sportangebot belegt?
+  - Hinweis: _Noch nicht final modelliert_
