@@ -31,8 +31,10 @@ erDiagram
           mitglied ||--|{ mitglied-haushalt : "gehört zu"
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
           mitglied ||--|{ mitgliedsvertrag : "ist Vertragspartner"
-          mitgliedsvertrag ||--|| verein : "ist Vertragspartner"
+          verein ||--|| mitgliedsvertrag : "ist Vertragspartner"
           verein ||--|{ geschaeftsstelle : "betreibt"
+          verein ||--|{ vereinseinheit : "ist organisiert in"
+          vereinseinheit ||--o{ : vereinseinheit : "ist Untereinheit von"
 
           mitglied {
             string nachname
@@ -109,7 +111,7 @@ erDiagram
 # Erläuterungen
 
 - Mitglied
-  - ein Mitglied ist eine natürliche Person (TODO: Entitätstyp PERSON modellieren)
+  - ein Mitglied ist eine natürliche Person (ToDo: Entitätstyp PERSON modellieren)
   - eine Person ist erst durch Abschluss eines Mitgliedsvertrags ein Mitglied
 
 - Haushalt
@@ -121,15 +123,32 @@ erDiagram
     zu erhalten. Anders als ein starres Konzept wie etwa "Familie" ermöglicht es "Haushalt",
     moderne Formen des Zusammenlebens zu repräsentieren. 
   - Idee hinter dem Konzept "Haushalt" ist, dass jedes Mitglied einem Haushalt angehört, 
-    auch wenn der Haushalt nur diese eine Person umfasst, um zeitlich nachgelagert, weitere
+    auch wenn der Haushalt nur diese eine Person umfasst, um zeitlich nachgelagert weitere
     Mitglieder einem Haushalt hinzufügen zu können.
 
 - Mitglied-Haushalt
   - ein Mitglied muss mindestens einem Haushalt angehören
+  - ein Haushalt muss mindestens ein Mitglied umfassen
+  - ein Mitglied kann mehreren Haushalten angehören (auch wenn dies auf den ersten Blick
+    ungewöhnlich ist, so ermöglicht dies, moderne Formen menschlichen Zusammenlebens wie
+    Erwachsene, die in zwei Haushalten im Wechsel leben, zu repräsentieren) 
   - für ein Neumitglied wird ein Haushalt neu angelegt, sofern ein korrespondierender Haushalt
-    noch nicht existiert. Andernfalls wird das Neumitglied einem bereits vorliegenden Haushalt
-    hinzugefügt.  
-  - 
+    noch nicht existiert; andernfalls wird das Neumitglied einem bereits vorliegenden Haushalt
+    hinzugefügt.
+
+- Mitgliedsvertrag : ein aktuell gültiger Mitgliedsvertrag ist Grundlage der Vereinsteilnahme
+  - ein Mitgliedsvertrag hat formal zwei Vertragspartner : Verein und Mitglied (Person)
+  - ein Mitglied muss mindestens einen Mitgliedsvertrag abgeschlossen haben
+  - ein Mitglied kann im Laufe der Zeit mehrere Mitgliedsverträge abschließen, wenn
+    das Mitglied einen früher laufenden Mitgliedsvertrag beendet hat und nach einiger Zeit
+    wieder einen Mitgliedsvertrag abschließt
+  - ein Mitglied kann temporär einen Mitgliedsvertrag aussetzen (diverse Gründen)
+  - diverse weitere Aspekte eines Mitgliedsvertrags sind hier _noch nicht_ modelliert
+
+- Verein : Metadaten über den repräsentierten Verein
+  - Metadaten über einen Verein sind (auch) dem deutschen Vereinsrecht zu entnehmen
+  -  
+
 
 - Sportangebot : ein Sportangebot, dass der Verein anbietet
   - ein Sportangebot muss von mindestens einer Organisationseinheit ausgerichtet werden
