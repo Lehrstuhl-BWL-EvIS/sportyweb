@@ -78,10 +78,6 @@ erDiagram
             string geschaeftsstelle_telefonnumer1_typ "mobil ODER festnetz ODER ..."
           }
 
-%%
-%% Vereinseinheit : ein Verein ist in Organisationseinheiten unterteilt
-%% Bsp. Vereinseinheit : Abteilung, Unterabteilung, usw.
-%%
           vereinseinheit {
             string vereinseinheit_bezeichner
             string vereinseinheit_leitung "todo: als Entitätstyp modellieren"
@@ -160,6 +156,26 @@ erDiagram
   - ein Verein betreibt eine oder mehrere Geschaeftsstellen
   - eine Geschaeftsstelle hat eine Besucheradresse und eine postalische Adresse sowie
     ein oder mehrere Telefonverbindungen
+
+
+- Vereinseinheit : ein Verein ist organisatorisch in Organisationseinheiten (z.B. Abteilungen) unterteilt
+  - Vereinseinheit ist synonym zu Organisationseinheit
+  - ein Verein betreibt mindestens eine Vereinseinheit
+  - eine Vereinseinheit ist genau einem Verein zugeordnet (aber: es gibt nur einen Verein)
+  - Bsp. für eine Vereinseinheit : Abteilung, Unterabteilung, Unterunterabteilung usw.
+  - eine Vereinseinheit kann einer anderen Vereinseinheit untergeordnet sein
+  - eine Vereinseinheit kann einer oder keiner übergeordneten Vereinseinheit zugeordnet sein
+
+  - Eine Vereinseinheit verantwortet die Bereitstellung mindestens eines Sportangebots
+  - Hinweis: Abweichend vom (laxen) Sprachgebrauch des Sportvereinswesens üblich, 
+    sind Abteilungen hier getrennt von Sportangeboten des Vereins gedacht und modelliert.
+    Erst durch die nachfolgend modellierte Datenhaltung zu Sportangeboten und ihrer Systematisierung und
+    Strukturierung wird die Beteiligung einer Abteilung an der Ausrichtung von Sportangeboten modelliert!
+
+  - mit anderen Worten: Die Modellierung überlässt es den Vereinsverantwortlichen, mehrere Abteilungsebenen
+    anzulegen und zu pflegen _oder_ mit nur einer ("Haupt-") Ebene zu arbeiten.
+  - Beispiel 1: Haupt-Abteilung: Fussball - Unterabteilungen: Kinder- und Jugendfussball, Seniorenfussball 
+  - Beispiel 2: Haupt-Abteilung: Fussball, Haupt-Abteilung: Basketball, Haupt-Abteilung: Volleyball usw. 
 
 
 - Sportangebot : ein Sportangebot, dass der Verein anbietet
