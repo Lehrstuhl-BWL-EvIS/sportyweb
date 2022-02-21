@@ -158,8 +158,8 @@ erDiagram
     ein oder mehrere Telefonverbindungen
 
 
-- Vereinseinheit : ein Verein ist organisatorisch in Organisationseinheiten (z.B. Abteilungen) unterteilt
-  - Vereinseinheit ist synonym zu Organisationseinheit
+- Vereinseinheit : ein Verein ist in Organisationseinheiten (z.B. Abteilungen) unterteilt
+  - Vereinseinheit ist synonym mit Organisationseinheit (Begriff der Organisationstheorie)
   - ein Verein betreibt mindestens eine Vereinseinheit
   - eine Vereinseinheit ist genau einem Verein zugeordnet (aber: es gibt nur einen Verein)
   - Bsp. für eine Vereinseinheit : Abteilung, Unterabteilung, Unterunterabteilung usw.
