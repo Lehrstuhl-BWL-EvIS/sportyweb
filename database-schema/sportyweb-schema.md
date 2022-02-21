@@ -105,3 +105,34 @@ erDiagram
           }
           
 ```
+
+# Erläuterungen
+
+- Mitglied
+  - ein Mitglied ist eine natürliche Person (TODO: Entitätstyp PERSON modellieren)
+  - eine Person ist erst durch Abschluss eines Mitgliedsvertrags ein Mitglied
+
+- Haushalt
+  - ein Haushalt wird über eine postalische Adresse identifiziert
+  - da an einer postalischen Adresse mehrere Haushalte existieren können (Mehrfamilienhäuser),
+    ist es erforderlich, einem Haushalt einen eindeutigen Namen (Bezeichner) zu vergeben
+  - "Haushalt" ist ein "künstlich eingefügtes" Konzept, mit dem die Zusammenfassung
+    von Mitgliedern zu Gruppen ermöglicht wird, z.B. um einen Rabatt auf Mitgliedsbeiträge 
+    zu erhalten. Anders als ein starres Konzept wie etwa "Familie" ermöglicht es "Haushalt",
+    moderne Formen des Zusammenlebens zu repräsentieren. 
+  - Idee hinter dem Konzept "Haushalt" ist, dass jedes Mitglied einem Haushalt angehört, 
+    auch wenn der Haushalt nur diese eine Person umfasst, um zeitlich nachgelagert, weitere
+    Mitglieder einem Haushalt hinzufügen zu können.
+
+- Mitglied-Haushalt
+  - ein Mitglied muss mindestens einem Haushalt angehören
+  - für ein Neumitglied wird ein Haushalt neu angelegt, sofern ein korrespondierender Haushalt
+    noch nicht existiert. Andernfalls wird das Neumitglied einem bereits vorliegenden Haushalt
+    hinzugefügt.  
+  - 
+
+- Sportangebot : ein Sportangebot, dass der Verein anbietet
+  - ein Sportangebot muss von mindestens einer Organisationseinheit ausgerichtet werden
+  - ein Sportangebot kann von mehreren Organisationseinheiten ausgerichtet werden
+  - ein Sportangebot muss mindestens einer Sparte zugeordnet sein
+  - ein Sportangebot kann mehreren Sparten zugeordnet sein 
