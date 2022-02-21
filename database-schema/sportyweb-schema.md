@@ -1,5 +1,5 @@
 ---
-title: Sportyweb - ER diagram of early database design
+title: Sportyweb - ER diagram of Sportyweb database design
 language: yaml
 license:
 Copyright (C) 2022 Stefan Strecker, stefan.strecker@fernuni-hagen.de
