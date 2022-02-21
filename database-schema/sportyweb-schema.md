@@ -2,7 +2,7 @@
 title: Sportyweb - ER diagram of early database design
 language: yaml
 license:
-Copyright (C) 2022 Stefan Strecker
+Copyright (C) 2022 Stefan Strecker, stefan.strecker@fernuni-hagen.de
 https://gitlab.com/fuhevis/sportyweb
 
 This program is free software: you can redistribute it and/or modify
@@ -65,6 +65,8 @@ erDiagram
           mitgliedsvertrag {
             date vertragsbeginn
             date vertragsende
+            date ruhezeit_anfang
+            date ruhezeit_ende
           }
 
           verein {
@@ -72,6 +74,9 @@ erDiagram
             string vereinsname_vollstaendig
             string vereinsname_kurzfassung
             string verein_url
+            date verein_gruendungsdatum
+            blob verein_logo_1
+            blob verein_logo_2
           }
 
           geschaeftsstelle {
@@ -80,13 +85,13 @@ erDiagram
             string geschaeftsstelle_postalische_adresse
             string geschaeftsstelle_telefonnummer1
             string geschaeftsstelle_telefonnumer1_typ "mobil ODER festnetz ODER ..."
+            string geschaeftsstelle_funktionsemail
           }
 
           vereinseinheit {
             string vereinseinheit_bezeichner
             string vereinseinheit_leitung "todo: als Entitätstyp modellieren"
           }
-
 
           vereinseinheit-sparte {
             date sparte_beginn
@@ -100,16 +105,28 @@ erDiagram
           sportangebot {
             string sportangebot_bezeichner
           }
+
+          sportstaette {
+            string sportstaette-bezeichner
+            string sportstaette_adresse
+          }
+
+          belegung-sportstaette-zeitslot {
+            dayofweek Wochentag
+            int AnzahlTage "in welchem Rhythmus erfolgt die Belegung"
+            time belegung_von
+            time belegung_bis
+          }
           
 ```
 
-<div style="page-break-after: always;"></div>
 
 # Erläuterungen
 
 - Mitglied
   - ein Mitglied ist eine natürliche Person (TODO: Entitätstyp PERSON modellieren)
   - eine Person ist erst durch Abschluss eines Mitgliedsvertrags ein Mitglied
+
 
 - Haushalt
   - ein Haushalt wird über eine postalische Adresse identifiziert
@@ -123,6 +140,7 @@ erDiagram
     auch wenn der Haushalt nur diese eine Person umfasst, um zeitlich nachgelagert weitere
     Mitglieder einem Haushalt hinzufügen zu können.
 
+
 - Mitglied-Haushalt
   - ein Mitglied muss mindestens einem Haushalt angehören
   - ein Haushalt muss mindestens ein Mitglied umfassen
@@ -132,6 +150,7 @@ erDiagram
   - für ein Neumitglied wird ein Haushalt neu angelegt, sofern ein korrespondierender Haushalt
     noch nicht existiert; andernfalls wird das Neumitglied einem bereits vorliegenden Haushalt
     hinzugefügt.
+
 
 - Mitgliedsvertrag : ein aktuell gültiger Mitgliedsvertrag ist Grundlage der Vereinsteilnahme
   - ein Mitgliedsvertrag hat formal zwei Vertragspartner : Verein und Mitglied (Person)
@@ -145,10 +164,15 @@ erDiagram
   - diverse weitere Aspekte eines Mitgliedsvertrags sind hier _noch nicht_ modelliert
 
 
-- Verein : Metadaten über den repräsentierten Verein
-  - Metadaten über einen Verein sind (auch) dem deutschen Vereinsrecht zu entnehmen
-  - Hinweis: Es handelt sich um Metadaten bzgl. des Vereins, dessen Datenhaltung hier
-    modelliert wird
+- Verein : Daten, die den Verein beschreiben
+  - dieser Entitätstyp "Verein" ist ein "Singleton" => es gibt nur eine Entität als
+    Instanz dieses Entitätstyps
+  - Hinweis: Weitere Daten, die einen Verein charakterisieren, sind dem deutschen Vereinsrecht 
+    zu entnehmen
+  - Hinweis: _Noch nicht modelliert_ sind Vereinsfunktionäre in ihren Rollen (Vorsitzender, 
+    Kassenwart etc.) 
+  - Hinweis _Noch nicht modelliert_ sind Vereinssatzungen, die u.a. in Bezug auf Mitgliedsverträge
+    Relevanz aufweisen. 
 
 
 - Geschaeftsstelle : eine Geschaeftsstelle wird von einem Verein betrieben
@@ -182,9 +206,8 @@ erDiagram
   - eine Sparte kann von mehreren Vereinseinheiten getragen/ausgerichtet werden = 
     mehrere Vereinseinheiten können eine Sparte organisieren und verantworten
   - einer Sparte können mehrere Sportarten zugeordnet sein
-  - Beispiele für Sparte: Leistungssport, Breitensport, Fitnesssport, Reha-Sport, ...
+  - Beispiele für Sparte: Wassersport, Ballsport, Fitnesssport, Reha-Sport, ...
   - Hinweis: eine Vereinssparte kann einer Vereinseinheit (z.B. Abteilung) entsprechen, muss aber nicht 
-
 
 
 - Sportart : eine Sportart dient der Gruppierung von Sportangeboten nach Sportvereinswesen-bezogenen Kriterien
@@ -197,12 +220,22 @@ erDiagram
 - Sportangebot : ein Sportangebot dient der Datenhaltung zu konkreten Sportangeboten des Vereins
   - "Sportangebot" ist der vorläufig gewählte Begriff für konkrete Einzelangebote des Vereins
   - Beispiel: Jumping Fitness, samstags 10 bis 11 Uhr, Trainer: Marie Mustermann
+  - Hinweis zum Beispiel: Das Beispiel "Jumping Fitness" legt offen, dass ein Sportangebot _nur_
+    in Zusammenhang mit einer Sportstätten-Belegung und einer Belegungszeit sinnvoll zu interpretieren
+    ist.
+  - TODO : Sportstätten-Belegung und Belegungszeiten sind _noch nicht_ modelliert!
   - TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
     erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
     dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
 
-- Deprecated: Sportangebot : ein Sportangebot, dass der Verein anbietet
-  - ein Sportangebot muss von mindestens einer Organisationseinheit ausgerichtet werden
-  - ein Sportangebot kann von mehreren Organisationseinheiten ausgerichtet werden
-  - ein Sportangebot muss mindestens einer Sparte zugeordnet sein
-  - ein Sportangebot kann mehreren Sparten zugeordnet sein 
+- Sportstätte
+  - ein Sportstätte ermöglicht das Durchführen von Sportangeboten
+  - Beispiele: Sportstätten können Sporthallen, Teile von Sporthallen, Sportplätze, Laufbahnen, 
+                usw. sein
+  - ein Sportangebot wird zu einem Zeitslot an einer Sportstätte durchgeführt
+  - eine Sportstätte steht zu einem Zeitslot zur Verfügung (Verfügbarkeit)
+  - eine Sportstätte kann zu einem Zeitslot "gebucht" / belegt werden
+
+
+- Belegung-Zeitslot-Sportstaette
+  - 
