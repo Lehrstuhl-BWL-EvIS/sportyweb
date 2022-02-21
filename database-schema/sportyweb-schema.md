@@ -165,18 +165,17 @@ erDiagram
   - Bsp. für eine Vereinseinheit : Abteilung, Unterabteilung, Unterunterabteilung usw.
   - eine Vereinseinheit kann einer anderen Vereinseinheit untergeordnet sein
   - eine Vereinseinheit kann einer oder keiner übergeordneten Vereinseinheit zugeordnet sein
-
   - Eine Vereinseinheit verantwortet die Bereitstellung mindestens eines Sportangebots
   - Hinweis: Abweichend vom (laxen) Sprachgebrauch des Sportvereinswesens üblich, 
     sind Abteilungen hier getrennt von Sportangeboten des Vereins gedacht und modelliert.
     Erst durch die nachfolgend modellierte Datenhaltung zu Sportangeboten und ihrer Systematisierung und
     Strukturierung wird die Beteiligung einer Abteilung an der Ausrichtung von Sportangeboten modelliert!
-
   - mit anderen Worten: Die Modellierung überlässt es den Vereinsverantwortlichen, mehrere Abteilungsebenen
     anzulegen und zu pflegen _oder_ mit nur einer ("Haupt-") Ebene zu arbeiten.
   - Beispiel 1: Haupt-Abteilung: Fussball - Unterabteilungen: Kinder- und Jugendfussball, Seniorenfussball 
   - Beispiel 2: Haupt-Abteilung: Fussball, Haupt-Abteilung: Basketball, Haupt-Abteilung: Volleyball usw. 
-
+  - Hinweis: Die Modellierung erlaubt es auch, zu einem späteren Zeitpunkt neue Vereinseinheiten anzulegen
+    und diese anderen Vereinseinheiten unterzuordnen
 
 - Sportangebot : ein Sportangebot, dass der Verein anbietet
   - ein Sportangebot muss von mindestens einer Organisationseinheit ausgerichtet werden
