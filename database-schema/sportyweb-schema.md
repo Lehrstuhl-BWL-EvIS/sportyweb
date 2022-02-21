@@ -35,8 +35,8 @@ erDiagram
           verein ||--|{ geschaeftsstelle : "betreibt"
           verein ||--|{ vereinseinheit : "ist organisiert in"
           vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
-          vereinseinheit ||--o{ vereinseinheit-sparte : "richtet aus"
-          sparte ||--o{ vereinseinheit-sparte : "wird ausrichtet von"
+          vereinseinheit ||--|{ vereinseinheit-sparte : "richtet aus"
+          sparte ||--|{ vereinseinheit-sparte : "wird ausrichtet von"
           sparte ||--o{ sportart : "ist zugeordnet zu"
           sportart ||--o{ sportangebot : "ist zugeordnet zu"
 
@@ -106,7 +106,7 @@ erDiagram
 # Erläuterungen
 
 - Mitglied
-  - ein Mitglied ist eine natürliche Person (ToDo: Entitätstyp PERSON modellieren)
+  - ein Mitglied ist eine natürliche Person (TODO: Entitätstyp PERSON modellieren)
   - eine Person ist erst durch Abschluss eines Mitgliedsvertrags ein Mitglied
 
 - Haushalt
@@ -176,20 +176,24 @@ erDiagram
 
 
 - Sparte : eine (Sport-)Sparte dient der Gruppierung von Sportarten nach Sportvereinswesen-bezogenen Kriterien
+  - eine Sparte ist mindestens einer Vereinseinheit (mittels Vereinseinheit-Sparte) zugeordnet
+  - eine Sparte kann von mehreren Vereinseinheiten getragen/ausgerichtet werden = 
+    mehrere Vereinseinheiten können eine Sparte organisieren und verantworten
+  - einer Sparte können mehrere Sportarten zugeordnet sein
 
 
 - Sportart : eine Sportart dient der Gruppierung von Sportangeboten nach Sportvereinswesen-bezogenen Kriterien
   - für die Systematisierung von Sportarten liegen mehrere Systematiken in den Sportwissenschaften vor,
     darüber hinaus haben sich im Sportvereinswesen Systematiken etabliert
   - Sportart : Fussball, Basketball, Handball, Volleyball, Fitnesssport, Reha-Sport usw. 
+  - eine Sportart ist genau einer Sparte zugeordnet (TODO: ggf. eine zu restriktive Einschränkung)
 
 
 - Sportangebot : ein Sportangebot dient der Datenhaltung zu konkreten Sportangeboten des Vereins
-  - "Sportangebot" ist der vorläufig gewählte Begriff für konkrete einzelne Angebote des Vereins
+  - "Sportangebot" ist der vorläufig gewählte Begriff für konkrete Einzelangebote des Vereins
   - Beispiel: Jumping Fitness, samstags 10 bis 11 Uhr, Trainer: Marie Mustermann
-  
-
-
+  - TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
+    erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können
 
 - Sportangebot : ein Sportangebot, dass der Verein anbietet
   - ein Sportangebot muss von mindestens einer Organisationseinheit ausgerichtet werden
