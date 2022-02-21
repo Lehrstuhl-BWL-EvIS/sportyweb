@@ -35,6 +35,10 @@ erDiagram
           verein ||--|{ geschaeftsstelle : "betreibt"
           verein ||--|{ vereinseinheit : "ist organisiert in"
           vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
+          vereinseinheit ||--o{ vereinseinheit-sparte : "richtet aus"
+          sparte ||--o{ vereinseinheit-sparte : "wird ausrichtet von"
+          sparte ||--o{ sportart : "ist zugeordnet zu"
+          sportart ||--o{ sportangebot : "ist zugeordnet zu"
 
           mitglied {
             string nachname
@@ -83,13 +87,6 @@ erDiagram
             string vereinseinheit_leitung "todo: als Entitätstyp modellieren"
           }
 
-%%
-%% Sportangebot : ein Sportangebot, dass der Verein anbietet
-%%
-%% ein Sportangebot muss von mindestens einer Organisationseinheit ausgerichtet werden
-%% ein Sportangebot kann von mehreren Organisationseinheiten ausgerichtet werden
-%% ein Sportangebot muss mindestens einer Sparte zugeordnet sein
-%% ein Sportangebot kann mehreren Sparten zugeordnet sein 
 
           sportangebot {
             string sportangebot_bezeichner
@@ -166,16 +163,33 @@ erDiagram
   - eine Vereinseinheit kann einer anderen Vereinseinheit untergeordnet sein
   - eine Vereinseinheit kann einer oder keiner übergeordneten Vereinseinheit zugeordnet sein
   - Eine Vereinseinheit verantwortet die Bereitstellung mindestens eines Sportangebots
-  - Hinweis: Abweichend vom (laxen) Sprachgebrauch des Sportvereinswesens üblich, 
-    sind Abteilungen hier getrennt von Sportangeboten des Vereins gedacht und modelliert.
-    Erst durch die nachfolgend modellierte Datenhaltung zu Sportangeboten und ihrer Systematisierung und
-    Strukturierung wird die Beteiligung einer Abteilung an der Ausrichtung von Sportangeboten modelliert!
+  - Hinweis: Vereinseinheiten sind in dieser Modellierung bewusst getrennt von Sportangeboten des Vereins 
+    gedacht und modelliert.
+    Erst durch die nachfolgend skizzierte Datenhaltung zu Sportangeboten und ihrer Systematisierung und
+    Strukturierung wird die Beteiligung einer Vereinseinheit an der Ausrichtung von Sportangeboten modelliert!
   - mit anderen Worten: Die Modellierung überlässt es den Vereinsverantwortlichen, mehrere Abteilungsebenen
     anzulegen und zu pflegen _oder_ mit nur einer ("Haupt-") Ebene zu arbeiten.
   - Beispiel 1: Haupt-Abteilung: Fussball - Unterabteilungen: Kinder- und Jugendfussball, Seniorenfussball 
   - Beispiel 2: Haupt-Abteilung: Fussball, Haupt-Abteilung: Basketball, Haupt-Abteilung: Volleyball usw. 
-  - Hinweis: Die Modellierung erlaubt es auch, zu einem späteren Zeitpunkt neue Vereinseinheiten anzulegen
-    und diese anderen Vereinseinheiten unterzuordnen
+  - (Anmerkung: Die Modellierung erlaubt es auch, zu einem späteren Zeitpunkt neue Vereinseinheiten anzulegen
+    und diese anderen Vereinseinheiten unterzuordnen)
+
+
+- Sparte : eine (Sport-)Sparte dient der Gruppierung von Sportarten nach Sportvereinswesen-bezogenen Kriterien
+
+
+- Sportart : eine Sportart dient der Gruppierung von Sportangeboten nach Sportvereinswesen-bezogenen Kriterien
+  - für die Systematisierung von Sportarten liegen mehrere Systematiken in den Sportwissenschaften vor,
+    darüber hinaus haben sich im Sportvereinswesen Systematiken etabliert
+  - Sportart : Fussball, Basketball, Handball, Volleyball, Fitnesssport, Reha-Sport usw. 
+
+
+- Sportangebot : ein Sportangebot dient der Datenhaltung zu konkreten Sportangeboten des Vereins
+  - "Sportangebot" ist der vorläufig gewählte Begriff für konkrete einzelne Angebote des Vereins
+  - Beispiel: Jumping Fitness, samstags 10 bis 11 Uhr, Trainer: Marie Mustermann
+  
+
+
 
 - Sportangebot : ein Sportangebot, dass der Verein anbietet
   - ein Sportangebot muss von mindestens einer Organisationseinheit ausgerichtet werden
