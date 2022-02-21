@@ -182,7 +182,7 @@ erDiagram
   - eine Sparte kann von mehreren Vereinseinheiten getragen/ausgerichtet werden = 
     mehrere Vereinseinheiten können eine Sparte organisieren und verantworten
   - einer Sparte können mehrere Sportarten zugeordnet sein
-  - Beispiele für Sparte: Breitensport, Fitnesssport, Reha-Sport, Fussball, Handball, ...
+  - Beispiele für Sparte: Leistungssport, Breitensport, Fitnesssport, Reha-Sport, ...
   - Hinweis: eine Vereinssparte kann einer Vereinseinheit (z.B. Abteilung) entsprechen, muss aber nicht 
 
 
