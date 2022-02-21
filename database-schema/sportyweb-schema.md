@@ -28,8 +28,8 @@ https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
 ```mermaid
 erDiagram
 
-          mitglied ||--|{ mitglied-haushalt : "gehört zu"
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
+          mitglied ||--|{ mitglied-haushalt : "gehört zu"
           mitglied ||--|{ mitgliedsvertrag : "ist Vertragspartner"
           verein ||--|| mitgliedsvertrag : "ist Vertragspartner"
           verein ||--|{ geschaeftsstelle : "betreibt"
@@ -72,7 +72,8 @@ erDiagram
 
           geschaeftsstelle {
             string geschaeftsstelle_bezeichner
-            string geschaeftsstelle_adresse "vorerst nur Dummy-Modellierung"
+            string geschaeftsstelle_besucheradresse "vorerst nur Dummy-Modellierung"
+            string geschaeftsstelle_postalische_adresse
             string geschaeftsstelle_telefonnummer1
             string geschaeftsstelle_telefonnumer1_typ "mobil ODER festnetz ODER ..."
           }
@@ -83,6 +84,7 @@ erDiagram
 %%
           vereinseinheit {
             string vereinseinheit_bezeichner
+            string vereinseinheit_leitung "todo: als Entitätstyp modellieren"
           }
 
 %%
@@ -139,15 +141,25 @@ erDiagram
 - Mitgliedsvertrag : ein aktuell gültiger Mitgliedsvertrag ist Grundlage der Vereinsteilnahme
   - ein Mitgliedsvertrag hat formal zwei Vertragspartner : Verein und Mitglied (Person)
   - ein Mitglied muss mindestens einen Mitgliedsvertrag abgeschlossen haben
+  - ein Mitglied kann einen Mitgliedsvertrag ohne Vertragsende abschließen und
+    lebenslang Mitglied mit diesem Mitgliedsvertrag bleiben
   - ein Mitglied kann im Laufe der Zeit mehrere Mitgliedsverträge abschließen, wenn
     das Mitglied einen früher laufenden Mitgliedsvertrag beendet hat und nach einiger Zeit
     wieder einen Mitgliedsvertrag abschließt
   - ein Mitglied kann temporär einen Mitgliedsvertrag aussetzen (diverse Gründen)
   - diverse weitere Aspekte eines Mitgliedsvertrags sind hier _noch nicht_ modelliert
 
+
 - Verein : Metadaten über den repräsentierten Verein
   - Metadaten über einen Verein sind (auch) dem deutschen Vereinsrecht zu entnehmen
-  -  
+  - Hinweis: Es handelt sich um Metadaten bzgl. des Vereins, dessen Datenhaltung hier
+    modelliert wird
+
+
+- Geschaeftsstelle : eine Geschaeftsstelle wird von einem Verein betrieben
+  - ein Verein betreibt eine oder mehrere Geschaeftsstellen
+  - eine Geschaeftsstelle hat eine Besucheradresse und eine postalische Adresse sowie
+    ein oder mehrere Telefonverbindungen
 
 
 - Sportangebot : ein Sportangebot, dass der Verein anbietet
