@@ -34,7 +34,7 @@ erDiagram
           verein ||--|| mitgliedsvertrag : "ist Vertragspartner"
           verein ||--|{ geschaeftsstelle : "betreibt"
           verein ||--|{ vereinseinheit : "ist organisiert in"
-          vereinseinheit ||--o{ : vereinseinheit : "ist Untereinheit von"
+          vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
 
           mitglied {
             string nachname
