@@ -242,3 +242,12 @@ erDiagram
 - Belegung-Sportstaette-Zeitslot
   - An welchem Wochentag oder Datum ist eine Sportstätte von wann bis wann durch welches Sportangebot belegt?
   - Hinweis: _Noch nicht final modelliert_
+
+
+
+```mermaid
+classDiagram
+    Customer "1" --> "*" Ticket
+    Student "1" --> "1..*" Course
+    Galaxy --> "many" Star : Contains
+```
