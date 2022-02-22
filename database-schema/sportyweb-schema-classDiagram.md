@@ -29,6 +29,4 @@ classDiagram
     class Haushalt
     class Mitglied
     class Mitglied-Haushalt
-    Haushalt "1" --> "1..*" Mitglied-Haushalt
-    Mitglied "1" --> "1..*" Mitglied-Haushalt
 ```
