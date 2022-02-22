@@ -102,10 +102,14 @@ erDiagram
 
           sparte {
             string sparte_bezeichner
+            string sparte_erlaeuterung "Erläuterung der Spartendefinition"
+            date spart_einfuehrungsdatum
           }
 
           sportangebot {
             string sportangebot_bezeichner
+            date sportangebot_einfuehrungsdatum
+            date sportangebot_beendigungsdatum
           }
 
           sportstaette {
@@ -115,11 +119,22 @@ erDiagram
 
           belegung-sportstaette-zeitslot {
             dayofweek Wochentag
+            date belegung_termin "alternativ zu dayofweek Wochentag"
             int AnzahlTage "in welchem Rhythmus erfolgt die Belegung"
             time belegung_von
-            time belegung_bis
+            time belegung_bis "u.a. CONSTRAINT belegung_von < belegung_bis"
+          }
+
+          person {
+            string nachname
+            string vorname
+            date geburtsdatum
           }
           
+          trainer {
+            string lizenz
+          } inherits(person);
+
 ```
 
 
@@ -203,16 +218,18 @@ erDiagram
     und diese anderen Vereinseinheiten unterzuordnen)
 
 
-- Sparte : eine (Vereins-)Sparte dient der Gruppierung von Sportarten nach Sportvereinswesen-bezogenen Kriterien
+- Sparte : eine (Vereins-)Sparte dient der Gruppierung von Sport*arten* nach Sportvereinswesen-bezogenen Kriterien
   - eine Sparte ist mindestens einer Vereinseinheit (mittels Vereinseinheit-Sparte) zugeordnet
   - eine Sparte kann von mehreren Vereinseinheiten getragen/ausgerichtet werden = 
     mehrere Vereinseinheiten können eine Sparte organisieren und verantworten
   - einer Sparte können mehrere Sportarten zugeordnet sein
+  - einer Sparte sind in der Regel mehrere Sportangebote zugeordnet
   - Beispiele für Sparte: Wassersport, Ballsport, Fitnesssport, Reha-Sport, ...
   - Hinweis: eine Vereinssparte kann einer Vereinseinheit (z.B. Abteilung) entsprechen, muss aber nicht 
+  - TODO: Etablierte Vereinssparten-/Vereinsportarten-Systematiken identifizieren!
 
 
-- Sportart : eine Sportart dient der Gruppierung von Sportangeboten nach Sportvereinswesen-bezogenen Kriterien
+- Sportart : eine Sportart dient der Gruppierung von Sport*angeboten* nach Sportvereinswesen-bezogenen Kriterien
   - für die Systematisierung von Sportarten liegen mehrere Systematiken in den Sportwissenschaften vor,
     darüber hinaus haben sich im Sportvereinswesen Systematiken etabliert
   - Sportart : Fussball, Basketball, Handball, Volleyball, Fitnesssport, Reha-Sport usw. 
@@ -223,22 +240,21 @@ erDiagram
   - "Sportangebot" ist der vorläufig gewählte Begriff für konkrete Einzelangebote des Vereins
   - Beispiel: Jumping Fitness, samstags 10 bis 11 Uhr, Trainer: Marie Mustermann
   - Hinweis zum Beispiel: Das Beispiel "Jumping Fitness" legt offen, dass ein Sportangebot _nur_
-    in Zusammenhang mit einer Sportstätten-Belegung und einer Belegungszeit sinnvoll zu interpretieren
-    ist.
-  - TODO : Sportstätten-Belegung und Belegungszeiten sind _noch nicht_ modelliert!
-  - TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
+    in Zusammenhang mit einer Sportstätten-Belegung und einer Belegungszeit und einer Person in
+    der Rolle Trainer / Übungsleiter (ÜL) sinnvoll zu modellieren ist.
+ - TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
     erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
     dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
 
-- Sportstätte
-  - ein Sportstätte ermöglicht das Durchführen von Sportangeboten
-  - Beispiele: Sportstätten können Sporthallen, Teile von Sporthallen, Sportplätze, Laufbahnen, 
-                usw. sein
-  - ein Sportangebot wird zu einem Zeitslot an einer Sportstätte durchgeführt
+- Sportstätte : ein Sportstätte ermöglicht das Durchführen von Sportangeboten
+  - Sportstätten können Sporthallen, Teile von Sporthallen, Sportplätze, Laufbahnen, 
+    Schwimmbahnen, Fitnessräume usw. sein
   - eine Sportstätte steht zu einem Zeitslot zur Verfügung (Verfügbarkeit)
   - eine Sportstätte kann zu einem Zeitslot "gebucht" / belegt werden
-
+  - ein Sportangebot wird zu einem Zeitslot an einer Sportstätte durchgeführt
 
 - Belegung-Sportstaette-Zeitslot
   - An welchem Wochentag oder Datum ist eine Sportstätte von wann bis wann durch welches Sportangebot belegt?
   - Hinweis: _Noch nicht final modelliert_
+  - TODO : Sportstätten-Belegung und Belegungszeiten sind _noch nicht hinreichend_ modelliert!
+  - TODO: Postgres Range Type tsrange for time ranges, https://www.postgresql.org/docs/14/rangetypes.html 
