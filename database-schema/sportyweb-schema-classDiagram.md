@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Database design as class diagram (for using multiplicity constraints) 
 
-Note that data types are NOT properly modeled due to Mermaid.js limitations, see 
+Note that multiplicity are NOT properly implemented in Mermaid.js at this time, see 
 https://mermaid-js.github.io/mermaid/#/classDiagram
 
 ```mermaid
