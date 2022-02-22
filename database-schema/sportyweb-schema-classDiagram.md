@@ -26,7 +26,6 @@ https://mermaid-js.github.io/mermaid/#/classDiagram
 
 ```mermaid
 classDiagram
-    class Haushalt
-    class Mitglied
-    class Mitglied-Haushalt
+    
+    Mitglied "1..*" -- "1..*" Haushalt
 ```
