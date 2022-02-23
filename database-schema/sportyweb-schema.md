@@ -175,8 +175,19 @@ erDiagram
 
 # Erläuterungen
 
+- Person : eine natürliche Person
+  - die Normalisierung der Datenhaltung legt das Modellieren organisationaler Rollen wie Mitglied, Mitarbeiter, Trainer 
+    Funktionär, Sponsor usw. mittels einer Relation PERSON nahe
+  - eine Person kann gleichzeitig mehrere organisationale Rollen ausfüllen   
+  - Beispiel : eine Person kann gleichzeitig Mitglied, Mitarbeiter, Trainer und Funktionär sein
+  - eine Person kann auch *keine* organisationale Rolle im Verein ausfüllen
+  - Beispiel : eine Person kann eine Vereinskontaktperson sein, deren Kontaktdaten erfasst werden sollen,
+    z.B. eine Kontaktperson in einem Verband oder im Stadtsportbund usw. 
+  - TODO : _noch nicht final modelliert_
+
+
 - Mitglied
-  - ein Mitglied ist eine natürliche Person (TODO: Entitätstyp PERSON modellieren)
+  - ein Mitglied ist eine natürliche Person
   - eine Person ist erst durch Abschluss eines Mitgliedsvertrags ein Mitglied
 
 
@@ -292,16 +303,6 @@ erDiagram
     erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
     dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
 
-
-- Person : eine natürliche Person
-  - die Normalisierung der Datenhaltung legt das Modellieren organisationaler Rollen wie Mitglied, Mitarbeiter, Trainer 
-    Funktionär, Sponsor usw. mittels einer Relation PERSON nahe
-  - eine Person kann gleichzeitig mehrere organisationale Rollen ausfüllen   
-  - Beispiel : eine Person kann gleichzeitig Mitglied, Mitarbeiter, Trainer und Funktionär sein
-  - eine Person kann auch *keine* organisationale Rolle im Verein ausfüllen
-  - Beispiel : eine Person kann eine Vereinskontaktperson sein, deren Kontaktdaten erfasst werden sollen,
-    z.B. eine Kontaktperson in einem Verband oder im Stadtsportbund usw. 
-  - TODO : _noch nicht final modelliert_
 
 - Trainer : ein Trainer, der für bestimmte Sportangebote qualifiziert ist und bestimmte Sportangebote durchführt 
   - ein Synonym für Trainer ist Übungsleiter (ÜL) - der Begriff 'Trainer' wird hier verwendet, da kürzer und kein Umlaut
