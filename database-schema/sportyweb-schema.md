@@ -39,12 +39,13 @@ erDiagram
           sparte ||--|{ vereinseinheit-sparte : "wird ausrichtet von"
           sparte ||--o{ sportart : "ist zugeordnet zu"
           sportart ||--o{ sportangebotstyp : "ist zugeordnet zu"
-          sportangebotstyp ||--o{ konkretes_sportangebot : "belegt Sportstaette von bis"
+          sportangebotstyp ||--o{ konkretes_sportangebot : "wird konkret angeboten"
           sportstaette ||--o{ konkretes_sportangebot : "ist belegt"
-          trainer ||--o{ trainerlizenz : "hat erworben"
+          person ||--o{ trainer : "ist eine"
+          trainer ||--o{ trainer_lizenz : "hat erworben"
+          lizenz ||--o{ trainer_lizenz : "nachgewiesen von"
           trainer ||--o{ sportangebotstyp : "ist qualifiziert für"
           trainer ||--|{ konkretes_sportangebot : "führt durch"
-          person ||--o{ trainer : "ist eine"
 
           mitglied {
             string nachname
@@ -153,9 +154,14 @@ erDiagram
             string iban
           } 
 
-          trainerlizenz {
+          lizenz {
             string lizenz_bezeichner
             string lizenz_beschreibung
+            string lizenz_ausstellender_verband "TODO: normalisieren"
+            string lizenz_erfasst_von
+          }
+
+          trainer_lizenz {
             date lizenz_erworben_am
             date lizenz_gueltig_bis
             string lizenz_erworben_bei
