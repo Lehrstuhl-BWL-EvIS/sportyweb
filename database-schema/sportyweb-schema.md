@@ -41,6 +41,10 @@ erDiagram
           sportart ||--o{ sportangebot : "ist zugeordnet zu"
           sportangebot ||--o{ belegung-sportstaette-zeitslot : "belegt Sportstaette von bis"
           sportstaette ||--o{ belegung-sportstaette-zeitslot : "ist belegt"
+          person ||--|{ trainer : "ist eine"
+          trainer ||--o{ lizenz : "hat erworben"
+          trainer ||--o{ sportangebot : "ist qualifiziert für"
+          trainer ||--|{ belegung-sportstaette-zeitslot : "führt durch"
 
           mitglied {
             string nachname
@@ -129,11 +133,26 @@ erDiagram
             string nachname
             string vorname
             date geburtsdatum
+            geschlecht_kuerzel geschlecht
+            string email1
+            string email2
+            string telefonnummer1
+            string telefonnummer2            
           }
-          
+
           trainer {
-            string lizenz
-          } inherits(person);
+            string spitzname
+            string kontoinhaber
+            string iban
+          } 
+
+          trainerlizenz {
+            string trainerlizenz_bezeichner
+            string trainerlizenz_beschreibung
+            date trainerlizenz_erworben_am
+            string trainerlizenz_erworben_bei
+            boolean trainerlizenz_ueberprueft
+          }
 
 ```
 
@@ -258,3 +277,14 @@ erDiagram
   - Hinweis: _Noch nicht final modelliert_
   - TODO : Sportstätten-Belegung und Belegungszeiten sind _noch nicht hinreichend_ modelliert!
   - TODO: Postgres Range Type tsrange for time ranges, https://www.postgresql.org/docs/14/rangetypes.html 
+
+
+# TODO
+
+## Personalmanagement
+- Rollen von Personen in Bezug auf Sportangebote, insbes. Trainer/Übungsleiter
+  WICHTIGE ROLLE für Planung von Sportangeboten
+- Rollen von Personen in Bezug auf die Mitarbeit im Verein (ehrenamtlich, hauptamtlich)
+  z.B. Mitarbeiter der Geschäftstelle
+- Rollen von Personen in Bezug auf die Vereinsführung, z.B. (Erster) Vorsitzender usw.
+  Allerdings: Für Mitgliederverwaltung nicht zwingend erforderlich
