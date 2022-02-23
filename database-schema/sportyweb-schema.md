@@ -41,7 +41,7 @@ erDiagram
           sportart ||--o{ sportangebot : "ist zugeordnet zu"
           sportangebot ||--o{ belegung-sportstaette-zeitslot : "belegt Sportstaette von bis"
           sportstaette ||--o{ belegung-sportstaette-zeitslot : "ist belegt"
-          person ||--|{ trainer : "ist eine"
+          person ||--o{ trainer : "ist eine"
           trainer ||--o{ trainerlizenz : "hat erworben"
           trainer ||--o{ sportangebot : "ist qualifiziert für"
           trainer ||--|{ belegung-sportstaette-zeitslot : "führt durch"
