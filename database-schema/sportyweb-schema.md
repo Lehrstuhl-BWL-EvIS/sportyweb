@@ -38,12 +38,12 @@ erDiagram
           vereinseinheit ||--|{ vereinseinheit-sparte : "richtet aus"
           sparte ||--|{ vereinseinheit-sparte : "wird ausrichtet von"
           sparte ||--o{ sportart : "ist zugeordnet zu"
-          sportart ||--o{ sportangebot : "ist zugeordnet zu"
-          sportangebot ||--o{ belegung-sportstaette-zeitslot : "belegt Sportstaette von bis"
-          sportstaette ||--o{ belegung-sportstaette-zeitslot : "ist belegt"
+          sportart ||--o{ sportangebotstyp : "ist zugeordnet zu"
+          sportangebotstyp ||--o{ konkretes_sportangebot : "belegt Sportstaette von bis"
+          sportstaette ||--o{ konkretes_sportangebot : "ist belegt"
           trainer ||--o{ trainerlizenz : "hat erworben"
-          trainer ||--o{ sportangebot : "ist qualifiziert für"
-          trainer ||--|{ belegung-sportstaette-zeitslot : "führt durch"
+          trainer ||--o{ sportangebotstyp : "ist qualifiziert für"
+          trainer ||--|{ konkretes_sportangebot : "führt durch"
           person ||--o{ trainer : "ist eine"
 
           mitglied {
@@ -57,6 +57,10 @@ erDiagram
             string kontoinhaber
             string iban
             date eintrittsdatum 
+            text notiz1
+            text notiz2
+            date letzter_kontakt
+            string kontakt_art "email OR telephone OR in person"
           }
 
           haushalt {
@@ -110,23 +114,26 @@ erDiagram
             date spart_einfuehrungsdatum
           }
 
-          sportangebot {
-            string sportangebot_bezeichner
-            date sportangebot_einfuehrungsdatum
-            date sportangebot_beendigungsdatum
+          sportangebotstyp {
+            string sportangebotstyp_bezeichner
+            date sportangebotstyp_einfuehrungsdatum
+            date sportangebotstyp_beendigungsdatum
           }
 
           sportstaette {
             string sportstaette-bezeichner
             string sportstaette_adresse
+            int sportstaette_teilnehmer_kapazitaet
           }
 
-          belegung-sportstaette-zeitslot {
+          konkretes_sportangebot {
             dayofweek Wochentag
             date belegung_termin "alternativ zu dayofweek Wochentag"
             int AnzahlTage "in welchem Rhythmus erfolgt die Belegung"
             time belegung_von
             time belegung_bis "u.a. CONSTRAINT belegung_von < belegung_bis"
+            int min_teilnehmer
+            int max_teilnehmer
           }
 
           person {
@@ -147,11 +154,13 @@ erDiagram
           } 
 
           trainerlizenz {
-            string trainerlizenz_bezeichner
-            string trainerlizenz_beschreibung
-            date trainerlizenz_erworben_am
-            string trainerlizenz_erworben_bei
-            boolean trainerlizenz_ueberprueft
+            string lizenz_bezeichner
+            string lizenz_beschreibung
+            date lizenz_erworben_am
+            date lizenz_gueltig_bis
+            string lizenz_erworben_bei
+            boolean lizenz_ueberprueft
+            blob lizenz_scan
           }
 
 ```
@@ -254,16 +263,9 @@ erDiagram
   - Sportart : Fussball, Basketball, Handball, Volleyball, Fitnesssport, Reha-Sport usw. 
   - eine Sportart ist genau einer Sparte zugeordnet (TODO: ggf. eine zu restriktive Einschränkung)
 
-
-- Sportangebot : ein Sportangebot dient der Datenhaltung zu konkreten Sportangeboten des Vereins
-  - "Sportangebot" ist der vorläufig gewählte Begriff für konkrete Einzelangebote des Vereins
-  - Beispiel: Jumping Fitness, samstags 10 bis 11 Uhr, Trainer: Marie Mustermann
-  - Hinweis zum Beispiel: Das Beispiel "Jumping Fitness" legt offen, dass ein Sportangebot _nur_
-    in Zusammenhang mit einer Sportstätten-Belegung und einer Belegungszeit und einer Person in
-    der Rolle Trainer / Übungsleiter (ÜL) sinnvoll zu modellieren ist.
- - TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
-    erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
-    dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
+- Sportangebotstyp : ein Sportangebotstyp dient der Datenhaltung zu Typen von Sportangeboten des Vereins
+  - "Sportangebotstyp" ist der vorläufig gewählte Begriff für typisierte Einzelangebote des Vereins
+  - Beispiel: Jumping Fitness, Basketball U14
 
 - Sportstätte : ein Sportstätte ermöglicht das Durchführen von Sportangeboten
   - Sportstätten können Sporthallen, Teile von Sporthallen, Sportplätze, Laufbahnen, 
@@ -272,12 +274,43 @@ erDiagram
   - eine Sportstätte kann zu einem Zeitslot "gebucht" / belegt werden
   - ein Sportangebot wird zu einem Zeitslot an einer Sportstätte durchgeführt
 
-- Belegung-Sportstaette-Zeitslot
-  - An welchem Wochentag oder Datum ist eine Sportstätte von wann bis wann durch welches Sportangebot belegt?
-  - Hinweis: _Noch nicht final modelliert_
-  - TODO : Sportstätten-Belegung und Belegungszeiten sind _noch nicht hinreichend_ modelliert!
+- konkretes_Sportangebot : ein konkretes Sportangebot bedingt die Belegung einer Sportstätte in einem konkreten Zeitslot an einem Wochentag (oder einem konkreten Datum) unter Leitung eines bestimmten Trainers
+  - M.a.W.: An welchem Wochentag oder Datum ist eine Sportstätte von wann bis wann durch welches konkrete Sportangebot belegt?
+  - Beispiel: Jumping Fitness mit Marie, samstags 11 bis 12 Uhr, Fitnessraum 2+3
   - TODO: Postgres Range Type tsrange for time ranges, https://www.postgresql.org/docs/14/rangetypes.html 
+  - Hinweis zum Beispiel: Das Beispiel "Jumping Fitness" legt offen, dass ein Sportangebot _nur_
+    in Zusammenhang mit einer Sportstätten-Belegung und einer Belegungszeit und einer Person in
+    der Rolle Trainer / Übungsleiter (ÜL) sinnvoll zu modellieren ist.
+ - TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
+    erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
+    dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
 
+
+- PERSON : eine natürliche Person
+  - die Normalisierung der Datenhaltung legt das Modellieren organisationaler Rollen wie Mitglied, Mitarbeiter, Trainer 
+    Funktionär, Sponsor usw. mittels einer Relation PERSON nahe
+  - eine Person kann gleichzeitig mehrere organisationale Rollen ausfüllen   
+  - Beispiel : eine Person kann gleichzeitig Mitglied, Mitarbeiter, Trainer und Funktionär sein
+  - eine Person kann auch *keine* organisationale Rolle im Verein ausfüllen
+  - Beispiel : eine Person kann eine Vereinskontaktperson sein, deren Kontaktdaten erfasst werden sollen,
+    z.B. eine Kontaktperson in einem Verband oder im Stadtsportbund usw. 
+  - TODO : _noch nicht final modelliert_
+
+- TRAINER : ein Trainer, der für bestimmte Sportangebote qualifiziert ist und bestimmte Sportangebote durchführt 
+  - ein Synonym für Trainer ist Übungsleiter (ÜL) - der Begriff 'Trainer' wird hier verwendet, da kürzer und kein Umlaut
+  - 'Trainer' ist ein Rolle einer Person
+  - eine Person
+
+- TRAINERLIZENZ : eine Lizenz, die ein Trainer erworben hat
+  - eine Trainerlizenz ist genau einem Trainer zugeordnet 
+  - Anmerkung: Eine alternative Modellierung würde abstrakte Trainerlizenzen modellieren, die Trainern zugeordnet werden
+    Beispiel: Es wird eine Lizenz "Übungsleiter B-Lizenz Breitensport" als abstrakte Trainerlizenz angelegt und wiederverwendet
+    Hinweis: Mit der hier gewählten Modellierung ist diese Wiederverwendung *nicht* möglich; für jeden Trainer müssen alle 
+    von ihm erworbenen Lizenzen neu erfasst und angelegt werden.
+  - ein Trainer kann keine, eine oder mehrere Lizenzen erworben haben
+  - Hinweis: für bestimmte Sportangebote ist keine Trainerlizenz erforderlich
+  - eine Lizenz hat üblicherweise eine bestimmte zeitliche Gültigkeit und muss danach durch Teilnahme an
+    Trainerausbildungen erneuert werden
 
 # TODO
 
