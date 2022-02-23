@@ -28,6 +28,8 @@ https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
 ```mermaid
 erDiagram
 
+          person ||--o{ mitglied : "ist eine"
+          person ||--o{ trainer : "ist eine"
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
           mitglied ||--|{ mitglied-haushalt : "gehört zu"
           mitglied ||--|{ mitgliedsvertrag : "ist Vertragspartner"
@@ -41,8 +43,6 @@ erDiagram
           sportart ||--o{ sportangebotstyp : "ist zugeordnet zu"
           sportangebotstyp ||--o{ konkretes_sportangebot : "wird konkret angeboten"
           sportstaette ||--o{ konkretes_sportangebot : "ist belegt"
-          person ||--o{ mitglied : "ist eine"
-          person ||--o{ trainer : "ist eine"
           trainer ||--o{ trainer_lizenz : "hat erworben"
           lizenz ||--o{ trainer_lizenz : "nachgewiesen von"
           trainer ||--o{ sportangebotstyp : "ist qualifiziert für"
