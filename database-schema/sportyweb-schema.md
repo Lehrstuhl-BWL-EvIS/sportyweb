@@ -42,7 +42,7 @@ erDiagram
           sportangebot ||--o{ belegung-sportstaette-zeitslot : "belegt Sportstaette von bis"
           sportstaette ||--o{ belegung-sportstaette-zeitslot : "ist belegt"
           person ||--|{ trainer : "ist eine"
-          trainer ||--o{ lizenz : "hat erworben"
+          trainer ||--o{ trainerlizenz : "hat erworben"
           trainer ||--o{ sportangebot : "ist qualifiziert für"
           trainer ||--|{ belegung-sportstaette-zeitslot : "führt durch"
 
