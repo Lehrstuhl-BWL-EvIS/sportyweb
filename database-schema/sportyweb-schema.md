@@ -41,6 +41,7 @@ erDiagram
           sportart ||--o{ sportangebotstyp : "ist zugeordnet zu"
           sportangebotstyp ||--o{ konkretes_sportangebot : "wird konkret angeboten"
           sportstaette ||--o{ konkretes_sportangebot : "ist belegt"
+          person ||--o{ mitglied : "ist eine"
           person ||--o{ trainer : "ist eine"
           trainer ||--o{ trainer_lizenz : "hat erworben"
           lizenz ||--o{ trainer_lizenz : "nachgewiesen von"
