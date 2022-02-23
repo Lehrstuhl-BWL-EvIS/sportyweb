@@ -292,7 +292,7 @@ erDiagram
     dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
 
 
-- PERSON : eine natürliche Person
+- Person : eine natürliche Person
   - die Normalisierung der Datenhaltung legt das Modellieren organisationaler Rollen wie Mitglied, Mitarbeiter, Trainer 
     Funktionär, Sponsor usw. mittels einer Relation PERSON nahe
   - eine Person kann gleichzeitig mehrere organisationale Rollen ausfüllen   
@@ -302,10 +302,37 @@ erDiagram
     z.B. eine Kontaktperson in einem Verband oder im Stadtsportbund usw. 
   - TODO : _noch nicht final modelliert_
 
-- TRAINER : ein Trainer, der für bestimmte Sportangebote qualifiziert ist und bestimmte Sportangebote durchführt 
+- Trainer : ein Trainer, der für bestimmte Sportangebote qualifiziert ist und bestimmte Sportangebote durchführt 
   - ein Synonym für Trainer ist Übungsleiter (ÜL) - der Begriff 'Trainer' wird hier verwendet, da kürzer und kein Umlaut
   - 'Trainer' ist ein Rolle einer Person
   - eine Person
+
+
+- Lizenz : eine konkrete Lizenz, die von einem Verband o.ä. geprüft und ausgestellt wird
+  - zum Zweck der Wiederverwendung bereits angelegter Lizenzen
+  - _noch nicht final_  
+
+
+- trainer_lizenz : keine, eine oder mehrere Lizenzen, die ein Trainer erworben hat
+  - ein Trainer kann keine, eine oder mehrere Lizenzen erworben haben
+  - Hinweis: für bestimmte Sportangebote ist keine Trainerlizenz erforderlich
+  - eine Lizenz hat üblicherweise eine bestimmte zeitliche Gültigkeit und muss danach durch Teilnahme an
+    Trainerweiterbildungen erneuert werden
+
+
+# TODO
+
+## Personalmanagement
+- Rollen von Personen in Bezug auf Sportangebote, insbes. Trainer/Übungsleiter
+  WICHTIGE ROLLE für Planung von Sportangeboten
+- Rollen von Personen in Bezug auf die Mitarbeit im Verein (ehrenamtlich, hauptamtlich)
+  z.B. Mitarbeiter der Geschäftstelle
+- Rollen von Personen in Bezug auf die Vereinsführung, z.B. (Erster) Vorsitzender usw.
+  Allerdings: Für Mitgliederverwaltung nicht zwingend erforderlich
+
+
+
+# DEPRECATED / OBSOLETE
 
 - TRAINERLIZENZ : eine Lizenz, die ein Trainer erworben hat
   - eine Trainerlizenz ist genau einem Trainer zugeordnet 
@@ -317,13 +344,3 @@ erDiagram
   - Hinweis: für bestimmte Sportangebote ist keine Trainerlizenz erforderlich
   - eine Lizenz hat üblicherweise eine bestimmte zeitliche Gültigkeit und muss danach durch Teilnahme an
     Trainerausbildungen erneuert werden
-
-# TODO
-
-## Personalmanagement
-- Rollen von Personen in Bezug auf Sportangebote, insbes. Trainer/Übungsleiter
-  WICHTIGE ROLLE für Planung von Sportangeboten
-- Rollen von Personen in Bezug auf die Mitarbeit im Verein (ehrenamtlich, hauptamtlich)
-  z.B. Mitarbeiter der Geschäftstelle
-- Rollen von Personen in Bezug auf die Vereinsführung, z.B. (Erster) Vorsitzender usw.
-  Allerdings: Für Mitgliederverwaltung nicht zwingend erforderlich
