@@ -295,31 +295,26 @@ erDiagram
 - konkretes_Sportangebot : ein konkretes Sportangebot bedingt die Belegung einer Sportstätte in einem konkreten Zeitslot an einem Wochentag (oder einem konkreten Datum) unter Leitung eines bestimmten Trainers
   - M.a.W.: An welchem Wochentag oder Datum ist eine Sportstätte von wann bis wann durch welches konkrete Sportangebot belegt?
   - Beispiel: Jumping Fitness mit Marie, samstags 11 bis 12 Uhr, Fitnessraum 2+3
-  - TODO: Postgres Range Type tsrange for time ranges, https://www.postgresql.org/docs/14/rangetypes.html 
   - Hinweis zum Beispiel: Das Beispiel "Jumping Fitness" legt offen, dass ein Sportangebot _nur_
     in Zusammenhang mit einer Sportstätten-Belegung und einer Belegungszeit und einer Person in
     der Rolle Trainer / Übungsleiter (ÜL) sinnvoll zu modellieren ist.
- - TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
-    erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
-    dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
-
+  - TODO: Postgres Range Type tsrange for time ranges, https://www.postgresql.org/docs/14/rangetypes.html 
+  
 
 - Trainer : ein Trainer, der für bestimmte Sportangebote qualifiziert ist und bestimmte Sportangebote durchführt 
   - ein Synonym für Trainer ist Übungsleiter (ÜL) - der Begriff 'Trainer' wird hier verwendet, da kürzer und kein Umlaut
   - 'Trainer' ist ein Rolle einer Person
-  - eine Person
-
-
-- Lizenz : eine konkrete Lizenz, die von einem Verband o.ä. geprüft und ausgestellt wird
-  - zum Zweck der Wiederverwendung bereits angelegter Lizenzen
-  - _noch nicht final_  
-
+  - ein Trainer ist eine natürliche Person
 
 - trainer_lizenz : keine, eine oder mehrere Lizenzen, die ein Trainer erworben hat
   - ein Trainer kann keine, eine oder mehrere Lizenzen erworben haben
   - Hinweis: für bestimmte Sportangebote ist keine Trainerlizenz erforderlich
   - eine Lizenz hat üblicherweise eine bestimmte zeitliche Gültigkeit und muss danach durch Teilnahme an
     Trainerweiterbildungen erneuert werden
+
+- Lizenz : eine konkrete Lizenz, die von einem Verband o.ä. geprüft und ausgestellt wird
+  - zum Zweck der Wiederverwendung bereits angelegter Lizenzen modelliert
+  - _noch nicht final_  
 
 
 # TODO
@@ -346,3 +341,7 @@ erDiagram
   - Hinweis: für bestimmte Sportangebote ist keine Trainerlizenz erforderlich
   - eine Lizenz hat üblicherweise eine bestimmte zeitliche Gültigkeit und muss danach durch Teilnahme an
     Trainerausbildungen erneuert werden
+
+- TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
+    erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
+    dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
