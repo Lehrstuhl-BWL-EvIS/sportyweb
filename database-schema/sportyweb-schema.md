@@ -32,8 +32,7 @@ erDiagram
           person ||--o| trainer : "ist eine"
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
           mitglied ||--|{ mitglied-haushalt : "gehört zu"
-          mitglied ||--|{ mitgliedsvertrag : "ist Vertragspartner"
-          verein ||--|| mitgliedsvertrag : "ist Vertragspartner"
+          mitglied ||--|{ mitgliedsvertrag : "schliesst ab"
           mitgliedsvertrag ||--|{ vertragsposition : "umfasst"
           sparte ||--|{ vertragsposition : "bezieht sich auf"
           verein ||--|{ geschaeftsstelle : "betreibt"
@@ -355,3 +354,6 @@ erDiagram
 - TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
     erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
     dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
+
+-           verein ||--|| mitgliedsvertrag : "ist Vertragspartner"
+
