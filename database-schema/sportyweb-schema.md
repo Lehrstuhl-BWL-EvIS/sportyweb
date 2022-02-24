@@ -33,12 +33,13 @@ erDiagram
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
           mitglied ||--|{ mitglied-haushalt : "gehört zu"
           mitglied ||--|{ mitgliedsvertrag : "schliesst ab"
-          mitgliedsvertrag ||--|{ mitgliedsvertrag_einzelposition : "umfasst"
           verein ||--|{ geschaeftsstelle : "betreibt"
           verein ||--|{ vereinseinheit : "ist organisiert in"
           vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
           vereinseinheit ||--|{ vereinseinheit-sparte : "richtet aus"
-          vereinseinheit ||--|{ mitgliedsvertrag_einzelposition : "bezieht sich auf"
+          vereinseinheit ||--|{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
+          mitgliedsvertrag ||--|{ beitragsgruppe : "ist zugeordnet"
+          beitragsgruppe ||--o{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
           sparte ||--|{ vereinseinheit-sparte : "wird ausrichtet von"
           sparte ||--o{ sportart : "ist zugeordnet zu"
           sportart ||--o{ sportangebotstyp : "ist zugeordnet zu"
@@ -88,13 +89,18 @@ erDiagram
             date mitgliedsvertrag_kuendigungsdatum
             date mitgliedsvertrag_ruhezeit_anfang
             date mitgliedsvertrag_ruhezeit_ende
-            money grundgebuehr
           }
 
-          mitgliedsvertrag_einzelposition {
-            date einzelposition_datum_beginn
-            date einzelposition_datum_ende
-            money einzelposition_gebuehr
+          beitragsgruppe {
+            string beitragsgruppe_bezeichner
+            string beitragsgruppe_beschreibung
+            money beitragsgruppe_grundgebuehr
+          }
+
+          mitgliedschaft_vereinseinheit {
+            date mitgliedschaft_datum_beginn
+            date mitgliedschaft_datum_ende
+            money mitgliedschaft_gebuehr
           }
 
           verein {
@@ -331,12 +337,6 @@ erDiagram
   - _noch nicht final_  
 
 
-# NOTIZEN
-
-- Anmeldung beim Verein / Aufnahmeformular
-- Aufnahmebestätigung mit Angaben zu Gebühren für angemeldete Abteilung(en)
-
-
 # TODO
 
 ## Personalmanagement
@@ -366,5 +366,9 @@ erDiagram
     erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
     dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
 
--           verein ||--|| mitgliedsvertrag : "ist Vertragspartner"
+- verein ||--|| mitgliedsvertrag : "ist Vertragspartner"
+- mitgliedsvertrag ||--|{ mitgliedsvertrag_einzelposition : "umfasst"
+
+
+
 
