@@ -84,10 +84,10 @@ erDiagram
           }
 
           mitgliedsvertrag {
-            date aufnahmedatum
-            date kuendigungsdatum
-            date ruhezeit_anfang
-            date ruhezeit_ende
+            date mitgliedsvertrag_aufnahmedatum
+            date mitgliedsvertrag_kuendigungsdatum
+            date mitgliedsvertrag_ruhezeit_anfang
+            date mitgliedsvertrag_ruhezeit_ende
             money grundgebuehr
           }
 
@@ -98,7 +98,7 @@ erDiagram
           }
 
           verein {
-            string landessportbund-vereinsnummer
+            string landessportbund-vereinskennziffer
             string vereinsname_vollstaendig
             string vereinsname_kurzfassung
             string verein_url
@@ -199,8 +199,6 @@ erDiagram
   - ein Mitglied ist eine natürliche Person
   - eine Person ist erst durch Abschluss eines Mitgliedsvertrags ein Mitglied
   - ein Mitglied hinterlegt Bankverbindung und Zahlungsweise und Zahlungsrhythmus
-  - 
-
 
 - Haushalt
   - ein Haushalt wird über eine postalische Adresse identifiziert
