@@ -28,12 +28,14 @@ https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
 ```mermaid
 erDiagram
 
-          person ||--o{ mitglied : "ist eine"
-          person ||--o{ trainer : "ist eine"
+          person ||--o| mitglied : "ist eine"
+          person ||--o| trainer : "ist eine"
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
           mitglied ||--|{ mitglied-haushalt : "gehört zu"
           mitglied ||--|{ mitgliedsvertrag : "ist Vertragspartner"
           verein ||--|| mitgliedsvertrag : "ist Vertragspartner"
+          mitgliedsvertrag ||--|{ vertragsposition : "umfasst"
+          sparte ||--|{ vertragsposition : "bezieht sich auf"
           verein ||--|{ geschaeftsstelle : "betreibt"
           verein ||--|{ vereinseinheit : "ist organisiert in"
           vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
@@ -81,6 +83,10 @@ erDiagram
             date ruhezeit_ende
           }
 
+          vertragsposition {
+            money Zusatzgebuehr
+          }
+
           verein {
             string landessportbund-vereinsnummer
             string vereinsname_vollstaendig
@@ -114,6 +120,10 @@ erDiagram
             string sparte_bezeichner
             string sparte_erlaeuterung "Erläuterung der Spartendefinition"
             date spart_einfuehrungsdatum
+          }
+
+          sportart {
+            string sportart_bezeichner
           }
 
           sportangebotstyp {
