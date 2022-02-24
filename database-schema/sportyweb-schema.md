@@ -32,8 +32,8 @@ erDiagram
           person ||--o| trainer : "ist eine"
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
           mitglied ||--|{ mitglied-haushalt : "gehört zu"
-          mitglied ||--|{ mitgliedschaft : "bestätigt"
-          mitgliedschaft ||--|{ mitgliedschaft_einzelposition : "umfasst"
+          mitglied ||--|{ mitgliedsvertrag : "schliesst ab"
+          mitgliedsvertrag ||--|{ mitgliedsvertrag_einzelposition : "umfasst"
           verein ||--|{ geschaeftsstelle : "betreibt"
           verein ||--|{ vereinseinheit : "ist organisiert in"
           vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
@@ -49,21 +49,29 @@ erDiagram
           trainer ||--o{ sportangebotstyp : "ist qualifiziert für"
           trainer ||--|{ konkretes_sportangebot : "führt durch"
 
+          person {
+            string person_nachname
+            string person_vorname
+            date person_geburtsdatum
+            geschlecht_kuerzel person_geschlecht
+            string person_email1
+            string person_email2
+            string person_telefonnummer1
+            string person_telefonnummer2            
+            text person_notiz1
+            text person_notiz2
+          }
+
           mitglied {
-            string nachname
-            string vorname
-            date geburtsdatum
-            geschlecht_kuerzel geschlecht
-            string telefonnummer1
-            string telefonnummer2
-            string email
-            string kontoinhaber
-            string iban
-            date eintrittsdatum 
-            text notiz1
-            text notiz2
-            date letzter_kontakt
-            string kontakt_art "email OR telephone OR in person"
+            date mitglied_eintrittsdatum 
+            string mitglied_kontoinhaber
+            string mitglied_iban
+            zahlungsweise mitglied_zahlungsweise "bar | Abbuchung | ???"
+            zahlungsrhythmus mitglied_zahlungsrhythmus "monatlich | quartalsweise | halbjährlich | jährlich"
+            text mitglied_notiz1
+            text mitglied_notiz2
+            date mitglied_letzter_kontakt
+            string mitglied_kontakt_art "email OR telephone OR in person"
           }
 
           haushalt {
@@ -75,15 +83,18 @@ erDiagram
             string haushalt_ort
           }
 
-          mitgliedschaft {
+          mitgliedsvertrag {
             date aufnahmedatum
             date kuendigungsdatum
             date ruhezeit_anfang
             date ruhezeit_ende
+            money grundgebuehr
           }
 
-          mitgliedschaft_einzelposition {
-            money Zusatzgebuehr
+          mitgliedsvertrag_einzelposition {
+            date einzelposition_datum_beginn
+            date einzelposition_datum_ende
+            money einzelposition_gebuehr
           }
 
           verein {
@@ -147,17 +158,6 @@ erDiagram
             int max_teilnehmer
           }
 
-          person {
-            string nachname
-            string vorname
-            date geburtsdatum
-            geschlecht_kuerzel geschlecht
-            string email1
-            string email2
-            string telefonnummer1
-            string telefonnummer2            
-          }
-
           trainer {
             string spitzname
             string kontoinhaber
@@ -198,6 +198,8 @@ erDiagram
 - Mitglied
   - ein Mitglied ist eine natürliche Person
   - eine Person ist erst durch Abschluss eines Mitgliedsvertrags ein Mitglied
+  - ein Mitglied hinterlegt Bankverbindung und Zahlungsweise und Zahlungsrhythmus
+  - 
 
 
 - Haushalt
@@ -224,7 +226,8 @@ erDiagram
     hinzugefügt.
 
 
-- Mitgliedsvertrag : ein aktuell gültiger Mitgliedsvertrag ist Grundlage der Vereinsteilnahme
+- Mitgliedsvertrag : ein aktuell gültiger Mitgliedsvertrag ist Grundlage der Vereinsteilnahme, siehe
+  https://www.rkpn.de/vereinsrecht/veroeffentlichungen/die-aufnahme-neuer-mitglieder-in-den-verein.html
   - ein Mitgliedsvertrag hat formal zwei Vertragspartner : Verein und Mitglied (Person)
   - ein Mitglied muss mindestens einen Mitgliedsvertrag abgeschlossen haben
   - ein Mitglied kann einen Mitgliedsvertrag ohne Vertragsende abschließen und
@@ -232,8 +235,12 @@ erDiagram
   - ein Mitglied kann im Laufe der Zeit mehrere Mitgliedsverträge abschließen, wenn
     das Mitglied einen früher laufenden Mitgliedsvertrag beendet hat und nach einiger Zeit
     wieder einen Mitgliedsvertrag abschließt
-  - ein Mitglied kann temporär einen Mitgliedsvertrag aussetzen (diverse Gründen)
+  - Ruhezeiten: ein Mitglied kann mehrmals temporär einen Mitgliedsvertrag aussetzen (diverse Gründen)
   - diverse weitere Aspekte eines Mitgliedsvertrags sind hier _noch nicht_ modelliert
+
+
+- mitgliedschaft_einzelposition : eine Einzelposition eines Mitgliedsvertrags / einer mitgliedschaft, ggf. mit Zusatzgebühr
+  - Gebührenmodellierung: Grundgebühr (Mitgliedsvertrag plus 0..* zusätzliche Gebühren für Einzelpositionen)
 
 
 - Verein : Daten, die den Verein beschreiben
