@@ -39,7 +39,7 @@ erDiagram
           vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
           vereinseinheit ||--|{ vereinseinheit-sparte : "richtet aus"
           vereinseinheit ||--|{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
-          mitglied ||--o{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
+          mitgliedsvertrag ||--o{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
           sparte ||--|{ vereinseinheit-sparte : "wird ausrichtet von"
           sparte ||--o{ sportart : "ist zugeordnet zu"
           sportart ||--o{ sportangebotstyp : "ist zugeordnet zu"
