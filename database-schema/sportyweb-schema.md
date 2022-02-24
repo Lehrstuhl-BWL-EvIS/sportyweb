@@ -32,13 +32,13 @@ erDiagram
           person ||--o| trainer : "ist eine"
           haushalt ||--|{ mitglied-haushalt : "besteht aus"
           mitglied ||--|{ mitglied-haushalt : "gehört zu"
-          mitglied ||--|{ mitgliedsvertrag : "schliesst ab"
-          mitgliedsvertrag ||--|{ vertragsposition : "umfasst"
-          sparte ||--|{ vertragsposition : "bezieht sich auf"
+          mitglied ||--|{ mitgliedschaft : "bestätigt"
+          mitgliedschaft ||--|{ mitgliedschaft_einzelposition : "umfasst"
           verein ||--|{ geschaeftsstelle : "betreibt"
           verein ||--|{ vereinseinheit : "ist organisiert in"
           vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
           vereinseinheit ||--|{ vereinseinheit-sparte : "richtet aus"
+          vereinseinheit ||--|{ mitgliedschaft_einzelposition : "bezieht sich auf"
           sparte ||--|{ vereinseinheit-sparte : "wird ausrichtet von"
           sparte ||--o{ sportart : "ist zugeordnet zu"
           sportart ||--o{ sportangebotstyp : "ist zugeordnet zu"
@@ -75,14 +75,14 @@ erDiagram
             string haushalt_ort
           }
 
-          mitgliedsvertrag {
-            date vertragsbeginn
-            date vertragsende
+          mitgliedschaft {
+            date aufnahmedatum
+            date kuendigungsdatum
             date ruhezeit_anfang
             date ruhezeit_ende
           }
 
-          vertragsposition {
+          mitgliedschaft_einzelposition {
             money Zusatzgebuehr
           }
 
@@ -324,6 +324,12 @@ erDiagram
 - Lizenz : eine konkrete Lizenz, die von einem Verband o.ä. geprüft und ausgestellt wird
   - zum Zweck der Wiederverwendung bereits angelegter Lizenzen modelliert
   - _noch nicht final_  
+
+
+# NOTIZEN
+
+- Anmeldung beim Verein / Aufnahmeformular
+- Aufnahmebestätigung mit Angaben zu Gebühren für angemeldete Abteilung(en)
 
 
 # TODO
