@@ -92,9 +92,23 @@ erDiagram
           }
 
           beitragsgruppe {
+            money beitragsgruppe_jahresgrundgebuehr
             string beitragsgruppe_bezeichner
             string beitragsgruppe_beschreibung
-            money beitragsgruppe_grundgebuehr
+            boolean beitragsgruppe_nachweis_erforderlich
+            date beitragsgruppe_gueltig_von
+            date beitragsgruppe_gueltig_bis
+          }
+
+          vereinseinheit ||--o{ zusatzbeitrag : "erhoben für"
+          beitragsgruppe ||--|{ zusatzbeitrag : "erhoben in"
+
+          zusatzbeitrag {
+            money zusatzbeitrag_jahreszusatzbeitrag
+            string zusatzbeitrag_bezeichner
+            string zusatzbeitrag_beschreibung
+            date zusatzbeitrag_gueltig_von
+            date zusatzbeitrag_gueltig_bis
           }
 
           mitgliedschaft_vereinseinheit {
