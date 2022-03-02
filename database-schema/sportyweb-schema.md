@@ -19,7 +19,12 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---
 
-# ER diagram 
+# ER Overview Diagram 
+
+![Sportyweb ER Overview Diagram](database-schema/sportyweb-schema.png "ER Overview Diagram")
+
+
+# ER Details Diagram 
 
 Note that data types are NOT properly modeled due to Mermaid.js limitations, see 
 https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
@@ -92,9 +97,23 @@ erDiagram
           }
 
           beitragsgruppe {
+            money beitragsgruppe_jahresgrundgebuehr
             string beitragsgruppe_bezeichner
             string beitragsgruppe_beschreibung
-            money beitragsgruppe_grundgebuehr
+            boolean beitragsgruppe_nachweis_erforderlich
+            date beitragsgruppe_gueltig_von
+            date beitragsgruppe_gueltig_bis
+          }
+
+          vereinseinheit ||--o{ zusatzbeitrag : "erhoben für"
+          beitragsgruppe ||--|{ zusatzbeitrag : "erhoben in"
+
+          zusatzbeitrag {
+            money zusatzbeitrag_jahreszusatzbeitrag
+            string zusatzbeitrag_bezeichner
+            string zusatzbeitrag_beschreibung
+            date zusatzbeitrag_gueltig_von
+            date zusatzbeitrag_gueltig_bis
           }
 
           mitgliedschaft_vereinseinheit {
