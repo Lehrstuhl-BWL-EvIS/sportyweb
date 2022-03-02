@@ -19,14 +19,15 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---
 
-# ER diagram 
+# ER Overview Diagram 
+
+![Sportyweb ER Overview Diagram](database-schema/sportyweb-schema.png "ER Overview Diagram")
+
+
+# ER Details Diagram 
 
 Note that data types are NOT properly modeled due to Mermaid.js limitations, see 
 https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
-
-
-![Sportyweb ER Overview Diagramt](database-schema/sportyweb-schema.png "ER Overview Diagram")
-
 
 
 ```mermaid
