@@ -25,6 +25,10 @@ Note that data types are NOT properly modeled due to Mermaid.js limitations, see
 https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
 
 
+![Sportyweb ER Overview Diagramt](sportyweb-schema.png "ER Overview Diagram")
+
+
+
 ```mermaid
 erDiagram
 
