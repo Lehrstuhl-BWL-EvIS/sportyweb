@@ -25,6 +25,7 @@
 DROP TABLE mitglied_haushalt;
 DROP TABLE haushalt;
 DROP TABLE mitglied;
+DROP TABLE beitragsgruppe;
 DROP TYPE geschlecht_kuerzel;
 DROP TYPE mitglied_status;
 
