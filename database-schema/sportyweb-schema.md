@@ -262,27 +262,6 @@ erDiagram
   - diverse weitere Aspekte eines Mitgliedsvertrags sind hier _noch nicht_ modelliert
 
 
-- mitgliedschaft_einzelposition : eine Einzelposition eines Mitgliedsvertrags / einer mitgliedschaft, ggf. mit Zusatzgebühr
-  - Gebührenmodellierung: Grundgebühr (Mitgliedsvertrag plus 0..* zusätzliche Gebühren für Einzelpositionen)
-
-
-- Verein : Daten, die den Verein beschreiben
-  - dieser Entitätstyp "Verein" ist ein "Singleton" => es gibt nur eine Entität als
-    Instanz dieses Entitätstyps
-  - Hinweis: Weitere Daten, die einen Verein charakterisieren, sind dem deutschen Vereinsrecht 
-    zu entnehmen
-  - Hinweis: _Noch nicht modelliert_ sind Vereinsfunktionäre in ihren Rollen (Vorsitzender, 
-    Kassenwart etc.) 
-  - Hinweis _Noch nicht modelliert_ sind Vereinssatzungen, die u.a. in Bezug auf Mitgliedsverträge
-    Relevanz aufweisen. 
-
-
-- Geschaeftsstelle : eine Geschaeftsstelle wird von einem Verein betrieben
-  - ein Verein betreibt eine oder mehrere Geschaeftsstellen
-  - eine Geschaeftsstelle hat eine Besucheradresse und eine postalische Adresse sowie
-    ein oder mehrere Telefonverbindungen
-
-
 - Vereinseinheit : ein Verein ist in Organisationseinheiten (z.B. Abteilungen) unterteilt
   - Vereinseinheit ist synonym mit Organisationseinheit (Begriff der Organisationstheorie)
   - ein Verein betreibt mindestens eine Vereinseinheit
@@ -301,6 +280,11 @@ erDiagram
   - Beispiel 2: Haupt-Abteilung: Fussball, Haupt-Abteilung: Basketball, Haupt-Abteilung: Volleyball usw. 
   - (Anmerkung: Die Modellierung erlaubt es auch, zu einem späteren Zeitpunkt neue Vereinseinheiten anzulegen
     und diese anderen Vereinseinheiten unterzuordnen)
+
+
+- Mitgliedschaft_Vereinseinheit 
+  - ein Mitgliedsvertrag kann Einzelposten umfassen, die sich auf die Mitgliedschaft in einer
+    Vereinseinheit (z.B. einer Abteilung) umfassen
 
 
 - Sparte : eine (Vereins-)Sparte dient der Gruppierung von Sport*arten* nach Sportvereinswesen-bezogenen Kriterien
@@ -324,12 +308,6 @@ erDiagram
   - "Sportangebotstyp" ist der vorläufig gewählte Begriff für typisierte Einzelangebote des Vereins
   - Beispiel: Jumping Fitness, Basketball U14
 
-- Sportstätte : ein Sportstätte ermöglicht das Durchführen von Sportangeboten
-  - Sportstätten können Sporthallen, Teile von Sporthallen, Sportplätze, Laufbahnen, 
-    Schwimmbahnen, Fitnessräume usw. sein
-  - eine Sportstätte steht zu einem Zeitslot zur Verfügung (Verfügbarkeit)
-  - eine Sportstätte kann zu einem Zeitslot "gebucht" / belegt werden
-  - ein Sportangebot wird zu einem Zeitslot an einer Sportstätte durchgeführt
 
 - konkretes_Sportangebot : ein konkretes Sportangebot bedingt die Belegung einer Sportstätte in einem konkreten Zeitslot an einem Wochentag (oder einem konkreten Datum) unter Leitung eines bestimmten Trainers
   - M.a.W.: An welchem Wochentag oder Datum ist eine Sportstätte von wann bis wann durch welches konkrete Sportangebot belegt?
@@ -340,20 +318,52 @@ erDiagram
   - TODO: Postgres Range Type tsrange for time ranges, https://www.postgresql.org/docs/14/rangetypes.html 
   
 
+- Sportstätte : ein Sportstätte ermöglicht das Durchführen von Sportangeboten
+  - Sportstätten können Sporthallen, Teile von Sporthallen, Sportplätze, Laufbahnen, 
+    Schwimmbahnen, Fitnessräume usw. sein
+  - eine Sportstätte steht zu einem Zeitslot zur Verfügung (Verfügbarkeit)
+  - eine Sportstätte kann zu einem Zeitslot "gebucht" / belegt werden
+  - ein Sportangebot wird zu einem Zeitslot an einer Sportstätte durchgeführt
+
+
 - Trainer : ein Trainer, der für bestimmte Sportangebote qualifiziert ist und bestimmte Sportangebote durchführt 
   - ein Synonym für Trainer ist Übungsleiter (ÜL) - der Begriff 'Trainer' wird hier verwendet, da kürzer und kein Umlaut
   - 'Trainer' ist ein Rolle einer Person
   - ein Trainer ist eine natürliche Person
 
-- trainer_lizenz : keine, eine oder mehrere Lizenzen, die ein Trainer erworben hat
+- Trainer_Trainerlizenztyp : keine, eine oder mehrere Lizenzen, die ein Trainer erworben hat
   - ein Trainer kann keine, eine oder mehrere Lizenzen erworben haben
   - Hinweis: für bestimmte Sportangebote ist keine Trainerlizenz erforderlich
   - eine Lizenz hat üblicherweise eine bestimmte zeitliche Gültigkeit und muss danach durch Teilnahme an
     Trainerweiterbildungen erneuert werden
 
-- Lizenz : eine konkrete Lizenz, die von einem Verband o.ä. geprüft und ausgestellt wird
+- Trainerlizenztyp : eine Lizenztyp, die von einem Verband o.ä. geprüft und ausgestellt wird
   - zum Zweck der Wiederverwendung bereits angelegter Lizenzen modelliert
-  - _noch nicht final_  
+  - Beispiel: C-Lizenz Breitensport
+
+
+- Beitragsgruppe : eine Beitragsgruppe, die eine Gebührenstruktur für einen Zeitraum definiert 
+  - Beispiel: Vollzahler, Schüler/Studenten/Rentner, ...
+
+- Zusatzbeitrag
+  - ein Zusatzbeitrag für eine Mitglieschaft in einer Vereinseinheit
+
+- Verein : Daten, die den Verein beschreiben
+  - dieser Entitätstyp "Verein" ist ein "Singleton" => es gibt nur eine Entität als
+    Instanz dieses Entitätstyps
+  - Hinweis: Weitere Daten, die einen Verein charakterisieren, sind dem deutschen Vereinsrecht 
+    zu entnehmen
+  - Hinweis: _Noch nicht modelliert_ sind Vereinsfunktionäre in ihren Rollen (Vorsitzender, 
+    Kassenwart etc.) 
+  - Hinweis _Noch nicht modelliert_ sind Vereinssatzungen, die u.a. in Bezug auf Mitgliedsverträge
+    Relevanz aufweisen. 
+
+
+- Geschaeftsstelle : eine Geschaeftsstelle wird von einem Verein betrieben
+  - ein Verein betreibt eine oder mehrere Geschaeftsstellen
+  - eine Geschaeftsstelle hat eine Besucheradresse und eine postalische Adresse sowie
+    ein oder mehrere Telefonverbindungen
+
 
 
 # TODO
