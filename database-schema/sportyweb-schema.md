@@ -366,6 +366,12 @@ erDiagram
 
 
 
+# Wichtige Überlegungen zum Datenbankdesign
+
+1. Multi-Tenancy : Derzeit ignoriert das DB-Design die fachliche Anforderung, ein Laufzeitsystem für mehrere, potenziell sehr viele Vereine zu konzipieren und zu implementieren ("multi-tenancy" = mehrere Tenants) 
+2. DB-Security : Nicht berücksichtigt ist die Anforderung, Daten *vor* dem Persistieren in der DB zu verschlüsseln und das physische DB-Design nach aktuellen Maßstäben sicher zu gestalten und zu implementieren (u.a. Verwendung nicht-sequentieller Primarschlüssel, "UUID", "ULID") 
+
+
 # TODO
 
 ## Personalmanagement
@@ -376,27 +382,6 @@ erDiagram
 - Rollen von Personen in Bezug auf die Vereinsführung, z.B. (Erster) Vorsitzender usw.
   Allerdings: Für Mitgliederverwaltung nicht zwingend erforderlich
 
-
-
-# DEPRECATED / OBSOLETE
-
-- TRAINERLIZENZ : eine Lizenz, die ein Trainer erworben hat
-  - eine Trainerlizenz ist genau einem Trainer zugeordnet 
-  - Anmerkung: Eine alternative Modellierung würde abstrakte Trainerlizenzen modellieren, die Trainern zugeordnet werden
-    Beispiel: Es wird eine Lizenz "Übungsleiter B-Lizenz Breitensport" als abstrakte Trainerlizenz angelegt und wiederverwendet
-    Hinweis: Mit der hier gewählten Modellierung ist diese Wiederverwendung *nicht* möglich; für jeden Trainer müssen alle 
-    von ihm erworbenen Lizenzen neu erfasst und angelegt werden.
-  - ein Trainer kann keine, eine oder mehrere Lizenzen erworben haben
-  - Hinweis: für bestimmte Sportangebote ist keine Trainerlizenz erforderlich
-  - eine Lizenz hat üblicherweise eine bestimmte zeitliche Gültigkeit und muss danach durch Teilnahme an
-    Trainerausbildungen erneuert werden
-
-- TODO: ggf. ist zusätzlich ein rekursiver Beziehungstyp von Sportangebot zu Sportangebot 
-    erforderlich, um Über-Unterordnungsbeziehungen zwischen Sportangeboten repräsentieren zu können;
-    dies würde allerdings zu einer deutlich aufwändigeren Programmierung führen
-
-- verein ||--|| mitgliedsvertrag : "ist Vertragspartner"
-- mitgliedsvertrag ||--|{ mitgliedsvertrag_einzelposition : "umfasst"
 
 
 
