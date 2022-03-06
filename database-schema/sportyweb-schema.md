@@ -371,9 +371,9 @@ erDiagram
 
 # Wichtige zu berücksichtigende Anforderungen
 
-1. **Multi-Tenancy** : Derzeit ignoriert das DB-Design die Anforderung, ein Laufzeitsystem für mehrere, potenziell für sehr viele Vereine zu konzipieren und zu implementieren ("multi-tenancy") 
-2. **Data Security** : Nicht berücksichtigt ist die Anforderung, Datensicherheit nach gegenwärtig akzeptierten Standards zu implementieren. Darunter z.B. Daten *vor* dem Persistieren in der DB zu verschlüsseln und das physische DB-Design nach aktuellen Maßstäben sicher zu gestalten und zu implementieren (u.a. Verwendung nicht-sequentieller Primarschlüssel: "UUID", "ULID"). 
-3. **Temporal Tables*** : Daten mit Zeiträumen fortschreiben anstelle zu löschen, siehe ANSI SQL:2011. Siehe u.a. https://www.timmitchell.net/sql-server-temporal-tables/ und https://blog.koverhoop.com/temporal-tables-keeping-a-record-of-data-changes-in-postgresql-tables-c798863a00d5 
+1. **Multi-Tenancy** : Anpassungen des DB-Schemas für ein Laufzeitsystem für mehrere, potenziell für sehr viele Vereine ("multi-tenancy") 
+2. **Data Security** : Anpassungen des DB-Schemas für Datensicherheit nach gegenwärtig akzeptierten Standards (z.B. Datentypen von Schlüsselattributen mit nicht-sequentiellen Primarschlüsseln: "UUID", "ULID")). Zudem Daten *vor* dem Persistieren in der DB zu verschlüsseln und das physische DB-Design nach aktuellen Maßstäben sicher zu gestalten und zu implementieren. 
+3. **Temporal Tables*** : Daten fortschreiben anstelle zu löschen, siehe "temporal tables" (ANSI SQL:2011): https://www.timmitchell.net/sql-server-temporal-tables/ und https://blog.koverhoop.com/temporal-tables-keeping-a-record-of-data-changes-in-postgresql-tables-c798863a00d5 
 
 
 # TODO
