@@ -346,7 +346,7 @@ erDiagram
   - Beispiel: Vollzahler, Schüler/Studenten/Rentner, ...
 
 - Zusatzbeitrag
-  - ein Zusatzbeitrag für eine Mitglieschaft in einer Vereinseinheit
+  - ein Zusatzbeitrag für eine Mitgliedschaft in einer Vereinseinheit (z.B. einer Abteilung)
 
 - Verein : Daten, die den Verein beschreiben
   - dieser Entitätstyp "Verein" ist ein "Singleton" => es gibt nur eine Entität als
@@ -364,19 +364,21 @@ erDiagram
   - eine Geschaeftsstelle hat eine Besucheradresse und eine postalische Adresse sowie
     ein oder mehrere Telefonverbindungen
 
+# Anmerkungen
+
+- das derzeitige Schema sieht einen Zusatzbeitrag nur für die Mitgliedschaft in einer Vereinseinheit (einer Abteilung) vor. Andere Arten von Zusatzbeiträgen (z.B. 10er-Karten für Fitnessport) sind _nicht_ berücksichtigt
 
 
-# Wichtige Überlegungen zum Datenbankdesign
+# Wichtige zu berücksichtigende Anforderungen
 
-1. Multi-Tenancy : Derzeit ignoriert das DB-Design die fachliche Anforderung, ein Laufzeitsystem für mehrere, potenziell sehr viele Vereine zu konzipieren und zu implementieren ("multi-tenancy" = mehrere Tenants) 
-2. DB-Security : Nicht berücksichtigt ist die Anforderung, Daten *vor* dem Persistieren in der DB zu verschlüsseln und das physische DB-Design nach aktuellen Maßstäben sicher zu gestalten und zu implementieren (u.a. Verwendung nicht-sequentieller Primarschlüssel, "UUID", "ULID") 
+1. **Multi-Tenancy** : Derzeit ignoriert das DB-Design die Anforderung, ein Laufzeitsystem für mehrere, potenziell für sehr viele Vereine zu konzipieren und zu implementieren ("multi-tenancy") 
+2. **Data Security **: Nicht berücksichtigt ist die Anforderung, Datensicherheit nach gegenwärtig akzeptierten Standards zu implementieren. Darunter z.B. Daten *vor* dem Persistieren in der DB zu verschlüsseln und das physische DB-Design nach aktuellen Maßstäben sicher zu gestalten und zu implementieren (u.a. Verwendung nicht-sequentieller Primarschlüssel: "UUID", "ULID"). 
+3. **Temporal Tables*** : Daten mit Zeiträumen fortschreiben anstelle zu löschen, siehe ANSI SQL:2011. Siehe u.a. https://www.timmitchell.net/sql-server-temporal-tables/ und https://blog.koverhoop.com/temporal-tables-keeping-a-record-of-data-changes-in-postgresql-tables-c798863a00d5 
 
 
 # TODO
 
 ## Personalmanagement
-- Rollen von Personen in Bezug auf Sportangebote, insbes. Trainer/Übungsleiter
-  WICHTIGE ROLLE für Planung von Sportangeboten
 - Rollen von Personen in Bezug auf die Mitarbeit im Verein (ehrenamtlich, hauptamtlich)
   z.B. Mitarbeiter der Geschäftstelle
 - Rollen von Personen in Bezug auf die Vereinsführung, z.B. (Erster) Vorsitzender usw.
