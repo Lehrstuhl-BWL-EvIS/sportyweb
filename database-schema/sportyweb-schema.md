@@ -19,12 +19,13 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---
 
-# ER Overview Diagram 
+# ER Overview Diagram – (partial) conceptual data model / semantic data model 
 
 ![Sportyweb ER Overview Diagram](database-schema/sportyweb-schema.png "ER Overview Diagram")
 
 
-# ER Details Diagram 
+# ER Details Diagram – (incomplete, preliminary) logical database schema
+
 
 Note that data types are NOT properly modeled due to Mermaid.js limitations, see 
 https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
@@ -32,6 +33,30 @@ https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
 
 ```mermaid
 erDiagram
+
+          person ||--o| mitglied : "ist eine"
+          person ||--o| trainer : "ist eine"
+          haushalt ||--|{ mitglied-haushalt : "besteht aus"
+          mitglied ||--|{ mitglied-haushalt : "gehört zu"
+          mitglied ||--|{ mitgliedsvertrag : "schliesst ab"
+          beitragsgruppe ||--|{ mitgliedsvertrag : "ist zugeordnet"
+          verein ||--|{ geschaeftsstelle : "betreibt"
+          verein ||--|{ vereinseinheit : "ist organisiert in"
+          vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
+          vereinseinheit ||--|{ vereinseinheit-sparte : "richtet aus"
+          vereinseinheit ||--|{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
+          mitgliedsvertrag ||--o{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
+          sparte ||--|{ vereinseinheit-sparte : "wird ausrichtet von"
+          sparte ||--o{ sportart : "ist zugeordnet zu"
+          sportart ||--o{ sportangebotstyp : "ist zugeordnet zu"
+          sportangebotstyp ||--o{ konkretes_sportangebot : "wird konkret angeboten"
+          sportstaette ||--o{ konkretes_sportangebot : "ist belegt"
+          trainer ||--o{ trainer_lizenz : "hat erworben"
+          lizenz ||--o{ trainer_lizenz : "nachgewiesen von"
+          trainer ||--o{ sportangebotstyp : "ist qualifiziert für"
+          trainer ||--|{ konkretes_sportangebot : "führt durch"
+          vereinseinheit ||--o{ zusatzbeitrag : "erhoben für"
+          beitragsgruppe ||--|{ zusatzbeitrag : "erhoben in"
 
           person {
             string person_nachname
