@@ -33,28 +33,6 @@ https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
 ```mermaid
 erDiagram
 
-          person ||--o| mitglied : "ist eine"
-          person ||--o| trainer : "ist eine"
-          haushalt ||--|{ mitglied-haushalt : "besteht aus"
-          mitglied ||--|{ mitglied-haushalt : "gehört zu"
-          mitglied ||--|{ mitgliedsvertrag : "schliesst ab"
-          beitragsgruppe ||--|{ mitgliedsvertrag : "ist zugeordnet"
-          verein ||--|{ geschaeftsstelle : "betreibt"
-          verein ||--|{ vereinseinheit : "ist organisiert in"
-          vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
-          vereinseinheit ||--|{ vereinseinheit-sparte : "richtet aus"
-          vereinseinheit ||--|{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
-          mitgliedsvertrag ||--o{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
-          sparte ||--|{ vereinseinheit-sparte : "wird ausrichtet von"
-          sparte ||--o{ sportart : "ist zugeordnet zu"
-          sportart ||--o{ sportangebotstyp : "ist zugeordnet zu"
-          sportangebotstyp ||--o{ konkretes_sportangebot : "wird konkret angeboten"
-          sportstaette ||--o{ konkretes_sportangebot : "ist belegt"
-          trainer ||--o{ trainer_lizenz : "hat erworben"
-          lizenz ||--o{ trainer_lizenz : "nachgewiesen von"
-          trainer ||--o{ sportangebotstyp : "ist qualifiziert für"
-          trainer ||--|{ konkretes_sportangebot : "führt durch"
-
           person {
             string person_nachname
             string person_vorname
@@ -105,8 +83,6 @@ erDiagram
             date beitragsgruppe_gueltig_bis
           }
 
-          vereinseinheit ||--o{ zusatzbeitrag : "erhoben für"
-          beitragsgruppe ||--|{ zusatzbeitrag : "erhoben in"
 
           zusatzbeitrag {
             money zusatzbeitrag_jahreszusatzbeitrag
@@ -383,6 +359,30 @@ erDiagram
   z.B. Mitarbeiter der Geschäftstelle
 - Rollen von Personen in Bezug auf die Vereinsführung, z.B. (Erster) Vorsitzender usw.
   Allerdings: Für Mitgliederverwaltung nicht zwingend erforderlich
+
+          person ||--o| mitglied : "ist eine"
+          person ||--o| trainer : "ist eine"
+          haushalt ||--|{ mitglied-haushalt : "besteht aus"
+          mitglied ||--|{ mitglied-haushalt : "gehört zu"
+          mitglied ||--|{ mitgliedsvertrag : "schliesst ab"
+          beitragsgruppe ||--|{ mitgliedsvertrag : "ist zugeordnet"
+          verein ||--|{ geschaeftsstelle : "betreibt"
+          verein ||--|{ vereinseinheit : "ist organisiert in"
+          vereinseinheit ||--o{ vereinseinheit : "ist Untereinheit von"
+          vereinseinheit ||--|{ vereinseinheit-sparte : "richtet aus"
+          vereinseinheit ||--|{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
+          mitgliedsvertrag ||--o{ mitgliedschaft_vereinseinheit : "ist Mitglied in"
+          sparte ||--|{ vereinseinheit-sparte : "wird ausrichtet von"
+          sparte ||--o{ sportart : "ist zugeordnet zu"
+          sportart ||--o{ sportangebotstyp : "ist zugeordnet zu"
+          sportangebotstyp ||--o{ konkretes_sportangebot : "wird konkret angeboten"
+          sportstaette ||--o{ konkretes_sportangebot : "ist belegt"
+          trainer ||--o{ trainer_lizenz : "hat erworben"
+          lizenz ||--o{ trainer_lizenz : "nachgewiesen von"
+          trainer ||--o{ sportangebotstyp : "ist qualifiziert für"
+          trainer ||--|{ konkretes_sportangebot : "führt durch"
+          vereinseinheit ||--o{ zusatzbeitrag : "erhoben für"
+          beitragsgruppe ||--|{ zusatzbeitrag : "erhoben in"
 
 
 
