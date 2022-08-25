@@ -123,3 +123,9 @@ To create your own development branch locally and push it to GitLab:
 
 You should receive a success message from Git.
 
+### Integrate upstream changes into your own development branch
+
+* `git checkout <your-development-branch>`
+* `git pull origin <branch-from-which-to-integrate-upstream>`. Example: `git pull origin main` (integrate upstream changes in the main branch into your own development branch)
+* `git pull origin <branch-from-which-to-integrate-upstream>`. Example: `git pul
+l origin development` (integrate upstream changes in the development branch into your own development branch)
