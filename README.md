@@ -42,6 +42,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Verify that you are assigned to the sportyweb project on GitLab and your role is 'Developer'.
   * Take a look at the main and the development branches in the repository.
   * Read these instructions carefully and set up your machine for collaboration.
+  * Familiarize yourself with `git` and GitLab - read the manuals, watch tutorials.
 
 ### Prerequisites
 
@@ -54,7 +55,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * We also recommend to use:
     * Visual Studio Code (as IDE and code editor, install the vscode-elixir extension and other you like)
 
-### Prepare instructions  
+### Preparation instructions  
 
   * If you run 
     * macOS (we are currently on Monterey 12.5.1), install Homebrew: https://brew.sh and possibly asdf: https://asdf-vm.com (read the instructions before deciding on asdf)
