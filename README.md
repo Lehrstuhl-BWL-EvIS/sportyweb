@@ -128,5 +128,7 @@ You should receive a success message from Git.
 * `git checkout <your-development-branch>`
 * `git pull origin <branch-from-which-to-integrate-upstream>`. Example: `git pull origin main` (integrate upstream changes in the main branch into your own development branch)
 * `git pull origin <branch-from-which-to-integrate-upstream>`. Example: `git pull origin development` (integrate upstream changes in the development branch into your own development branch)
+* Take note of any conflicts, resolve them, git pull again.
+* `git push` will then push your changes to GitLab and update your own development branch remotely.
 
 Why should you need to integrate upstream changes into your development branch? As it happens, we work together in different rhythms and it will happen that the maintainers decide to accept changes from another developer into the development (or even the main) branch---changes you need to account for and need for your own project development. 
