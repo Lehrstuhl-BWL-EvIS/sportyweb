@@ -96,18 +96,15 @@ On macOS, the last step requires you to follow additional instructions (at least
 
 Now you should be up and running to sign your commits.
 
-In case of problems, consult the instructions from GitHub and search the web for your specific machine setup:
+In case of problems, search for further instructions from *GitLab* or consult these instructions from *GitHub* and search the web for your specific machine setup:
 
 https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits
-
 https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key
-
 https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key
-
 
 ### *Important step* : Set up your own personal development branch and perform a test commit
 
-You need to create your own personal development (feature) branch in the repository in which you develop your code locally, make *frequent small-sized commits* (!) and push it to the GitLab repository (remote origin/<your-development-branch>) as often as you like. Whenever you deem a new feature fit for the official Sportyweb development branch, notify the maintainers and create a merge request.
+You need to create your own personal development (feature) branch in the repository in which you develop your code locally, make *frequent small-sized commits* (!) and push it to the GitLab repository (`origin/<your-development-branch>`) as often as you like. Whenever you deem a new feature fit for the official Sportyweb development branch, notify the maintainers and create a merge request.
 
 For naming your own development branch, please follow this convention: Prefix your branch name with `develop-` and then `firstname-lastname`, for example, `develop-jack-white`.
 
@@ -115,9 +112,9 @@ To create your own development branch locally and push it to GitLab:
 * Change into your `sportyweb` folder (`cd sportyweb`), i.e., the folder in which you cloned this repository.
 * Create your new branch with `git branch <your-development-branch>`. Example: `git branch develop-jack-white`
 * Switch to your new branch: `git checkout <your-development-branch>`. Example: `git checkout develop-jack-white` 
-* Check your current branch: `git status` and `git branch`
+* Check your current branch: `git status`
 * Display all available branches: `git branch`
-* Note that your new branch only exists locally now. 
+* Note that your new branch now only exists locally. 
 * Push your new branch upstream to GitLab: `git push --set-upstream origin develop-jack-white`
 * For testing, make a change to your branch: `touch test.md` (or create any other new Markdown file with a text editor of your chocie).
 * Display the status of your local branch: `git status` (note the branch name)
