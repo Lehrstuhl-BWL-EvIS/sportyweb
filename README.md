@@ -46,21 +46,21 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 ### Prerequisites
 
   * You will need a current version of 
-  ** git (we currently use 2.37.2) 
-  ** gpg (GnuPG, we currently use 2.3.7)
-  ** Erlang (as of today we use: Erlang 25.0.4)
-  ** Elixir (as of today we use: Elixir 1.13.4)
-  ** PostgreSQL >=13 (as of today, we use: PostgreSQL 14)
+    * git (we currently use 2.37.2) 
+    * gpg (GnuPG, we currently use 2.3.7)
+    * Erlang (as of today we use: Erlang 25.0.4)
+    * Elixir (as of today we use: Elixir 1.13.4)
+    * PostgreSQL >=13 (as of today, we use: PostgreSQL 14.5)
   * We also recommend to use:
-  ** Visual Studio Code (as IDE and code editor, install the vscode-elixir extension and other you like)
+    * Visual Studio Code (as IDE and code editor, install the vscode-elixir extension and other you like)
 
 ### Prepare instructions  
 
   * If you run 
     * macOS (we are currently on Monterey 12.5.1), install Homebrew: https://brew.sh and possibly asdf: https://asdf-vm.com (read the instructions before deciding on asdf)
-    * Windows, we have no recommendation / experience as of now (i.e. search the web and let us know what you recommend to others)
-    * Linux, most of the following instructions should work accordingly (let us know what you recommend to others)
-  * Install Erlang >=25  - on MacOS you may use HomeBrew: `brew install erlang latest` 
+    * Linux, most of the following instructions should work accordingly but use the package manager of your chocie (let us know what preparation steps you recommend to others and which package manager you used)
+    * Windows, we have no recommendation for you as of now (i.e. search the web and let us know what steps you recommend to others)
+  * Install Erlang >=25 - on MacOS you may use HomeBrew: `brew install erlang latest` 
   * Install Elixir >=1.13 (as of today: 1.13.4) - on MacOS you may use HomeBrew: `brew install elixir latest`
   * Install PostgreSQL >=13 () - on MacOS you may use HomeBrew: `brew install elixir latest`
   * Make sure both Elixir and Erlang are accessible from your $PATH (which HomeBrew usually takes care of)
