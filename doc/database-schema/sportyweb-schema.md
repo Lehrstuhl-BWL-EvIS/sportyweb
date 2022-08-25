@@ -21,7 +21,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # ER Overview Diagram – (partial) conceptual data model / semantic data model 
 
-![Sportyweb ER Overview Diagram](database-schema/sportyweb-schema.png "ER Overview Diagram")
+![Sportyweb ER Overview Diagram](sportyweb-schema.png "ER Overview Diagram")
 
 
 # ER Details Diagram – (incomplete, preliminary) logical database schema
