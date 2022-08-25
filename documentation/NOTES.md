@@ -1,4 +1,4 @@
-sportyweb % mix phx.gen.html Membership Member members user_id:references:users firstname:string lastname:string gender:string date_of_birth:date email1:string email2:string phone1:string phone2:string is_active:boolean --binary-id
+mix phx.gen.html Membership Member members user_id:references:users firstname:string lastname:string gender:string date_of_birth:date email1:string email2:string phone1:string phone2:string is_active:boolean --binary-id
 * creating lib/sportyweb_web/controllers/member_controller.ex
 * creating lib/sportyweb_web/templates/member/edit.html.heex
 * creating lib/sportyweb_web/templates/member/form.html.heex
