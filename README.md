@@ -57,18 +57,18 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 ### Preparation instructions  
 
   * If you run 
-  ** macOS (we are currently on Monterey 12.5.1), install Homebrew: https://brew.sh and possibly asdf: https://asdf-vm.com (read the instructions before deciding on asdf)
-  ** if you run Windows, we have no recommendation / experience as of now (i.e. search the web and let us know what you recommend to others)
-  ** if you run Linux, most of the following instructions should work accordingly (let us know what you recommend to others)
+    * macOS (we are currently on Monterey 12.5.1), install Homebrew: https://brew.sh and possibly asdf: https://asdf-vm.com (read the instructions before deciding on asdf)
+    * if you run Windows, we have no recommendation / experience as of now (i.e. search the web and let us know what you recommend to others)
+    * if you run Linux, most of the following instructions should work accordingly (let us know what you recommend to others)
   * Install Erlang >=25  - on MacOS you may use HomeBrew: `brew install erlang latest` 
   * Install Elixir >=1.13 (as of today: 1.13.4) - on MacOS you may use HomeBrew: `brew install elixir latest`
   * Install PostgreSQL >=13 () - on MacOS you may use HomeBrew: `brew install elixir latest`
   * Make sure both Elixir and Erlang are accessible from your $PATH (which HomeBrew usually takes care of)
   * Create a folder / directory in which your local Git repository will live and cd into this folder
   * Clone the Sportyweb GitLab repository:  `git clone https://gitlab.com/fuhevis/sportyweb.git`  
-  * Open a terminal and start your PostgreSQL server (in non-daemon mode / not as a background process). On macOS run `brew info postgresql` to find out how to start your PostgreSQL instance. On our M1 mac, we use `/opt/homebrew/opt/postgresql/bin/postgres -D /opt/homebrew/var/postgres` and leave the terminal open to run the database server instance while developing.
+  * Run PostgreSQL: Open a terminal and start your PostgreSQL server (in non-daemon mode / not as a background process). On macOS run `brew info postgresql` to find out how to start your PostgreSQL instance. On our M1 mac, we use `/opt/homebrew/opt/postgresql/bin/postgres -D /opt/homebrew/var/postgres` and leave the terminal open to run the database server instance while developing.
   * Follow the instructions (above) to test run the prototype: 
-  ** Install dependencies with `mix deps.get`
-  ** Create and migrate your database with `mix ecto.setup`
-  ** Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
-  ** Visit [`localhost:4000`](http://localhost:4000) from your browser to see the Phoenix default start page
+    * Install dependencies with `mix deps.get`
+    * Create and migrate your database with `mix ecto.setup`
+    * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+    * Visit [`localhost:4000`](http://localhost:4000) from your browser to see the Phoenix default start page
