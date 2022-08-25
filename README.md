@@ -98,9 +98,9 @@ Now you should be up and running to sign your commits.
 
 In case of problems, search for further instructions from *GitLab* or consult these instructions from *GitHub* and search the web for your specific machine setup:
 
-https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits
-https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key
-https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key
+* https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits
+* https://docs.github.com/en/authentication/managing-commit-signature-verification/generating-a-new-gpg-key
+* https://docs.github.com/en/authentication/managing-commit-signature-verification/telling-git-about-your-signing-key
 
 ### *Important step* : Set up your own personal development branch and perform a test commit
 
