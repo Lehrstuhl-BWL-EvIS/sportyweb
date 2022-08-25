@@ -32,3 +32,13 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+## For (student) collaborators @ FUH : How to prepare your machine for collaborating
+
+  0. If you run macOS (we are currently on Monterey 12.5.1), install Homebrew: https://brew.sh and possibly asdf: https://asdf-vm.com / if you run Windows, we have no recommendation / experience as of now (i.e. search the web)
+  1. Install Erlang >=25 (as of today: 25.0.4) - on MacOS you may use HomeBrew: `brew install erlang latest` 
+  2. Install Elixir >=1.13 (as of today: 1.13.4) - on MacOS you may use HomeBrew: `brew install elixir latest`
+  3. Make sure both Elixir and Erlang are accessible from your $PATH (which HomeBrew usually takes care of)
+  4. Create a folder / directory in which your local Git repository will live and cd into this folder
+  4. Clone the Sportyweb GitLab repository:  `git clone https://gitlab.com/fuhevis/sportyweb.git`  
+  4. 
