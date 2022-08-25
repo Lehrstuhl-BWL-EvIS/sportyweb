@@ -127,5 +127,4 @@ You should receive a success message from Git.
 
 * `git checkout <your-development-branch>`
 * `git pull origin <branch-from-which-to-integrate-upstream>`. Example: `git pull origin main` (integrate upstream changes in the main branch into your own development branch)
-* `git pull origin <branch-from-which-to-integrate-upstream>`. Example: `git pul
-l origin development` (integrate upstream changes in the development branch into your own development branch)
+* `git pull origin <branch-from-which-to-integrate-upstream>`. Example: `git pull origin development` (integrate upstream changes in the development branch into your own development branch)
