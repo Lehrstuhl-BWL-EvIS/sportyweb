@@ -33,12 +33,42 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
 
-## For (student) collaborators @ FUH : How to prepare your machine for collaborating
+## For collaborators (and students @ FUH) : How to prepare your machine for collaboration 
 
-  0. If you run macOS (we are currently on Monterey 12.5.1), install Homebrew: https://brew.sh and possibly asdf: https://asdf-vm.com / if you run Windows, we have no recommendation / experience as of now (i.e. search the web)
-  1. Install Erlang >=25 (as of today: 25.0.4) - on MacOS you may use HomeBrew: `brew install erlang latest` 
-  2. Install Elixir >=1.13 (as of today: 1.13.4) - on MacOS you may use HomeBrew: `brew install elixir latest`
-  3. Make sure both Elixir and Erlang are accessible from your $PATH (which HomeBrew usually takes care of)
-  4. Create a folder / directory in which your local Git repository will live and cd into this folder
-  4. Clone the Sportyweb GitLab repository:  `git clone https://gitlab.com/fuhevis/sportyweb.git`  
-  4. 
+### For students @ FUH
+
+  * You will receive an email invitation to join the Sportyweb project on GitLab as a project member in the role as Developer (sent by the project maintainers).  
+  * Accept the invitation and, if not already done, create your GitLab account for your collaboration on the Sportyweb project, and log in to GitLab to adjust your profile and settings.
+  * Verify that you are assigned to the sportyweb project on GitLab and your role is 'Developer'.
+  * Take a look at the main and the development branches in the repository.
+  * Read these instructions carefully and set up your machine for collaboration.
+
+### Prerequisites
+
+  * You will need a current version of 
+  ** git (we currently use 2.37.2) 
+  ** gpg (GnuPG, we currently use 2.3.7)
+  ** Erlang (as of today we use: Erlang 25.0.4)
+  ** Elixir (as of today we use: Elixir 1.13.4)
+  ** PostgreSQL >=13 (as of today, we use: PostgreSQL 14)
+  * We also recommend to use:
+  ** Visual Studio Code (as IDE and code editor, install the vscode-elixir extension and other you like)
+
+### Preparation instructions  
+
+  * If you run 
+  ** macOS (we are currently on Monterey 12.5.1), install Homebrew: https://brew.sh and possibly asdf: https://asdf-vm.com (read the instructions before deciding on asdf)
+  ** if you run Windows, we have no recommendation / experience as of now (i.e. search the web and let us know what you recommend to others)
+  ** if you run Linux, most of the following instructions should work accordingly (let us know what you recommend to others)
+  * Install Erlang >=25  - on MacOS you may use HomeBrew: `brew install erlang latest` 
+  * Install Elixir >=1.13 (as of today: 1.13.4) - on MacOS you may use HomeBrew: `brew install elixir latest`
+  * Install PostgreSQL >=13 () - on MacOS you may use HomeBrew: `brew install elixir latest`
+  * Make sure both Elixir and Erlang are accessible from your $PATH (which HomeBrew usually takes care of)
+  * Create a folder / directory in which your local Git repository will live and cd into this folder
+  * Clone the Sportyweb GitLab repository:  `git clone https://gitlab.com/fuhevis/sportyweb.git`  
+  * Open a terminal and start your PostgreSQL server (in non-daemon mode / not as a background process). On macOS run `brew info postgresql` to find out how to start your PostgreSQL instance. On our M1 mac, we use `/opt/homebrew/opt/postgresql/bin/postgres -D /opt/homebrew/var/postgres` and leave the terminal open to run the database server instance while developing.
+  * Follow the instructions (above) to test run the prototype: 
+  ** Install dependencies with `mix deps.get`
+  ** Create and migrate your database with `mix ecto.setup`
+  ** Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+  ** Visit [`localhost:4000`](http://localhost:4000) from your browser to see the Phoenix default start page
