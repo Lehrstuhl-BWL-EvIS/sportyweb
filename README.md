@@ -59,7 +59,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 
   * If you run 
     * macOS (we are currently on Monterey 12.5.1), install Homebrew: https://brew.sh and possibly asdf: https://asdf-vm.com (read the instructions before deciding on asdf)
-    * Linux, most of the following instructions should work accordingly but use the package manager of your chocie (let us know what preparation steps you recommend to others and which package manager you used)
+    * Linux, most of the following instructions should work accordingly but use the package manager of your choice (let us know what preparation steps you recommend to others and which package manager you used)
     * Windows, we have no recommendation for you as of now (i.e. search the web and let us know what steps you recommend to others)
   * Install Erlang >=25 - on MacOS you may use HomeBrew: `brew install erlang latest` 
   * Install Elixir >=1.13 (as of today: 1.13.4) - on MacOS you may use HomeBrew: `brew install elixir latest`
