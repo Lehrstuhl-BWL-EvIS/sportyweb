@@ -63,7 +63,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
     * Windows, we have no recommendation for you as of now (i.e. search the web and let us know what steps you recommend to others)
   * Install Erlang >=25 - on MacOS you may use HomeBrew: `brew install erlang latest` 
   * Install Elixir >=1.13 (as of today: 1.13.4) - on MacOS you may use HomeBrew: `brew install elixir latest`
-  * Install PostgreSQL >=13 () - on MacOS you may use HomeBrew: `brew install elixir latest`
+  * Install PostgreSQL >=13 () - on MacOS you may use HomeBrew: `brew install postgresql latest`
   * Make sure both Elixir and Erlang are accessible from your $PATH (which HomeBrew usually takes care of)
   * Create a folder / directory in which your local Git repository will live and cd into this folder
   * Clone the Sportyweb GitLab repository:  `git clone https://gitlab.com/fuhevis/sportyweb.git`  
