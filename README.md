@@ -52,6 +52,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
     * Erlang (as of today we use: Erlang 25.0.4)
     * Elixir (as of today we use: Elixir 1.13.4)
     * PostgreSQL >=13 (as of today, we use: PostgreSQL 14.5)
+    * Phoenix (as of today, 1.6.11) - automatically installed via `mix deps.get`, see below
   * We also recommend to use:
     * Visual Studio Code (as IDE and code editor, install the vscode-elixir extension and other you like)
 
@@ -71,12 +72,20 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
     * On macOS run `brew info postgresql` to find out how to start your PostgreSQL instance. 
       * On our M1 mac, we use `/opt/homebrew/opt/postgresql/bin/postgres -D /opt/homebrew/var/postgres` and leave the terminal open to run the database server instance while developing.
   * Follow the instructions (above) to test run the prototype: 
-    * Install dependencies with `mix deps.get`
+    * Install dependencies with `mix deps.get` (which, among others, installs Phoenix)
     * Create and migrate your database with `mix ecto.setup` - Note: PostgreSQL must be running for this step!
     * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server` - Look out for  compiler errors. 
     * Visit [`localhost:4000`](http://localhost:4000) from your browser to see the Phoenix default start page
 
 Congratulations! If you see the start page in your browser, you have verified that your machine is set up for developing and running the Sportyweb prototype.
+
+### Regular upgrades to new versions of Phoenix, Phoenix LiveView, Ecto etc. 
+
+As of today, we plan to follow upcoming updates of Erlang, Elixir, Phoenix and related packages we use - as closely as possible to benefit from upcoming new features. For example, Phoenix LiveView 0.18 has already been announced via the CHANGELOG at 
+
+https://github.com/phoenixframework/phoenix_live_view/blob/master/CHANGELOG.md
+
+announcing a number of relevant changes to `live_redirect` and `live_patch` relevant to us (we currently consider moving from Alpine.js to a pure LiveView.JS implementation). Expect similar design decisions in the future. 
 
 ### Set up git for signing commits
 
