@@ -32,6 +32,11 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+ 
+ ## Learn the foundation
+ 
+  * Learn Elixir: https://elixir-lang.org and https://elixir-lang.org/docs.html
+  * Learn Phoenix and Phoenix LiveView: https://hexdocs.pm/phoenix/overview.html
 
 ## For collaborators (and students @ FUH) : How to prepare your machine for collaboration 
 
