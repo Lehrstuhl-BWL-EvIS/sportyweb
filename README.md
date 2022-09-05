@@ -55,7 +55,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
     * git (we currently use 2.37.2) 
     * gpg (GnuPG, we currently use 2.3.7)
     * Erlang (as of today we use: Erlang 25.0.4)
-    * Elixir (as of today we use: Elixir 1.13.4)
+    * Elixir (as of today we use: Elixir 1.14.x)
     * PostgreSQL >=13 (as of today, we use: PostgreSQL 14.5)
     * Phoenix (as of today, 1.6.11) - automatically installed via `mix deps.get`, see below
   * We also recommend to use:
