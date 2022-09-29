@@ -4,7 +4,7 @@ We are currently initiating development of a web application for managing, organ
 
 Join us in [discussing](https://github.com/sportyweb/sportyweb/wiki) the application domain of multi-sports clubs management with regard to software requirements (in German, though 😉).
 
-Sportyweb is part of an academic research & development project at the ["Enterprise Modelling Research Group", University of Hagen, Germany](https://www.fernuni-hagen.de/evis/forschung/projekte/sportyweb.shtml) and is developed as an open source software under Apache 2.0 license.
+Sportyweb is part of an academic research & development project at the ["Enterprise Modelling Research Group", University of Hagen, Germany](https://www.fernuni-hagen.de/evis/forschung/projekte/sportyweb.shtml) and is developed as an open source software under [GNU Affero General Public License 3.0](https://www.gnu.org/licenses/agpl-3.0.html).
 
 ------
 
