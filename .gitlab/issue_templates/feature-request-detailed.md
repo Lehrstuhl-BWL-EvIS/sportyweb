@@ -46,6 +46,6 @@ Use the following resources to find the appropriate labels:
 - https://about.gitlab.com/handbook/product/categories/features/
 -->
 
-/label ~group:: ~section:: ~Category:
-/label ~suggestion
+/label ~enhancement
+
 

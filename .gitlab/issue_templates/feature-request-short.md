@@ -1,6 +1,6 @@
 <!-- IMPORTANT NOTE: The following template is taken from the GitLab developmentworkflow itself at https://gitlab.com/gitlab-org/gitlab/-/tree/master/.gitlab/issue_templates -->
 
-### Proposal
+### Propose a new feature / Request a new feature / Describe feature
 
 <!-- Use this section to explain the feature and how it will work. It can be helpful to add technical details, design proposals, and links to related epics or issues. -->
 
@@ -13,6 +13,5 @@ Use the following resources to find the appropriate labels:
 - https://about.gitlab.com/handbook/product/categories/features/
 -->
 
-/label ~group:: ~section:: ~Category:
-/label ~suggestion
+/label ~enhancement
 
