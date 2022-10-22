@@ -1,6 +1,6 @@
 <!-- IMPORTANT NOTE: The following template is taken from the GitLab developmentworkflow itself at https://gitlab.com/gitlab-org/gitlab/-/tree/master/.gitlab/issue_templates -->
 
-<!-- This issue template can be used as a great starting point for feature requests. The section "Release notes" can be used as a summary of the feature and is also required if you want to have your release post blog MR auto generated using the release post item generator:  https://about.gitlab.com/handbook/marketing/blog/release-posts/#release-post-item-generator. The remaining sections are the backbone for every feature in GitLab.
+<!-- This issue template can be used as a great starting point for feature requests. The section "Feature Description / Future Release notes" can be used as a summary of the feature and is also required if you want to have your release post blog MR auto generated using the release post item generator:  https://about.gitlab.com/handbook/marketing/blog/release-posts/#release-post-item-generator. The remaining sections are the backbone for every feature in GitLab.
 
 The goal of this template is brevity for quick/smaller iterations. For a more thorough list of considerations for larger features or feature sets, you can leverage the detailed [feature proposal](https://gitlab.com/gitlab-org/gitlab/-/blob/master/.gitlab/issue_templates/Feature%20proposal%20-%20detailed.md). -->
 
@@ -40,14 +40,6 @@ Personas are described at https://about.gitlab.com/handbook/marketing/product-ma
 * [Eddie (Content Editor)](https://about.gitlab.com/handbook/marketing/product-marketing/roles-personas/#eddie-content-editor)
 -->
 
-### Feature Usage Metrics
-
-<!-- How are you going to track usage of this feature? Think about user behavior and their interaction with the product. What indicates someone is getting value from it?
-
-Create tracking issue using the Snowplow event tracking template. See https://gitlab.com/gitlab-org/gitlab/-/blob/master/.gitlab/issue_templates/Snowplow%20event%20tracking.md
-
--->
-
 <!-- Label reminders
 Use the following resources to find the appropriate labels:
 - https://gitlab.com/gitlab-org/gitlab/-/labels
@@ -55,6 +47,5 @@ Use the following resources to find the appropriate labels:
 -->
 
 /label ~group:: ~section:: ~Category:
-/label ~"GitLab Free" ~"GitLab Premium" ~"GitLab Ultimate"
-/label ~"type::feature" ~documentation ~direction
+/label ~suggestion
 

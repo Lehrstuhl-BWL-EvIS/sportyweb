@@ -14,6 +14,5 @@ Use the following resources to find the appropriate labels:
 -->
 
 /label ~group:: ~section:: ~Category:
-/label ~"GitLab Free" ~"GitLab Premium" ~"GitLab Ultimate"
-/label ~"type::feature" ~"feature::addition" ~documentation
+/label ~suggestion
 
