@@ -1,4 +1,4 @@
-<!-- This template is a great use for issues that are feature::additions or technical tasks for larger issues.-->
+<!-- IMPORTANT NOTE: The following template is taken from the GitLab developmentworkflow itself at https://gitlab.com/gitlab-org/gitlab/-/tree/master/.gitlab/issue_templates -->
 
 ### Proposal
 
