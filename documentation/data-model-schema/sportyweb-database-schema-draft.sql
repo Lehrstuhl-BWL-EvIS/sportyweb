@@ -40,7 +40,7 @@ https://sqlfordevs.com/ebook
 */
 CREATE TABLE clubs (
   club_id uuid PRIMARY KEY,
-  landessportbund-vereinskennziffer varchar(255) UNIQUE NOT NULL,
+  landessportbund_vereinskennziffer varchar(255) UNIQUE NOT NULL,
   club_fullname varchar(255) UNIQUE NOT NULL,
   club_shortname varchar(255) UNIQUE NOT NULL,
   club_website varchar(255) UNIQUE,
@@ -71,10 +71,11 @@ CREATE TABLE clubs (
 */
 CREATE TABLE clubunits (
   clubunits_id serial PRIMARY KEY,
+  clubs_id uuid REFERENCES clubs(clubs_id) ON DELETE NO ACTION,            /* UNIQUE FOREIGN KEY? */
+  parent_id integer REFERENCES clubunits(clubunits_id),
   clubunits_name varchar(255) NOT NULL,
   clubunits_shortname varchar(255) NOT NULL
 )
-
 
 
 
