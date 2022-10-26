@@ -32,6 +32,52 @@ https://sqlfordevs.com/ebook
 /* NOTE: Privacy and security measures such as hashed values NOT yet accounted for! */
 
 
+/*
+- Clubs/Vereine
+  - es scheint ein Nummerierungsschema und -System durch den DOSB und die LSB zu geben
+    hierzu sind weitere Recherchen notwendig
+  - Andere Daten, die einen Verein charakterisieren, können wir dem deutschen Vereinsrecht entnehmen
+*/
+CREATE TABLE clubs (
+  club_id uuid PRIMARY KEY,
+  landessportbund-vereinskennziffer varchar(255) UNIQUE NOT NULL,
+  club_fullname varchar(255) UNIQUE NOT NULL,
+  club_shortname varchar(255) UNIQUE NOT NULL,
+  club_website varchar(255) UNIQUE,
+  club_founding_date date,
+  club_logo bytea
+)
+
+
+/*
+- ClubUnits / Vereinseinheit : ein Verein ist in Organisationseinheiten (z.B. Abteilungen) unterteilt
+  - Vereinseinheit ist synonym mit Organisationseinheit (Begriff der Organisationstheorie)
+  - ein Verein betreibt mindestens eine Vereinseinheit
+  - eine Vereinseinheit ist genau einem Verein zugeordnet
+  - Bsp. für eine Vereinseinheit : Abteilung, Unterabteilung, Unterunterabteilung usw.
+  - eine Vereinseinheit kann einer anderen Vereinseinheit untergeordnet sein
+  - eine Vereinseinheit kann einer oder keiner übergeordneten Vereinseinheit zugeordnet sein
+  - Eine Vereinseinheit verantwortet die Bereitstellung mindestens eines Sportangebots
+  - Hinweis: Vereinseinheiten sind in dieser Modellierung bewusst getrennt von Sportangeboten des Vereins 
+    gedacht und modelliert.
+    Erst durch die nachfolgend skizzierte Datenhaltung zu Sportangeboten und ihrer Systematisierung und
+    Strukturierung wird die Beteiligung einer Vereinseinheit an der Ausrichtung von Sportangeboten modelliert!
+  - mit anderen Worten: Die Modellierung überlässt es den Vereinsverantwortlichen, mehrere Abteilungsebenen
+    anzulegen und zu pflegen _oder_ mit nur einer ("Haupt-") Ebene zu arbeiten.
+  - Beispiel 1: Haupt-Abteilung: Fussball - Unterabteilungen: Kinder- und Jugendfussball, Seniorenfussball 
+  - Beispiel 2: Haupt-Abteilung: Fussball, Haupt-Abteilung: Basketball, Haupt-Abteilung: Volleyball usw. 
+  - (Anmerkung: Die Modellierung erlaubt es auch, zu einem späteren Zeitpunkt neue Vereinseinheiten anzulegen
+    und diese anderen Vereinseinheiten unterzuordnen)
+*/
+CREATE TABLE clubunits (
+  clubunits_id serial PRIMARY KEY,
+  clubunits_name varchar(255) NOT NULL,
+  clubunits_shortname varchar(255) NOT NULL
+)
+
+
+
+
 
 /*
 - Person : eine natürliche Person
@@ -73,7 +119,7 @@ CREATE TABLE persons (
 CREATE TABLE members (
   member_id uuid PRIMARY KEY,                     /* Non-public, internal identifier */
   person_id uuid REFERENCES persons(person_id) 
-                  ON DELETE NO ACTION;            /* UNIQUE FOREIGN KEY? */
+                  ON DELETE NO ACTION,            /* UNIQUE FOREIGN KEY? */
   member_membership_number varchar(255) UNIQUE,   /* Public identifier: Allow for alphanumeric membership numbers; unique membership identifiers usually imported during system configuration and setup */
   member_initial_entry_date date NOT NULL,
   member_membership_state text,                   /* TODO : Describe states and use CHECK constraint to test for valid values, "regular", "temporary_on_hold", "honorary", ...  */
@@ -129,7 +175,7 @@ CREATE TABLE households (
     noch nicht existiert; andernfalls wird das Neumitglied einem bereits vorliegenden Haushalt
     hinzugefügt.
 */
-CREATE TABLE members-households (
+CREATE TABLE members_households (
   member_id uuid NOT NULL,
   household_id integer NOT NULL,
   FOREIGN KEY (member_id) REFERENCES members(member_id),
@@ -165,3 +211,59 @@ CREATE TABLE postaladdresses (
   postaladdress_country varchar(2),         /* ISO-Code */
   UNIQUE(postaladdress_street,postaladdress_number,postaladdress_zipcode,postaladdress_city,postaladdress_country)
 )
+
+
+
+
+/* 
+  memberships
+
+- Mitgliedschaft
+  - Mitgliedsvertrag : ein aktuell gültiger Mitgliedsvertrag ist Grundlage der Vereinsteilnahme, siehe
+  https://www.rkpn.de/vereinsrecht/veroeffentlichungen/die-aufnahme-neuer-mitglieder-in-den-verein.html
+  - ein Mitgliedsvertrag hat formal zwei Vertragspartner : Verein und Mitglied (Person)
+  - ein Mitglied muss mindestens einen Mitgliedsvertrag abgeschlossen haben
+  - ein Mitglied kann einen Mitgliedsvertrag ohne Vertragsende abschließen und
+    lebenslang Mitglied mit diesem Mitgliedsvertrag bleiben
+  - ein Mitglied kann im Laufe der Zeit mehrere Mitgliedsverträge abschließen, wenn
+    das Mitglied einen früher laufenden Mitgliedsvertrag beendet hat und nach einiger Zeit
+    wieder einen Mitgliedsvertrag abschließt
+  - zu jedem Zeitpunkt darf ein Mitglied maximal genau einen Mitgliedsvertrag unterhalten 
+  - zu jedem Zeitpunkt muss ein Mitglied genau einen Mitgliedsvertrag unterhalten
+  - Ruhezeiten: ein Mitglied kann mehrmals temporär einen Mitgliedsvertrag aussetzen (diverse Gründen)
+  - diverse weitere Aspekte eines Mitgliedsvertrags sind hier _noch nicht_ modelliert
+*/
+CREATE TABLE memberships (
+  membership_id serial PRIMARY KEY,
+  member_id uuid REFERENCES members(member_id),
+  membership_contract_number varchar(255) UNIQUE,
+  membership_contract_signing_date date NOT NULL,         /* Datum des Vertragsabschlusses */
+  membership_contract_termination_date date,              /* Datum der Vertragskündigung */
+  membership_start_date date NOT NULL,                    /* Aufnahmedatum */
+  membership_end_date date,                               /* Vertragsende, sofern im Vertrag festgelegt */ 
+  membership_temphold_start_date date,            /* falls Vertrag temporär unterbrochen wird: Vertrag ruht */ 
+  membership_temphold_end_date date,              
+  membership_temphold_note text,
+  membership_note text              
+)
+/*
+CREATE TABLE membership_change_history (
+  membership_change_history__id serial PRIMARY KEY,
+  membership_id integer REFERENCES memberships(membership_id),
+  membership_change_reason varchar(255)                   -- Grund für Vertragsänderung: Vertrag ruht, Vertragsunterbrechung, etc.
+  membership_change_start_date date        
+  membership_note text
+)
+*/
+
+
+
+
+
+
+
+          mitgliedschaft_vereinseinheit {
+            date mitgliedschaft_datum_beginn
+            date mitgliedschaft_datum_ende
+            money mitgliedschaft_gebuehr
+          }
