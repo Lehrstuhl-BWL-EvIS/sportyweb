@@ -270,7 +270,7 @@ CREATE TABLE memberships (
   membership_temphold_start_date date,              /* falls Vertrag temporär unterbrochen wird: Vertrag ruht */ 
   membership_temphold_end_date date,              
   membership_temphold_note text,
-  membership_base_yearly_fee money,
+  membership_base_yearly_fee money,                 -- Part of overall fee structure
   membership_note text              
 )
 /*
@@ -297,5 +297,5 @@ CREATE TABLE membership_clubunit (
   UNIQUE (membership_id,clubunit_id),
   membership_clubunit_start_date date,
   membership_clubunit_end_date date,
-  membership_clubunit_yearly_fee money          /* 
+  membership_clubunit_yearly_fee money          -- Part of overall fee structure 
 )
