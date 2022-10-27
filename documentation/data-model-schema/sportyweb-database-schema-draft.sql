@@ -28,9 +28,7 @@ https://sqlfordevs.com/ebook
 
 */
 
-
 /* NOTE: Privacy and security measures such as hashed values NOT yet accounted for! */
-
 
 /*
 - Clubs/Vereine
@@ -40,7 +38,7 @@ https://sqlfordevs.com/ebook
 */
 CREATE TABLE clubs (
   club_id uuid PRIMARY KEY,
-  landessportbund_vereinskennziffer varchar(255) UNIQUE NOT NULL,
+  club_landessportbund_vereinskennziffer varchar(255) UNIQUE NOT NULL,
   club_fullname varchar(255) UNIQUE NOT NULL,
   club_shortname varchar(255) UNIQUE NOT NULL,
   club_website varchar(255) UNIQUE,
@@ -48,6 +46,8 @@ CREATE TABLE clubs (
   club_logo bytea
 )
 
+INSERT INTO clubs VALUES 
+(gen_random_uuid (), 'ABC123', 'Musterverein', 'Muster', 'https://musterverein.de', '1900-01-01');
 
 /*
 - ClubUnits / Vereinseinheit : ein Verein ist in Organisationseinheiten (z.B. Abteilungen) unterteilt
@@ -70,15 +70,28 @@ CREATE TABLE clubs (
     und diese anderen Vereinseinheiten unterzuordnen)
 */
 CREATE TABLE clubunits (
-  clubunits_id serial PRIMARY KEY,
-  clubs_id uuid REFERENCES clubs(clubs_id) ON DELETE NO ACTION,            /* UNIQUE FOREIGN KEY? */
-  parent_id integer REFERENCES clubunits(clubunits_id),
-  clubunits_name varchar(255) NOT NULL,
-  clubunits_shortname varchar(255) NOT NULL
+  clubunit_id serial PRIMARY KEY,
+  club_id uuid REFERENCES clubs(club_id) ON DELETE NO ACTION,            /* UNIQUE FOREIGN KEY? */
+  parent_id integer REFERENCES clubunits(clubunit_id),
+  clubunit_type varchar(255) NOT NULL,  -- Typ: Hauptabteilung | Abteilung
+  clubunit_name varchar(255) NOT NULL,  -- Bezeichner: Fussball, Fitness-Sport
+  clubunit_shortname varchar(255) NOT NULL,
+  clubunit_inception date
 )
 
+/*
+CREATE TABLE clubunit_types (
+  clubunit_type_id serial PRIMARY KEY,
+  clubunit_type_name varchar(255) UNIQUE NOT NULL 
+)
+*/
 
-
+INSERT INTO clubunits VALUES 
+(DEFAULT, '438b0e41-0433-4083-8afa-e6fab0172a22', DEFAULT, 'Hauptabteilung', 'Fussball', 'Fussball-Abtlg.', '1969-12-32');
+INSERT INTO clubunits VALUES 
+(DEFAULT, '438b0e41-0433-4083-8afa-e6fab0172a22', DEFAULT, 'Hauptabteilung', 'Volleyball', 'Volleyball-Abtlg.');
+INSERT INTO clubunits VALUES 
+(DEFAULT, '438b0e41-0433-4083-8afa-e6fab0172a22', 1, 'Abteilung Jugendfussball', 'Jugendfussball-Abtlg.');
 
 /*
 - Person : eine natürliche Person
@@ -96,20 +109,23 @@ CREATE TABLE persons (
   first_name1 varchar(255) NOT NULL,
   first_name2 varchar(255) NOT NULL,
   first_name3 varchar(255) NOT NULL,
-  nickname varchar(255),              /* just in case: If Josef Mustermann is only known as 'Jupp' etc */
+  nickname varchar(255),              
   unique_official_id varchar(255),    /* z.B. Personalausweisnummer */
   date_of_birth date NOT NULL,
-  gender gender_abbrev NOT NULL,      /* Do not use ENUM TYPES, see https://readyset.io/blog/enums-mysql-vs-postgres and https://twitter.com/tobias_petry/status/1579707412956983297?s=61&t=GLgAfFM-UsOWdtkpcAN68w*/
+  gender gender_abbrev NOT NULL,      /* MAYBE use ENUM TYPES, see https://readyset.io/blog/enums-mysql-vs-postgres and https://twitter.com/tobias_petry/status/1579707412956983297?s=61&t=GLgAfFM-UsOWdtkpcAN68w*/
   phone1 phone_number NOT NULL,       /* Is there a data type to properly store a FQTN? See https://de.wikipedia.org/wiki/E.164 */
   phone2 phone_number,                /* dito */
   email1 email,                       /* Is there a data type to properly store an email address (addr-spec?)? See https://en.wikipedia.org/wiki/Email_address */ 
   email2 email,
   messenger1 messenger,               /* What is the best way to store the messenger apps a person uses and how to reach the person via a messenger? */ 
   messenger2 messenger,
-  club_entry_date date NOT NULL,
   person_note text,                    /* Always allow for notes on a tupel */
   postaladdress_id integer REFERENCES postaladdresses(postaladdress_id) 
 )
+
+-- INSERT INTO persons VALUES 
+-- (get_random_uuid(), '438b0e41-0433-4083-8afa-e6fab0172a22', DEFAULT, 'Hauptabteilung', 'Fussball', 'Fussball-Abtlg.', '1969-12-32');
+
 
 /* 
 - Mitglied
@@ -212,9 +228,9 @@ CREATE TABLE postaladdresses (
   postaladdress_country varchar(2),         /* ISO-Code */
   UNIQUE(postaladdress_street,postaladdress_number,postaladdress_zipcode,postaladdress_city,postaladdress_country)
 )
-
-
-
+INSERT INTO postaladdresses VALUES (
+  DEFAULT, 'Universitätsstr.', '41', '51087', 'Hagen', 'DE'
+)
 
 /* 
   memberships
@@ -258,8 +274,21 @@ CREATE TABLE membership_change_history (
 */
 
 
-
-
+/*
+- Mitgliedschaft_Vereinseinheit 
+  - ein Mitgliedsvertrag kann Einzelposten umfassen, die sich auf die Mitgliedschaft in einer
+    Vereinseinheit (z.B. einer Abteilung) umfassen
+*/
+CREATE TABLE membership_clubunit (
+  membership_id integer NOT NULL,
+  clubunit_id integer NOT NULL,
+  FOREIGN KEY (membership_id) REFERENCES memberships(membership_id),
+  FOREIGN KEY (clubunit_id) REFERENCES clubunits(clubunit_id),
+  UNIQUE (membership_id,clubunit_id),
+  membership_clubunit_start_date date,
+  membership_clubunit_end_date date,
+  membership_clubunit_yearly_fee money
+)
 
 
 
