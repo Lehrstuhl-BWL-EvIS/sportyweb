@@ -299,3 +299,31 @@ CREATE TABLE membership_clubunit (
   membership_clubunit_end_date date,
   membership_clubunit_yearly_fee money          -- Part of overall fee structure 
 )
+
+
+/* 
+- branch_offices / Geschaeftsstelle : eine Geschaeftsstelle wird von einem Verein betrieben
+  - ein Verein betreibt eine oder mehrere Geschaeftsstellen
+  - eine Geschaeftsstelle hat eine Besucheradresse und eine postalische Adresse sowie
+    ein oder mehrere Telefonverbindungen
+*/
+CREATE TABLE branch_offices (
+  branch_office_id serial PRIMARY KEY,
+  club_id uuid REFERENCES clubs(club_id),
+  branch_office_name varchar(255) UNIQUE NOT NULL,
+  postaladdress_id integer REFERENCES postaladdresses(postaladdress_id), 
+  visitor_address_id integer REFERENCES postaladdresses(postaladdress_id),
+  branch_office_phone1 varchar(255),
+  branch_office_email1 varchar(255)
+);
+/*
+INSERT INTO branch_offices VALUES (
+  DEFAULT, 
+  '438b0e41-0433-4083-8afa-e6fab0172a22',
+  'branch office name',
+  '3',
+  '3',
+  '+49 123 4574747',
+  'branch@office.com'
+);
+*/
