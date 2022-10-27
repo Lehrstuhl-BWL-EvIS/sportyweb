@@ -21,12 +21,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 # Database schema - draft design   
 
-![Sportyweb Database Schema - design draft (draft)](data-model-schema/sportyweb-database-schema-draft.sql "Database schema draft")
+![Sportyweb Database Schema - design draft (draft)](sportyweb-database-schema-draft.sql "Database schema draft")
 
 
 # Conceptual Data Model (partial) – (partial) conceptual data model / semantic data model 
 
-![Sportyweb Conceptual Data Model (draft)](data-model-schema/2022-10-24-sportyweb-cdm.pdf "Conceptual Data Model (drafT))")
+![Sportyweb Conceptual Data Model (draft)](2022-10-24-sportyweb-cdm.pdf "Conceptual Data Model (drafT))")
 
 
 # ER Details Diagram – (incomplete, preliminary) logical database schema
