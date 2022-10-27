@@ -1,6 +1,8 @@
 /* Sportyweb Database Schema Design -- Draft version */
 
-/* Copyright (C) 2022 Stefan Strecker, stefan.strecker@fernuni-hagen.de
+/* 
+
+Copyright (C) 2022 Stefan Strecker, stefan.strecker@fernuni-hagen.de
 https://gitlab.com/fuhevis/sportyweb
 
 This program is free software: you can redistribute it and/or modify
@@ -14,27 +16,23 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU Affero General Public License for more details.
 
 You should have received a copy of the GNU Affero General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>. */
-
-
-/* NOTE: This document is for design and draft purposes only - NOT for implementation.
-   For implementation, we use regular database migrations */
-
-/* All values based on UTF8 coding */
-
-/* For SQL expertise, see for example:
-
-https://sqlfordevs.com/ebook
+along with this program.  If not, see <https://www.gnu.org/licenses/>. 
 
 */
 
-/* NOTE: Privacy and security measures such as hashed values NOT yet accounted for! */
+-- NOTE: This document is for design and draft purposes only - NOT for implementation.
+-- For implementation, we use regular database migrations 
+-- For SQL expertise, see for example: https://sqlfordevs.com/ebook
+-- All values based on UTF8 coding 
+-- NOTE: Privacy and security measures such as hashed values NOT yet accounted for! 
+-- NOTE: Database schema is non-normalized wrt various fields/attributes   
+-- NOTE: Database schema ignores recording data change history aka data auditing / database versioning, 
+--       see https://github.com/izelnakri/paper_trail or https://github.com/ZennerIoT/ex_audit 
 
 /*
 - Clubs/Vereine
   - es scheint ein Nummerierungsschema und -System durch den DOSB und die LSB zu geben
-    hierzu sind weitere Recherchen notwendig
-  - Andere Daten, die einen Verein charakterisieren, können wir dem deutschen Vereinsrecht entnehmen
+    hierzu sind weitere Recherchen notwendig (Vereinskennziffer)
 */
 CREATE TABLE clubs (
   club_id uuid PRIMARY KEY,
@@ -45,9 +43,12 @@ CREATE TABLE clubs (
   club_founding_date date,
   club_logo bytea
 )
-
+/*
 INSERT INTO clubs VALUES 
 (gen_random_uuid (), 'ABC123', 'Musterverein', 'Muster', 'https://musterverein.de', '1900-01-01');
+*/
+
+
 
 /*
 - ClubUnits / Vereinseinheit : ein Verein ist in Organisationseinheiten (z.B. Abteilungen) unterteilt
@@ -85,13 +86,50 @@ CREATE TABLE clubunit_types (
   clubunit_type_name varchar(255) UNIQUE NOT NULL 
 )
 */
-
+/*
 INSERT INTO clubunits VALUES 
 (DEFAULT, '438b0e41-0433-4083-8afa-e6fab0172a22', DEFAULT, 'Hauptabteilung', 'Fussball', 'Fussball-Abtlg.', '1969-12-32');
 INSERT INTO clubunits VALUES 
 (DEFAULT, '438b0e41-0433-4083-8afa-e6fab0172a22', DEFAULT, 'Hauptabteilung', 'Volleyball', 'Volleyball-Abtlg.');
 INSERT INTO clubunits VALUES 
 (DEFAULT, '438b0e41-0433-4083-8afa-e6fab0172a22', 1, 'Abteilung Jugendfussball', 'Jugendfussball-Abtlg.');
+*/
+
+
+
+/* 
+- Postalische Adresse
+  - eine Adresse kann Personen, Mitgliedern, Sportstätten und anderen Entitäten zugeordnet sein
+  - notwendige Attribute einer Adresse sind in verschiedenen Standards dargestellt
+  - hier wird eine stark vereinfachte Representation einer Adresse für Postadressen in Deutschland vorgeschlagen
+  - aus Gründen der Vereinfachung könnten die Attribute einer Postadresse auch in die Relation PERSONS integriert werden
+  
+Professionally representing (int'l) postal addresses in a database schema is a challenge but potential solutions are plenty, see e.g. 
+
+https://de.wikipedia.org/wiki/Postanschrift
+
+https://www.iso.org/obp/ui/#iso:std:iso:19160:-4:ed-1:v1:en
+
+http://xml.coverpages.org/xnal.html 
+
+https://softwareengineering.stackexchange.com/questions/357900/whats-a-universal-way-to-store-a-geographical-address-location-in-a-database
+*/
+CREATE TABLE postaladdresses (
+  postaladdress_id serial PRIMARY KEY,
+  postaladdress_street varchar(255),
+  postaladdress_number varchar(20),
+  postaladdress_zipcode varchar(20),
+  postaladdress_city varchar(20),
+  postaladdress_country varchar(2),         /* ISO-Code */
+  UNIQUE(postaladdress_street,postaladdress_number,postaladdress_zipcode,postaladdress_city,postaladdress_country)
+)
+/*
+INSERT INTO postaladdresses VALUES (
+  DEFAULT, 'Universitätsstr.', '41', '51087', 'Hagen', 'DE'
+)
+*/
+
+
 
 /*
 - Person : eine natürliche Person
@@ -122,10 +160,10 @@ CREATE TABLE persons (
   person_note text,                    /* Always allow for notes on a tupel */
   postaladdress_id integer REFERENCES postaladdresses(postaladdress_id) 
 )
-
--- INSERT INTO persons VALUES 
--- (get_random_uuid(), '438b0e41-0433-4083-8afa-e6fab0172a22', DEFAULT, 'Hauptabteilung', 'Fussball', 'Fussball-Abtlg.', '1969-12-32');
-
+/*
+INSERT INTO persons VALUES 
+(get_random_uuid(), '438b0e41-0433-4083-8afa-e6fab0172a22', DEFAULT, 'Hauptabteilung', 'Fussball', 'Fussball-Abtlg.', '1969-12-32');
+*/
 
 /* 
 - Mitglied
@@ -202,35 +240,6 @@ CREATE TABLE members_households (
   member_household_is_legal_guardian boolean
 )
 
-/* 
-- Postalische Adresse
-  - eine Adresse kann Personen, Mitgliedern, Sportstätten zugeordnet sein
-  - notwendige Attribute einer Adresse sind in verschiedenen Standards dargestellt
-  - hier wird eine stark vereinfachte Representation einer Adresse für Postadressen in Deutschland vorgeschlagen
-  - aus Gründen der Vereinfachung könnten die Attribute einer Postadresse auch in die Relation PERSONS integriert werden
-  
-Professionally representing (int'l) postal addresses in a database schema is a challenge but potential solutions are plenty, see e.g. 
-
-https://de.wikipedia.org/wiki/Postanschrift
-
-https://www.iso.org/obp/ui/#iso:std:iso:19160:-4:ed-1:v1:en
-
-http://xml.coverpages.org/xnal.html 
-
-https://softwareengineering.stackexchange.com/questions/357900/whats-a-universal-way-to-store-a-geographical-address-location-in-a-database
-*/
-CREATE TABLE postaladdresses (
-  postaladdress_id serial PRIMARY KEY,
-  postaladdress_street varchar(255),
-  postaladdress_number varchar(20),
-  postaladdress_zipcode varchar(20),
-  postaladdress_city varchar(20),
-  postaladdress_country varchar(2),         /* ISO-Code */
-  UNIQUE(postaladdress_street,postaladdress_number,postaladdress_zipcode,postaladdress_city,postaladdress_country)
-)
-INSERT INTO postaladdresses VALUES (
-  DEFAULT, 'Universitätsstr.', '41', '51087', 'Hagen', 'DE'
-)
 
 /* 
   memberships
@@ -253,14 +262,15 @@ INSERT INTO postaladdresses VALUES (
 CREATE TABLE memberships (
   membership_id serial PRIMARY KEY,
   member_id uuid REFERENCES members(member_id),
-  membership_contract_number varchar(255) UNIQUE,
-  membership_contract_signing_date date NOT NULL,         /* Datum des Vertragsabschlusses */
-  membership_contract_termination_date date,              /* Datum der Vertragskündigung */
-  membership_start_date date NOT NULL,                    /* Aufnahmedatum */
-  membership_end_date date,                               /* Vertragsende, sofern im Vertrag festgelegt */ 
-  membership_temphold_start_date date,            /* falls Vertrag temporär unterbrochen wird: Vertrag ruht */ 
+  membership_contract_number varchar(255) UNIQUE,   /* Vertragsnummer */
+  membership_contract_signing_date date NOT NULL,   /* Datum des Vertragsabschlusses */
+  membership_contract_termination_date date,        /* Datum der Vertragskündigung */
+  membership_start_date date NOT NULL,              /* Aufnahmedatum */
+  membership_end_date date,                         /* Vertragsende, sofern im Vertrag festgelegt */ 
+  membership_temphold_start_date date,              /* falls Vertrag temporär unterbrochen wird: Vertrag ruht */ 
   membership_temphold_end_date date,              
   membership_temphold_note text,
+  membership_base_yearly_fee money,
   membership_note text              
 )
 /*
@@ -287,13 +297,5 @@ CREATE TABLE membership_clubunit (
   UNIQUE (membership_id,clubunit_id),
   membership_clubunit_start_date date,
   membership_clubunit_end_date date,
-  membership_clubunit_yearly_fee money
+  membership_clubunit_yearly_fee money          /* 
 )
-
-
-
-          mitgliedschaft_vereinseinheit {
-            date mitgliedschaft_datum_beginn
-            date mitgliedschaft_datum_ende
-            money mitgliedschaft_gebuehr
-          }
