@@ -327,3 +327,134 @@ INSERT INTO branch_offices VALUES (
   'branch@office.com'
 );
 */
+
+
+/*
+
+section / Sportangebotssparte (Sparte)
+
+- Sparte : eine (Vereins-)Sparte dient der Gruppierung von Sport*arten* nach Sportvereinswesen-bezogenen Kriterien
+  - eine Sparte ist mindestens einer Vereinseinheit (mittels Vereinseinheit-Sparte) zugeordnet
+  - eine Sparte kann von mehreren Vereinseinheiten getragen/ausgerichtet werden = 
+    mehrere Vereinseinheiten können eine Sparte organisieren und verantworten
+  - einer Sparte können mehrere Sportarten zugeordnet sein
+  - einer Sparte sind in der Regel mehrere Sportangebote zugeordnet
+  - Beispiele für Sparte: Wassersport, Ballsport, Fitnesssport, Reha-Sport, ...
+  - Hinweis: eine Vereinssparte kann einer Vereinseinheit (z.B. Abteilung) entsprechen, muss aber nicht 
+  - TODO: Etablierte Vereinssparten-/Vereinsportarten-Systematiken identifizieren!
+
+   string sparte_bezeichner
+            string sparte_erlaeuterung "Erläuterung der Spartendefinition"
+            date spart_einfuehrungsdatum
+*/
+CREATE TABLE sections (
+  section_id serial PRIMARY KEY,
+  section_name varchar(255) UNIQUE NOT NULL,
+  section_description varchar(255),
+  setion_is_active boolean,      -- set to TRUE when new section is created
+  section_start_date date,       -- inserted once when new section is created
+  section_end_date date         -- updated once when section is set to inactive
+)
+
+
+/*
+
+clubunits_sections
+
+- eine Sparte ist mindestens einer Vereinseinheit (mittels Vereinseinheit-Sparte) zugeordnet
+- eine Sparte kann von mehreren Vereinseinheiten getragen/ausgerichtet werden = 
+    mehrere Vereinseinheiten können eine Sparte organisieren und verantworten
+
+*/
+CREATE TABLE clubunits_sections (
+  section_id integer NOT NULL,
+  clubunit_id integer NOT NULL,
+  FOREIGN KEY (section_id) REFERENCES sections(section_id),
+  FOREIGN KEY (clubunit_id) REFERENCES clubunits(clubunit_id),
+  UNIQUE (section_id,clubunit_id),
+  section_clubunit_start_date date,
+  section_clubunit_end_date date
+)
+
+
+
+/* 
+
+sports
+
+- Sportart : eine Sportart dient der Gruppierung von Sport*angeboten* nach Sportvereinswesen-bezogenen Kriterien
+  - für die Systematisierung von Sportarten liegen mehrere Systematiken in den Sportwissenschaften vor,
+    darüber hinaus haben sich im Sportvereinswesen Systematiken etabliert
+  - Sportart : Fussball, Basketball, Handball, Volleyball, Fitnesssport, Reha-Sport usw. 
+  - eine Sportart ist genau einer Sparte zugeordnet (TODO: ggf. eine zu restriktive Einschränkung)
+
+*/
+
+CREATE TABLE sports (
+  sport_id serial PRIMARY KEY,
+  section_id integer REFERENCES sections(section_id),
+  sport_name varchar(255) UNIQUE NOT NULL,
+  sport_description varchar(255)
+)
+
+
+/*
+
+generic_sport_offers
+
+- Sportangebotstyp : ein Sportangebotstyp dient der Datenhaltung zu Typen von Sportangeboten des Vereins
+  - "Sportangebotstyp" ist der vorläufig gewählte Begriff für typisierte Einzelangebote des Vereins
+  - Beispiel: Jumping Fitness, Basketball U14
+  - dient der Gruppierung / Zusammenfassung einzelner konkreter Sportangebote zu sachlogisch sinnvollen Gruppen
+  - Beispiel Basketball U14 bezieht sich auf mehrere konkrete Sportangebote, z.B. ein konkretes Training an 
+    einem Wochentag zu einer bestimmten Uhrzeit (jede Woche außerhalb der Ferienzeiten)
+
+*/
+
+CREATE TABLE generic_sport_offers (
+  generic_sport_offer_id serial PRIMARY KEY,
+  sport_id integer REFERENCES sports(sport_id),
+  generic_sport_offer_name varchar(255) UNIQUE NOT NULL,
+  generic_sport_offer_description varchar(255)  
+);
+
+/* 
+
+fixed_sports_offer
+
+- konkretes_Sportangebot : ein konkretes Sportangebot bedingt die Belegung einer Sportstätte 
+  in einem konkreten Zeitslot an einem Wochentag (oder einem konkreten Datum) unter Leitung eines bestimmten Trainers
+  - M.a.W.: An welchem Wochentag oder Datum ist eine Sportstätte von wann bis wann durch welches konkrete Sportangebot belegt?
+  - Beispiel: Jumping Fitness mit Marie, samstags 11 bis 12 Uhr, Fitnessraum 2+3
+  - Hinweis zum Beispiel: Das Beispiel "Jumping Fitness" legt offen, dass ein Sportangebot _nur_
+    in Zusammenhang mit einer Sportstätten-Belegung und einer Belegungszeit und einer Person in
+    der Rolle Trainer / Übungsleiter (ÜL) sinnvoll zu modellieren ist.
+  - TODO: Postgres Range Type tsrange for time ranges, https://www.postgresql.org/docs/14/rangetypes.html 
+  
+              dayofweek Wochentag
+            date belegung_termin "alternativ zu dayofweek Wochentag"
+            int AnzahlTage "in welchem Rhythmus erfolgt die Belegung"
+            time belegung_von
+            time belegung_bis "u.a. CONSTRAINT belegung_von < belegung_bis"
+            int min_teilnehmer
+            int max_teilnehmer
+*/
+CREATE TABLE fixed_sports_offer (
+  fixed_sport_offer_id serial PRIMARY KEY,
+  generic_sport_offer_id integer REFERENCES generic_sport_offers(generic_sport_offer_id),
+  fixed_sport_offer_name varchar(255) UNIQUE NOT NULL,
+  fixed_sport_offer_description varchar(255),
+  fixed_sport_offer_start_date date,  -- Ist das Angebot derzeit aktiv?
+  fixed_sport_offer_end_date date,    -- Angebot wurde beendet am ... 
+  fixed_sport_offer_type text,        -- For future use: 
+                                      -- "Weekday offer" (findet an einem Wochentag jede Woche statt; Beispiel: Basketball-Training U14 freitags 16-18 Uhr), 
+                                      --"Time Period Offer" (findet in einem bestimmten Zeitraum statt; aber nicht jede Woche; Beispiel: Sommercamp Fussballschule) 
+                                      -- 
+  fixed_sport_offer_day_of_week integer;
+  fixed_sport_offer_every_n_days integer;
+
+
+
+  
+)
+
