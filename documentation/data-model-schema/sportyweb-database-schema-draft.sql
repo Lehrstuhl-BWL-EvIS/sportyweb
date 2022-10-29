@@ -452,9 +452,5 @@ CREATE TABLE fixed_sports_offer (
                                       -- 
   fixed_sport_offer_day_of_week integer;
   fixed_sport_offer_every_n_days integer;
-
-
-
-  
 )
 
