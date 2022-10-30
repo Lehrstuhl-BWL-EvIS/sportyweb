@@ -21,10 +21,10 @@
     <%= text_input f, :website_url %>
     <%= error_tag f, :website_url %>
 
-    <%= label f, :founding_date, "Gründungsdatum" %>
+    <%= label f, :founded_at, "Gründungsdatum" %>
     <% {:ok, now} = DateTime.now("Europe/Berlin") %>
     <% today = DateTime.to_date(now) %>
-    <%= date_select f, :founding_date, year: [options: 1800..(today.year)],
+    <%= date_select f, :founded_at, year: [options: 1800..(today.year)],
                                        month: [options: 1..12],
                                        default: today,
                                        builder: fn b -> %>
@@ -32,7 +32,7 @@
       <%= b.(:month, []) %> /
       <%= b.(:year, []) %>
     <% end %>
-    <%= error_tag f, :founding_date %>
+    <%= error_tag f, :founded_at %>
 
     <div>
       <%= submit "Save", phx_disable_with: "Saving..." %>

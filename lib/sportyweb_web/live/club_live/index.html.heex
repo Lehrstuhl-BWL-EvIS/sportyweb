@@ -30,7 +30,7 @@
         <td><%= club.name %></td>
         <td><%= club.reference_number %></td>
         <td><%= link(club.website_url, to: club.website_url, target: "_blank") %></td>
-        <td><%= Calendar.strftime(club.founding_date, "%d.%m.%Y") %></td>
+        <td><%= Calendar.strftime(club.founded_at, "%d.%m.%Y") %></td>
 
         <td>
           <span><%= live_redirect "Show", to: Routes.club_show_path(@socket, :show, club) %></span>

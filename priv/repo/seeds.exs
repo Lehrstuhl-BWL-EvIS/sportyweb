@@ -53,26 +53,26 @@ Repo.insert!(%Club{
   name: "FC Bayern München",
   reference_number: "0815",
   website_url: "https://fcbayern.com/",
-  founding_date: ~D[1900-02-27]
+  founded_at: ~D[1900-02-27]
 })
 
 Repo.insert!(%Club{
   name: "1. FC Köln",
   reference_number: "xyz",
   website_url: "https://fc.de/",
-  founding_date: ~D[1948-02-13]
+  founded_at: ~D[1948-02-13]
 })
 
 Repo.insert!(%Club{
   name: "FC St. Pauli",
   reference_number: "",
   website_url: "https://www.fcstpauli.com/",
-  founding_date: ~D[1910-05-15]
+  founded_at: ~D[1910-05-15]
 })
 
 Repo.insert!(%Club{
   name: "Keine-Website-Verein",
   reference_number: "",
   website_url: "",
-  founding_date: ~D[2020-04-01]
+  founded_at: ~D[2020-04-01]
 })

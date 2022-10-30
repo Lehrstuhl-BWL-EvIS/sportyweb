@@ -8,7 +8,7 @@ defmodule Sportyweb.OrganizationsTest do
 
     import Sportyweb.OrganizationsFixtures
 
-    @invalid_attrs %{founding_date: nil, name: nil, reference_number: nil, website_url: nil}
+    @invalid_attrs %{founded_at: nil, name: nil, reference_number: nil, website_url: nil}
 
     test "list_clubs/0 returns all clubs" do
       club = club_fixture()
@@ -21,10 +21,10 @@ defmodule Sportyweb.OrganizationsTest do
     end
 
     test "create_club/1 with valid data creates a club" do
-      valid_attrs = %{founding_date: ~D[2022-10-29], name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
+      valid_attrs = %{founded_at: ~D[2022-10-29], name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
 
       assert {:ok, %Club{} = club} = Organizations.create_club(valid_attrs)
-      assert club.founding_date == ~D[2022-10-29]
+      assert club.founded_at == ~D[2022-10-29]
       assert club.name == "some name"
       assert club.reference_number == "some reference_number"
       assert club.website_url == "some website_url"
@@ -36,10 +36,10 @@ defmodule Sportyweb.OrganizationsTest do
 
     test "update_club/2 with valid data updates the club" do
       club = club_fixture()
-      update_attrs = %{founding_date: ~D[2022-10-30], name: "some updated name", reference_number: "some updated reference_number", website_url: "some updated website_url"}
+      update_attrs = %{founded_at: ~D[2022-10-30], name: "some updated name", reference_number: "some updated reference_number", website_url: "some updated website_url"}
 
       assert {:ok, %Club{} = club} = Organizations.update_club(club, update_attrs)
-      assert club.founding_date == ~D[2022-10-30]
+      assert club.founded_at == ~D[2022-10-30]
       assert club.name == "some updated name"
       assert club.reference_number == "some updated reference_number"
       assert club.website_url == "some updated website_url"

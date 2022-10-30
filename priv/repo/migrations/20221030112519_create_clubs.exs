@@ -7,7 +7,7 @@ defmodule Sportyweb.Repo.Migrations.CreateClubs do
       add :name, :string, null: false, default: ""
       add :reference_number, :string, null: false, default: ""
       add :website_url, :string, null: false, default: ""
-      add :founding_date, :date, null: false
+      add :founded_at, :date, null: false
 
       timestamps()
     end

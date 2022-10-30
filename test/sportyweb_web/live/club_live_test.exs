@@ -4,9 +4,9 @@ defmodule SportywebWeb.ClubLiveTest do
   import Phoenix.LiveViewTest
   import Sportyweb.OrganizationsFixtures
 
-  @create_attrs %{founding_date: %{day: 29, month: 10, year: 2022}, name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
-  @update_attrs %{founding_date: %{day: 30, month: 10, year: 2022}, name: "some updated name", reference_number: "some updated reference_number", website_url: "some updated website_url"}
-  @invalid_attrs %{founding_date: %{day: 30, month: 2, year: 2022}, name: nil, reference_number: nil, website_url: nil}
+  @create_attrs %{founded_at: %{day: 29, month: 10, year: 2022}, name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
+  @update_attrs %{founded_at: %{day: 30, month: 10, year: 2022}, name: "some updated name", reference_number: "some updated reference_number", website_url: "some updated website_url"}
+  @invalid_attrs %{founded_at: %{day: 30, month: 2, year: 2022}, name: nil, reference_number: nil, website_url: nil}
 
   defp create_club(_) do
     club = club_fixture()
