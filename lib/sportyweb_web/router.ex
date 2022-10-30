@@ -88,6 +88,15 @@ defmodule SportywebWeb.Router do
     live "/clubs/:id", ClubLive.Show, :show
     live "/clubs/:id/show/edit", ClubLive.Show, :edit
 
+    # Departments
+
+    live "/departments", DepartmentLive.Index, :index
+    live "/departments/new", DepartmentLive.Index, :new
+    live "/departments/:id/edit", DepartmentLive.Index, :edit
+
+    live "/departments/:id", DepartmentLive.Show, :show
+    live "/departments/:id/show/edit", DepartmentLive.Show, :edit
+
     # Members
 
     resources "/members", MemberController # TODO: Replace the entire resource with LiveView

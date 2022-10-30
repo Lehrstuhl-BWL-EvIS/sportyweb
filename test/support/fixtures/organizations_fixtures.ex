@@ -25,4 +25,20 @@ defmodule Sportyweb.OrganizationsFixtures do
 
     club
   end
+
+  @doc """
+  Generate a department.
+  """
+  def department_fixture(attrs \\ %{}) do
+    {:ok, department} =
+      attrs
+      |> Enum.into(%{
+        created_at: ~D[2022-10-29],
+        name: "some name",
+        type: "some type"
+      })
+      |> Sportyweb.Organizations.create_department()
+
+    department
+  end
 end
