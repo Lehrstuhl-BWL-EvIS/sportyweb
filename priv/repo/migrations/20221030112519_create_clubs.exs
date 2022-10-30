@@ -4,14 +4,12 @@ defmodule Sportyweb.Repo.Migrations.CreateClubs do
   def change do
     create table(:clubs, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :name, :string
-      add :reference_number, :string
-      add :website_url, :string
-      add :founding_date, :date
+      add :name, :string, null: false, default: ""
+      add :reference_number, :string, null: false, default: ""
+      add :website_url, :string, null: false, default: ""
+      add :founding_date, :date, null: false
 
       timestamps()
     end
-
-    create unique_index(:clubs, [:website_url])
   end
 end
