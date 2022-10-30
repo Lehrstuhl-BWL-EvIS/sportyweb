@@ -79,6 +79,17 @@ defmodule SportywebWeb.Router do
     put "/users/settings", UserSettingsController, :update
     get "/users/settings/confirm_email/:token", UserSettingsController, :confirm_email
 
+    # Clubs
+
+    live "/clubs", ClubLive.Index, :index
+    live "/clubs/new", ClubLive.Index, :new
+    live "/clubs/:id/edit", ClubLive.Index, :edit
+
+    live "/clubs/:id", ClubLive.Show, :show
+    live "/clubs/:id/show/edit", ClubLive.Show, :edit
+
+    # Members
+
     resources "/members", MemberController # TODO: Replace the entire resource with LiveView
   end
 

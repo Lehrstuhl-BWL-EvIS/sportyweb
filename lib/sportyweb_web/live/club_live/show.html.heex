@@ -1,0 +1,41 @@
+<h1>Show Club</h1>
+
+<%= if @live_action in [:edit] do %>
+  <.modal return_to={Routes.club_show_path(@socket, :show, @club)}>
+    <.live_component
+      module={SportywebWeb.ClubLive.FormComponent}
+      id={@club.id}
+      title={@page_title}
+      action={@live_action}
+      club={@club}
+      return_to={Routes.club_show_path(@socket, :show, @club)}
+    />
+  </.modal>
+<% end %>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @club.name %>
+  </li>
+
+  <li>
+    <strong>Reference number:</strong>
+    <%= @club.reference_number %>
+  </li>
+
+  <li>
+    <strong>Website url:</strong>
+    <%= @club.website_url %>
+  </li>
+
+  <li>
+    <strong>Founding date:</strong>
+    <%= @club.founding_date %>
+  </li>
+
+</ul>
+
+<span><%= live_patch "Edit", to: Routes.club_show_path(@socket, :edit, @club), class: "button" %></span> |
+<span><%= live_redirect "Back", to: Routes.club_index_path(@socket, :index) %></span>

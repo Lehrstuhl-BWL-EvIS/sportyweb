@@ -1,0 +1,45 @@
+<h1>Listing Clubs</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <.modal return_to={Routes.club_index_path(@socket, :index)}>
+    <.live_component
+      module={SportywebWeb.ClubLive.FormComponent}
+      id={@club.id || :new}
+      title={@page_title}
+      action={@live_action}
+      club={@club}
+      return_to={Routes.club_index_path(@socket, :index)}
+    />
+  </.modal>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Reference number</th>
+      <th>Website url</th>
+      <th>Founding date</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="clubs">
+    <%= for club <- @clubs do %>
+      <tr id={"club-#{club.id}"}>
+        <td><%= club.name %></td>
+        <td><%= club.reference_number %></td>
+        <td><%= club.website_url %></td>
+        <td><%= club.founding_date %></td>
+
+        <td>
+          <span><%= live_redirect "Show", to: Routes.club_show_path(@socket, :show, club) %></span>
+          <span><%= live_patch "Edit", to: Routes.club_index_path(@socket, :edit, club) %></span>
+          <span><%= link "Delete", to: "#", phx_click: "delete", phx_value_id: club.id, data: [confirm: "Are you sure?"] %></span>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<span><%= live_patch "New Club", to: Routes.club_index_path(@socket, :new) %></span>
