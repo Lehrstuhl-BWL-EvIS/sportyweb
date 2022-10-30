@@ -33,7 +33,9 @@ defmodule Sportyweb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      ###################################
       # Default Phoenix Dependencies
+
       {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.6.15"},
       {:phoenix_ecto, "~> 4.4"},
@@ -52,8 +54,15 @@ defmodule Sportyweb.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
 
+      ###################################
       # Custom Dependencies
-      {:argon2_elixir, "~> 3.0"} # TODO: Add short explanation
+
+      # TODO: Add short explanation
+      {:argon2_elixir, "~> 3.0"},
+
+      # A mix task for generating Entity Relationship Diagrams
+      # https://github.com/fuelen/ecto_erd
+      {:ecto_erd, "~> 0.5", only: :dev}
     ]
   end
 

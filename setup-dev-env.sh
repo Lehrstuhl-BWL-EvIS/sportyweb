@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# The collaborative development of complex software like
+# SportyWeb will be much easier if each developer starts
+# on the same basis.
+#
+# This script takes care of setting up a new and clean
+# development environment each time it's run. It is meant
+# to be run on a regular basis. E.g. after each DB change.
+#
+# The script has to be executable. On Mac & Linux run:
+# chmod +x setup-dev-env.sh
+#
+# To run/execute the script:
+# ./setup-dev-env.sh
+
+set -e
+echo "- Setup Development Environment: Start"
+
+echo "- Install and update dependencies"
+mix deps.get
+
+echo "- Drop database"
+mix ecto.drop
+
+echo "- Create database"
+mix ecto.create
+
+echo "- Run database migrations"
+mix ecto.migrate
+
+echo "- Run seed file"
+mix run priv/repo/seeds.exs
+
+echo "- Generate an ERD (Entity Relationship Diagram)"
+if command -v dot &> /dev/null
+then
+    # https://hexdocs.pm/ecto_erd/Mix.Tasks.Ecto.Gen.Erd.html
+    mix ecto.gen.erd && dot -Tpdf ecto_erd.dot -o documentation/erd.pdf
+    rm ecto_erd.dot # Remove the .dot file
+else
+    echo "  WARNING: Can't generate an ERD!"
+    echo "           Please install Graphviz (https://graphviz.org/)"
+fi
+
+echo "- Setup Development Environment: Done"
+exit 0
