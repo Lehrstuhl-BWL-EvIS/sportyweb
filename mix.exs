@@ -5,7 +5,7 @@ defmodule Sportyweb.MixProject do
     [
       app: :sportyweb,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.12",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -33,8 +33,9 @@ defmodule Sportyweb.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      # Default Phoenix Dependencies
       {:bcrypt_elixir, "~> 3.0"},
-      {:phoenix, "~> 1.6.14"},
+      {:phoenix, "~> 1.6.15"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.9"},
       {:postgrex, ">= 0.0.0"},
@@ -50,7 +51,9 @@ defmodule Sportyweb.MixProject do
       {:gettext, "~> 0.18"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:argon2_elixir, "~> 3.0"}
+
+      # Custom Dependencies
+      {:argon2_elixir, "~> 3.0"} # TODO: Add short explanation
     ]
   end
 
