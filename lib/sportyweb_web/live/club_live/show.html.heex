@@ -27,12 +27,12 @@
 
   <li>
     <strong>Website url:</strong>
-    <%= @club.website_url %>
+    <%= link(@club.website_url, to: @club.website_url, target: "_blank") %>
   </li>
 
   <li>
     <strong>Founding date:</strong>
-    <%= @club.founding_date %>
+    <%= Calendar.strftime(@club.founding_date, "%d.%m.%Y") %>
   </li>
 
 </ul>

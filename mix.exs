@@ -61,8 +61,14 @@ defmodule Sportyweb.MixProject do
       {:argon2_elixir, "~> 3.0"},
 
       # A mix task for generating Entity Relationship Diagrams
+      # https://hexdocs.pm/ecto_erd/Mix.Tasks.Ecto.Gen.Erd.html
       # https://github.com/fuelen/ecto_erd
-      {:ecto_erd, "~> 0.5", only: :dev}
+      {:ecto_erd, "~> 0.5", only: :dev},
+
+      # TimeZoneDatabase for DateTime (which per default only supports UTC)
+      # https://hexdocs.pm/tzdata/readme.html
+      # https://github.com/lau/tzdata
+      {:tzdata, "~> 1.1"}
     ]
   end
 
