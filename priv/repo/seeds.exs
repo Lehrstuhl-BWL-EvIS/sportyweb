@@ -14,6 +14,7 @@ alias Sportyweb.Repo
 
 alias Sportyweb.Accounts
 alias Sportyweb.Organizations.Club
+alias Sportyweb.Organizations.Department
 
 ###################################
 # Add Users
@@ -49,11 +50,25 @@ end
 ###################################
 # Add Clubs
 
-Repo.insert!(%Club{
+club_1 = Repo.insert!(%Club{
   name: "FC Bayern München",
   reference_number: "0815",
   website_url: "https://fcbayern.com/",
   founded_at: ~D[1900-02-27]
+})
+
+Repo.insert!(%Department{
+  club: club_1,
+  name: "Fußball 1",
+  type: "Hauptabteilung",
+  created_at: ~D[1900-03-01]
+})
+
+Repo.insert!(%Department{
+  club: club_1,
+  name: "Fußball 2",
+  type: "Hauptabteilung",
+  created_at: ~D[1905-03-01]
 })
 
 Repo.insert!(%Club{
