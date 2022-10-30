@@ -1,12 +1,12 @@
-defmodule Sportyweb.Organizations do
+defmodule Sportyweb.Organization do
   @moduledoc """
-  The Organizations context.
+  The Organization context.
   """
 
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
-  alias Sportyweb.Organizations.Club
+  alias Sportyweb.Organization.Club
 
   @doc """
   Returns the list of clubs.
@@ -102,7 +102,7 @@ defmodule Sportyweb.Organizations do
     Club.changeset(club, attrs)
   end
 
-  alias Sportyweb.Organizations.Department
+  alias Sportyweb.Organization.Department
 
   @doc """
   Returns the list of departments.

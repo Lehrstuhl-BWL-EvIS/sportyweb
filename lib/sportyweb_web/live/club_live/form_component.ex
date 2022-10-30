@@ -1,11 +1,11 @@
 defmodule SportywebWeb.ClubLive.FormComponent do
   use SportywebWeb, :live_component
 
-  alias Sportyweb.Organizations
+  alias Sportyweb.Organization
 
   @impl true
   def update(%{club: club} = assigns, socket) do
-    changeset = Organizations.change_club(club)
+    changeset = Organization.change_club(club)
 
     {:ok,
      socket
@@ -17,7 +17,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
   def handle_event("validate", %{"club" => club_params}, socket) do
     changeset =
       socket.assigns.club
-      |> Organizations.change_club(club_params)
+      |> Organization.change_club(club_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, changeset)}
@@ -28,7 +28,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
   end
 
   defp save_club(socket, :edit, club_params) do
-    case Organizations.update_club(socket.assigns.club, club_params) do
+    case Organization.update_club(socket.assigns.club, club_params) do
       {:ok, _club} ->
         {:noreply,
          socket
@@ -41,7 +41,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
   end
 
   defp save_club(socket, :new, club_params) do
-    case Organizations.create_club(club_params) do
+    case Organization.create_club(club_params) do
       {:ok, _club} ->
         {:noreply,
          socket

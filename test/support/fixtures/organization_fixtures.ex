@@ -1,7 +1,7 @@
-defmodule Sportyweb.OrganizationsFixtures do
+defmodule Sportyweb.OrganizationFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Sportyweb.Organizations` context.
+  entities via the `Sportyweb.Organization` context.
   """
 
   @doc """
@@ -21,7 +21,7 @@ defmodule Sportyweb.OrganizationsFixtures do
         reference_number: "some reference_number",
         website_url: unique_club_website_url()
       })
-      |> Sportyweb.Organizations.create_club()
+      |> Sportyweb.Organization.create_club()
 
     club
   end
@@ -37,7 +37,7 @@ defmodule Sportyweb.OrganizationsFixtures do
         name: "some name",
         type: "some type"
       })
-      |> Sportyweb.Organizations.create_department()
+      |> Sportyweb.Organization.create_department()
 
     department
   end

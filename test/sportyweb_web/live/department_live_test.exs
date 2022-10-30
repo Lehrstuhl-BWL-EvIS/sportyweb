@@ -2,7 +2,7 @@ defmodule SportywebWeb.DepartmentLiveTest do
   use SportywebWeb.ConnCase
 
   import Phoenix.LiveViewTest
-  import Sportyweb.OrganizationsFixtures
+  import Sportyweb.OrganizationFixtures
 
   @create_attrs %{created_at: %{day: 29, month: 10, year: 2022}, name: "some name", type: "some type"}
   @update_attrs %{created_at: %{day: 30, month: 10, year: 2022}, name: "some updated name", type: "some updated type"}

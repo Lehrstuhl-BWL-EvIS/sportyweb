@@ -13,8 +13,8 @@
 alias Sportyweb.Repo
 
 alias Sportyweb.Accounts
-alias Sportyweb.Organizations.Club
-alias Sportyweb.Organizations.Department
+alias Sportyweb.Organization.Club
+alias Sportyweb.Organization.Department
 
 ###################################
 # Add Users

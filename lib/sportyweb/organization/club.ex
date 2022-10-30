@@ -1,8 +1,8 @@
-defmodule Sportyweb.Organizations.Club do
+defmodule Sportyweb.Organization.Club do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Sportyweb.Organizations.Department
+  alias Sportyweb.Organization.Department
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

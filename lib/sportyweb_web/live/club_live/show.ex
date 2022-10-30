@@ -1,7 +1,7 @@
 defmodule SportywebWeb.ClubLive.Show do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Organizations
+  alias Sportyweb.Organization
 
   @impl true
   def mount(_params, _session, socket) do
@@ -13,7 +13,7 @@ defmodule SportywebWeb.ClubLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:club, Organizations.get_club!(id))}
+     |> assign(:club, Organization.get_club!(id))}
   end
 
   defp page_title(:show), do: "Show Club"

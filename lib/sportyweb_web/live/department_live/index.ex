@@ -1,8 +1,8 @@
 defmodule SportywebWeb.DepartmentLive.Index do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Organizations
-  alias Sportyweb.Organizations.Department
+  alias Sportyweb.Organization
+  alias Sportyweb.Organization.Department
 
   @impl true
   def mount(_params, _session, socket) do
@@ -17,7 +17,7 @@ defmodule SportywebWeb.DepartmentLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit Department")
-    |> assign(:department, Organizations.get_department!(id))
+    |> assign(:department, Organization.get_department!(id))
   end
 
   defp apply_action(socket, :new, _params) do
@@ -34,13 +34,13 @@ defmodule SportywebWeb.DepartmentLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    department = Organizations.get_department!(id)
-    {:ok, _} = Organizations.delete_department(department)
+    department = Organization.get_department!(id)
+    {:ok, _} = Organization.delete_department(department)
 
     {:noreply, assign(socket, :departments, list_departments())}
   end
 
   defp list_departments do
-    Organizations.list_departments()
+    Organization.list_departments()
   end
 end

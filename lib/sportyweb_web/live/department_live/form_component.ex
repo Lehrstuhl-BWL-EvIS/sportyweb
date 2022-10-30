@@ -1,11 +1,11 @@
 defmodule SportywebWeb.DepartmentLive.FormComponent do
   use SportywebWeb, :live_component
 
-  alias Sportyweb.Organizations
+  alias Sportyweb.Organization
 
   @impl true
   def update(%{department: department} = assigns, socket) do
-    changeset = Organizations.change_department(department)
+    changeset = Organization.change_department(department)
 
     {:ok,
      socket
@@ -17,7 +17,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
   def handle_event("validate", %{"department" => department_params}, socket) do
     changeset =
       socket.assigns.department
-      |> Organizations.change_department(department_params)
+      |> Organization.change_department(department_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign(socket, :changeset, changeset)}
@@ -28,7 +28,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
   end
 
   defp save_department(socket, :edit, department_params) do
-    case Organizations.update_department(socket.assigns.department, department_params) do
+    case Organization.update_department(socket.assigns.department, department_params) do
       {:ok, _department} ->
         {:noreply,
          socket
@@ -41,7 +41,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
   end
 
   defp save_department(socket, :new, department_params) do
-    case Organizations.create_department(department_params) do
+    case Organization.create_department(department_params) do
       {:ok, _department} ->
         {:noreply,
          socket
