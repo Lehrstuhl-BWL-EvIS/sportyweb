@@ -11,7 +11,7 @@
   <:col :let={club} label="Name"><%= club.name %></:col>
   <:col :let={club} label="Reference number"><%= club.reference_number %></:col>
   <:col :let={club} label="Website url"><%= club.website_url %></:col>
-  <:col :let={club} label="Founded at"><%= club.founded_at %></:col>
+  <:col :let={club} label="Founded at"><%= Calendar.strftime(club.founded_at, "%d.%m.%Y") %></:col>
   <:action :let={club}>
     <div class="sr-only">
       <.link navigate={~p"/clubs/#{club}"}>Show</.link>

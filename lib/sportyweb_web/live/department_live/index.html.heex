@@ -10,7 +10,7 @@
 <.table id="departments" rows={@departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
   <:col :let={department} label="Name"><%= department.name %></:col>
   <:col :let={department} label="Type"><%= department.type %></:col>
-  <:col :let={department} label="Created at"><%= department.created_at %></:col>
+  <:col :let={department} label="Created at"><%= Calendar.strftime(department.created_at, "%d.%m.%Y") %></:col>
   <:action :let={department}>
     <div class="sr-only">
       <.link navigate={~p"/departments/#{department}"}>Show</.link>

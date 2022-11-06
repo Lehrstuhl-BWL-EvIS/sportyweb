@@ -11,7 +11,7 @@
 <.list>
   <:item title="Name"><%= @department.name %></:item>
   <:item title="Type"><%= @department.type %></:item>
-  <:item title="Created at"><%= @department.created_at %></:item>
+  <:item title="Created at"><%= Calendar.strftime(@department.created_at, "%d.%m.%Y") %></:item>
 </.list>
 
 <.back navigate={~p"/departments"}>Back to departments</.back>

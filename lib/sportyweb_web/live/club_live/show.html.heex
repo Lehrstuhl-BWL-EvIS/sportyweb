@@ -12,7 +12,7 @@
   <:item title="Name"><%= @club.name %></:item>
   <:item title="Reference number"><%= @club.reference_number %></:item>
   <:item title="Website url"><%= @club.website_url %></:item>
-  <:item title="Founded at"><%= @club.founded_at %></:item>
+  <:item title="Founded at"><%= Calendar.strftime(@club.founded_at, "%d.%m.%Y") %></:item>
 </.list>
 
 <.back navigate={~p"/clubs"}>Back to clubs</.back>
