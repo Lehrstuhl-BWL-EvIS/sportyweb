@@ -4,9 +4,9 @@ defmodule SportywebWeb.DepartmentLiveTest do
   import Phoenix.LiveViewTest
   import Sportyweb.OrganizationFixtures
 
-  @create_attrs %{created_at: %{day: 29, month: 10, year: 2022}, name: "some name", type: "some type"}
-  @update_attrs %{created_at: %{day: 30, month: 10, year: 2022}, name: "some updated name", type: "some updated type"}
-  @invalid_attrs %{created_at: %{day: 30, month: 2, year: 2022}, name: nil, type: nil}
+  @create_attrs %{created_at: "2022-11-5", name: "some name", type: "some type"}
+  @update_attrs %{created_at: "2022-11-6", name: "some updated name", type: "some updated type"}
+  @invalid_attrs %{created_at: nil, name: nil, type: nil}
 
   defp create_department(_) do
     department = department_fixture()
@@ -17,60 +17,60 @@ defmodule SportywebWeb.DepartmentLiveTest do
     setup [:create_department]
 
     test "lists all departments", %{conn: conn, department: department} do
-      {:ok, _index_live, html} = live(conn, Routes.department_index_path(conn, :index))
+      {:ok, _index_live, html} = live(conn, ~p"/departments")
 
       assert html =~ "Listing Departments"
       assert html =~ department.name
     end
 
     test "saves new department", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, Routes.department_index_path(conn, :index))
+      {:ok, index_live, _html} = live(conn, ~p"/departments")
 
       assert index_live |> element("a", "New Department") |> render_click() =~
                "New Department"
 
-      assert_patch(index_live, Routes.department_index_path(conn, :new))
+      assert_patch(index_live, ~p"/departments/new")
 
       assert index_live
              |> form("#department-form", department: @invalid_attrs)
-             |> render_change() =~ "is invalid"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         index_live
         |> form("#department-form", department: @create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, Routes.department_index_path(conn, :index))
+        |> follow_redirect(conn, ~p"/departments")
 
       assert html =~ "Department created successfully"
       assert html =~ "some name"
     end
 
     test "updates department in listing", %{conn: conn, department: department} do
-      {:ok, index_live, _html} = live(conn, Routes.department_index_path(conn, :index))
+      {:ok, index_live, _html} = live(conn, ~p"/departments")
 
-      assert index_live |> element("#department-#{department.id} a", "Edit") |> render_click() =~
+      assert index_live |> element("#departments-#{department.id} a", "Edit") |> render_click() =~
                "Edit Department"
 
-      assert_patch(index_live, Routes.department_index_path(conn, :edit, department))
+      assert_patch(index_live, ~p"/departments/#{department}/edit")
 
       assert index_live
              |> form("#department-form", department: @invalid_attrs)
-             |> render_change() =~ "is invalid"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         index_live
         |> form("#department-form", department: @update_attrs)
         |> render_submit()
-        |> follow_redirect(conn, Routes.department_index_path(conn, :index))
+        |> follow_redirect(conn, ~p"/departments")
 
       assert html =~ "Department updated successfully"
       assert html =~ "some updated name"
     end
 
     test "deletes department in listing", %{conn: conn, department: department} do
-      {:ok, index_live, _html} = live(conn, Routes.department_index_path(conn, :index))
+      {:ok, index_live, _html} = live(conn, ~p"/departments")
 
-      assert index_live |> element("#department-#{department.id} a", "Delete") |> render_click()
+      assert index_live |> element("#departments-#{department.id} a", "Delete") |> render_click()
       refute has_element?(index_live, "#department-#{department.id}")
     end
   end
@@ -79,29 +79,29 @@ defmodule SportywebWeb.DepartmentLiveTest do
     setup [:create_department]
 
     test "displays department", %{conn: conn, department: department} do
-      {:ok, _show_live, html} = live(conn, Routes.department_show_path(conn, :show, department))
+      {:ok, _show_live, html} = live(conn, ~p"/departments/#{department}")
 
       assert html =~ "Show Department"
       assert html =~ department.name
     end
 
     test "updates department within modal", %{conn: conn, department: department} do
-      {:ok, show_live, _html} = live(conn, Routes.department_show_path(conn, :show, department))
+      {:ok, show_live, _html} = live(conn, ~p"/departments/#{department}")
 
       assert show_live |> element("a", "Edit") |> render_click() =~
                "Edit Department"
 
-      assert_patch(show_live, Routes.department_show_path(conn, :edit, department))
+      assert_patch(show_live, ~p"/departments/#{department}/show/edit")
 
       assert show_live
              |> form("#department-form", department: @invalid_attrs)
-             |> render_change() =~ "is invalid"
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         show_live
         |> form("#department-form", department: @update_attrs)
         |> render_submit()
-        |> follow_redirect(conn, Routes.department_show_path(conn, :show, department))
+        |> follow_redirect(conn, ~p"/departments/#{department}")
 
       assert html =~ "Department updated successfully"
       assert html =~ "some updated name"

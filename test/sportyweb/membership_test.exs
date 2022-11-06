@@ -3,73 +3,57 @@ defmodule Sportyweb.MembershipTest do
 
   alias Sportyweb.Membership
 
-  describe "members" do
-    alias Sportyweb.Membership.Member
+  describe "households" do
+    alias Sportyweb.Membership.Household
 
     import Sportyweb.MembershipFixtures
 
-    @invalid_attrs %{date_of_birth: nil, email1: nil, email2: nil, firstname: nil, gender: nil, is_active: nil, lastname: nil, phone1: nil, phone2: nil}
+    @invalid_attrs %{identifier: nil}
 
-    test "list_members/0 returns all members" do
-      member = member_fixture()
-      assert Membership.list_members() == [member]
+    test "list_households/0 returns all households" do
+      household = household_fixture()
+      assert Membership.list_households() == [household]
     end
 
-    test "get_member!/1 returns the member with given id" do
-      member = member_fixture()
-      assert Membership.get_member!(member.id) == member
+    test "get_household!/1 returns the household with given id" do
+      household = household_fixture()
+      assert Membership.get_household!(household.id) == household
     end
 
-    test "create_member/1 with valid data creates a member" do
-      valid_attrs = %{date_of_birth: ~D[2022-08-24], email1: "some email1", email2: "some email2", firstname: "some firstname", gender: "some gender", is_active: true, lastname: "some lastname", phone1: "some phone1", phone2: "some phone2"}
+    test "create_household/1 with valid data creates a household" do
+      valid_attrs = %{identifier: "some identifier"}
 
-      assert {:ok, %Member{} = member} = Membership.create_member(valid_attrs)
-      assert member.date_of_birth == ~D[2022-08-24]
-      assert member.email1 == "some email1"
-      assert member.email2 == "some email2"
-      assert member.firstname == "some firstname"
-      assert member.gender == "some gender"
-      assert member.is_active == true
-      assert member.lastname == "some lastname"
-      assert member.phone1 == "some phone1"
-      assert member.phone2 == "some phone2"
+      assert {:ok, %Household{} = household} = Membership.create_household(valid_attrs)
+      assert household.identifier == "some identifier"
     end
 
-    test "create_member/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Membership.create_member(@invalid_attrs)
+    test "create_household/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Membership.create_household(@invalid_attrs)
     end
 
-    test "update_member/2 with valid data updates the member" do
-      member = member_fixture()
-      update_attrs = %{date_of_birth: ~D[2022-08-25], email1: "some updated email1", email2: "some updated email2", firstname: "some updated firstname", gender: "some updated gender", is_active: false, lastname: "some updated lastname", phone1: "some updated phone1", phone2: "some updated phone2"}
+    test "update_household/2 with valid data updates the household" do
+      household = household_fixture()
+      update_attrs = %{identifier: "some updated identifier"}
 
-      assert {:ok, %Member{} = member} = Membership.update_member(member, update_attrs)
-      assert member.date_of_birth == ~D[2022-08-25]
-      assert member.email1 == "some updated email1"
-      assert member.email2 == "some updated email2"
-      assert member.firstname == "some updated firstname"
-      assert member.gender == "some updated gender"
-      assert member.is_active == false
-      assert member.lastname == "some updated lastname"
-      assert member.phone1 == "some updated phone1"
-      assert member.phone2 == "some updated phone2"
+      assert {:ok, %Household{} = household} = Membership.update_household(household, update_attrs)
+      assert household.identifier == "some updated identifier"
     end
 
-    test "update_member/2 with invalid data returns error changeset" do
-      member = member_fixture()
-      assert {:error, %Ecto.Changeset{}} = Membership.update_member(member, @invalid_attrs)
-      assert member == Membership.get_member!(member.id)
+    test "update_household/2 with invalid data returns error changeset" do
+      household = household_fixture()
+      assert {:error, %Ecto.Changeset{}} = Membership.update_household(household, @invalid_attrs)
+      assert household == Membership.get_household!(household.id)
     end
 
-    test "delete_member/1 deletes the member" do
-      member = member_fixture()
-      assert {:ok, %Member{}} = Membership.delete_member(member)
-      assert_raise Ecto.NoResultsError, fn -> Membership.get_member!(member.id) end
+    test "delete_household/1 deletes the household" do
+      household = household_fixture()
+      assert {:ok, %Household{}} = Membership.delete_household(household)
+      assert_raise Ecto.NoResultsError, fn -> Membership.get_household!(household.id) end
     end
 
-    test "change_member/1 returns a member changeset" do
-      member = member_fixture()
-      assert %Ecto.Changeset{} = Membership.change_member(member)
+    test "change_household/1 returns a household changeset" do
+      household = household_fixture()
+      assert %Ecto.Changeset{} = Membership.change_household(household)
     end
   end
 end

@@ -8,12 +8,14 @@ defmodule Sportyweb.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Ecto repository
-      Sportyweb.Repo,
       # Start the Telemetry supervisor
       SportywebWeb.Telemetry,
+      # Start the Ecto repository
+      Sportyweb.Repo,
       # Start the PubSub system
       {Phoenix.PubSub, name: Sportyweb.PubSub},
+      # Start Finch
+      {Finch, name: Sportyweb.Finch},
       # Start the Endpoint (http/https)
       SportywebWeb.Endpoint
       # Start a worker by calling: Sportyweb.Worker.start_link(arg)

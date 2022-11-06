@@ -4,6 +4,35 @@ defmodule SportywebWeb.ClubLive.FormComponent do
   alias Sportyweb.Organization
 
   @impl true
+  def render(assigns) do
+    ~H"""
+    <div>
+      <.header>
+        <%= @title %>
+        <:subtitle>Use this form to manage club records in your database.</:subtitle>
+      </.header>
+
+      <.simple_form
+        :let={f}
+        for={@changeset}
+        id="club-form"
+        phx-target={@myself}
+        phx-change="validate"
+        phx-submit="save"
+      >
+        <.input field={{f, :name}} type="text" label="name" />
+        <.input field={{f, :reference_number}} type="text" label="reference_number" />
+        <.input field={{f, :website_url}} type="text" label="website_url" />
+        <.input field={{f, :founded_at}} type="date" label="founded_at" />
+        <:actions>
+          <.button phx-disable-with="Saving...">Save Club</.button>
+        </:actions>
+      </.simple_form>
+    </div>
+    """
+  end
+
+  @impl true
   def update(%{club: club} = assigns, socket) do
     changeset = Organization.change_club(club)
 
@@ -33,7 +62,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Club updated successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -46,7 +75,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Club created successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}

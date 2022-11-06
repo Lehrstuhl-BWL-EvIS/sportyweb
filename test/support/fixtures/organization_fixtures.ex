@@ -16,7 +16,7 @@ defmodule Sportyweb.OrganizationFixtures do
     {:ok, club} =
       attrs
       |> Enum.into(%{
-        founded_at: ~D[2022-10-29],
+        founded_at: ~D[2022-11-05],
         name: "some name",
         reference_number: "some reference_number",
         website_url: unique_club_website_url()
@@ -33,7 +33,7 @@ defmodule Sportyweb.OrganizationFixtures do
     {:ok, department} =
       attrs
       |> Enum.into(%{
-        created_at: ~D[2022-10-29],
+        created_at: ~D[2022-11-05],
         name: "some name",
         type: "some type"
       })

@@ -6,99 +6,99 @@ defmodule Sportyweb.Membership do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
-  alias Sportyweb.Membership.Member
+  alias Sportyweb.Membership.Household
 
   @doc """
-  Returns the list of members.
+  Returns the list of households.
 
   ## Examples
 
-      iex> list_members()
-      [%Member{}, ...]
+      iex> list_households()
+      [%Household{}, ...]
 
   """
-  def list_members do
-    Repo.all(Member)
+  def list_households do
+    Repo.all(Household)
   end
 
   @doc """
-  Gets a single member.
+  Gets a single household.
 
-  Raises `Ecto.NoResultsError` if the Member does not exist.
+  Raises `Ecto.NoResultsError` if the Household does not exist.
 
   ## Examples
 
-      iex> get_member!(123)
-      %Member{}
+      iex> get_household!(123)
+      %Household{}
 
-      iex> get_member!(456)
+      iex> get_household!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_member!(id), do: Repo.get!(Member, id)
+  def get_household!(id), do: Repo.get!(Household, id)
 
   @doc """
-  Creates a member.
+  Creates a household.
 
   ## Examples
 
-      iex> create_member(%{field: value})
-      {:ok, %Member{}}
+      iex> create_household(%{field: value})
+      {:ok, %Household{}}
 
-      iex> create_member(%{field: bad_value})
+      iex> create_household(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_member(attrs \\ %{}) do
-    %Member{}
-    |> Member.changeset(attrs)
+  def create_household(attrs \\ %{}) do
+    %Household{}
+    |> Household.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a member.
+  Updates a household.
 
   ## Examples
 
-      iex> update_member(member, %{field: new_value})
-      {:ok, %Member{}}
+      iex> update_household(household, %{field: new_value})
+      {:ok, %Household{}}
 
-      iex> update_member(member, %{field: bad_value})
+      iex> update_household(household, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_member(%Member{} = member, attrs) do
-    member
-    |> Member.changeset(attrs)
+  def update_household(%Household{} = household, attrs) do
+    household
+    |> Household.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a member.
+  Deletes a household.
 
   ## Examples
 
-      iex> delete_member(member)
-      {:ok, %Member{}}
+      iex> delete_household(household)
+      {:ok, %Household{}}
 
-      iex> delete_member(member)
+      iex> delete_household(household)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_member(%Member{} = member) do
-    Repo.delete(member)
+  def delete_household(%Household{} = household) do
+    Repo.delete(household)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking member changes.
+  Returns an `%Ecto.Changeset{}` for tracking household changes.
 
   ## Examples
 
-      iex> change_member(member)
-      %Ecto.Changeset{data: %Member{}}
+      iex> change_household(household)
+      %Ecto.Changeset{data: %Household{}}
 
   """
-  def change_member(%Member{} = member, attrs \\ %{}) do
-    Member.changeset(member, attrs)
+  def change_household(%Household{} = household, attrs \\ %{}) do
+    Household.changeset(household, attrs)
   end
 end

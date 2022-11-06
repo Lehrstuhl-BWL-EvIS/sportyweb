@@ -4,6 +4,34 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
   alias Sportyweb.Organization
 
   @impl true
+  def render(assigns) do
+    ~H"""
+    <div>
+      <.header>
+        <%= @title %>
+        <:subtitle>Use this form to manage department records in your database.</:subtitle>
+      </.header>
+
+      <.simple_form
+        :let={f}
+        for={@changeset}
+        id="department-form"
+        phx-target={@myself}
+        phx-change="validate"
+        phx-submit="save"
+      >
+        <.input field={{f, :name}} type="text" label="name" />
+        <.input field={{f, :type}} type="text" label="type" />
+        <.input field={{f, :created_at}} type="date" label="created_at" />
+        <:actions>
+          <.button phx-disable-with="Saving...">Save Department</.button>
+        </:actions>
+      </.simple_form>
+    </div>
+    """
+  end
+
+  @impl true
   def update(%{department: department} = assigns, socket) do
     changeset = Organization.change_department(department)
 
@@ -33,7 +61,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Department updated successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -46,7 +74,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Department created successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}

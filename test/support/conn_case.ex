@@ -19,15 +19,15 @@ defmodule SportywebWeb.ConnCase do
 
   using do
     quote do
+      # The default endpoint for testing
+      @endpoint SportywebWeb.Endpoint
+
+      use SportywebWeb, :verified_routes
+
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
       import SportywebWeb.ConnCase
-
-      alias SportywebWeb.Router.Helpers, as: Routes
-
-      # The default endpoint for testing
-      @endpoint SportywebWeb.Endpoint
     end
   end
 

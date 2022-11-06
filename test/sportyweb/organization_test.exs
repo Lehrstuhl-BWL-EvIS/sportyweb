@@ -21,10 +21,10 @@ defmodule Sportyweb.OrganizationTest do
     end
 
     test "create_club/1 with valid data creates a club" do
-      valid_attrs = %{founded_at: ~D[2022-10-29], name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
+      valid_attrs = %{founded_at: ~D[2022-11-05], name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
 
       assert {:ok, %Club{} = club} = Organization.create_club(valid_attrs)
-      assert club.founded_at == ~D[2022-10-29]
+      assert club.founded_at == ~D[2022-11-05]
       assert club.name == "some name"
       assert club.reference_number == "some reference_number"
       assert club.website_url == "some website_url"
@@ -36,10 +36,10 @@ defmodule Sportyweb.OrganizationTest do
 
     test "update_club/2 with valid data updates the club" do
       club = club_fixture()
-      update_attrs = %{founded_at: ~D[2022-10-30], name: "some updated name", reference_number: "some updated reference_number", website_url: "some updated website_url"}
+      update_attrs = %{founded_at: ~D[2022-11-06], name: "some updated name", reference_number: "some updated reference_number", website_url: "some updated website_url"}
 
       assert {:ok, %Club{} = club} = Organization.update_club(club, update_attrs)
-      assert club.founded_at == ~D[2022-10-30]
+      assert club.founded_at == ~D[2022-11-06]
       assert club.name == "some updated name"
       assert club.reference_number == "some updated reference_number"
       assert club.website_url == "some updated website_url"
@@ -81,10 +81,10 @@ defmodule Sportyweb.OrganizationTest do
     end
 
     test "create_department/1 with valid data creates a department" do
-      valid_attrs = %{created_at: ~D[2022-10-29], name: "some name", type: "some type"}
+      valid_attrs = %{created_at: ~D[2022-11-05], name: "some name", type: "some type"}
 
       assert {:ok, %Department{} = department} = Organization.create_department(valid_attrs)
-      assert department.created_at == ~D[2022-10-29]
+      assert department.created_at == ~D[2022-11-05]
       assert department.name == "some name"
       assert department.type == "some type"
     end
@@ -95,10 +95,10 @@ defmodule Sportyweb.OrganizationTest do
 
     test "update_department/2 with valid data updates the department" do
       department = department_fixture()
-      update_attrs = %{created_at: ~D[2022-10-30], name: "some updated name", type: "some updated type"}
+      update_attrs = %{created_at: ~D[2022-11-06], name: "some updated name", type: "some updated type"}
 
       assert {:ok, %Department{} = department} = Organization.update_department(department, update_attrs)
-      assert department.created_at == ~D[2022-10-30]
+      assert department.created_at == ~D[2022-11-06]
       assert department.name == "some updated name"
       assert department.type == "some updated type"
     end

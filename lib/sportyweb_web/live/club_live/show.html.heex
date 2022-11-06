@@ -1,41 +1,29 @@
-<h1>Show Club</h1>
+<.header>
+  Club <%= @club.id %>
+  <:subtitle>This is a club record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/clubs/#{@club}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit club</.button>
+    </.link>
+  </:actions>
+</.header>
 
-<%= if @live_action in [:edit] do %>
-  <.modal return_to={Routes.club_show_path(@socket, :show, @club)}>
-    <.live_component
-      module={SportywebWeb.ClubLive.FormComponent}
-      id={@club.id}
-      title={@page_title}
-      action={@live_action}
-      club={@club}
-      return_to={Routes.club_show_path(@socket, :show, @club)}
-    />
-  </.modal>
-<% end %>
+<.list>
+  <:item title="Name"><%= @club.name %></:item>
+  <:item title="Reference number"><%= @club.reference_number %></:item>
+  <:item title="Website url"><%= @club.website_url %></:item>
+  <:item title="Founded at"><%= @club.founded_at %></:item>
+</.list>
 
-<ul>
+<.back navigate={~p"/clubs"}>Back to clubs</.back>
 
-  <li>
-    <strong>Name:</strong>
-    <%= @club.name %>
-  </li>
-
-  <li>
-    <strong>Reference number:</strong>
-    <%= @club.reference_number %>
-  </li>
-
-  <li>
-    <strong>Website url:</strong>
-    <%= link(@club.website_url, to: @club.website_url, target: "_blank") %>
-  </li>
-
-  <li>
-    <strong>Founding date:</strong>
-    <%= Calendar.strftime(@club.founded_at, "%d.%m.%Y") %>
-  </li>
-
-</ul>
-
-<span><%= live_patch "Edit", to: Routes.club_show_path(@socket, :edit, @club), class: "button" %></span> |
-<span><%= live_redirect "Back", to: Routes.club_index_path(@socket, :index) %></span>
+<.modal :if={@live_action == :edit} id="club-modal" show on_cancel={JS.patch(~p"/clubs/#{@club}")}>
+  <.live_component
+    module={SportywebWeb.ClubLive.FormComponent}
+    id={@club.id}
+    title={@page_title}
+    action={@live_action}
+    club={@club}
+    navigate={~p"/clubs/#{@club}"}
+  />
+</.modal>
