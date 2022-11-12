@@ -19,13 +19,17 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---
 
-# ER Overview Diagram – (partial) conceptual data model / semantic data model 
+# Database schema - draft design   
 
-![Sportyweb ER Overview Diagram](sportyweb-schema.png "ER Overview Diagram")
+![Sportyweb Database Schema - design draft (draft)](sportyweb-database-schema-draft.sql "Database schema draft")
+
+
+# Conceptual Data Model (partial) – (partial) conceptual data model / semantic data model 
+
+![Sportyweb Conceptual Data Model (draft)](2022-10-24-sportyweb-cdm.pdf "Conceptual Data Model (drafT))")
 
 
 # ER Details Diagram – (incomplete, preliminary) logical database schema
-
 
 Note that data types are NOT properly modeled due to Mermaid.js limitations, see 
 https://mermaid-js.github.io/mermaid/#/entityRelationshipDiagram
