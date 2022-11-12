@@ -1,0 +1,28 @@
+<.header>
+  Department <%= @department.id %>
+  <:subtitle>This is a department record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/departments/#{@department}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit department</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @department.name %></:item>
+  <:item title="Type"><%= @department.type %></:item>
+  <:item title="Created at"><%= Calendar.strftime(@department.created_at, "%d.%m.%Y") %></:item>
+</.list>
+
+<.back navigate={~p"/departments"}>Back to departments</.back>
+
+<.modal :if={@live_action == :edit} id="department-modal" show on_cancel={JS.patch(~p"/departments/#{@department}")}>
+  <.live_component
+    module={SportywebWeb.DepartmentLive.FormComponent}
+    id={@department.id}
+    title={@page_title}
+    action={@live_action}
+    department={@department}
+    navigate={~p"/departments/#{@department}"}
+  />
+</.modal>

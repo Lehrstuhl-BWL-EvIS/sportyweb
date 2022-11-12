@@ -32,3 +32,5 @@ sportyweb-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Don't commit the ERD file, recreate it with each setup-dev-env.sh run
+documentation/erd.pdf

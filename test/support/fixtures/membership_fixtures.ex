@@ -5,24 +5,21 @@ defmodule Sportyweb.MembershipFixtures do
   """
 
   @doc """
-  Generate a member.
+  Generate a unique household identifier.
   """
-  def member_fixture(attrs \\ %{}) do
-    {:ok, member} =
+  def unique_household_identifier, do: "some identifier#{System.unique_integer([:positive])}"
+
+  @doc """
+  Generate a household.
+  """
+  def household_fixture(attrs \\ %{}) do
+    {:ok, household} =
       attrs
       |> Enum.into(%{
-        date_of_birth: ~D[2022-08-24],
-        email1: "some email1",
-        email2: "some email2",
-        firstname: "some firstname",
-        gender: "some gender",
-        is_active: true,
-        lastname: "some lastname",
-        phone1: "some phone1",
-        phone2: "some phone2"
+        identifier: unique_household_identifier()
       })
-      |> Sportyweb.Membership.create_member()
+      |> Sportyweb.Membership.create_household()
 
-    member
+    household
   end
 end

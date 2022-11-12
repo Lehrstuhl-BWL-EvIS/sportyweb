@@ -1,0 +1,42 @@
+<.header>
+  Listing Clubs
+  <:actions>
+    <.link patch={~p"/clubs/new"}>
+      <.button>New Club</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="clubs" rows={@clubs} row_click={&JS.navigate(~p"/clubs/#{&1}")}>
+  <:col :let={club} label="Name"><%= club.name %></:col>
+  <:col :let={club} label="Reference number"><%= club.reference_number %></:col>
+  <:col :let={club} label="Website url"><%= club.website_url %></:col>
+  <:col :let={club} label="Founded at"><%= Calendar.strftime(club.founded_at, "%d.%m.%Y") %></:col>
+  <:action :let={club}>
+    <div class="sr-only">
+      <.link navigate={~p"/clubs/#{club}"}>Show</.link>
+    </div>
+    <.link patch={~p"/clubs/#{club}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={club}>
+    <.link phx-click={JS.push("delete", value: %{id: club.id})} data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="club-modal"
+  show
+  on_cancel={JS.navigate(~p"/clubs")}
+>
+  <.live_component
+    module={SportywebWeb.ClubLive.FormComponent}
+    id={@club.id || :new}
+    title={@page_title}
+    action={@live_action}
+    club={@club}
+    navigate={~p"/clubs"}
+  />
+</.modal>

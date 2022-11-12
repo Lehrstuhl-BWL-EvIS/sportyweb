@@ -7,33 +7,18 @@ defmodule SportywebWeb.UserSessionControllerTest do
     %{user: user_fixture()}
   end
 
-  describe "GET /users/log_in" do
-    test "renders log in page", %{conn: conn} do
-      conn = get(conn, Routes.user_session_path(conn, :new))
-      response = html_response(conn, 200)
-      assert response =~ "<h1>Log in</h1>"
-      assert response =~ "Register</a>"
-      assert response =~ "Forgot your password?</a>"
-    end
-
-    test "redirects if already logged in", %{conn: conn, user: user} do
-      conn = conn |> log_in_user(user) |> get(Routes.user_session_path(conn, :new))
-      assert redirected_to(conn) == "/"
-    end
-  end
-
   describe "POST /users/log_in" do
     test "logs the user in", %{conn: conn, user: user} do
       conn =
-        post(conn, Routes.user_session_path(conn, :create), %{
+        post(conn, ~p"/users/log_in", %{
           "user" => %{"email" => user.email, "password" => valid_user_password()}
         })
 
       assert get_session(conn, :user_token)
-      assert redirected_to(conn) == "/"
+      assert redirected_to(conn) == ~p"/"
 
       # Now do a logged in request and assert on the menu
-      conn = get(conn, "/")
+      conn = get(conn, ~p"/")
       response = html_response(conn, 200)
       assert response =~ user.email
       assert response =~ "Settings</a>"
@@ -42,7 +27,7 @@ defmodule SportywebWeb.UserSessionControllerTest do
 
     test "logs the user in with remember me", %{conn: conn, user: user} do
       conn =
-        post(conn, Routes.user_session_path(conn, :create), %{
+        post(conn, ~p"/users/log_in", %{
           "user" => %{
             "email" => user.email,
             "password" => valid_user_password(),
@@ -51,14 +36,14 @@ defmodule SportywebWeb.UserSessionControllerTest do
         })
 
       assert conn.resp_cookies["_sportyweb_web_user_remember_me"]
-      assert redirected_to(conn) == "/"
+      assert redirected_to(conn) == ~p"/"
     end
 
     test "logs the user in with return to", %{conn: conn, user: user} do
       conn =
         conn
         |> init_test_session(user_return_to: "/foo/bar")
-        |> post(Routes.user_session_path(conn, :create), %{
+        |> post(~p"/users/log_in", %{
           "user" => %{
             "email" => user.email,
             "password" => valid_user_password()
@@ -66,33 +51,63 @@ defmodule SportywebWeb.UserSessionControllerTest do
         })
 
       assert redirected_to(conn) == "/foo/bar"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Welcome back!"
     end
 
-    test "emits error message with invalid credentials", %{conn: conn, user: user} do
+    test "login following registration", %{conn: conn, user: user} do
       conn =
-        post(conn, Routes.user_session_path(conn, :create), %{
-          "user" => %{"email" => user.email, "password" => "invalid_password"}
+        conn
+        |> post(~p"/users/log_in", %{
+          "_action" => "registered",
+          "user" => %{
+            "email" => user.email,
+            "password" => valid_user_password()
+          }
         })
 
-      response = html_response(conn, 200)
-      assert response =~ "<h1>Log in</h1>"
-      assert response =~ "Invalid email or password"
+      assert redirected_to(conn) == ~p"/"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Account created successfully"
+    end
+
+    test "login following password update", %{conn: conn, user: user} do
+      conn =
+        conn
+        |> post(~p"/users/log_in", %{
+          "_action" => "password_updated",
+          "user" => %{
+            "email" => user.email,
+            "password" => valid_user_password()
+          }
+        })
+
+      assert redirected_to(conn) == ~p"/users/settings"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Password updated successfully"
+    end
+
+    test "redirects to login page with invalid credentials", %{conn: conn} do
+      conn =
+        post(conn, ~p"/users/log_in", %{
+          "user" => %{"email" => "invalid@email.com", "password" => "invalid_password"}
+        })
+
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid email or password"
+      assert redirected_to(conn) == ~p"/users/log_in"
     end
   end
 
   describe "DELETE /users/log_out" do
     test "logs the user out", %{conn: conn, user: user} do
-      conn = conn |> log_in_user(user) |> delete(Routes.user_session_path(conn, :delete))
-      assert redirected_to(conn) == "/"
+      conn = conn |> log_in_user(user) |> delete(~p"/users/log_out")
+      assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
-      assert get_flash(conn, :info) =~ "Logged out successfully"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
     end
 
     test "succeeds even if the user is not logged in", %{conn: conn} do
-      conn = delete(conn, Routes.user_session_path(conn, :delete))
-      assert redirected_to(conn) == "/"
+      conn = delete(conn, ~p"/users/log_out")
+      assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
-      assert get_flash(conn, :info) =~ "Logged out successfully"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
     end
   end
 end

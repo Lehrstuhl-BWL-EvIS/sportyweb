@@ -1,0 +1,39 @@
+<.header>
+  Listing Households
+  <:actions>
+    <.link patch={~p"/households/new"}>
+      <.button>New Household</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="households" rows={@households} row_click={&JS.navigate(~p"/households/#{&1}")}>
+  <:col :let={household} label="Identifier"><%= household.identifier %></:col>
+  <:action :let={household}>
+    <div class="sr-only">
+      <.link navigate={~p"/households/#{household}"}>Show</.link>
+    </div>
+    <.link patch={~p"/households/#{household}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={household}>
+    <.link phx-click={JS.push("delete", value: %{id: household.id})} data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="household-modal"
+  show
+  on_cancel={JS.navigate(~p"/households")}
+>
+  <.live_component
+    module={SportywebWeb.HouseholdLive.FormComponent}
+    id={@household.id || :new}
+    title={@page_title}
+    action={@live_action}
+    household={@household}
+    navigate={~p"/households"}
+  />
+</.modal>
