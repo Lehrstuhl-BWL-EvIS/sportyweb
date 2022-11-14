@@ -68,7 +68,7 @@ defmodule Sportyweb.OrganizationTest do
 
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{created_at: nil, name: nil, type: nil}
+    @invalid_attrs %{club_id: nil, created_at: nil, name: nil, type: nil}
 
     test "list_departments/0 returns all departments" do
       department = department_fixture()
@@ -81,7 +81,8 @@ defmodule Sportyweb.OrganizationTest do
     end
 
     test "create_department/1 with valid data creates a department" do
-      valid_attrs = %{created_at: ~D[2022-11-05], name: "some name", type: "some type"}
+      club = club_fixture()
+      valid_attrs = %{club_id: club.id, created_at: ~D[2022-11-05], name: "some name", type: "some type"}
 
       assert {:ok, %Department{} = department} = Organization.create_department(valid_attrs)
       assert department.created_at == ~D[2022-11-05]
