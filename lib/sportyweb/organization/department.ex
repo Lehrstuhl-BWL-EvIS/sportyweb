@@ -2,13 +2,14 @@ defmodule Sportyweb.Organization.Department do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Organization.Department
   alias Sportyweb.Organization.Club
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "departments" do
     belongs_to :club, Club
-    field :parent_id, :binary_id # TODO: Self-reference
+    belongs_to :parent, Department
     field :name, :string
     field :type, :string
     field :created_at, :date
