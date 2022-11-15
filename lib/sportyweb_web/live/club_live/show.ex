@@ -13,7 +13,7 @@ defmodule SportywebWeb.ClubLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:club, Organization.get_club!(id))}
+     |> assign(:club, Organization.get_club!(id, [:departments]))}
   end
 
   defp page_title(:show), do: "Show Club"
