@@ -9,6 +9,7 @@
 </.header>
 
 <.list>
+  <:item title="Club"><%= @department.club.name %></:item>
   <:item title="Name"><%= @department.name %></:item>
   <:item title="Type"><%= @department.type %></:item>
   <:item title="Created at"><%= Calendar.strftime(@department.created_at, "%d.%m.%Y") %></:item>
