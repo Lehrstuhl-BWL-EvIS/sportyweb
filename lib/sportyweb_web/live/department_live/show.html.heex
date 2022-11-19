@@ -15,7 +15,7 @@
   <:item title="Created at"><%= Calendar.strftime(@department.created_at, "%d.%m.%Y") %></:item>
 </.list>
 
-<.back navigate={~p"/departments"}>Back to departments</.back>
+<.back navigate={~p"/clubs/#{@department.club}"}>Back to club</.back>
 
 <.modal :if={@live_action == :edit} id="department-modal" show on_cancel={JS.patch(~p"/departments/#{@department}")}>
   <.live_component
