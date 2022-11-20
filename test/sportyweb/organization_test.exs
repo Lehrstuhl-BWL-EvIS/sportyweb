@@ -78,9 +78,9 @@ defmodule Sportyweb.OrganizationTest do
 
     @invalid_attrs %{club_id: nil, created_at: nil, name: nil, type: nil}
 
-    test "list_departments/0 returns all departments" do
+    test "list_departments/1 returns all departments of a given club" do
       department = department_fixture()
-      assert Organization.list_departments() == [department]
+      assert Organization.list_departments(department.club_id) == [department]
     end
 
     test "get_department!/1 returns the department with given id" do
