@@ -18,7 +18,8 @@ defmodule Sportyweb.Organization do
 
   """
   def list_clubs do
-    Repo.all(Club)
+    query = from(c in Club, order_by: c.name)
+    Repo.all(query)
   end
 
   @doc """
