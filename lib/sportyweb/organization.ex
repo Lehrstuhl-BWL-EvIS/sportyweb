@@ -134,7 +134,7 @@ defmodule Sportyweb.Organization do
 
   """
   def list_departments(club_id) do
-    query = from(d in Department, where: d.club_id == ^club_id)
+    query = from(d in Department, where: d.club_id == ^club_id, order_by: d.name)
     Repo.all(query)
   end
 
