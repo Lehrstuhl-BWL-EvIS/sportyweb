@@ -125,16 +125,17 @@ defmodule Sportyweb.Organization do
   alias Sportyweb.Organization.Department
 
   @doc """
-  Returns the list of departments.
+  Returns a clubs list of departments.
 
   ## Examples
 
-      iex> list_departments()
+      iex> list_departments(1)
       [%Department{}, ...]
 
   """
-  def list_departments do
-    Repo.all(Department)
+  def list_departments(club_id) do
+    query = from(d in Department, where: d.club_id == ^club_id)
+    Repo.all(query)
   end
 
   @doc """

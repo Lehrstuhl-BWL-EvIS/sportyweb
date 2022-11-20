@@ -15,9 +15,19 @@
   <:item title="Founded at"><%= Calendar.strftime(@club.founded_at, "%d.%m.%Y") %></:item>
 </.list>
 
-<h2 class="text-lg font-semibold leading-8 text-zinc-800 mt-20 mb-3">
+<hr class="text-lg font-semibold leading-8 text-zinc-800 mt-20 mb-5">
+
+<.header>
   Departments
-</h2>
+  <:actions>
+    <.link navigate={~p"/clubs/#{@club.id}/departments"}>
+      <.button>All Departments</.button>
+    </.link>
+    <.link patch={~p"/clubs/#{@club.id}/departments/new"}>
+      <.button>New Department</.button>
+    </.link>
+  </:actions>
+</.header>
 
 <%= if Enum.any?(@club.departments) do %>
   <.table id="departments" rows={@club.departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
