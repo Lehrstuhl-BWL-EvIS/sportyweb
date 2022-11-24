@@ -8,6 +8,7 @@ defmodule Sportyweb.Accounts.User do
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+    field :roles, {:array, :string}, default: ["customer"]
 
     timestamps()
   end
@@ -37,7 +38,7 @@ defmodule Sportyweb.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :roles])
     |> validate_email(opts)
     |> validate_password(opts)
   end

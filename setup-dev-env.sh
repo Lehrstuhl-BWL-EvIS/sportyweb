@@ -47,4 +47,3 @@ else
 fi
 
 echo "- Setup Development Environment: Done"
-exit 0

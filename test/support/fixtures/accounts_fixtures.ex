@@ -6,6 +6,7 @@ defmodule Sportyweb.AccountsFixtures do
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
   def valid_user_password, do: "hello world!"
+  def role_super_user, do: ["super_user"]
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
@@ -14,10 +15,28 @@ defmodule Sportyweb.AccountsFixtures do
     })
   end
 
+  def valid_user_attributes_super_user(attrs \\ %{}) do
+    Enum.into(attrs, %{
+      email: unique_user_email(),
+      password: valid_user_password(),
+      roles: role_super_user()
+    })
+  end
+
   def user_fixture(attrs \\ %{}) do
     {:ok, user} =
       attrs
       |> valid_user_attributes()
+      |> Sportyweb.Accounts.register_user()
+
+    user
+  end
+
+  def user_fixture_customer(attrs \\ %{}), do: user_fixture(attrs)
+  def user_fixture_super_user(attrs \\ %{}) do
+    {:ok, user} =
+      attrs
+      |> valid_user_attributes_super_user()
       |> Sportyweb.Accounts.register_user()
 
     user

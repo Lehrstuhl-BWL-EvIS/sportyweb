@@ -23,27 +23,37 @@ alias Sportyweb.Organization.Department
 if Mix.env() in [:dev] do
   Accounts.register_user(%{
     email: "stefan.strecker@fernuni-hagen.de",
-    password: "NTU5MTM5NGNmZjY"
+    password: "NTU5MTM5NGNmZjY",
+    roles: ["super_user"]
   })
 
   Accounts.register_user(%{
     email: "marvin.biesenbach@studium.fernuni-hagen.de",
-    password: "MzU2OWY3NTQyNzI"
+    password: "MzU2OWY3NTQyNzI",
+    roles: ["super_user"]
   })
 
   Accounts.register_user(%{
     email: "sven.christ@fernuni-hagen.de",
-    password: "ZThjNWY2NTQ3OGQ"
+    password: "ZThjNWY2NTQ3OGQ",
+    roles: ["super_user"]
   })
 
   Accounts.register_user(%{
     email: "bastian.kres@krewast.de",
-    password: "MzU0MmJiZWI4ZmN"
+    password: "MzU0MmJiZWI4ZmN",
+    roles: ["super_user"]
   })
 
   Accounts.register_user(%{
     email: "andrew.utley@studium.fernuni-hagen.de",
-    password: "MGI3MTNlMzczZjR"
+    password: "MGI3MTNlMzczZjR",
+    roles: ["super_user"]
+  })
+
+  Accounts.register_user(%{
+    email: "tester@tester.de",
+    password: "testertester"
   })
 end
 
