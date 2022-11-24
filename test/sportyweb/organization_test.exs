@@ -20,6 +20,14 @@ defmodule Sportyweb.OrganizationTest do
       assert Organization.get_club!(club.id) == club
     end
 
+    test "get_club!/2 returns the club with given id and contains a list of preloaded departments" do
+      department = department_fixture()
+      club_id = department.club_id
+
+      assert %Club{} = Organization.get_club!(club_id, [:departments])
+      assert Organization.get_club!(club_id, [:departments]).departments |> Enum.at(0) == department
+    end
+
     test "create_club/1 with valid data creates a club" do
       valid_attrs = %{founded_at: ~D[2022-11-05], name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
 
@@ -68,11 +76,11 @@ defmodule Sportyweb.OrganizationTest do
 
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{created_at: nil, name: nil, type: nil}
+    @invalid_attrs %{club_id: nil, created_at: nil, name: nil, type: nil}
 
-    test "list_departments/0 returns all departments" do
+    test "list_departments/1 returns all departments of a given club" do
       department = department_fixture()
-      assert Organization.list_departments() == [department]
+      assert Organization.list_departments(department.club_id) == [department]
     end
 
     test "get_department!/1 returns the department with given id" do
@@ -80,8 +88,16 @@ defmodule Sportyweb.OrganizationTest do
       assert Organization.get_department!(department.id) == department
     end
 
+    test "get_department!/2 returns the department with given id and contains a preloaded club" do
+      department = department_fixture()
+
+      assert %Department{} = Organization.get_department!(department.id, [:club])
+      assert Organization.get_department!(department.id, [:club]).club.id == department.club_id
+    end
+
     test "create_department/1 with valid data creates a department" do
-      valid_attrs = %{created_at: ~D[2022-11-05], name: "some name", type: "some type"}
+      club = club_fixture()
+      valid_attrs = %{club_id: club.id, created_at: ~D[2022-11-05], name: "some name", type: "some type"}
 
       assert {:ok, %Department{} = department} = Organization.create_department(valid_attrs)
       assert department.created_at == ~D[2022-11-05]

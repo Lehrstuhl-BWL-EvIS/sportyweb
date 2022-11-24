@@ -1,7 +1,7 @@
 <.header>
-  Listing Departments
+  Listing Departments (<%= @club.name %>)
   <:actions>
-    <.link patch={~p"/departments/new"}>
+    <.link patch={~p"/clubs/#{@club.id}/departments/new"}>
       <.button>New Department</.button>
     </.link>
   </:actions>
@@ -24,11 +24,13 @@
   </:action>
 </.table>
 
+<.back navigate={~p"/clubs/#{@club}"}>Back to club</.back>
+
 <.modal
   :if={@live_action in [:new, :edit]}
   id="department-modal"
   show
-  on_cancel={JS.navigate(~p"/departments")}
+  on_cancel={JS.navigate(~p"/clubs/#{@club.id}")}
 >
   <.live_component
     module={SportywebWeb.DepartmentLive.FormComponent}
@@ -36,6 +38,6 @@
     title={@page_title}
     action={@live_action}
     department={@department}
-    navigate={~p"/departments"}
+    navigate={~p"/clubs/#{@club.id}"}
   />
 </.modal>

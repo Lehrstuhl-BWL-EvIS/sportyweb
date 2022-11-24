@@ -18,7 +18,8 @@ defmodule Sportyweb.Organization do
 
   """
   def list_clubs do
-    Repo.all(Club)
+    query = from(c in Club, order_by: c.name)
+    Repo.all(query)
   end
 
   @doc """
@@ -36,6 +37,25 @@ defmodule Sportyweb.Organization do
 
   """
   def get_club!(id), do: Repo.get!(Club, id)
+
+  @doc """
+  Gets a single club. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Club does not exist.
+
+  ## Examples
+
+      iex> get_club!(123, [:departments])
+      %Club{}
+
+      iex> get_club!(456, [:departments])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_club!(id, preloads) do
+    Repo.get!(Club, id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a club.
@@ -105,16 +125,17 @@ defmodule Sportyweb.Organization do
   alias Sportyweb.Organization.Department
 
   @doc """
-  Returns the list of departments.
+  Returns a clubs list of departments.
 
   ## Examples
 
-      iex> list_departments()
+      iex> list_departments(1)
       [%Department{}, ...]
 
   """
-  def list_departments do
-    Repo.all(Department)
+  def list_departments(club_id) do
+    query = from(d in Department, where: d.club_id == ^club_id, order_by: d.name)
+    Repo.all(query)
   end
 
   @doc """
@@ -132,6 +153,25 @@ defmodule Sportyweb.Organization do
 
   """
   def get_department!(id), do: Repo.get!(Department, id)
+
+  @doc """
+  Gets a single department. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Department does not exist.
+
+  ## Examples
+
+      iex> get_department!(123, [:club])
+      %Department{}
+
+      iex> get_department!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_department!(id, preloads) do
+    Repo.get!(Department, id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a department.

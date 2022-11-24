@@ -20,14 +20,17 @@ echo "- Setup Development Environment: Start"
 echo "- Install and update dependencies"
 mix deps.get
 
-echo "- Drop database"
-mix ecto.drop
+echo "- Drop databases (Dev & Test)"
+MIX_ENV=dev  mix ecto.drop
+MIX_ENV=test mix ecto.drop
 
-echo "- Create database"
-mix ecto.create
+echo "- Create databases (Dev & Test)"
+MIX_ENV=dev  mix ecto.create
+MIX_ENV=test mix ecto.create
 
-echo "- Run database migrations"
-mix ecto.migrate
+echo "- Run database migrations (Dev & Test)"
+MIX_ENV=dev  mix ecto.migrate
+MIX_ENV=test mix ecto.migrate
 
 echo "- Run seed file"
 mix run priv/repo/seeds.exs

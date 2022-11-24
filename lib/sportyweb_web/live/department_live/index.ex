@@ -5,8 +5,13 @@ defmodule SportywebWeb.DepartmentLive.Index do
   alias Sportyweb.Organization.Department
 
   @impl true
+  def mount(%{"club_id" => club_id}, _session, socket) do
+    {:ok, assign(socket, :departments, list_departments(club_id))}
+  end
+
+  @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :departments, list_departments())}
+    {:ok, assign(socket, :departments, [])}
   end
 
   @impl true
@@ -15,21 +20,35 @@ defmodule SportywebWeb.DepartmentLive.Index do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
+    department = Organization.get_department!(id, [:club])
+
     socket
     |> assign(:page_title, "Edit Department")
-    |> assign(:department, Organization.get_department!(id))
+    |> assign(:department, department)
+    |> assign(:club, department.club)
   end
 
-  defp apply_action(socket, :new, _params) do
+  defp apply_action(socket, :new, %{"club_id" => club_id}) do
+    club = Organization.get_club!(club_id)
+
     socket
     |> assign(:page_title, "New Department")
-    |> assign(:department, %Department{})
+    |> assign(:department, %Department{club: club})
+    |> assign(:club, club)
   end
 
-  defp apply_action(socket, :index, _params) do
+  defp apply_action(socket, :index_root, _params) do
+    socket
+    |> redirect(to: "/clubs")
+  end
+
+  defp apply_action(socket, :index, %{"club_id" => club_id}) do
+    club = Organization.get_club!(club_id)
+
     socket
     |> assign(:page_title, "Listing Departments")
     |> assign(:department, nil)
+    |> assign(:club, club)
   end
 
   @impl true
@@ -37,10 +56,10 @@ defmodule SportywebWeb.DepartmentLive.Index do
     department = Organization.get_department!(id)
     {:ok, _} = Organization.delete_department(department)
 
-    {:noreply, assign(socket, :departments, list_departments())}
+    {:noreply, assign(socket, :departments, list_departments(department.club_id))}
   end
 
-  defp list_departments do
-    Organization.list_departments()
+  defp list_departments(club_id) do
+    Organization.list_departments(club_id)
   end
 end
