@@ -16,6 +16,9 @@ alias Sportyweb.Accounts
 alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
 
+alias Sportyweb.AccessControl.ClubRole
+alias Sportyweb.AccessControl.UserClubRoles
+
 ###################################
 # Add Users
 # Only in the dev environment!
@@ -52,7 +55,27 @@ if Mix.env() in [:dev] do
   })
 
   Accounts.register_user(%{
-    email: "tester@tester.de",
+    email: "sportyweb_user@tester.de",
+    password: "testertester"
+  })
+
+  Accounts.register_user(%{
+    email: "clubadmin@tester.de",
+    password: "testertester"
+  })
+
+  Accounts.register_user(%{
+    email: "clubsubadmin@tester.de",
+    password: "testertester"
+  })
+
+  Accounts.register_user(%{
+    email: "clubreadwriteuser@tester.de",
+    password: "testertester"
+  })
+
+  Accounts.register_user(%{
+    email: "clubuser@tester.de",
     password: "testertester"
   })
 end
@@ -158,4 +181,67 @@ Repo.insert!(%Club{
   reference_number: "",
   website_url: "",
   founded_at: ~D[2020-04-01]
+})
+
+###################################
+# Add Club Roles
+
+Repo.insert!(%ClubRole{
+  name: "sportyweb_user"
+})
+
+Repo.insert!(%ClubRole{
+  name: "club_admin"
+})
+
+Repo.insert!(%ClubRole{
+  name: "club_subadmin"
+})
+
+Repo.insert!(%ClubRole{
+  name: "club_readwrite_user"
+})
+
+Repo.insert!(%ClubRole{
+  name: "club_user"
+})
+
+###################################
+# Create User Club Roles
+
+club = Repo.all(Club) |> Enum.at(0)
+#Tester Club1 Sportyweb User
+Repo.insert!(%UserClubRoles{
+  user_id: Accounts.get_user_by_email("sportyweb_user@tester.de").id,
+  club_id: club.id,
+  clubrole_id: Repo.all(ClubRole) |> Enum.at(0) |> Map.get(:id)
+})
+
+#Tester Club1 Admin
+Repo.insert!(%UserClubRoles{
+  user_id: Accounts.get_user_by_email("clubadmin@tester.de").id,
+  club_id: club.id,
+  clubrole_id: Repo.all(ClubRole) |> Enum.at(1) |> Map.get(:id)
+})
+
+#Tester Club1 Subadmin
+club = Repo.all(Club) |> Enum.at(1)
+Repo.insert!(%UserClubRoles{
+  user_id: Accounts.get_user_by_email("clubsubadmin@tester.de").id,
+  club_id: club.id,
+  clubrole_id: Repo.all(ClubRole) |> Enum.at(2) |> Map.get(:id)
+})
+
+#Tester Club1 ReadWriteUser
+Repo.insert!(%UserClubRoles{
+  user_id: Accounts.get_user_by_email("clubreadwriteuser@tester.de").id,
+  club_id: club.id,
+  clubrole_id: Repo.all(ClubRole) |> Enum.at(3) |> Map.get(:id)
+})
+
+#Tester Club1 User
+Repo.insert!(%UserClubRoles{
+  user_id: Accounts.get_user_by_email("clubuser@tester.de").id,
+  club_id: club.id,
+  clubrole_id: Repo.all(ClubRole) |> Enum.at(4) |> Map.get(:id)
 })

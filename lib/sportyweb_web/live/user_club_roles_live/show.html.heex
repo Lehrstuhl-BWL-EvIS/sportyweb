@@ -1,0 +1,25 @@
+<.header>
+  User club roles <%= @user_club_roles.id %>
+  <:subtitle>This is a user_club_roles record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/userclubroles/#{@user_club_roles}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit user_club_roles</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+</.list>
+
+<.back navigate={~p"/userclubroles"}>Back to userclubroles</.back>
+
+<.modal :if={@live_action == :edit} id="user_club_roles-modal" show on_cancel={JS.patch(~p"/userclubroles/#{@user_club_roles}")}>
+  <.live_component
+    module={SportywebWeb.UserClubRolesLive.FormComponent}
+    id={@user_club_roles.id}
+    title={@page_title}
+    action={@live_action}
+    user_club_roles={@user_club_roles}
+    navigate={~p"/userclubroles/#{@user_club_roles}"}
+  />
+</.modal>

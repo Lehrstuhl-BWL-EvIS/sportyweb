@@ -1,0 +1,42 @@
+<.header>
+  Listing Userclubroles
+  <:actions>
+    <.link patch={~p"/userclubroles/new"}>
+      <.button>New User club roles</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="userclubroles" rows={@userclubroles} row_click={&JS.navigate(~p"/userclubroles/#{&1}")}>
+  <:col :let={ucr} label="User"><%= ucr.user_id %></:col>
+  <:col :let={ucr} label="Club"><%= ucr.club_id %></:col>
+  <:col :let={ucr} label="Club"><%= ucr.clubrole_id %></:col>
+
+  <:action :let={user_club_roles}>
+    <div class="sr-only">
+      <.link navigate={~p"/userclubroles/#{user_club_roles}"}>Show</.link>
+    </div>
+    <.link patch={~p"/userclubroles/#{user_club_roles}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={user_club_roles}>
+    <.link phx-click={JS.push("delete", value: %{id: user_club_roles.id})} data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="user_club_roles-modal"
+  show
+  on_cancel={JS.navigate(~p"/userclubroles")}
+>
+  <.live_component
+    module={SportywebWeb.UserClubRolesLive.FormComponent}
+    id={@user_club_roles.id || :new}
+    title={@page_title}
+    action={@live_action}
+    user_club_roles={@user_club_roles}
+    navigate={~p"/userclubroles"}
+  />
+</.modal>
