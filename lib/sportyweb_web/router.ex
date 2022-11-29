@@ -2,7 +2,6 @@ defmodule SportywebWeb.Router do
   use SportywebWeb, :router
 
   import SportywebWeb.UserAuth
-  import SportywebWeb.AccessControl
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -62,16 +61,6 @@ defmodule SportywebWeb.Router do
     post "/users/log_in", UserSessionController, :create
   end
 
-  ## Authorized Sportyweb Staff Only
-  scope "/", SportywebWeb do
-    pipe_through [:browser, :require_authenticated_user, :require_super_user]
-
-    # Clubs
-    live "/clubs", ClubLive.Index, :index
-    live "/clubs/new", ClubLive.Index, :new
-    live "/clubs/:id/edit", ClubLive.Index, :edit
-  end
-
   scope "/", SportywebWeb do
     pipe_through [:browser, :require_authenticated_user]
 
@@ -84,6 +73,10 @@ defmodule SportywebWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
       # Clubs
+
+      live "/clubs", ClubLive.Index, :index
+      live "/clubs/new", ClubLive.Index, :new
+      live "/clubs/:id/edit", ClubLive.Index, :edit
 
       live "/clubs/:id", ClubLive.Show, :show
       live "/clubs/:id/show/edit", ClubLive.Show, :edit
