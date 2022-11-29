@@ -39,6 +39,41 @@ defmodule SportywebWeb.UserLoginLive do
         </:actions>
       </.simple_form>
     </div>
+    <div class="mx-auto max-w-sm mt-10">
+      <.header class="text-center bg-red-600">DEV MODE Quick Sign In</.header>
+      <.simple_form
+        :let={f}
+        id="login_form"
+        for={:user}
+        action={~p"/users/log_in"}
+        as={:user}
+        phx-update="ignore"
+      >
+        <.input field={{f, :email}} value ="sportyweb_admin@tester.de" type="hidden" required />
+        <.input field={{f, :password}} value ="testertester" type="hidden" required />
+        <:actions>
+          <.button phx-disable-with="Sigining in..." class="w-full">
+            Sportyweb Admin Tester <span aria-hidden="true">→</span>
+          </.button>
+        </:actions>
+      </.simple_form>
+      <.simple_form
+        :let={f}
+        id="login_form"
+        for={:user}
+        action={~p"/users/log_in"}
+        as={:user}
+        phx-update="ignore"
+      >
+        <.input field={{f, :email}} value ="clubmember@tester.de" type="hidden" required />
+        <.input field={{f, :password}} value ="testertester" type="hidden" required />
+        <:actions>
+          <.button phx-disable-with="Sigining in..." class="w-full">
+            Member Tester <span aria-hidden="true">→</span>
+          </.button>
+        </:actions>
+      </.simple_form>
+    </div>
     """
   end
 
