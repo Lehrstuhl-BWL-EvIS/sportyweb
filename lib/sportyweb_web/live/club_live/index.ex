@@ -1,12 +1,14 @@
 defmodule SportywebWeb.ClubLive.Index do
   use SportywebWeb, :live_view
 
+  import SportywebWeb.AccessControl
+
   alias Sportyweb.Organization
   alias Sportyweb.Organization.Club
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :clubs, list_clubs())}
+    {:ok, assign(socket, :clubs, load_authorized_clubs(socket.assigns.current_user))}
   end
 
   @impl true
