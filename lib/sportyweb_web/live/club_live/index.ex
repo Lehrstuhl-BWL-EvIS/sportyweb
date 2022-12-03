@@ -1,19 +1,26 @@
 defmodule SportywebWeb.ClubLive.Index do
   use SportywebWeb, :live_view
 
-  import SportywebWeb.AccessControl
+  alias Sportyweb.AccessControl.PolicyClub
 
   alias Sportyweb.Organization
   alias Sportyweb.Organization.Club
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :clubs, load_authorized_clubs(socket.assigns.current_user))}
+    {:ok, assign(socket, :clubs, PolicyClub.load_authorized_clubs(socket.assigns.current_user))}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    if PolicyClub.can?(socket.assigns.current_user, socket.assigns.live_action, params) do
+      {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+    else
+      {:noreply,
+        socket
+        |> put_flash(:error, "No permission to #{Atom.to_string(socket.assigns.live_action)} club")
+        |> redirect(to: ~p"/clubs")}
+    end
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -36,13 +43,16 @@ defmodule SportywebWeb.ClubLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    club = Organization.get_club!(id)
-    {:ok, _} = Organization.delete_club(club)
+    if PolicyClub.can?(socket.assigns.current_user, "delete", id) do
+      club = Organization.get_club!(id)
+      {:ok, _} = Organization.delete_club(club)
 
-    {:noreply, assign(socket, :clubs, list_clubs())}
-  end
-
-  defp list_clubs do
-    Organization.list_clubs()
+      {:noreply, assign(socket, :clubs, PolicyClub.load_authorized_clubs(socket.assigns.current_user))}
+    else
+      {:noreply,
+        socket
+        |> put_flash(:error, "No permission to delete club")
+        |> assign(:clubs, PolicyClub.load_authorized_clubs(socket.assigns.current_user))}
+    end
   end
 end

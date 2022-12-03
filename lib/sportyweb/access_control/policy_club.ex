@@ -39,6 +39,8 @@ defmodule Sportyweb.AccessControl.PolicyClub do
     if AccessControl.is_sportyweb_admin(user) || Enum.any?(AccessControl.get_role(user, club_id), fn r -> r in allowed_roles end), do: true, else: false
   end
 
+  def can?(user, :show, %{"id" => club_id}), do: true
+
   def can?(_, _, _), do: false
 
 end
