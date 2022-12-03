@@ -216,7 +216,6 @@ club3 = Repo.all(Club) |> Enum.at(2)
 #Tester Sportyweb Admin Club 1
 Repo.insert!(%UserClubRoles{
   user_id: Accounts.get_user_by_email("sportyweb_admin@tester.de").id,
-  club_id: club1.id,
   clubrole_id: Repo.all(ClubRole) |> Enum.at(0) |> Map.get(:id)
 })
 

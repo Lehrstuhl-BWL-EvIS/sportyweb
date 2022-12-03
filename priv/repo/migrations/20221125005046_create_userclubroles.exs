@@ -4,8 +4,8 @@ defmodule Sportyweb.Repo.Migrations.CreateUserclubroles do
   def change do
     create table(:userclubroles, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :user_id, references(:users, on_delete: :nothing, type: :binary_id), null: false
-      add :club_id, references(:clubs, on_delete: :nothing, type: :binary_id), null: false
+      add :user_id, references(:users, on_delete: :delete_all, type: :binary_id), null: false
+      add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id)
       add :clubrole_id, references(:clubroles, on_delete: :nothing, type: :binary_id), null: false
 
       timestamps()

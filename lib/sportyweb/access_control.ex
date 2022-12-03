@@ -197,4 +197,29 @@ defmodule Sportyweb.AccessControl do
   def change_user_club_roles(%UserClubRoles{} = user_club_roles, attrs \\ %{}) do
     UserClubRoles.changeset(user_club_roles, attrs)
   end
+
+  ### Policy Support ###
+
+  alias Sportyweb.Accounts.User
+  alias Sportyweb.Repo
+  alias Sportyweb.Organization.Club
+  alias Sportyweb.AccessControl.UserClubRoles, as: UCR
+
+  def is_sportyweb_admin(%User{id: user_id}) do
+    query = from ucr in UCR,
+      where: ucr.user_id == ^user_id,
+      join: cr in assoc(ucr, :clubrole),
+      select: cr.name
+
+      Enum.member?(Repo.all(query), "sportyweb_admin")
+  end
+
+  def get_role(%User{id: user_id}, club_id) do
+    query = from ucr in UCR,
+      where: ucr.user_id == ^user_id and ucr.club_id == ^club_id,
+      join: cr in assoc(ucr, :clubrole),
+      select: cr.name
+
+    Repo.all(query)
+  end
 end
