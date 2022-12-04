@@ -1,0 +1,24 @@
+<.header>
+    Manage user roles for <%= @club.name %>
+    <:subtitle>This is a section to manage club roles of club members.</:subtitle>
+</.header>
+
+<.table id="clubmembers" rows={@clubmembers}>
+    <:col :let={clubmember} label="Name"><%= clubmember.email %></:col>
+    <:col :let={clubmember} label="Current club role">
+    <form phx-change="role_selected">
+        <select name="role" id="select_roles">
+          <option value=""><%= clubmember.role %></option>
+          <%= for r <- @roles do %>
+            <option value={r}>
+                <%= r %>
+            </option>
+          <% end %>
+        </select>
+    </form>
+    </:col>
+</.table>
+
+  
+<.back navigate={~p"/clubs/#{@club.id}"}>Back to club</.back>
+  
