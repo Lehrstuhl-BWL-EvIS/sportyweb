@@ -31,15 +31,17 @@ defmodule Sportyweb.AccessControl.PolicyClub do
 
   def can?(user, :edit, %{"id" => club_id}) do
     allowed_roles = ["club_admin", "club_subadmin"]
-    if AccessControl.is_sportyweb_admin(user) || Enum.any?(AccessControl.get_role(user, club_id), fn r -> r in allowed_roles end), do: true, else: false
+    if AccessControl.is_sportyweb_admin(user) || Enum.any?(AccessControl.has_club_role(user, club_id), fn r -> r in allowed_roles end), do: true, else: false
   end
 
   def can?(user, "delete", club_id) do
     allowed_roles = ["club_admin"]
-    if AccessControl.is_sportyweb_admin(user) || Enum.any?(AccessControl.get_role(user, club_id), fn r -> r in allowed_roles end), do: true, else: false
+    if AccessControl.is_sportyweb_admin(user) || Enum.any?(AccessControl.has_club_role(user, club_id), fn r -> r in allowed_roles end), do: true, else: false
   end
 
-  def can?(user, :show, %{"id" => club_id}), do: true
+  def can?(user, :show, %{"id" => club_id}) do
+    Enum.any?(load_authorized_clubs(user), fn club -> club.id == club_id end)
+  end
 
   def can?(_, _, _), do: false
 

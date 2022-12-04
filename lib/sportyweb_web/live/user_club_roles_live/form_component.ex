@@ -13,7 +13,6 @@ defmodule SportywebWeb.UserClubRolesLive.FormComponent do
       </.header>
 
       <.simple_form
-        :let={f}
         for={@changeset}
         id="user_club_roles-form"
         phx-target={@myself}

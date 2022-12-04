@@ -202,7 +202,6 @@ defmodule Sportyweb.AccessControl do
 
   alias Sportyweb.Accounts.User
   alias Sportyweb.Repo
-  alias Sportyweb.Organization.Club
   alias Sportyweb.AccessControl.UserClubRoles, as: UCR
 
   def is_sportyweb_admin(%User{id: user_id}) do
@@ -214,7 +213,7 @@ defmodule Sportyweb.AccessControl do
       Enum.member?(Repo.all(query), "sportyweb_admin")
   end
 
-  def get_role(%User{id: user_id}, club_id) do
+  def has_club_role(%User{id: user_id}, club_id) do
     query = from ucr in UCR,
       where: ucr.user_id == ^user_id and ucr.club_id == ^club_id,
       join: cr in assoc(ucr, :clubrole),

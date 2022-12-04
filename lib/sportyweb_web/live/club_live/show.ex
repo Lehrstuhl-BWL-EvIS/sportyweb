@@ -7,12 +7,12 @@ defmodule SportywebWeb.ClubLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    if Enum.any?(PolicyClub.load_authorized_clubs(socket.assigns.current_user), fn x -> x.id == id end) do
+    if PolicyClub.can?(socket.assigns.current_user, :show, %{"id" => id}) do
       {:ok, socket}
     else
       {:ok, socket
-        |> put_flash(:error, "No permission #{Atom.to_string(socket.assigns.action)} club")
-        |> redirect(to: ~p"/clubs")}
+        |> put_flash(:error, "No permission to #{Atom.to_string(socket.assigns.live_action)} club")
+        |> redirect(to: action_route(socket.assigns.live_action, id))}
     end
   end
 
@@ -25,11 +25,14 @@ defmodule SportywebWeb.ClubLive.Show do
       |> assign(:club, Organization.get_club!(id, [:departments]))}
     else
       {:noreply, socket
-        |> put_flash(:error, "No permission #{Atom.to_string(socket.assigns.live_action)} club")
-        |> redirect(to: ~p"/clubs/#{id}")}
+        |> put_flash(:error, "No permission to #{Atom.to_string(socket.assigns.live_action)} club")
+        |> redirect(to: action_route(socket.assigns.live_action, id))}
     end
   end
 
   defp page_title(:show), do: "Show Club"
   defp page_title(:edit), do: "Edit Club"
+
+  defp action_route(:show, _ ), do:  ~p"/clubs"
+  defp action_route(:edit, id), do:  ~p"/clubs/#{id}"
 end
