@@ -1,29 +1,31 @@
 <.header>
-  Listing Clubs
+  Vereinsübersicht
   <:actions>
     <.link patch={~p"/clubs/new"}>
-      <.button>New Club</.button>
+      <.button>Neuer Verein</.button>
     </.link>
   </:actions>
 </.header>
 
-<.table id="clubs" rows={@clubs} row_click={&JS.navigate(~p"/clubs/#{&1}")}>
-  <:col :let={club} label="Name"><%= club.name %></:col>
-  <:col :let={club} label="Reference number"><%= club.reference_number %></:col>
-  <:col :let={club} label="Website url"><%= club.website_url %></:col>
-  <:col :let={club} label="Founded at"><%= Calendar.strftime(club.founded_at, "%d.%m.%Y") %></:col>
-  <:action :let={club}>
-    <div class="sr-only">
-      <.link navigate={~p"/clubs/#{club}"}>Show</.link>
-    </div>
-    <.link patch={~p"/clubs/#{club}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={club}>
-    <.link phx-click={JS.push("delete", value: %{id: club.id})} data-confirm="Are you sure?">
-      Delete
-    </.link>
-  </:action>
-</.table>
+<.card>
+  <.table id="clubs" rows={@clubs} row_click={&JS.navigate(~p"/clubs/#{&1}")}>
+    <:col :let={club} label="Name"><%= club.name %></:col>
+    <:col :let={club} label="Referenznummer"><%= club.reference_number %></:col>
+    <:col :let={club} label="URL"><%= club.website_url %></:col>
+    <:col :let={club} label="Gründungsdatum"><%= Calendar.strftime(club.founded_at, "%d.%m.%Y") %></:col>
+    <:action :let={club}>
+      <div class="sr-only">
+        <.link navigate={~p"/clubs/#{club}"}>Anzeigen</.link>
+      </div>
+      <.link patch={~p"/clubs/#{club}/edit"}>Bearbeiten</.link>
+    </:action>
+    <:action :let={club}>
+      <.link phx-click={JS.push("delete", value: %{id: club.id})} data-confirm="Are you sure?">
+        Löschen
+      </.link>
+    </:action>
+  </.table>
+</.card>
 
 <.modal
   :if={@live_action in [:new, :edit]}

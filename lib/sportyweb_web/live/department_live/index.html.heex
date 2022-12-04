@@ -1,5 +1,5 @@
 <.header>
-  Listing Departments (<%= @club.name %>)
+  <%= @club.name %>: Abteilungen
   <:actions>
     <.link patch={~p"/clubs/#{@club.id}/departments/new"}>
       <.button>New Department</.button>
@@ -7,22 +7,24 @@
   </:actions>
 </.header>
 
-<.table id="departments" rows={@departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
-  <:col :let={department} label="Name"><%= department.name %></:col>
-  <:col :let={department} label="Type"><%= department.type %></:col>
-  <:col :let={department} label="Created at"><%= Calendar.strftime(department.created_at, "%d.%m.%Y") %></:col>
-  <:action :let={department}>
-    <div class="sr-only">
-      <.link navigate={~p"/departments/#{department}"}>Show</.link>
-    </div>
-    <.link patch={~p"/departments/#{department}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={department}>
-    <.link phx-click={JS.push("delete", value: %{id: department.id})} data-confirm="Are you sure?">
-      Delete
-    </.link>
-  </:action>
-</.table>
+<.card>
+  <.table id="departments" rows={@departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
+    <:col :let={department} label="Name"><%= department.name %></:col>
+    <:col :let={department} label="Art"><%= department.type %></:col>
+    <:col :let={department} label="Erstellungsdatum"><%= Calendar.strftime(department.created_at, "%d.%m.%Y") %></:col>
+    <:action :let={department}>
+      <div class="sr-only">
+        <.link navigate={~p"/departments/#{department}"}>Anzeigen</.link>
+      </div>
+      <.link patch={~p"/departments/#{department}/edit"}>Bearbeiten</.link>
+    </:action>
+    <:action :let={department}>
+      <.link phx-click={JS.push("delete", value: %{id: department.id})} data-confirm="Are you sure?">
+        Löschen
+      </.link>
+    </:action>
+  </.table>
+</.card>
 
 <.back navigate={~p"/clubs/#{@club}"}>Back to club</.back>
 
