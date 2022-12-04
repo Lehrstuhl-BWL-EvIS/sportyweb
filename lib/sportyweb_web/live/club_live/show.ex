@@ -6,14 +6,8 @@ defmodule SportywebWeb.ClubLive.Show do
   alias Sportyweb.Organization
 
   @impl true
-  def mount(%{"id" => id}, _session, socket) do
-    if PolicyClub.can?(socket.assigns.current_user, :show, %{"id" => id}) do
-      {:ok, socket}
-    else
-      {:ok, socket
-        |> put_flash(:error, "No permission to #{Atom.to_string(socket.assigns.live_action)} club")
-        |> redirect(to: action_route(socket.assigns.live_action, id))}
-    end
+  def mount(_params, _session, socket) do
+    {:ok, socket}
   end
 
   @impl true
