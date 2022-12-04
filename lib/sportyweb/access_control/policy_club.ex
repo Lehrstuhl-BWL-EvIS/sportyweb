@@ -8,18 +8,33 @@ defmodule Sportyweb.AccessControl.PolicyClub do
 
   alias Sportyweb.AccessControl
 
+  ### Member struct ###
+  defmodule ClubMember do
+    defstruct [:id, :email, :role]
+  end
+
   ### LOAD/SHOW ###
   def load_authorized_clubs(user) do
     if AccessControl.is_sportyweb_admin(user) == true do
       Repo.all(Club)
     else
       query_user_clubs = from ucr in UCR,
-      where: ucr.user_id == ^user.id,
-      join: c in assoc(ucr, :club),
-      select: c
+        where: ucr.user_id == ^user.id,
+        join: c in assoc(ucr, :club),
+        select: c
 
-    Repo.all(query_user_clubs)
+      Repo.all(query_user_clubs)
     end
+  end
+
+  def get_club_members_and_their_roles(club_id) do
+    query_member_by_roles = from ucr in UCR,
+      where: ucr.club_id == ^club_id,
+      join: u in assoc(ucr, :user),
+      join: cr in assoc(ucr, :clubrole),
+      select: %ClubMember{id: ucr.id, email: u.email, role: cr.name}
+
+    Repo.all(query_member_by_roles)
   end
 
   ### ACCESS ###
@@ -29,14 +44,8 @@ defmodule Sportyweb.AccessControl.PolicyClub do
     if AccessControl.is_sportyweb_admin(user), do: true, else: false
   end
 
-  def can?(user, :edit, %{"id" => club_id}) do
-    allowed_roles = ["club_admin", "club_subadmin"]
-    if AccessControl.is_sportyweb_admin(user) || Enum.any?(AccessControl.has_club_role(user, club_id), fn r -> r in allowed_roles end), do: true, else: false
-  end
-
-  def can?(user, "delete", club_id) do
-    allowed_roles = ["club_admin"]
-    if AccessControl.is_sportyweb_admin(user) || Enum.any?(AccessControl.has_club_role(user, club_id), fn r -> r in allowed_roles end), do: true, else: false
+  def can?(user, action, %{"id" => club_id}) when action in [:edit, "delete", :userrolemanagement] do
+    if AccessControl.is_sportyweb_admin(user) || Enum.any?(AccessControl.has_club_role(user, club_id), fn r -> r in get_allowed_roles(action) end), do: true, else: false
   end
 
   def can?(user, :show, %{"id" => club_id}) do
@@ -44,5 +53,9 @@ defmodule Sportyweb.AccessControl.PolicyClub do
   end
 
   def can?(_, _, _), do: false
+
+  defp get_allowed_roles(:edit), do: ["club_admin", "club_subadmin"]
+  defp get_allowed_roles("delete"), do: ["club_admin"]
+  defp get_allowed_roles(:userrolemanagement), do: ["club_admin"]
 
 end
