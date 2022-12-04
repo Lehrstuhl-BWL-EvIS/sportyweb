@@ -9,7 +9,6 @@ defmodule Sportyweb.Repo.Migrations.CreateUsersAuthTables do
       add :email, :citext, null: false
       add :hashed_password, :string, null: false
       add :confirmed_at, :naive_datetime
-      add :roles, {:array, :string}
       timestamps()
     end
 

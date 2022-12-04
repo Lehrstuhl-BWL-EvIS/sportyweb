@@ -26,34 +26,30 @@ alias Sportyweb.AccessControl.UserClubRoles
 if Mix.env() in [:dev] do
   Accounts.register_user(%{
     email: "stefan.strecker@fernuni-hagen.de",
-    password: "NTU5MTM5NGNmZjY",
-    roles: ["super_user"]
+    password: "NTU5MTM5NGNmZjY"
   })
 
   Accounts.register_user(%{
     email: "marvin.biesenbach@studium.fernuni-hagen.de",
-    password: "MzU2OWY3NTQyNzI",
-    roles: ["super_user"]
+    password: "MzU2OWY3NTQyNzI"
   })
 
   Accounts.register_user(%{
     email: "sven.christ@fernuni-hagen.de",
-    password: "ZThjNWY2NTQ3OGQ",
-    roles: ["super_user"]
+    password: "ZThjNWY2NTQ3OGQ"
   })
 
   Accounts.register_user(%{
     email: "bastian.kres@krewast.de",
-    password: "MzU0MmJiZWI4ZmN",
-    roles: ["super_user"]
+    password: "MzU0MmJiZWI4ZmN"
   })
 
   Accounts.register_user(%{
     email: "andrew.utley@studium.fernuni-hagen.de",
-    password: "MGI3MTNlMzczZjR",
-    roles: ["super_user"]
+    password: "MGI3MTNlMzczZjR"
   })
 
+  ### Tester ###
   Accounts.register_user(%{
     email: "sportyweb_admin@tester.de",
     password: "testertester"
@@ -209,6 +205,16 @@ Repo.insert!(%ClubRole{
 ###################################
 # Create User Club Roles
 
+### Sporty Web Admins ###
+swa_id = Repo.all(ClubRole) |> Enum.at(0) |> Map.get(:id)
+for swa <- ["stefan.strecker@fernuni-hagen.de","marvin.biesenbach@studium.fernuni-hagen.de","sven.christ@fernuni-hagen.de","bastian.kres@krewast.de","andrew.utley@studium.fernuni-hagen.de"] do
+  Repo.insert!(%UserClubRoles{
+    user_id: Accounts.get_user_by_email(swa).id,
+    clubrole_id: swa_id
+  })
+end
+
+### Tester ###
 club1 = Repo.all(Club) |> Enum.at(0)
 club2 = Repo.all(Club) |> Enum.at(1)
 club3 = Repo.all(Club) |> Enum.at(2)
