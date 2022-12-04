@@ -413,6 +413,21 @@ defmodule SportywebWeb.CoreComponents do
     """
   end
 
+  @doc """
+  Renders a card element with acts as container.
+  """
+  attr :class, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def card(assigns) do
+    ~H"""
+    <div class={["bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6", @class]}>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
   @doc ~S"""
   Renders a table with generic styling.
 
