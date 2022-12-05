@@ -2,6 +2,7 @@
 // https://tailwindcss.com/docs/configuration
 
 const plugin = require("tailwindcss/plugin")
+const colors = require("tailwindcss/colors")
 
 module.exports = {
   content: [
@@ -12,7 +13,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: "#FD4F00",
+        brand: "#FD4F00", // colors.rose
       }
     },
   },
