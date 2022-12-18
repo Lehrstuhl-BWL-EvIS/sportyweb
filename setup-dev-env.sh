@@ -14,7 +14,10 @@
 # To run/execute the script:
 # ./setup-dev-env.sh
 
-set -e
+set -o errexit
+set -o nounset
+set -o pipefail
+
 echo "- Setup Development Environment: Start"
 
 echo "- Install and update dependencies"
@@ -47,4 +50,3 @@ else
 fi
 
 echo "- Setup Development Environment: Done"
-exit 0
