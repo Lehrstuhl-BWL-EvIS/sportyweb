@@ -89,14 +89,10 @@
     <!-- Mobile menu, show/hide based on menu state. -->
     <nav class="lg:hidden" aria-label="Global">
       <div class="mx-auto max-w-3xl space-y-1 px-2 pt-2 pb-3 sm:px-4">
-        <!-- Current: "bg-gray-100 text-gray-900", Default: "hover:bg-gray-50" -->
-        <a href="#" aria-current="page" class="bg-gray-100 text-gray-900 block rounded-md py-2 px-3 text-base font-medium">Home</a>
-
-        <a href="#" class="hover:bg-gray-50 block rounded-md py-2 px-3 text-base font-medium">Popular</a>
-
-        <a href="#" class="hover:bg-gray-50 block rounded-md py-2 px-3 text-base font-medium">Communities</a>
-
-        <a href="#" class="hover:bg-gray-50 block rounded-md py-2 px-3 text-base font-medium">Trending</a>
+        <.live_component
+          module={SportywebWeb.SidebarNavigationComponent}
+          id={"sidebar-navigation-component-mobile"}
+        />
       </div>
 
       <div class="border-t border-gray-200 pt-4">
