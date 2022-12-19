@@ -8,7 +8,7 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="h-16 relative flex justify-between">
         <div class="flex items-center">
-          <a href="/" class="flex items-center">
+          <.link navigate={~p"/"} class="flex items-center">
             <svg viewBox="0 0 80 140" fill="#374151" stroke="black" stroke-width=".5" class="h-12">
               <path d="M60 30 l-13-13 l13-13 l13 13 z"/>
               <path d="M40 30 v16 l-16,16 v-16 z"/>
@@ -20,7 +20,7 @@
             </svg>
 
             <span class="ml-3 text-lg font-semibold text-gray-700">Sportyweb</span>
-          </a>
+          </.link>
         </div>
 
         <%= if @current_user do %>
@@ -75,8 +75,7 @@
 
               <!-- Dropdown menu, show/hide based on menu state. -->
               <div
-                style="display: none;"
-                class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                class="hidden absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                 id="profile-menu"
                 role="menu"
                 aria-orientation="vertical"
@@ -100,13 +99,15 @@
 
     <%= if @current_user do %>
       <!-- Mobile menu, show/hide based on menu state. -->
-      <nav style="display: none;" class="lg:hidden" id="mobile-menu" aria-label="Global">
-        <div class="mx-auto max-w-3xl space-y-1 px-2 pt-2 pb-3 sm:px-4">
-          <.live_component
-            module={SportywebWeb.SidebarNavigationComponent}
-            id={"sidebar-navigation-component-mobile"}
-          />
-        </div>
+      <nav class="hidden border-t border-gray-200" id="mobile-menu" aria-label="Global">
+        <%= if show_club_navigation(assigns) do %>
+          <div class="mx-auto max-w-3xl space-y-1 px-2 pt-2 pb-3 sm:px-4">
+            <.live_component
+              module={SportywebWeb.ClubNavigationComponent}
+              id={"sidebar-navigation-component-mobile"}
+            />
+          </div>
+        <% end %>
 
         <div class="border-t border-gray-200 pt-4">
           <div class="mx-auto flex max-w-3xl items-center px-4 sm:px-6">
@@ -135,17 +136,17 @@
 
   <div class="py-10">
     <div class="mx-auto max-w-7xl sm:px-6 lg:grid lg:grid-cols-12 lg:gap-8 lg:px-8">
-      <%= if @current_user do %>
-        <div class="hidden lg:block lg:col-span-3 xl:col-span-2">
+      <%= if show_club_navigation(assigns) do %>
+        <div class="hidden lg:block lg:col-span-3 xl:col-span-2 pt-14">
           <.live_component
-            module={SportywebWeb.SidebarNavigationComponent}
+            module={SportywebWeb.ClubNavigationComponent}
             id={"sidebar-navigation-component-desktop"}
           />
         </div>
       <% end %>
 
       <!-- Set the col-span classes based on whether a user is logged in, in which case the sidebar is visible. -->
-      <main class={"lg:block #{if @current_user, do: 'lg:col-span-9 xl:col-span-10', else: 'lg:col-span-12 xl:col-span-12'}"}>
+      <main class={"lg:block #{if show_club_navigation(assigns), do: 'lg:col-span-9 xl:col-span-10', else: 'lg:col-span-12 xl:col-span-12'}"}>
         <div>
           <%= @inner_content %>
         </div>
