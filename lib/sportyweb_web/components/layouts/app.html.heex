@@ -104,7 +104,8 @@
           <div class="mx-auto max-w-3xl space-y-1 px-2 pt-2 pb-3 sm:px-4">
             <.live_component
               module={SportywebWeb.ClubNavigationComponent}
-              id={"sidebar-navigation-component-mobile"}
+              id="club-navigation-component-mobile"
+              club={@club}
             />
           </div>
         <% end %>
@@ -140,12 +141,13 @@
         <div class="hidden lg:block lg:col-span-3 xl:col-span-2 pt-14">
           <.live_component
             module={SportywebWeb.ClubNavigationComponent}
-            id={"sidebar-navigation-component-desktop"}
+            id="club-navigation-component-desktop"
+            club={@club}
           />
         </div>
       <% end %>
 
-      <!-- Set the col-span classes based on whether a user is logged in, in which case the sidebar is visible. -->
+      <!-- Set the col-span classes based on whether a user is logged in, in which case the navigation (sidebar) is visible. -->
       <main class={"lg:block #{if show_club_navigation(assigns), do: 'lg:col-span-9 xl:col-span-10', else: 'lg:col-span-12 xl:col-span-12'}"}>
         <div>
           <%= @inner_content %>
