@@ -24,18 +24,10 @@
         </div>
       </div>
 
-      <%= if @current_user do %>
-        <div class="ml-10 space-x-4">
-<!--          <a href="#" class="inline-block rounded-md border border-transparent bg-indigo-500 py-2 px-4 text-base font-medium text-white hover:bg-opacity-75"></a> -->
-          <.link href={~p"/users/settings"}  class="inline-block rounded-md border border-transparent bg-indigo-500 py-2 px-4 text-base font-medium text-white hover:bg-opacity-75"><%= @current_user.email %></.link>
-          <.link href={~p"/users/log_out"} method="delete" class="inline-block rounded-md border border-transparent bg-white py-2 px-4 text-base font-medium text-indigo-600 hover:bg-indigo-50">Sign off</.link>
-        </div>
-      <% else %>
-        <div class="ml-10 space-x-4">
-          <.link href={~p"/users/register"} class="inline-block rounded-md border border-transparent bg-white py-2 px-4 text-base font-medium text-indigo-600 hover:bg-indigo-50">Sign up</.link>
-          <.link href={~p"/users/log_in"} class="inline-block rounded-md border border-transparent bg-white py-2 px-4 text-base font-medium text-indigo-600 hover:bg-indigo-50">Sign in</.link>
-        </div>
-      <% end %>
+      <div class="ml-10 space-x-4">
+        <.link navigate={~p"/users/register"} class="inline-block rounded-md border border-transparent bg-white py-2 px-4 text-base font-medium text-indigo-600 hover:bg-indigo-50">Sign up</.link>
+        <.link navigate={~p"/users/log_in"} class="inline-block rounded-md border border-transparent bg-white py-2 px-4 text-base font-medium text-indigo-600 hover:bg-indigo-50">Sign in</.link>
+      </div>
     </div>
 
     <!-- Top navigation for mobile and small screen with flex-wrap??? -->
