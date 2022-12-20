@@ -391,6 +391,7 @@ defmodule SportywebWeb.CoreComponents do
   @doc """
   Renders a header with title.
   """
+  attr :level, :string, default: "1"
   attr :class, :string, default: nil
 
   slot :inner_block, required: true
@@ -398,12 +399,20 @@ defmodule SportywebWeb.CoreComponents do
   slot :actions
 
   def header(assigns) do
+    default_header_classes = "font-semibold leading-8 text-zinc-800"
+
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6 mb-4", @class]}>
       <div>
-        <h1 class="text-2xl font-semibold leading-8 text-zinc-800">
-          <%= render_slot(@inner_block) %>
-        </h1>
+        <%= case @level do %>
+          <% "1" -> %> <h1 class={["text-3xl", default_header_classes]}><%= render_slot(@inner_block) %></h1>
+          <% "2" -> %> <h2 class={["text-2xl", default_header_classes]}><%= render_slot(@inner_block) %></h2>
+          <% "3" -> %> <h3 class={["text-xl",  default_header_classes]}><%= render_slot(@inner_block) %></h3>
+          <% "4" -> %> <h4 class={["text-lg",  default_header_classes]}><%= render_slot(@inner_block) %></h4>
+          <% "5" -> %> <h5 class={["text-md",  default_header_classes]}><%= render_slot(@inner_block) %></h5>
+          <% _   -> %> <h6 class={["text-sm",  default_header_classes]}><%= render_slot(@inner_block) %></h6>
+        <% end %>
+
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
           <%= render_slot(@subtitle) %>
         </p>
