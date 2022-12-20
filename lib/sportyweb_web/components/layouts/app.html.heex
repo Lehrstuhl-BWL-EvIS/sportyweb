@@ -99,18 +99,20 @@
 
     <%= if @current_user do %>
       <!-- Mobile menu, show/hide based on menu state. -->
-      <nav class="hidden border-t border-gray-200" id="mobile-menu" aria-label="Global">
+      <nav class="hidden" id="mobile-menu" aria-label="Global">
         <%= if show_club_navigation(assigns) do %>
-          <div class="mx-auto max-w-3xl space-y-1 px-2 pt-2 pb-3 sm:px-4">
-            <.live_component
-              module={SportywebWeb.ClubNavigationComponent}
-              id="club-navigation-component-mobile"
-              club={@club}
-            />
+          <div class="border-t border-gray-200 py-4">
+            <div class="mx-auto max-w-3xl space-y-1 px-2 pt-2 pb-3 sm:px-4">
+              <.live_component
+                module={SportywebWeb.ClubNavigationComponent}
+                id="club-navigation-component-mobile"
+                club={@club}
+              />
+            </div>
           </div>
         <% end %>
 
-        <div class="border-t border-gray-200 pt-4">
+        <div class="border-t border-gray-200 py-4">
           <div class="mx-auto flex max-w-3xl items-center px-4 sm:px-6">
             <div class="flex-shrink-0">
               <img class="h-10 w-10 rounded-full" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
@@ -121,7 +123,7 @@
             </div>
           </div>
 
-          <div class="mx-auto mt-3 max-w-3xl space-y-1 px-2 sm:px-4 pb-4">
+          <div class="mx-auto mt-3 max-w-3xl space-y-1 px-2 sm:px-4">
             <.link navigate={~p"/users/settings"} class="block rounded-md py-2 px-3 text-base font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900">
               Profil bearbeiten
             </.link>
