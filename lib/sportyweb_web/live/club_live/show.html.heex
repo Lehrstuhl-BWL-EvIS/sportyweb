@@ -15,21 +15,21 @@
     <:item title="URL"><%= @club.website_url %></:item>
     <:item title="Gründungsdatum"><%= Calendar.strftime(@club.founded_at, "%d.%m.%Y") %></:item>
   </.list>
+</.card>
 
-  <hr class="mt-12 mb-5">
+<.header level="2" class="mt-12">
+  Abteilungen
+  <:actions>
+    <.link navigate={~p"/clubs/#{@club.id}/departments"}>
+      <.button>Alle Abteilungen</.button>
+    </.link>
+    <.link patch={~p"/clubs/#{@club.id}/departments/new"}>
+      <.button>Neue Abteilung</.button>
+    </.link>
+  </:actions>
+</.header>
 
-  <.header level="2" class="mb-10">
-    Abteilungen
-    <:actions>
-      <.link navigate={~p"/clubs/#{@club.id}/departments"}>
-        <.button>Alle Abteilungen</.button>
-      </.link>
-      <.link patch={~p"/clubs/#{@club.id}/departments/new"}>
-        <.button>Neue Abteilung</.button>
-      </.link>
-    </:actions>
-  </.header>
-
+<.card>
   <%= if Enum.any?(@club.departments) do %>
     <.table id="departments" rows={@club.departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
       <:col :let={department} label="Name"><%= department.name %></:col>
@@ -52,7 +52,7 @@
   <% end %>
 </.card>
 
-<.back navigate={~p"/clubs"}>Zurück zur Vereinsübersicht</.back>
+<.back navigate={~p"/clubs"} class="mt-12">Zurück zur Vereinsübersicht</.back>
 
 <.modal :if={@live_action == :edit} id="club-modal" show on_cancel={JS.patch(~p"/clubs/#{@club}")}>
   <.live_component
