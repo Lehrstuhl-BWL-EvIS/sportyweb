@@ -390,6 +390,22 @@ defmodule SportywebWeb.CoreComponents do
 
   @doc """
   Renders a header with title.
+
+    ## Examples
+
+      <.header>
+        Title
+        <:actions>
+          Subtitle
+        </:actions>
+        <:actions>
+          ...
+        </:actions>
+      </.header>
+
+      <.header level="2" class="mb-10">
+        Title
+      </.header>
   """
   attr :level, :string, default: "1"
   attr :class, :string, default: nil
@@ -460,11 +476,11 @@ defmodule SportywebWeb.CoreComponents do
 
   def table(assigns) do
     ~H"""
-    <div id={@id} class={["overflow-y-auto px-4 sm:overflow-visible sm:px-0", @class]}>
+    <div id={@id} class={["overflow-y-auto px-4 md:overflow-visible sm:px-0", @class]}>
       <table class="w-[40rem] sm:w-full">
-        <thead class="text-left text-[0.8125rem] leading-6 text-zinc-500">
+        <thead class="text-left text-[0.8125rem] font-semibold leading-6 text-zinc-900">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th :for={col <- @col} class="p-0 pb-4 pr-6"><%= col[:label] %></th>
             <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
           </tr>
         </thead>
@@ -481,7 +497,7 @@ defmodule SportywebWeb.CoreComponents do
             >
               <div class="block py-4 pr-6">
                 <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                <span class={["relative", i == 0 && "font-semibold text-zinc-800"]}>
                   <%= render_slot(col, row) %>
                 </span>
               </div>
@@ -491,7 +507,7 @@ defmodule SportywebWeb.CoreComponents do
                 <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                  class="relative ml-4 font-semibold leading-6 text-zinc-800 hover:text-zinc-700"
                 >
                   <%= render_slot(action, row) %>
                 </span>
@@ -525,7 +541,7 @@ defmodule SportywebWeb.CoreComponents do
     <div class={@class}>
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 sm:gap-8">
-          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500"><%= item.title %></dt>
+          <dt class="w-1/4 flex-none text-[0.8125rem] font-semibold leading-6 text-zinc-900"><%= item.title %></dt>
           <dd class="text-sm leading-6 text-zinc-700"><%= render_slot(item) %></dd>
         </div>
       </dl>
