@@ -4,18 +4,13 @@ defmodule SportywebWeb.DepartmentLive.Show do
   alias Sportyweb.Organization
 
   @impl true
-  def mount(_params, _session, socket) do
-    {:ok, socket}
-  end
-
-  @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    department = Organization.get_department!(id, [:club])
+
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:department, Organization.get_department!(id, [:club]))}
+     |> assign(:page_title, "Abteilung: #{department.name}")
+     |> assign(:department, department)
+     |> assign(:club, department.club)}
   end
-
-  defp page_title(:show), do: "Show Department"
-  defp page_title(:edit), do: "Edit Department"
 end

@@ -1,8 +1,8 @@
 <.header>
   <%= @club.name %>: Abteilungen
   <:actions>
-    <.link patch={~p"/clubs/#{@club.id}/departments/new"}>
-      <.button>New Department</.button>
+    <.link navigate={~p"/clubs/#{@club.id}/departments/new"}>
+      <.button>Abteilung erstellen</.button>
     </.link>
   </:actions>
 </.header>
@@ -16,30 +16,9 @@
       <div class="sr-only">
         <.link navigate={~p"/departments/#{department}"}>Anzeigen</.link>
       </div>
-      <.link patch={~p"/departments/#{department}/edit"}>Bearbeiten</.link>
-    </:action>
-    <:action :let={department}>
-      <.link phx-click={JS.push("delete", value: %{id: department.id})} data-confirm="Are you sure?">
-        Löschen
-      </.link>
+      <.link navigate={~p"/departments/#{department}/edit"}>Bearbeiten</.link>
     </:action>
   </.table>
 </.card>
 
 <.back navigate={~p"/clubs/#{@club}"}>Back to club</.back>
-
-<.modal
-  :if={@live_action in [:new, :edit]}
-  id="department-modal"
-  show
-  on_cancel={JS.navigate(~p"/clubs/#{@club.id}")}
->
-  <.live_component
-    module={SportywebWeb.DepartmentLive.FormComponent}
-    id={@department.id || :new}
-    title={@page_title}
-    action={@live_action}
-    department={@department}
-    navigate={~p"/clubs/#{@club.id}"}
-  />
-</.modal>

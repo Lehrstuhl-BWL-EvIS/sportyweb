@@ -1,7 +1,7 @@
 <.header>
-  Abteilung: <%= @department.name %>
+  <%= @page_title %>
   <:actions>
-    <.link patch={~p"/departments/#{@department}/show/edit"} phx-click={JS.push_focus()}>
+    <.link navigate={~p"/departments/#{@department}/edit"}>
       <.button>Abteilung bearbeiten</.button>
     </.link>
   </:actions>
@@ -18,14 +18,3 @@
 </.card>
 
 <.back navigate={~p"/clubs/#{@department.club}"}>Zurück zum Dashboard</.back>
-
-<.modal :if={@live_action == :edit} id="department-modal" show on_cancel={JS.patch(~p"/departments/#{@department}")}>
-  <.live_component
-    module={SportywebWeb.DepartmentLive.FormComponent}
-    id={@department.id}
-    title={@page_title}
-    action={@live_action}
-    department={@department}
-    navigate={~p"/departments/#{@department}"}
-  />
-</.modal>
