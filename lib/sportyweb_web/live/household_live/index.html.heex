@@ -16,7 +16,7 @@
     <.link patch={~p"/households/#{household}/edit"}>Edit</.link>
   </:action>
   <:action :let={household}>
-    <.link phx-click={JS.push("delete", value: %{id: household.id})} data-confirm="Are you sure?">
+    <.link phx-click={JS.push("delete", value: %{id: household.id})} data-confirm="Unwiderruflich löschen?">
       Delete
     </.link>
   </:action>

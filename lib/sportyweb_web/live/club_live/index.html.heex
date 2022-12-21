@@ -2,7 +2,7 @@
   Vereinsübersicht
   <:actions>
     <.link patch={~p"/clubs/new"}>
-      <.button>Neuer Verein</.button>
+      <.button>Verein erstellen</.button>
     </.link>
   </:actions>
 </.header>
@@ -20,7 +20,7 @@
       <.link patch={~p"/clubs/#{club}/edit"}>Bearbeiten</.link>
     </:action>
     <:action :let={club}>
-      <.link phx-click={JS.push("delete", value: %{id: club.id})} data-confirm="Are you sure?">
+      <.link phx-click={JS.push("delete", value: %{id: club.id})} data-confirm="Unwiderruflich löschen?">
         Löschen
       </.link>
     </:action>
