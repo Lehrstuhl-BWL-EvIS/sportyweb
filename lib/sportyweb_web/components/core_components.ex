@@ -415,18 +415,18 @@ defmodule SportywebWeb.CoreComponents do
   slot :actions
 
   def header(assigns) do
-    default_header_classes = "font-bold leading-8 tracking-[0.015em] text-zinc-800"
+    assigns = assign(assigns, :default_header_classes, "font-bold leading-8 tracking-[0.015em] text-zinc-800")
 
     ~H"""
     <header class={["flex flex-wrap items-center justify-between gap-x-8 gap-y-2 mb-3 min-h-[40px]", @class]}>
       <div class="flex-grow">
         <%= case @level do %>
-          <% "1" -> %> <h1 class={["text-3xl", default_header_classes]}><%= render_slot(@inner_block) %></h1>
-          <% "2" -> %> <h2 class={["text-2xl", default_header_classes]}><%= render_slot(@inner_block) %></h2>
-          <% "3" -> %> <h3 class={["text-xl",  default_header_classes]}><%= render_slot(@inner_block) %></h3>
-          <% "4" -> %> <h4 class={["text-lg",  default_header_classes]}><%= render_slot(@inner_block) %></h4>
-          <% "5" -> %> <h5 class={["text-md",  default_header_classes]}><%= render_slot(@inner_block) %></h5>
-          <% _   -> %> <h6 class={["text-sm",  default_header_classes]}><%= render_slot(@inner_block) %></h6>
+          <% "1" -> %> <h1 class={["text-3xl", @default_header_classes]}><%= render_slot(@inner_block) %></h1>
+          <% "2" -> %> <h2 class={["text-2xl", @default_header_classes]}><%= render_slot(@inner_block) %></h2>
+          <% "3" -> %> <h3 class={["text-xl",  @default_header_classes]}><%= render_slot(@inner_block) %></h3>
+          <% "4" -> %> <h4 class={["text-lg",  @default_header_classes]}><%= render_slot(@inner_block) %></h4>
+          <% "5" -> %> <h5 class={["text-md",  @default_header_classes]}><%= render_slot(@inner_block) %></h5>
+          <% _   -> %> <h6 class={["text-sm",  @default_header_classes]}><%= render_slot(@inner_block) %></h6>
         <% end %>
 
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
