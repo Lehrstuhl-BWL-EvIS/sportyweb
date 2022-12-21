@@ -299,7 +299,7 @@ defmodule SportywebWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 sm:text-sm"
+        class="mt-1 block w-full py-2 px-3 border border-zinc-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 sm:text-sm"
         {@rest}
       >
         <option :if={@prompt}><%= @prompt %></option>
@@ -415,11 +415,11 @@ defmodule SportywebWeb.CoreComponents do
   slot :actions
 
   def header(assigns) do
-    default_header_classes = "font-semibold leading-8 text-zinc-800"
+    default_header_classes = "font-bold leading-8 tracking-[0.015em] text-zinc-800"
 
     ~H"""
-    <header class={["flex items-center justify-between gap-6 mb-4", @class]}>
-      <div>
+    <header class={["flex flex-wrap items-center justify-between gap-x-8 gap-y-2 mb-3 min-h-[40px]", @class]}>
+      <div class="flex-grow">
         <%= case @level do %>
           <% "1" -> %> <h1 class={["text-3xl", default_header_classes]}><%= render_slot(@inner_block) %></h1>
           <% "2" -> %> <h2 class={["text-2xl", default_header_classes]}><%= render_slot(@inner_block) %></h2>
@@ -433,7 +433,8 @@ defmodule SportywebWeb.CoreComponents do
           <%= render_slot(@subtitle) %>
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+
+      <div :if={@actions != []} class="flex-none"><%= render_slot(@actions) %></div>
     </header>
     """
   end
