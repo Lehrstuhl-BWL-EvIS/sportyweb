@@ -191,7 +191,7 @@ defmodule SportywebWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="space-y-8 bg-white mt-10">
+      <div class="space-y-8 bg-white">
         <%= render_slot(@inner_block, f) %>
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           <%= render_slot(action, f) %>
@@ -418,7 +418,7 @@ defmodule SportywebWeb.CoreComponents do
     default_header_classes = "font-semibold leading-8 text-zinc-800"
 
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6 mb-4", @class]}>
+    <header class={["flex items-center justify-between gap-6 mb-4", @class]}>
       <div>
         <%= case @level do %>
           <% "1" -> %> <h1 class={["text-3xl", default_header_classes]}><%= render_slot(@inner_block) %></h1>
