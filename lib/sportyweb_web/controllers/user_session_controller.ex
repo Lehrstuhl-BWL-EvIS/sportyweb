@@ -1,4 +1,4 @@
-defmodule SportywebWeb.UserSessionController do
+exit(defmodule SportywebWeb.UserSessionController do
   use SportywebWeb, :controller
 
   alias Sportyweb.Accounts
