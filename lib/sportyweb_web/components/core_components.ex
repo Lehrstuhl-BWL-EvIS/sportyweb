@@ -141,7 +141,7 @@ defmodule SportywebWeb.CoreComponents do
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("#flash")}
       role="alert"
       class={[
-        "fixed hidden top-2 right-2 w-80 sm:w-96 z-50 rounded-lg p-3 shadow-md shadow-zinc-900/5 ring-1",
+        "fixed hidden bottom-2 right-2 w-80 sm:w-96 z-50 rounded-lg p-3 shadow-md shadow-zinc-900/5 ring-1",
         @kind == :info && "bg-emerald-50 text-emerald-800 ring-emerald-500 fill-cyan-900",
         @kind == :error && "bg-rose-50 p-3 text-rose-900 shadow-md ring-rose-500 fill-rose-900"
       ]}
@@ -191,7 +191,7 @@ defmodule SportywebWeb.CoreComponents do
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="space-y-8 bg-white mt-10">
+      <div class="space-y-8 bg-white">
         <%= render_slot(@inner_block, f) %>
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           <%= render_slot(action, f) %>
@@ -299,7 +299,7 @@ defmodule SportywebWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 sm:text-sm"
+        class="mt-1 block w-full py-2 px-3 border border-zinc-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 sm:text-sm"
         {@rest}
       >
         <option :if={@prompt}><%= @prompt %></option>
@@ -390,7 +390,24 @@ defmodule SportywebWeb.CoreComponents do
 
   @doc """
   Renders a header with title.
+
+    ## Examples
+
+      <.header>
+        Title
+        <:actions>
+          Subtitle
+        </:actions>
+        <:actions>
+          ...
+        </:actions>
+      </.header>
+
+      <.header level="2" class="mb-10">
+        Title
+      </.header>
   """
+  attr :level, :string, default: "1"
   attr :class, :string, default: nil
 
   slot :inner_block, required: true
@@ -398,18 +415,42 @@ defmodule SportywebWeb.CoreComponents do
   slot :actions
 
   def header(assigns) do
+    assigns = assign(assigns, :default_header_classes, "font-bold leading-8 tracking-[0.015em] text-zinc-800")
+
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
-      <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
-          <%= render_slot(@inner_block) %>
-        </h1>
+    <header class={["flex flex-wrap items-center justify-between gap-x-8 gap-y-2 mb-3 min-h-[40px]", @class]}>
+      <div class="flex-grow">
+        <%= case @level do %>
+          <% "1" -> %> <h1 class={["text-3xl", @default_header_classes]}><%= render_slot(@inner_block) %></h1>
+          <% "2" -> %> <h2 class={["text-2xl", @default_header_classes]}><%= render_slot(@inner_block) %></h2>
+          <% "3" -> %> <h3 class={["text-xl",  @default_header_classes]}><%= render_slot(@inner_block) %></h3>
+          <% "4" -> %> <h4 class={["text-lg",  @default_header_classes]}><%= render_slot(@inner_block) %></h4>
+          <% "5" -> %> <h5 class={["text-md",  @default_header_classes]}><%= render_slot(@inner_block) %></h5>
+          <% _   -> %> <h6 class={["text-sm",  @default_header_classes]}><%= render_slot(@inner_block) %></h6>
+        <% end %>
+
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
           <%= render_slot(@subtitle) %>
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+
+      <div :if={@actions != []} class="flex-none"><%= render_slot(@actions) %></div>
     </header>
+    """
+  end
+
+  @doc """
+  Renders a card element with acts as container.
+  """
+  attr :class, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def card(assigns) do
+    ~H"""
+    <div class={["bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6", @class]}>
+      <%= render_slot(@inner_block) %>
+    </div>
     """
   end
 
@@ -424,6 +465,7 @@ defmodule SportywebWeb.CoreComponents do
       </.table>
   """
   attr :id, :string, required: true
+  attr :class, :string, default: nil
   attr :row_click, :any, default: nil
   attr :rows, :list, required: true
 
@@ -435,11 +477,11 @@ defmodule SportywebWeb.CoreComponents do
 
   def table(assigns) do
     ~H"""
-    <div id={@id} class="overflow-y-auto px-4 sm:overflow-visible sm:px-0">
-      <table class="mt-11 w-[40rem] sm:w-full">
-        <thead class="text-left text-[0.8125rem] leading-6 text-zinc-500">
+    <div id={@id} class={["overflow-y-auto px-4 md:overflow-visible sm:px-0", @class]}>
+      <table class="w-[40rem] sm:w-full">
+        <thead class="text-left text-[0.8125rem] font-semibold leading-6 text-zinc-900">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th :for={col <- @col} class="p-0 pb-4 pr-6"><%= col[:label] %></th>
             <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
           </tr>
         </thead>
@@ -456,7 +498,7 @@ defmodule SportywebWeb.CoreComponents do
             >
               <div class="block py-4 pr-6">
                 <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                <span class={["relative", i == 0 && "font-semibold text-zinc-800"]}>
                   <%= render_slot(col, row) %>
                 </span>
               </div>
@@ -466,7 +508,7 @@ defmodule SportywebWeb.CoreComponents do
                 <span class="absolute -inset-y-px -right-4 left-0 group-hover:bg-zinc-50 sm:rounded-r-xl" />
                 <span
                   :for={action <- @action}
-                  class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+                  class="relative ml-4 font-semibold leading-6 text-zinc-800 hover:text-zinc-700"
                 >
                   <%= render_slot(action, row) %>
                 </span>
@@ -489,16 +531,18 @@ defmodule SportywebWeb.CoreComponents do
         <:item title="Views"><%= @post.views %></:item>
       </.list>
   """
+  attr :class, :string, default: nil
+
   slot :item, required: true do
     attr :title, :string, required: true
   end
 
   def list(assigns) do
     ~H"""
-    <div class="mt-14">
+    <div class={@class}>
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 sm:gap-8">
-          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500"><%= item.title %></dt>
+          <dt class="w-1/4 flex-none text-[0.8125rem] font-semibold leading-6 text-zinc-900"><%= item.title %></dt>
           <dd class="text-sm leading-6 text-zinc-700"><%= render_slot(item) %></dd>
         </div>
       </dl>
@@ -514,11 +558,12 @@ defmodule SportywebWeb.CoreComponents do
       <.back navigate={~p"/posts"}>Back to posts</.back>
   """
   attr :navigate, :any, required: true
+  attr :class, :string, default: "mt-5"
   slot :inner_block, required: true
 
   def back(assigns) do
     ~H"""
-    <div class="mt-16">
+    <div class={@class}>
       <.link
         navigate={@navigate}
         class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"

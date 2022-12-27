@@ -12,9 +12,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        brand: "#FD4F00",
+        brand: "#6366F1" // indigo-500
       }
-    },
+    }
   },
   plugins: [
     require("@tailwindcss/forms"),

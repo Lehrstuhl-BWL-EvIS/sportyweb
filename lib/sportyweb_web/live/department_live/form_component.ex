@@ -9,24 +9,32 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage department records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
-        :let={f}
-        for={@changeset}
-        id="department-form"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
-      >
-        <.input field={{f, :name}} type="text" label="name" />
-        <.input field={{f, :type}} type="text" label="type" />
-        <.input field={{f, :created_at}} type="date" label="created_at" />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Department</.button>
-        </:actions>
-      </.simple_form>
+      <.card>
+        <.simple_form
+          :let={f}
+          for={@changeset}
+          id="department-form"
+          phx-target={@myself}
+          phx-change="validate"
+          phx-submit="save"
+        >
+          <.input field={{f, :name}} type="text" label="name" />
+          <.input field={{f, :type}} type="text" label="type" />
+          <.input field={{f, :created_at}} type="date" label="created_at" />
+          <:actions>
+            <.button phx-disable-with="Saving...">Save Department</.button>
+            <.button
+              :if={@department.id}
+              class="bg-rose-700 hover:bg-rose-800"
+              phx-click={JS.push("delete", value: %{id: @department.id})}
+              data-confirm="Unwiderruflich löschen?">
+              Delete
+            </.button>
+          </:actions>
+        </.simple_form>
+      </.card>
     </div>
     """
   end

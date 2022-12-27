@@ -1,56 +1,53 @@
 <.header>
-  Club <%= @club.id %>
-  <:subtitle>This is a club record from your database.</:subtitle>
+  Dashboard: <%= @club.name %>
   <:actions>
     <.link patch={~p"/clubs/#{@club}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit club</.button>
+      <.button>Verein bearbeiten</.button>
     </.link>
   </:actions>
 </.header>
 
-<.list>
-  <:item title="Name"><%= @club.name %></:item>
-  <:item title="Reference number"><%= @club.reference_number %></:item>
-  <:item title="Website url"><%= @club.website_url %></:item>
-  <:item title="Founded at"><%= Calendar.strftime(@club.founded_at, "%d.%m.%Y") %></:item>
-</.list>
+<.card>
+  <.list>
+    <:item title="ID"><%= @club.id %></:item>
+    <:item title="Name"><%= @club.name %></:item>
+    <:item title="Referenznummer"><%= @club.reference_number %></:item>
+    <:item title="URL"><%= @club.website_url %></:item>
+    <:item title="Gründungsdatum"><%= Calendar.strftime(@club.founded_at, "%d.%m.%Y") %></:item>
+  </.list>
+</.card>
 
-<hr class="mt-20 mb-5">
-
-<.header>
-  Departments
+<.header level="2" class="mt-12">
+  Abteilungen
   <:actions>
     <.link navigate={~p"/clubs/#{@club.id}/departments"}>
-      <.button>All Departments</.button>
+      <.button>Alle Abteilungen</.button>
     </.link>
-    <.link patch={~p"/clubs/#{@club.id}/departments/new"}>
-      <.button>New Department</.button>
+    <.link navigate={~p"/clubs/#{@club.id}/departments/new"}>
+      <.button>Abteilung erstellen</.button>
     </.link>
   </:actions>
 </.header>
 
-<%= if Enum.any?(@club.departments) do %>
-  <.table id="departments" rows={@club.departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
-    <:col :let={department} label="Name"><%= department.name %></:col>
-    <:col :let={department} label="Type"><%= department.type %></:col>
-    <:col :let={department} label="Created at"><%= Calendar.strftime(department.created_at, "%d.%m.%Y") %></:col>
-    <:action :let={department}>
-      <div class="sr-only">
-        <.link navigate={~p"/departments/#{department}"}>Show</.link>
-      </div>
-      <.link patch={~p"/departments/#{department}/edit"}>Edit</.link>
-    </:action>
-    <:action :let={department}>
-      <.link phx-click={JS.push("delete", value: %{id: department.id})} data-confirm="Are you sure?">
-        Delete
-      </.link>
-    </:action>
-  </.table>
-<% else %>
-  <p>No departments, yet.</p>
-<% end %>
+<.card>
+  <%= if Enum.any?(@club.departments) do %>
+    <.table id="departments" rows={@club.departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
+      <:col :let={department} label="Name"><%= department.name %></:col>
+      <:col :let={department} label="Art"><%= department.type %></:col>
+      <:col :let={department} label="Erstellungsdatum"><%= Calendar.strftime(department.created_at, "%d.%m.%Y") %></:col>
+      <:action :let={department}>
+        <div class="sr-only">
+          <.link navigate={~p"/departments/#{department}"}>Anzeigen</.link>
+        </div>
+        <.link navigate={~p"/departments/#{department}/edit"}>Bearbeiten</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>Bisher wurden noch keine Abteilungen erstellt.</p>
+  <% end %>
+</.card>
 
-<.back navigate={~p"/clubs"}>Back to clubs</.back>
+<.back navigate={~p"/clubs"} class="mt-12">Zurück zur Vereinsübersicht</.back>
 
 <.modal :if={@live_action == :edit} id="club-modal" show on_cancel={JS.patch(~p"/clubs/#{@club}")}>
   <.live_component
