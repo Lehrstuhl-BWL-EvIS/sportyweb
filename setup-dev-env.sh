@@ -38,6 +38,9 @@ MIX_ENV=test mix ecto.migrate
 echo "- Run seed file"
 mix run priv/repo/seeds.exs
 
+echo "- Generate the ExDoc project documentation"
+mix docs
+
 echo "- Generate an ERD (Entity Relationship Diagram)"
 if command -v dot &> /dev/null
 then
