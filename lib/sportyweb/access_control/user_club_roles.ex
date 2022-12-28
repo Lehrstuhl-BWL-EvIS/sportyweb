@@ -11,7 +11,7 @@ defmodule Sportyweb.AccessControl.UserClubRoles do
   schema "userclubroles" do
     belongs_to :user, User
     belongs_to :club, Club
-    belongs_to :clubrole, ClubRole
+    belongs_to :clubrole, ClubRole, on_replace: :delete
 
     timestamps()
   end
@@ -22,4 +22,11 @@ defmodule Sportyweb.AccessControl.UserClubRoles do
     |> cast(attrs, [])
     |> validate_required([])
   end
+
+  def managechanges(user_club_roles, attr) do
+    user_club_roles
+    |> change(attr)
+    |> validate_required([:user_id, :club_id, :clubrole_id])
+  end
+
 end
