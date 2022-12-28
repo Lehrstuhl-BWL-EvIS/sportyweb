@@ -24,13 +24,13 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
           <.input field={{f, :type}} type="text" label="type" />
           <.input field={{f, :created_at}} type="date" label="created_at" />
           <:actions>
-            <.button phx-disable-with="Saving...">Save Department</.button>
+            <.button phx-disable-with="Speichern...">Speichern</.button>
             <.button
               :if={@department.id}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @department.id})}
               data-confirm="Unwiderruflich löschen?">
-              Delete
+              Löschen
             </.button>
           </:actions>
         </.simple_form>
@@ -72,7 +72,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
       {:ok, _department} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Department updated successfully")
+         |> put_flash(:info, "Abteilung erfolgreich aktualisiert")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -85,7 +85,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
       {:ok, _department} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Department created successfully")
+         |> put_flash(:info, "Abteilung erfolgreich erstellt")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

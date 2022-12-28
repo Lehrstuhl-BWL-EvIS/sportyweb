@@ -10,11 +10,11 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
     <div>
       <.live_component
         module={SportywebWeb.DepartmentLive.FormComponent}
-        id={:new}
+        id={@department.id || :new}
         title={@page_title}
-        action={:new}
+        action={@live_action}
         department={@department}
-        navigate={~p"/clubs/#{@club}/departments"}
+        navigate={if @department.id, do: ~p"/departments/#{@department}", else: ~p"/clubs/#{@department.club}/departments"}
       />
     </div>
     """
@@ -50,6 +50,7 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
 
     {:noreply,
      socket
-     |> redirect(to: "/clubs/#{department.club_id}/departments")}
+     |> put_flash(:info, "Abteilung erfolgreich gelöscht")
+     |> push_navigate(to: "/clubs/#{department.club_id}")}
   end
 end
