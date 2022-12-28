@@ -36,6 +36,7 @@ defmodule Sportyweb.AccessControl do
 
   """
   def get_club_role!(id), do: Repo.get!(ClubRole, id)
+  def get_club_role_by_name(name), do: Repo.get_by(ClubRole, name: name)
 
   @doc """
   Creates a club_role.
@@ -170,6 +171,18 @@ defmodule Sportyweb.AccessControl do
   end
 
   @doc """
+  Updates a user_club_roles.
+
+  ## Examples
+
+  """
+  def manage_user_club_roles(%UserClubRoles{} = user_club_roles, attrs) do
+    user_club_roles
+    |> UserClubRoles.managechanges(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Deletes a user_club_roles.
 
   ## Examples
@@ -201,7 +214,6 @@ defmodule Sportyweb.AccessControl do
   ### Policy Support ###
 
   alias Sportyweb.Accounts.User
-  alias Sportyweb.Repo
   alias Sportyweb.AccessControl.UserClubRoles, as: UCR
 
   def is_sportyweb_admin(%User{id: user_id}) do
@@ -218,6 +230,15 @@ defmodule Sportyweb.AccessControl do
       where: ucr.user_id == ^user_id and ucr.club_id == ^club_id,
       join: cr in assoc(ucr, :clubrole),
       select: cr.name
+
+    Repo.all(query)
+  end
+
+  def list_userclubroles_data do
+    query = from ucr in UCR,
+      join: u in assoc(ucr, :user),
+      preload: [ :user, :club, :clubrole ],
+      order_by: u.email
 
     Repo.all(query)
   end
