@@ -75,11 +75,11 @@ defmodule SportywebWeb.Router do
       # Clubs
 
       live "/clubs", ClubLive.Index, :index
-      live "/clubs/new", ClubLive.Index, :new
-      live "/clubs/:id/edit", ClubLive.Index, :edit
+
+      live "/clubs/new", ClubLive.NewEdit, :new
+      live "/clubs/:id/edit", ClubLive.NewEdit, :edit
 
       live "/clubs/:id", ClubLive.Show, :show
-      live "/clubs/:id/show/edit", ClubLive.Show, :edit
 
       # Departments (each belongs to a club)
 

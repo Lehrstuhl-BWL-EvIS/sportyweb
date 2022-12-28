@@ -1,7 +1,7 @@
 <.header>
   Dashboard: <%= @club.name %>
   <:actions>
-    <.link patch={~p"/clubs/#{@club}/show/edit"} phx-click={JS.push_focus()}>
+    <.link navigate={~p"/clubs/#{@club}/edit"} phx-click={JS.push_focus()}>
       <.button>Verein bearbeiten</.button>
     </.link>
   </:actions>
@@ -48,14 +48,3 @@
 </.card>
 
 <.back navigate={~p"/clubs"} class="mt-12">Zurück zur Vereinsübersicht</.back>
-
-<.modal :if={@live_action == :edit} id="club-modal" show on_cancel={JS.patch(~p"/clubs/#{@club}")}>
-  <.live_component
-    module={SportywebWeb.ClubLive.FormComponent}
-    id={@club.id}
-    title={@page_title}
-    action={@live_action}
-    club={@club}
-    navigate={~p"/clubs/#{@club}"}
-  />
-</.modal>

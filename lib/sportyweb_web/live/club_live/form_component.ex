@@ -9,25 +9,33 @@ defmodule SportywebWeb.ClubLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage club records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
-        :let={f}
-        for={@changeset}
-        id="club-form"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
-      >
-        <.input field={{f, :name}} type="text" label="name" />
-        <.input field={{f, :reference_number}} type="text" label="reference_number" />
-        <.input field={{f, :website_url}} type="text" label="website_url" />
-        <.input field={{f, :founded_at}} type="date" label="founded_at" />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Club</.button>
-        </:actions>
-      </.simple_form>
+      <.card>
+        <.simple_form
+          :let={f}
+          for={@changeset}
+          id="club-form"
+          phx-target={@myself}
+          phx-change="validate"
+          phx-submit="save"
+        >
+          <.input field={{f, :name}} type="text" label="name" />
+          <.input field={{f, :reference_number}} type="text" label="reference_number" />
+          <.input field={{f, :website_url}} type="text" label="website_url" />
+          <.input field={{f, :founded_at}} type="date" label="founded_at" />
+          <:actions>
+            <.button phx-disable-with="Speichern...">Speichern</.button>
+            <.button
+              :if={@club.id}
+              class="bg-rose-700 hover:bg-rose-800"
+              phx-click={JS.push("delete", value: %{id: @club.id})}
+              data-confirm="Unwiderruflich löschen?">
+              Löschen
+            </.button>
+          </:actions>
+        </.simple_form>
+      </.card>
     </div>
     """
   end
@@ -61,7 +69,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
       {:ok, _club} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Club updated successfully")
+         |> put_flash(:info, "Verein erfolgreich aktualisiert")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -74,7 +82,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
       {:ok, _club} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Club created successfully")
+         |> put_flash(:info, "Verein erfolgreich erstellt")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

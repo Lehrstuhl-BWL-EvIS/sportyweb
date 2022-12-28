@@ -10,12 +10,11 @@ defmodule SportywebWeb.ClubLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    club = Organization.get_club!(id, [:departments])
+
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:club, Organization.get_club!(id, [:departments]))}
+     |> assign(:page_title, "Verein: #{club.name}")
+     |> assign(:club, club)}
   end
-
-  defp page_title(:show), do: "Show Club"
-  defp page_title(:edit), do: "Edit Club"
 end

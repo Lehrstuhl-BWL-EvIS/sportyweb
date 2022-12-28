@@ -1,7 +1,7 @@
 <.header>
   Vereinsübersicht
   <:actions>
-    <.link patch={~p"/clubs/new"}>
+    <.link navigate={~p"/clubs/new"}>
       <.button>Verein erstellen</.button>
     </.link>
   </:actions>
@@ -17,28 +17,7 @@
       <div class="sr-only">
         <.link navigate={~p"/clubs/#{club}"}>Anzeigen</.link>
       </div>
-      <.link patch={~p"/clubs/#{club}/edit"}>Bearbeiten</.link>
-    </:action>
-    <:action :let={club}>
-      <.link phx-click={JS.push("delete", value: %{id: club.id})} data-confirm="Unwiderruflich löschen?">
-        Löschen
-      </.link>
+      <.link navigate={~p"/clubs/#{club}/edit"}>Bearbeiten</.link>
     </:action>
   </.table>
 </.card>
-
-<.modal
-  :if={@live_action in [:new, :edit]}
-  id="club-modal"
-  show
-  on_cancel={JS.navigate(~p"/clubs")}
->
-  <.live_component
-    module={SportywebWeb.ClubLive.FormComponent}
-    id={@club.id || :new}
-    title={@page_title}
-    action={@live_action}
-    club={@club}
-    navigate={~p"/clubs"}
-  />
-</.modal>
