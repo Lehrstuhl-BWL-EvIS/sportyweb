@@ -69,7 +69,8 @@ defmodule Sportyweb.AccessControl.PolicyClub do
   def can?(user, :new, _params) do
     if AccessControl.is_sportyweb_admin(user), do: true, else: false
   end
-  def can?(user, action, %{"id" => club_id}) when action in [:new, :edit, "delete", :show, :userrolemanagement] do
+  def can?(user, action, %{"id" => club_id}), do: can?(user, action, club_id)
+  def can?(user, action, club_id) when action in [:new, :edit, "delete", :show, :userrolemanagement] do
     if AccessControl.is_sportyweb_admin(user) ||
        user
        |> AccessControl.has_club_role(club_id)

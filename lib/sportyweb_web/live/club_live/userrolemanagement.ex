@@ -17,7 +17,7 @@ defmodule SportywebWeb.ClubLive.Userrolemanagement do
 
   @impl true
   def handle_params(%{"id" => club_id}, _, socket) do
-    if PolicyClub.can?(socket.assigns.current_user, socket.assigns.live_action, %{"id" => club_id}) do
+    if PolicyClub.can?(socket.assigns.current_user, socket.assigns.live_action, club_id) do
       {:noreply, socket}
     else
       {:noreply,
@@ -35,7 +35,7 @@ defmodule SportywebWeb.ClubLive.Userrolemanagement do
 
   @impl true
   def handle_event("save", _, socket) do
-    if PolicyClub.can?(socket.assigns.current_user, socket.assigns.live_action, %{"id" => socket.assigns.club_id}) do
+    if PolicyClub.can?(socket.assigns.current_user, socket.assigns.live_action, socket.assigns.club_id) do
       save_ucrchanges(socket, socket.assigns.ucrchanges)
     else
       {:noreply,

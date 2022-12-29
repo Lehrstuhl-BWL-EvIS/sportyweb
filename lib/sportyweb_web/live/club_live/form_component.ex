@@ -55,7 +55,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
   end
 
   def handle_event("save", %{"club" => club_params}, socket) do
-    if PolicyClub.can?(socket.assigns.current_user, socket.assigns.action, %{"id" => socket.assigns.club.id}) do
+    if PolicyClub.can?(socket.assigns.current_user, socket.assigns.action, socket.assigns.club.id) do
       save_club(socket, socket.assigns.action, club_params)
     else
       {:noreply,

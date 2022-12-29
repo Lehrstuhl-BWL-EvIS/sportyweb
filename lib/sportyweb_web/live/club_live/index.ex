@@ -44,7 +44,7 @@ defmodule SportywebWeb.ClubLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    if PolicyClub.can?(socket.assigns.current_user, "delete", %{"id" => id}) do
+    if PolicyClub.can?(socket.assigns.current_user, "delete", id) do
       club = Organization.get_club!(id)
       {:ok, _} = Organization.delete_club(club)
 
