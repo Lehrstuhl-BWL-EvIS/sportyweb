@@ -8,7 +8,7 @@ defmodule SportywebWeb.ClubLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :clubs, PolicyClub.load_authorized_clubs(socket.assigns.current_user))}
+    {:ok, assign(socket, :clubs, [])}
   end
 
   @impl true
@@ -37,6 +37,7 @@ defmodule SportywebWeb.ClubLive.Index do
 
   defp apply_action(socket, :index, _params) do
     socket
+    |> assign(:clubs, PolicyClub.load_authorized_clubs(socket.assigns.current_user))
     |> assign(:page_title, "Listing Clubs")
     |> assign(:club, nil)
   end
