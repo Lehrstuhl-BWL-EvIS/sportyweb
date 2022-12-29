@@ -1,6 +1,10 @@
 defmodule SportywebWeb.AccessControlTest do
   use SportywebWeb.ConnCase, async: true
 
+  import Plug.Conn
+  import Phoenix.ConnTest
+  import Phoenix.LiveViewTest
+
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
@@ -9,10 +13,6 @@ defmodule SportywebWeb.AccessControlTest do
 
   alias Sportyweb.AccessControl
   alias Sportyweb.AccessControl.PolicyClub
-
-  import Sportyweb.AccountsFixtures
-  import Sportyweb.OrganizationFixtures
-  import Sportyweb.AccessControlFixtures
 
   defp do_setup(_) do
     tester0 = Accounts.get_user_by_email("sportyweb_admin@tester.de")
@@ -27,16 +27,30 @@ defmodule SportywebWeb.AccessControlTest do
 
     club = Repo.all(query_club) |> Enum.at(0)
 
-    %{club_admin: tester1, club_member: tester4, club: club}
+    %{sportyweb_admin: tester0, club_admin: tester1, club_member: tester4, club: club}
   end
 
   describe "PolicyClub" do
     setup [:do_setup]
 
+    test "user with sportyweb admin role performs according to policy", %{sportyweb_admin: user, club: club} do
+      assert user.email == "sportyweb_admin@tester.de"
+      assert club.name == "1. FC Köln"
+      assert AccessControl.is_sportyweb_admin(user) == true
+
+      assert PolicyClub.can?(user, :index, club.id) == true
+      assert PolicyClub.can?(user, :new, club.id) == true
+      assert PolicyClub.can?(user, :edit, club.id) == true
+      assert PolicyClub.can?(user, "delete", club.id) == true
+      assert PolicyClub.can?(user, :show, club.id) == true
+      assert PolicyClub.can?(user, :userrolemanagement, club.id) == true
+    end
+
     test "user with higher role [club_admin] performs according to policy", %{club_admin: user, club: club} do
       assert user.email == "clubadmin@tester.de"
       assert club.name == "1. FC Köln"
       assert AccessControl.has_club_role(user, club.id) |> Enum.at(0) == "club_admin"
+      assert AccessControl.is_sportyweb_admin(user) == false
 
       assert PolicyClub.can?(user, :index, club.id) == true
       assert PolicyClub.can?(user, :new, club.id) == false
@@ -50,6 +64,7 @@ defmodule SportywebWeb.AccessControlTest do
       assert user.email == "clubmember@tester.de"
       assert club.name == "1. FC Köln"
       assert AccessControl.has_club_role(user, club.id) |> Enum.at(0) == "club_member"
+      assert AccessControl.is_sportyweb_admin(user) == false
 
       assert PolicyClub.can?(user, :index, club.id) == true
       assert PolicyClub.can?(user, :new, club.id) == false
@@ -58,6 +73,75 @@ defmodule SportywebWeb.AccessControlTest do
       assert PolicyClub.can?(user, :show, club.id) == true
       assert PolicyClub.can?(user, :userrolemanagement, club.id) == false
     end
+
+    test "policy implemented correctly for user with sportyweb admin role", %{conn: conn, sportyweb_admin: user, club: club}do
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> Plug.Conn.assign(:current_user, user)
+        |> Map.replace!(:secret_key_base, SportywebWeb.Endpoint.config(:secret_key_base))
+        |> init_test_session(%{})
+        |> put_session(:user_token, user_token)
+
+      assert {:ok, index_view, _html}     = live(conn,  "/clubs")
+      assert {:ok, _view, _html}          = live(conn,  "/clubs/new")
+      assert {:ok, edit_view, _html}      = live(conn,  "/clubs/#{club.id}/edit")
+      assert {:ok, _view, _html}          = live(conn,  "/clubs/#{club.id}")
+      assert {:ok, show_edit_view, _html} = live(conn,  "/clubs/#{club.id}/show/edit")
+      assert {:ok, ucr_view, _html}       = live(conn,  "/clubs/#{club.id}/userrolemanagement")
+
+      #assert edit_view |> element("#club-form a", "save") |> render_submit(%{"club" => club}) =~ "Listing Clubs"
+      #assert show_edit_view |> element("club-form", "save") |> render_submit(%{"club" => club}) =~ "Listing Clubs"
+
+      assert render_click(ucr_view, "save", %{}) =~ "Role settings saved succesfully"
+      assert render_click(index_view, "delete", %{id: club.id}) =~ "Club deleted successfully"
+    end
+
+    test "policy implemented correctly for user with higher role [club_admin]", %{conn: conn, club_admin: user, club: club}do
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> Plug.Conn.assign(:current_user, user)
+        |> Map.replace!(:secret_key_base, SportywebWeb.Endpoint.config(:secret_key_base))
+        |> init_test_session(%{})
+        |> put_session(:user_token, user_token)
+
+      assert {:ok, index_view, _html}     = live(conn,  "/clubs")
+      assert {:error, _}                  = live(conn,  "/clubs/new")
+      assert {:ok, edit_view, _html}      = live(conn,  "/clubs/#{club.id}/edit")
+      assert {:ok, _view, _html}          = live(conn,  "/clubs/#{club.id}")
+      assert {:ok, show_edit_view, _html} = live(conn,  "/clubs/#{club.id}/show/edit")
+      assert {:ok, ucr_view, _html}       = live(conn,  "/clubs/#{club.id}/userrolemanagement")
+
+      #assert edit_view |> element("#club-form a", "save") |> render_submit(%{"club" => club}) =~ "Listing Clubs"
+      #assert show_edit_view |> element("club-form", "save") |> render_submit(%{"club" => club}) =~ "Listing Clubs"
+
+      assert render_click(ucr_view, "save", %{}) =~ "Role settings saved succesfully"
+      assert render_click(index_view, "delete", %{id: club.id}) =~ "Club deleted successfully"
+    end
+
+    test "policy implemented correctly for user with lower role [club_member]", %{conn: conn, club_member: user, club: club}do
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> Plug.Conn.assign(:current_user, user)
+        |> Map.replace!(:secret_key_base, SportywebWeb.Endpoint.config(:secret_key_base))
+        |> init_test_session(%{})
+        |> put_session(:user_token, user_token)
+
+      assert {:ok, index_view, _html}   = live(conn,  "/clubs")
+      assert {:error, _}                = live(conn,  "/clubs/new")
+      assert {:error, _}                = live(conn,  "/clubs/#{club.id}/edit")
+      assert {:ok, _view, _html}        = live(conn,  "/clubs/#{club.id}")
+      assert {:error, _}                = live(conn,  "/clubs/#{club.id}/show/edit")
+      assert {:error, _}                = live(conn,  "/clubs/#{club.id}/userrolemanagement")
+
+      assert render_click(index_view, "delete", %{id: club.id}) =~ "No permission to delete club"
+    end
+
   end
 
 end
