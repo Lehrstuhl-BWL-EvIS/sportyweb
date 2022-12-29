@@ -182,30 +182,16 @@ Repo.insert!(%Club{
 ###################################
 # Add Club Roles
 
-Repo.insert!(%ClubRole{
-  name: "sportyweb_admin"
-})
-
-Repo.insert!(%ClubRole{
-  name: "club_admin"
-})
-
-Repo.insert!(%ClubRole{
-  name: "club_subadmin"
-})
-
-Repo.insert!(%ClubRole{
-  name: "club_readwrite_member"
-})
-
-Repo.insert!(%ClubRole{
-  name: "club_member"
-})
+for role <- Sportyweb.AccessControl.PolicyClub.get_club_roles_all() do
+  Repo.insert!(%ClubRole{
+    name: role
+  })
+end
 
 ###################################
-# Create User Club Roles
+### Create User Club Roles ###
 
-### Sporty Web Admins ###
+## Sportyweb Admin for Team ##
 swa_id = Repo.all(ClubRole) |> Enum.at(0) |> Map.get(:id)
 for swa <- ["stefan.strecker@fernuni-hagen.de","marvin.biesenbach@studium.fernuni-hagen.de","sven.christ@fernuni-hagen.de","bastian.kres@krewast.de","andrew.utley@studium.fernuni-hagen.de"] do
   Repo.insert!(%UserClubRoles{
@@ -214,48 +200,29 @@ for swa <- ["stefan.strecker@fernuni-hagen.de","marvin.biesenbach@studium.fernun
   })
 end
 
-### Tester ###
-club1 = Repo.all(Club) |> Enum.at(0)
-club2 = Repo.all(Club) |> Enum.at(1)
-club3 = Repo.all(Club) |> Enum.at(2)
-
-#Tester Sportyweb Admin Club 1
+# Sportyweb Admin Tester #
 Repo.insert!(%UserClubRoles{
   user_id: Accounts.get_user_by_email("sportyweb_admin@tester.de").id,
   clubrole_id: Repo.all(ClubRole) |> Enum.at(0) |> Map.get(:id)
 })
 
-#Tester Club Admin Club 1
-Repo.insert!(%UserClubRoles{
-  user_id: Accounts.get_user_by_email("clubadmin@tester.de").id,
-  club_id: club1.id,
-  clubrole_id: Repo.all(ClubRole) |> Enum.at(1) |> Map.get(:id)
-})
+## Tester Roles ##
+# Helper Roles #
+[swa | clubroles] = Repo.all(ClubRole)
 
-#Tester ClubSubadmin Club 2
-Repo.insert!(%UserClubRoles{
-  user_id: Accounts.get_user_by_email("clubsubadmin@tester.de").id,
-  club_id: club2.id,
-  clubrole_id: Repo.all(ClubRole) |> Enum.at(2) |> Map.get(:id)
-})
+# Helper TesterUser #
+tester1 = "clubadmin@tester.de"
+tester2 = "clubsubadmin@tester.de"
+tester3 = "clubreadwritemember@tester.de"
+tester4 = "clubmember@tester.de"
+testers = [tester1, tester2, tester3, tester4]
 
-#Tester ClubReadWriteMember Club 2
-Repo.insert!(%UserClubRoles{
-  user_id: Accounts.get_user_by_email("clubreadwritemember@tester.de").id,
-  club_id: club2.id,
-  clubrole_id: Repo.all(ClubRole) |> Enum.at(3) |> Map.get(:id)
-})
-
-#Tester ClubMember Club 2
-Repo.insert!(%UserClubRoles{
-  user_id: Accounts.get_user_by_email("clubmember@tester.de").id,
-  club_id: club2.id,
-  clubrole_id: Repo.all(ClubRole) |> Enum.at(4) |> Map.get(:id)
-})
-
-#Tester ClubMember Club 3
-Repo.insert!(%UserClubRoles{
-  user_id: Accounts.get_user_by_email("clubmember@tester.de").id,
-  club_id: club3.id,
-  clubrole_id: Repo.all(ClubRole) |> Enum.at(4) |> Map.get(:id)
-})
+for {club, combs} <- Enum.zip(Repo.all(Club), [[1,3], 1..4, [2,3], [2, 4]]) do
+  for i <- Enum.map(combs, &(&1 - 1)) do
+      Repo.insert!(%UserClubRoles{
+        user_id: Accounts.get_user_by_email(Enum.at(testers, i)).id,
+        club_id: club.id,
+        clubrole_id: Map.get(Enum.at(clubroles, i), :id)
+      })
+  end
+end
