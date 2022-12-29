@@ -9,9 +9,9 @@
 
 <.table id="userclubroles" rows={@userclubroles} row_click={&JS.navigate(~p"/userclubroles/#{&1}")}>
   <:col :let={ucr} label="ID"><%= ucr.id %></:col>
-  <:col :let={ucr} label="User"><%= ucr.user_id %></:col>
-  <:col :let={ucr} label="Club"><%= ucr.club_id %></:col>
-  <:col :let={ucr} label="Club_Role"><%= ucr.clubrole_id %></:col>
+  <:col :let={ucr} label="User"><%= ucr.user.email %></:col>
+  <:col :let={ucr} label="Club"><%= if ucr.club, do: ucr.club.name, else: "Sportyweb Admin"  %></:col>
+  <:col :let={ucr} label="Club_Role"><%= ucr.clubrole.name %></:col>
 
   <:action :let={user_club_roles}>
     <div class="sr-only">

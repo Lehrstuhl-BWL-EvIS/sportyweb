@@ -41,6 +41,6 @@ defmodule SportywebWeb.UserClubRolesLive.Index do
   end
 
   defp list_userclubroles do
-    AccessControl.list_userclubroles()
+    AccessControl.list_userclubroles_data()
   end
 end
