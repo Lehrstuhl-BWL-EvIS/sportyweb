@@ -48,7 +48,10 @@ defmodule SportywebWeb.ClubLive.Index do
       club = Organization.get_club!(id)
       {:ok, _} = Organization.delete_club(club)
 
-      {:noreply, assign(socket, :clubs, PolicyClub.load_authorized_clubs(socket.assigns.current_user))}
+      {:noreply,
+        socket
+        |> put_flash(:info, "Club deleted successfully")
+        |> assign(:clubs, PolicyClub.load_authorized_clubs(socket.assigns.current_user))}
     else
       {:noreply,
         socket
