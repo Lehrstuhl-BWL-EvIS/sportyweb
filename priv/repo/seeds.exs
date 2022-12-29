@@ -23,7 +23,7 @@ alias Sportyweb.AccessControl.UserClubRoles
 # Add Users
 # Only in the dev environment!
 
-if Mix.env() in [:dev] do
+#if Mix.env() in [:dev] do
   Accounts.register_user(%{
     email: "stefan.strecker@fernuni-hagen.de",
     password: "NTU5MTM5NGNmZjY"
@@ -74,7 +74,7 @@ if Mix.env() in [:dev] do
     email: "clubmember@tester.de",
     password: "testertester"
   })
-end
+#end
 
 ###################################
 # Add Club 1

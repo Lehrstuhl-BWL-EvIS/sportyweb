@@ -33,7 +33,8 @@ MIX_ENV=dev  mix ecto.migrate
 MIX_ENV=test mix ecto.migrate
 
 echo "- Run seed file"
-mix run priv/repo/seeds.exs
+MIX_ENV=dev mix run priv/repo/seeds.exs
+MIX_ENV=test mix run priv/repo/seeds.exs
 
 echo "- Generate an ERD (Entity Relationship Diagram)"
 if command -v dot &> /dev/null
