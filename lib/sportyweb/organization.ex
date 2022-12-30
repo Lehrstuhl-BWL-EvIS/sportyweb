@@ -53,7 +53,8 @@ defmodule Sportyweb.Organization do
 
   """
   def get_club!(id, preloads) do
-    Repo.get!(Club, id)
+    Club
+    |> Repo.get!(id)
     |> Repo.preload(preloads)
   end
 
@@ -169,7 +170,8 @@ defmodule Sportyweb.Organization do
 
   """
   def get_department!(id, preloads) do
-    Repo.get!(Department, id)
+    Department
+    |> Repo.get!(id)
     |> Repo.preload(preloads)
   end
 

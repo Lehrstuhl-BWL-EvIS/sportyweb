@@ -143,8 +143,11 @@ TODO:
 
 ## Vor dem Commit
 
+Vor allem vor dem Merge in den Development-Branch!
+
 TODO:
 
 - setup-dev-env.sh
 - Restart server
-- Tests
+- Tests: mix test
+- Linter: mix credo --all

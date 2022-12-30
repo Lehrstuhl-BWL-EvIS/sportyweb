@@ -69,6 +69,11 @@ defmodule Sportyweb.MixProject do
       ###################################
       # Custom Dependencies
 
+      # Linter for better code consistency
+      # https://hexdocs.pm/credo/overview.html
+      # https://github.com/rrrene/credo
+      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+
       # A mix task for generating Entity Relationship Diagrams
       # https://hexdocs.pm/ecto_erd/Mix.Tasks.Ecto.Gen.Erd.html
       # https://github.com/fuelen/ecto_erd
