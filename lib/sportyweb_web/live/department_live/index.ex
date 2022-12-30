@@ -5,7 +5,10 @@ defmodule SportywebWeb.DepartmentLive.Index do
 
   @impl true
   def mount(%{"club_id" => club_id}, _session, socket) do
-    {:ok, assign(socket, :departments, list_departments(club_id))}
+    {:ok,
+    socket
+    |> assign(:departments, list_departments(club_id))
+    |> assign(:club_navigation_id, :dashboard)}
   end
 
   @impl true
