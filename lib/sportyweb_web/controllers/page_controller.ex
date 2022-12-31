@@ -5,10 +5,10 @@ defmodule SportywebWeb.PageController do
     if conn.assigns[:current_user] do
       conn
       |> redirect(to: ~p"/clubs")
+    else
+      # The home page is often custom made,
+      # so skip the default app layout.
+      render(conn, :home, layout: false)
     end
-
-    # The home page is often custom made,
-    # so skip the default app layout.
-    render(conn, :home, layout: false)
   end
 end

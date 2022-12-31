@@ -134,6 +134,7 @@ TODO:
 
 - Notwendigkeit
 - Genauigkeit / Tiefe
+- Hinzufügen / Anpassen
 - Fixtures
 - asserts
 - Zusammenwirken mit Seed
@@ -151,3 +152,4 @@ TODO:
 - Restart server
 - Tests: mix test
 - Linter: mix credo --all
+- git diff
