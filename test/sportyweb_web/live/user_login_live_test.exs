@@ -8,8 +8,8 @@ defmodule SportywebWeb.UserLoginLiveTest do
     test "renders log in page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/log_in")
 
-      assert html =~ "Log in"
-      assert html =~ "Register"
+      assert html =~ "Sign up"
+      assert html =~ "Sign in"
       assert html =~ "Forgot your password?"
     end
 

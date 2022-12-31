@@ -8,8 +8,8 @@ defmodule SportywebWeb.UserRegistrationLiveTest do
     test "renders registration page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
-      assert html =~ "Register"
-      assert html =~ "Log in"
+      assert html =~ "Sign in"
+      assert html =~ "Create an account"
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -48,11 +48,11 @@ defmodule SportywebWeb.UserRegistrationLiveTest do
       assert redirected_to(conn) == ~p"/"
 
       # Now do a logged in request and assert on the menu
-      conn = get(conn, "/")
+      conn = get(conn, "/clubs")
       response = html_response(conn, 200)
       assert response =~ email
-      assert response =~ "Settings"
-      assert response =~ "Log out"
+      assert response =~ "Profil bearbeiten"
+      assert response =~ "Abmelden"
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
@@ -78,7 +78,7 @@ defmodule SportywebWeb.UserRegistrationLiveTest do
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log_in")
 
-      assert login_html =~ "Log in"
+      assert login_html =~ "Sign in"
     end
   end
 end

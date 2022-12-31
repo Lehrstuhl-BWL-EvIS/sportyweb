@@ -12,8 +12,8 @@ defmodule SportywebWeb.UserSettingsLiveTest do
         |> log_in_user(user_fixture())
         |> live(~p"/users/settings")
 
-      assert html =~ "Change Email"
-      assert html =~ "Change Password"
+      assert html =~ "E-Mail-Adresse ändern"
+      assert html =~ "Passwort ändern"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
