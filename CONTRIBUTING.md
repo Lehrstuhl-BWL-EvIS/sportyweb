@@ -2,8 +2,40 @@
 
 > WORK IN PROGRESS!
 
-TODO: Einleitung, Erklärung des Dokuments
+&nbsp;
 
+Mit Sportyweb entsteht eine webbasierte Software für Amateursportvereine, die es erlaubt, alle administrativen Tätigkeiten innerhalb einer solchen Organisation effizient und auf integrierte Art und Weise zu erledigen.
+Mit dem im Laufe der Zeit immer weiter steigenden Funktionsumfang wächst automatisch auch die Menge an Code, die notwendig ist, um die gewünschten Features abzubilden.
+
+Dieses Dokument soll als Anleitung bei der Mitentwicklung an Sportyweb dienen und verfolgt mehrere Ziele:
+
+**Schneller Einstieg und einfaches Arbeiten:**
+
+[Elixir](https://elixir-lang.org/) ist eine funktionale Programmiersprache und somit in vielerlei Hinsicht anders, als eher bekannte imperative (Assembler, C, BASIC, ...) oder objektorientierte (Java, Ruby, Python, ...) Programmiersprachen.
+Auch das verwendete Framework [Phoenix](https://www.phoenixframework.org/) weicht durch den Einsatz von [LiveView](https://github.com/phoenixframework/phoenix_live_view) von etablierten [MVC-Webframeworks](https://de.wikipedia.org/wiki/Model_View_Controller) (Rails, Django, Laravel, ...) ab.
+Dieses Dokument wird für komplette Neueinsteiger das Studium entsprechender Fachliteratur und Projektdokumentation nicht ersetzen können, dient aber als Ausgangspunkt zum Verständnis der grundlegenden Zusammenhänge innerhalb der Codebasis und soll so einen schnellen Überblick und Einstieg ermöglichen, sowie die spätere Arbeit vereinfachen.
+
+**Einheitliche und qualitativ hochwertige Codebasis:**
+
+Sportweb steht vor dem (im Vergleich zur Softwareentwicklung in der freiem Wirtschaft) eher ungewöhnlichen Problem, dass in verhältnismäßig kurzer Zeit Menschen mit unterschiedlichstem Kenntnisstand bzgl.
+Webentwicklung, Elixir und Phoenix auf eine möglichst einheitliche Wissensebene gebracht werden müssen, um direkt im Anschluss effektiv mitwirken zu können.
+Um also die sowieso vorhandene Einstiegshürde nicht noch weiter anzuheben, ist es deshalb von äußerster Wichtigkeit, dass die Codebasis von Sportyweb, trotz des kontinuierlich wachsenden Funktionsumfangs, möglichst einheitlich und mit einem hohen Anspruch an Softwarequalität weiterentwickelt wird.
+Es gilt also, sich möglichst an die Vorgaben des Frameworks sowie der verwendeten Komponenten zu halten, aber auch die in diesem Dokument festgelegten Prozesse und Best Practices zu beachten.
+Nur so kann über einen langen Zeitraum hinweg die [technische Schuld](https://en.wikipedia.org/wiki/Technical_debt) trotz einer großen Zahl von Funktionen und Mitwirkenden auf einem überschaubaren Level gehalten werden.
+
+**Prozesse und Best Practices:**
+
+Auch wenn durch das Phoenix-Framework und Komponenten wie LiveView oder Tailwind bereits viele Best Practices aus dem Bereich der Webapplikationsentwicklung automatisch übernommen wurden, gilt es trotzdem, diese mit Bedacht einzuhalten und zu befolgen.
+Wie in der Softwareentwicklung üblich, führen viele Wege nach Rom und es ist sehr einfach, aber meiste nicht von Vorteil, von bewährten Vorgehensweisen abzuweichen.
+Deshalb wird in diesem Dokument klar beschrieben, wie bei der Erstellung neuer und der Anpassung bestehender Elemente vorgegangen werden soll.<br>
+Dies umfasst die Nutzung des Phoenix Codegenerators, anschließend notwendige Anpassungen und Erweiterungen der Migrations, Components, Views und Tests, sowie die Erweiterung der Seed-Datei und Dokumentation.
+Außerdem wird das Vorgehen bei Commits und Merges in andere Branches aufgezeigt, um eine saubere und möglichst fehlerfreie Codebasis zu gewährleisten.
+
+Begründete Abweichungen von den nachfolgend geschilderten Abläufen sind natürlich nicht verboten, sollten aber eher die Ausnahme bleiben.
+
+&nbsp;
+
+> Hinweis: Alle Sätze in der Markdown-Datei beginnen in einer neuen Zeile, um Änderungen daran besser nachvollziehen zu können. Dargestellt werden dann aber, wie bei HTML, natürlich zusammenhängende Absätze.
 
 &nbsp;
 
@@ -23,6 +55,7 @@ TODO:
 
 TODO:
 
+- Erklärung Nutzung LiveView statt des regulären MVP-Ansatzes
 - Beispiel (mit Reference, binary_id) auf Command Line
 - Contexts
 - Erklärung des Outputs
@@ -121,10 +154,11 @@ TODO:
 
 TODO:
 
-- Erweiterung um ausasgekräftige Beispiele
+- Erweiterung um aussagekräftige Beispiele
 - Abdecken aller Features
 - Hilft allen
-
+- Ausführung via setup-dev-env Skript, oder direkt: ...
+    - Mehrfache Ausführung führt zu Validation-Errors
 
 &nbsp;
 
@@ -142,6 +176,19 @@ TODO:
 
 &nbsp;
 
+## Dokumentation
+
+- Notwendigkeit
+- Genauigkeit / Tiefe
+- Problematik der Aktualität
+- Hinzufügen / Anpassen
+- Abschlussarbeit (Konzeption, Vorgehensweise, ...)
+- Kommentaren für die einzelnen Funktionen
+- Tests
+
+
+&nbsp;
+
 ## Vor dem Commit
 
 Vor allem vor dem Merge in den Development-Branch!
@@ -149,6 +196,7 @@ Vor allem vor dem Merge in den Development-Branch!
 TODO:
 
 - setup-dev-env.sh
+- Funktioniert Kompilierung?
 - Restart server
 - Tests: mix test
 - Linter: mix credo --all
