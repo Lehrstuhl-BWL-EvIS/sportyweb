@@ -12,6 +12,7 @@ defmodule SportywebWeb.AccessControlTest do
   alias Sportyweb.Organization.Club
 
   alias Sportyweb.AccessControl
+  alias Sportyweb.AccessControl.PolicyApplication
   alias Sportyweb.AccessControl.PolicyClub
 
   defp do_setup(_) do
@@ -27,16 +28,16 @@ defmodule SportywebWeb.AccessControlTest do
 
     club = Repo.all(query_club) |> Enum.at(0)
 
-    %{sportyweb_admin: tester0, club_admin: tester1, club_member: tester4, club: club}
+    %{sportyweb_admin: tester0, club_admin: tester1, club_subadmin: tester2, club_member: tester4, club: club}
   end
 
-  describe "PolicyClub" do
+  describe "PolicyClub functions" do
     setup [:do_setup]
 
     test "user with sportyweb admin role performs according to policy", %{sportyweb_admin: user, club: club} do
       assert user.email == "sportyweb_admin@tester.de"
       assert club.name == "1. FC Köln"
-      assert AccessControl.is_sportyweb_admin(user) == true
+      assert PolicyApplication.is_sportyweb_admin(user) == true
 
       assert PolicyClub.can?(user, :index, club.id) == true
       assert PolicyClub.can?(user, :new, club.id) == true
@@ -49,8 +50,8 @@ defmodule SportywebWeb.AccessControlTest do
     test "user with higher role [club_admin] performs according to policy", %{club_admin: user, club: club} do
       assert user.email == "clubadmin@tester.de"
       assert club.name == "1. FC Köln"
-      assert AccessControl.has_club_role(user, club.id) |> Enum.at(0) == "club_admin"
-      assert AccessControl.is_sportyweb_admin(user) == false
+      assert PolicyClub.has_club_role(user, club.id) |> Enum.at(0) == "club_admin"
+      assert PolicyApplication.is_sportyweb_admin(user) == false
 
       assert PolicyClub.can?(user, :index, club.id) == true
       assert PolicyClub.can?(user, :new, club.id) == false
@@ -63,8 +64,8 @@ defmodule SportywebWeb.AccessControlTest do
     test "user with lower role [club_member] performs according to policy", %{club_member: user, club: club} do
       assert user.email == "clubmember@tester.de"
       assert club.name == "1. FC Köln"
-      assert AccessControl.has_club_role(user, club.id) |> Enum.at(0) == "club_member"
-      assert AccessControl.is_sportyweb_admin(user) == false
+      assert PolicyClub.has_club_role(user, club.id) |> Enum.at(0) == "club_member"
+      assert PolicyApplication.is_sportyweb_admin(user) == false
 
       assert PolicyClub.can?(user, :index, club.id) == true
       assert PolicyClub.can?(user, :new, club.id) == false
@@ -73,6 +74,17 @@ defmodule SportywebWeb.AccessControlTest do
       assert PolicyClub.can?(user, :show, club.id) == true
       assert PolicyClub.can?(user, :userrolemanagement, club.id) == false
     end
+
+    test "get_club_roles_for_administration", %{club_admin: admin, club_subadmin: sub, club: club} do
+      len = length(PolicyClub.get_club_roles_all)
+
+      assert length(PolicyClub.get_club_roles_for_administration(admin, club.id)) == len
+      assert length(PolicyClub.get_club_roles_for_administration(sub, club.id))   <  len
+    end
+  end
+
+  describe "PolicyClub implementation" do
+    setup [:do_setup]
 
     test "policy implemented correctly for user with sportyweb admin role", %{conn: conn, sportyweb_admin: user, club: club}do
       user_token = Accounts.generate_user_session_token(user)
@@ -141,7 +153,6 @@ defmodule SportywebWeb.AccessControlTest do
 
       assert render_click(index_view, "delete", %{id: club.id}) =~ "No permission to delete club"
     end
-
   end
 
 end

@@ -3,28 +3,23 @@ defmodule Sportyweb.AccessControl.PolicyClub do
   import Ecto.Query
 
   alias Sportyweb.Repo
+  alias Sportyweb.Accounts.User
   alias Sportyweb.Organization.Club
-  alias Sportyweb.AccessControl.UserClubRoles, as: UCR
 
   alias Sportyweb.AccessControl
+  alias Sportyweb.AccessControl.PolicyApplication
+  alias Sportyweb.AccessControl.UserClubRoles, as: UCR
+  alias Sportyweb.AccessControl.RolePermissionMatrix, as: RPM
 
-  ### ROLES-PERMISSIONS-MATRIX ###
-  def role_permission_matrix do
-    [
-      sportyweb_admin:         [:index, :new, :edit, "delete", :show, :userrolemanagement ],
-      club_admin:              [:index,  nil, :edit, "delete", :show, :userrolemanagement ],
-      club_subadmin:           [:index,  nil, :edit,      nil, :show, :userrolemanagement ],
-      club_readwrite_member:   [:index,  nil, :edit,      nil, :show,                 nil ],
-      club_member:             [:index,  nil,   nil,      nil, :show,                 nil ]
-    ]
-  end
+  ### ROLE-PERMISSION-MATRIX ###
+  def role_permission_matrix, do: RPM.role_permission_matrix(:club)
 
   def get_club_roles_all, do: Keyword.keys(role_permission_matrix()) |> Enum.map(&( Atom.to_string(&1)))
   def get_club_roles_for_administration(user, club_id) do
-    role = if AccessControl.is_sportyweb_admin(user) do
-      get_club_roles_all() |> Enum.at(1)
+    role = if PolicyApplication.is_sportyweb_admin(user) do
+      get_club_roles_all() |> Enum.at(0)
     else
-      AccessControl.has_club_role(user, club_id) |> Enum.at(0)
+      has_club_role(user, club_id) |> Enum.at(0)
     end
 
     get_club_roles_all()
@@ -33,7 +28,7 @@ defmodule Sportyweb.AccessControl.PolicyClub do
 
   ### RESTRICTED QUERIES ###
   def load_authorized_clubs(user) do
-    if AccessControl.is_sportyweb_admin(user) == true do
+    if PolicyApplication.is_sportyweb_admin(user) == true do
       Repo.all(Club)
     else
       query_user_clubs = from ucr in UCR,
@@ -67,13 +62,13 @@ defmodule Sportyweb.AccessControl.PolicyClub do
   ### ACCESS POLICY ###
   def can?(_user, :index, _params), do: true
   def can?(user, :new, _params) do
-    if AccessControl.is_sportyweb_admin(user), do: true, else: false
+    if PolicyApplication.is_sportyweb_admin(user), do: true, else: false
   end
   def can?(user, action, %{"id" => club_id}), do: can?(user, action, club_id)
   def can?(user, action, club_id) when action in [:new, :edit, "delete", :show, :userrolemanagement] do
-    if AccessControl.is_sportyweb_admin(user) ||
+    if PolicyApplication.is_sportyweb_admin(user) ||
        user
-       |> AccessControl.has_club_role(club_id)
+       |> has_club_role(club_id)
        |> Enum.map(fn role -> Keyword.get(role_permission_matrix(), String.to_atom(role)) end)
        |> List.flatten()
        |> Enum.uniq()
@@ -98,4 +93,12 @@ defmodule Sportyweb.AccessControl.PolicyClub do
     |> Enum.member?(:error)
   end
 
+  def has_club_role(%User{id: user_id}, club_id) do
+    query = from ucr in UCR,
+      where: ucr.user_id == ^user_id and ucr.club_id == ^club_id,
+      join: cr in assoc(ucr, :clubrole),
+      select: cr.name
+
+    Repo.all(query)
+  end
 end
