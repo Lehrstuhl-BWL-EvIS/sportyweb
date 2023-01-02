@@ -7,7 +7,7 @@ defmodule SportywebWeb.ClubLive.Show do
   def mount(_params, _session, socket) do
     {:ok,
     socket
-    |> assign(:club_navigation_id, :dashboard)}
+    |> assign(:club_navigation_current_item, :dashboard)}
   end
 
   @impl true

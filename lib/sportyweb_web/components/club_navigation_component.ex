@@ -4,7 +4,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
   @doc """
   Renders the club navigation.
 
-  To mark the current item, the club_navigation_id has to be assigned
+  To mark the current item, the club_navigation_current_item has to be assigned
   with one of the available atoms (check below) as its value.
   This can be done in the mount function of the corresponding
   LiveView component. An easy example:
@@ -14,7 +14,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
       def mount(_params, _session, socket) do
         {:ok,
         socket
-        |> assign(:club_navigation_id, :dashboard)}
+        |> assign(:club_navigation_current_item, :dashboard)}
       end
 
   """
@@ -27,27 +27,27 @@ defmodule SportywebWeb.ClubNavigationComponent do
     ~H"""
     <nav class="sticky top-10">
       <div class="space-y-1">
-        <.link navigate={~p"/clubs/#{@club}"} class={[@default_link_classes, (if @club_navigation_id == :dashboard, do: @current_link_classes)]}>
+        <.link navigate={~p"/clubs/#{@club}"} class={[@default_link_classes, (if @club_navigation_current_item == :dashboard, do: @current_link_classes)]}>
           <Heroicons.squares_plus class={@default_icon_classes} />
           <span class="truncate">Dashboard</span>
         </.link>
 
-        <.link navigate={~p"/clubs/#{@club}"} class={[@default_link_classes, (if @club_navigation_id == :calendar, do: @current_link_classes)]}>
+        <.link navigate={~p"/clubs/#{@club}"} class={[@default_link_classes, (if @club_navigation_current_item == :calendar, do: @current_link_classes)]}>
           <Heroicons.calendar class={@default_icon_classes} />
           <span class="truncate">Kalender</span>
         </.link>
 
-        <.link navigate={~p"/clubs/#{@club}"} class={[@default_link_classes, (if @club_navigation_id == :members, do: @current_link_classes)]}>
+        <.link navigate={~p"/clubs/#{@club}"} class={[@default_link_classes, (if @club_navigation_current_item == :members, do: @current_link_classes)]}>
           <Heroicons.user_group class={@default_icon_classes} />
           <span class="truncate">Mitglieder</span>
         </.link>
 
-        <.link navigate={~p"/clubs/#{@club}"} class={[@default_link_classes, (if @club_navigation_id == :dues, do: @current_link_classes)]}>
+        <.link navigate={~p"/clubs/#{@club}"} class={[@default_link_classes, (if @club_navigation_current_item == :dues, do: @current_link_classes)]}>
           <Heroicons.banknotes class={@default_icon_classes} />
           <span class="truncate">Gebühren</span>
         </.link>
 
-        <.link navigate={~p"/clubs/#{@club}"} class={[@default_link_classes, (if @club_navigation_id == :authentication, do: @current_link_classes)]}>
+        <.link navigate={~p"/clubs/#{@club}"} class={[@default_link_classes, (if @club_navigation_current_item == :authentication, do: @current_link_classes)]}>
           <Heroicons.lock_closed class={@default_icon_classes} />
           <span class="truncate">Nutzer & Rollen</span>
         </.link>
