@@ -58,54 +58,54 @@ defmodule Sportyweb.AccessControlTest do
   end
 
   describe "userclubroles" do
-    alias Sportyweb.AccessControl.UserClubRoles
+    alias Sportyweb.AccessControl.UserClubRole
 
     import Sportyweb.AccessControlFixtures
 
     @invalid_attrs %{}
 
     test "list_userclubroles/0 returns all userclubroles" do
-      user_club_roles = user_club_roles_fixture()
-      assert AccessControl.list_userclubroles() == [user_club_roles]
+      user_club_role = user_club_role_fixture()
+      assert AccessControl.list_userclubroles() == [user_club_role]
     end
 
-    test "get_user_club_roles!/1 returns the user_club_roles with given id" do
-      user_club_roles = user_club_roles_fixture()
-      assert AccessControl.get_user_club_roles!(user_club_roles.id) == user_club_roles
+    test "get_user_club_role!/1 returns the user_club_role with given id" do
+      user_club_role = user_club_role_fixture()
+      assert AccessControl.get_user_club_role!(user_club_role.id) == user_club_role
     end
 
-    test "create_user_club_roles/1 with valid data creates a user_club_roles" do
+    test "create_user_club_role/1 with valid data creates a user_club_role" do
       valid_attrs = %{}
 
-      assert {:ok, %UserClubRoles{} = user_club_roles} = AccessControl.create_user_club_roles(valid_attrs)
+      assert {:ok, %UserClubRole{} = user_club_role} = AccessControl.create_user_club_role(valid_attrs)
     end
 
-    test "create_user_club_roles/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = AccessControl.create_user_club_roles(@invalid_attrs)
+    test "create_user_club_role/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = AccessControl.create_user_club_role(@invalid_attrs)
     end
 
-    test "update_user_club_roles/2 with valid data updates the user_club_roles" do
-      user_club_roles = user_club_roles_fixture()
+    test "update_user_club_role/2 with valid data updates the user_club_role" do
+      user_club_role = user_club_role_fixture()
       update_attrs = %{}
 
-      assert {:ok, %UserClubRoles{} = user_club_roles} = AccessControl.update_user_club_roles(user_club_roles, update_attrs)
+      assert {:ok, %UserClubRole{} = user_club_role} = AccessControl.update_user_club_role(user_club_role, update_attrs)
     end
 
-    test "update_user_club_roles/2 with invalid data returns error changeset" do
-      user_club_roles = user_club_roles_fixture()
-      assert {:error, %Ecto.Changeset{}} = AccessControl.update_user_club_roles(user_club_roles, @invalid_attrs)
-      assert user_club_roles == AccessControl.get_user_club_roles!(user_club_roles.id)
+    test "update_user_club_role/2 with invalid data returns error changeset" do
+      user_club_role = user_club_role_fixture()
+      assert {:error, %Ecto.Changeset{}} = AccessControl.update_user_club_role(user_club_role, @invalid_attrs)
+      assert user_club_role == AccessControl.get_user_club_role!(user_club_role.id)
     end
 
-    test "delete_user_club_roles/1 deletes the user_club_roles" do
-      user_club_roles = user_club_roles_fixture()
-      assert {:ok, %UserClubRoles{}} = AccessControl.delete_user_club_roles(user_club_roles)
-      assert_raise Ecto.NoResultsError, fn -> AccessControl.get_user_club_roles!(user_club_roles.id) end
+    test "delete_user_club_role/1 deletes the user_club_role" do
+      user_club_role = user_club_role_fixture()
+      assert {:ok, %UserClubRole{}} = AccessControl.delete_user_club_role(user_club_role)
+      assert_raise Ecto.NoResultsError, fn -> AccessControl.get_user_club_role!(user_club_role.id) end
     end
 
-    test "change_user_club_roles/1 returns a user_club_roles changeset" do
-      user_club_roles = user_club_roles_fixture()
-      assert %Ecto.Changeset{} = AccessControl.change_user_club_roles(user_club_roles)
+    test "change_user_club_role/1 returns a user_club_role changeset" do
+      user_club_role = user_club_role_fixture()
+      assert %Ecto.Changeset{} = AccessControl.change_user_club_role(user_club_role)
     end
   end
 

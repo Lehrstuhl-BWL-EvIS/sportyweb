@@ -2,7 +2,7 @@
   Listing Userclubroles
   <:actions>
     <.link patch={~p"/userclubroles/new"}>
-      <.button>New User club roles</.button>
+      <.button>New User club role</.button>
     </.link>
   </:actions>
 </.header>
@@ -13,14 +13,14 @@
   <:col :let={ucr} label="Club"><%= if ucr.club, do: ucr.club.name, else: "Sportyweb Admin"  %></:col>
   <:col :let={ucr} label="Club Role"><%= ucr.clubrole.name %></:col>
 
-  <:action :let={user_club_roles}>
+  <:action :let={user_club_role}>
     <div class="sr-only">
-      <.link navigate={~p"/userclubroles/#{user_club_roles}"}>Show</.link>
+      <.link navigate={~p"/userclubroles/#{user_club_role}"}>Show</.link>
     </div>
-    <.link patch={~p"/userclubroles/#{user_club_roles}/edit"}>Edit</.link>
+    <.link patch={~p"/userclubroles/#{user_club_role}/edit"}>Edit</.link>
   </:action>
-  <:action :let={user_club_roles}>
-    <.link phx-click={JS.push("delete", value: %{id: user_club_roles.id})} data-confirm="Are you sure?">
+  <:action :let={user_club_role}>
+    <.link phx-click={JS.push("delete", value: %{id: user_club_role.id})} data-confirm="Are you sure?">
       Delete
     </.link>
   </:action>
@@ -28,16 +28,16 @@
 
 <.modal
   :if={@live_action in [:new, :edit]}
-  id="user_club_roles-modal"
+  id="user_club_role-modal"
   show
   on_cancel={JS.navigate(~p"/userclubroles")}
 >
   <.live_component
-    module={SportywebWeb.UserClubRolesLive.FormComponent}
-    id={@user_club_roles.id || :new}
+    module={SportywebWeb.UserClubRoleLive.FormComponent}
+    id={@user_club_role.id || :new}
     title={@page_title}
     action={@live_action}
-    user_club_roles={@user_club_roles}
+    user_club_role={@user_club_role}
     navigate={~p"/userclubroles"}
   />
 </.modal>

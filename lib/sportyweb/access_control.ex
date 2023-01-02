@@ -103,7 +103,7 @@ defmodule Sportyweb.AccessControl do
     ClubRole.changeset(club_role, attrs)
   end
 
-  alias Sportyweb.AccessControl.UserClubRoles
+  alias Sportyweb.AccessControl.UserClubRole
 
   @doc """
   Returns the list of userclubroles.
@@ -111,15 +111,15 @@ defmodule Sportyweb.AccessControl do
   ## Examples
 
       iex> list_userclubroles()
-      [%UserClubRoles{}, ...]
+      [%UserClubRole{}, ...]
 
   """
   def list_userclubroles do
-    Repo.all(UserClubRoles)
+    Repo.all(UserClubRole)
   end
 
   def list_userclubroles_data do
-    query = from ucr in UserClubRoles,
+    query = from ucr in UserClubRole,
       join: u in assoc(ucr, :user),
       preload: [ :user, :club, :clubrole ],
       order_by: u.email
@@ -128,96 +128,96 @@ defmodule Sportyweb.AccessControl do
   end
 
   @doc """
-  Gets a single user_club_roles.
+  Gets a single user_club_role.
 
-  Raises `Ecto.NoResultsError` if the User club roles does not exist.
+  Raises `Ecto.NoResultsError` if the User club role does not exist.
 
   ## Examples
 
-      iex> get_user_club_roles!(123)
-      %UserClubRoles{}
+      iex> get_user_club_role!(123)
+      %UserClubRole{}
 
-      iex> get_user_club_roles!(456)
+      iex> get_user_club_role!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_user_club_roles!(id), do: Repo.get!(UserClubRoles, id)
+  def get_user_club_role!(id), do: Repo.get!(UserClubRole, id)
 
   @doc """
-  Creates a user_club_roles.
+  Creates a user_club_role.
 
   ## Examples
 
-      iex> create_user_club_roles(%{field: value})
-      {:ok, %UserClubRoles{}}
+      iex> create_user_club_role(%{field: value})
+      {:ok, %UserClubRole{}}
 
-      iex> create_user_club_roles(%{field: bad_value})
+      iex> create_user_club_role(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user_club_roles(attrs \\ %{}) do
-    %UserClubRoles{}
-    |> UserClubRoles.changeset(attrs)
+  def create_user_club_role(attrs \\ %{}) do
+    %UserClubRole{}
+    |> UserClubRole.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a user_club_roles.
+  Updates a user_club_role.
 
   ## Examples
 
-      iex> update_user_club_roles(user_club_roles, %{field: new_value})
-      {:ok, %UserClubRoles{}}
+      iex> update_user_club_role(user_club_role, %{field: new_value})
+      {:ok, %UserClubRole{}}
 
-      iex> update_user_club_roles(user_club_roles, %{field: bad_value})
+      iex> update_user_club_role(user_club_role, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_user_club_roles(%UserClubRoles{} = user_club_roles, attrs) do
-    user_club_roles
-    |> UserClubRoles.changeset(attrs)
+  def update_user_club_role(%UserClubRole{} = user_club_role, attrs) do
+    user_club_role
+    |> UserClubRole.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Updates a user_club_roles.
+  Updates a user_club_role.
 
   ## Examples
 
   """
-  def manage_user_club_roles(%UserClubRoles{} = user_club_roles, attrs) do
-    user_club_roles
-    |> UserClubRoles.managechanges(attrs)
+  def manage_user_club_role(%UserClubRole{} = user_club_role, attrs) do
+    user_club_role
+    |> UserClubRole.managechanges(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a user_club_roles.
+  Deletes a user_club_role.
 
   ## Examples
 
-      iex> delete_user_club_roles(user_club_roles)
-      {:ok, %UserClubRoles{}}
+      iex> delete_user_club_role(user_club_role)
+      {:ok, %UserClubRole{}}
 
-      iex> delete_user_club_roles(user_club_roles)
+      iex> delete_user_club_role(user_club_role)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_user_club_roles(%UserClubRoles{} = user_club_roles) do
-    Repo.delete(user_club_roles)
+  def delete_user_club_role(%UserClubRole{} = user_club_role) do
+    Repo.delete(user_club_role)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user_club_roles changes.
+  Returns an `%Ecto.Changeset{}` for tracking user_club_role changes.
 
   ## Examples
 
-      iex> change_user_club_roles(user_club_roles)
-      %Ecto.Changeset{data: %UserClubRoles{}}
+      iex> change_user_club_role(user_club_role)
+      %Ecto.Changeset{data: %UserClubRole{}}
 
   """
-  def change_user_club_roles(%UserClubRoles{} = user_club_roles, attrs \\ %{}) do
-    UserClubRoles.changeset(user_club_roles, attrs)
+  def change_user_club_role(%UserClubRole{} = user_club_role, attrs \\ %{}) do
+    UserClubRole.changeset(user_club_role, attrs)
   end
 
   alias Sportyweb.AccessControl.ApplicationRole

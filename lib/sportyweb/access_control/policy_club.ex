@@ -8,7 +8,7 @@ defmodule Sportyweb.AccessControl.PolicyClub do
 
   alias Sportyweb.AccessControl
   alias Sportyweb.AccessControl.PolicyApplication
-  alias Sportyweb.AccessControl.UserClubRoles, as: UCR
+  alias Sportyweb.AccessControl.UserClubRole, as: UCR
   alias Sportyweb.AccessControl.RolePermissionMatrix, as: RPM
 
   ### ROLE-PERMISSION-MATRIX ###
@@ -79,15 +79,15 @@ defmodule Sportyweb.AccessControl.PolicyClub do
 
   ### HELPER FUNCTIONS ###
   def ucr_has_role?(ucr_id, role_name) do
-    AccessControl.get_user_club_roles!(ucr_id).clubrole_id == AccessControl.get_club_role_by_name(role_name).id
+    AccessControl.get_user_club_role!(ucr_id).clubrole_id == AccessControl.get_club_role_by_name(role_name).id
   end
 
   def ucr_change_role(ucrchanges) do
     ucrchanges
     |> Enum.map(fn {ucr_id, role_name} ->
         ucr_id
-        |> AccessControl.get_user_club_roles!()
-        |> AccessControl.manage_user_club_roles(%{clubrole_id: AccessControl.get_club_role_by_name(role_name).id})
+        |> AccessControl.get_user_club_role!()
+        |> AccessControl.manage_user_club_role(%{clubrole_id: AccessControl.get_club_role_by_name(role_name).id})
       end)
     |> Enum.map(&(elem(&1, 0)))
     |> Enum.member?(:error)

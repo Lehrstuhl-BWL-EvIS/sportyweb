@@ -1,4 +1,4 @@
-defmodule SportywebWeb.UserClubRolesLive.Show do
+defmodule SportywebWeb.UserClubRoleLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.AccessControl
@@ -13,9 +13,9 @@ defmodule SportywebWeb.UserClubRolesLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:user_club_roles, AccessControl.get_user_club_roles!(id))}
+     |> assign(:user_club_role, AccessControl.get_user_club_role!(id))}
   end
 
-  defp page_title(:show), do: "Show User club roles"
-  defp page_title(:edit), do: "Edit User club roles"
+  defp page_title(:show), do: "Show User club role"
+  defp page_title(:edit), do: "Edit User club role"
 end

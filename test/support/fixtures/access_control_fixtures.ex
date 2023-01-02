@@ -19,17 +19,17 @@ defmodule Sportyweb.AccessControlFixtures do
   end
 
   @doc """
-  Generate a user_club_roles.
+  Generate a user_club_role.
   """
-  def user_club_roles_fixture(attrs \\ %{}) do
-    {:ok, user_club_roles} =
+  def user_club_role_fixture(attrs \\ %{}) do
+    {:ok, user_club_role} =
       attrs
       |> Enum.into(%{
 
       })
-      |> Sportyweb.AccessControl.create_user_club_roles()
+      |> Sportyweb.AccessControl.create_user_club_role()
 
-    user_club_roles
+    user_club_role
   end
 
   @doc """

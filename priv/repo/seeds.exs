@@ -17,7 +17,7 @@ alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
 
 alias Sportyweb.AccessControl.ClubRole
-alias Sportyweb.AccessControl.UserClubRoles
+alias Sportyweb.AccessControl.UserClubRole
 alias Sportyweb.AccessControl.ApplicationRole
 alias Sportyweb.AccessControl.UserApplicationRole
 
@@ -226,7 +226,7 @@ testers = [tester1, tester2, tester3, tester4]
 
 for {club, combs} <- Enum.zip(Repo.all(Club), [[1,3], 1..4, [2,3], [2, 4]]) do
   for i <- Enum.map(combs, &(&1 - 1)) do
-      Repo.insert!(%UserClubRoles{
+      Repo.insert!(%UserClubRole{
         user_id: Accounts.get_user_by_email(Enum.at(testers, i)).id,
         club_id: club.id,
         clubrole_id: Map.get(Enum.at(clubroles, i), :id)

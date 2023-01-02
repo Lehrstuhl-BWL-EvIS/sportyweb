@@ -1,4 +1,4 @@
-defmodule Sportyweb.AccessControl.UserClubRoles do
+defmodule Sportyweb.AccessControl.UserClubRole do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -17,14 +17,14 @@ defmodule Sportyweb.AccessControl.UserClubRoles do
   end
 
   @doc false
-  def changeset(user_club_roles, attrs) do
-    user_club_roles
+  def changeset(user_club_role, attrs) do
+    user_club_role
     |> cast(attrs, [])
     |> validate_required([])
   end
 
-  def managechanges(user_club_roles, attr) do
-    user_club_roles
+  def managechanges(user_club_role, attr) do
+    user_club_role
     |> change(attr)
     |> validate_required([:user_id, :club_id, :clubrole_id])
   end
