@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # The collaborative development of complex software like
-# SportyWeb will be much easier if each developer starts
+# Sportyweb will be much easier if each developer starts
 # on the same basis.
 #
 # This script takes care of setting up a new and clean
