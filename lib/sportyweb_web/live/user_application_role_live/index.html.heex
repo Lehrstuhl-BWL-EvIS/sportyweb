@@ -1,0 +1,42 @@
+<.header>
+  Listing Userapplicationroles
+  <:actions>
+    <.link patch={~p"/userapplicationroles/new"}>
+      <.button>New User application role</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table id="userapplicationroles" rows={@userapplicationroles} row_click={&JS.navigate(~p"/userapplicationroles/#{&1}")}>
+  <:col :let={uar} label="ID"><%= uar.id %></:col>
+  <:col :let={uar} label="User"><%= uar.user.email %></:col>
+  <:col :let={uar} label="Application Role"><%= uar.applicationrole.name %></:col>
+  
+  <:action :let={user_application_role}>
+    <div class="sr-only">
+      <.link navigate={~p"/userapplicationroles/#{user_application_role}"}>Show</.link>
+    </div>
+    <.link patch={~p"/userapplicationroles/#{user_application_role}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={user_application_role}>
+    <.link phx-click={JS.push("delete", value: %{id: user_application_role.id})} data-confirm="Are you sure?">
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="user_application_role-modal"
+  show
+  on_cancel={JS.navigate(~p"/userapplicationroles")}
+>
+  <.live_component
+    module={SportywebWeb.UserApplicationRoleLive.FormComponent}
+    id={@user_application_role.id || :new}
+    title={@page_title}
+    action={@live_action}
+    user_application_role={@user_application_role}
+    navigate={~p"/userapplicationroles"}
+  />
+</.modal>

@@ -13,13 +13,14 @@ defmodule SportywebWeb.UserClubRolesLive.FormComponent do
       </.header>
 
       <.simple_form
+        :let={f}
         for={@changeset}
         id="user_club_roles-form"
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
       >
-
+        <.input field={{f, :name}} type="text" label="name" />
         <:actions>
           <.button phx-disable-with="Saving...">Save User club roles</.button>
         </:actions>

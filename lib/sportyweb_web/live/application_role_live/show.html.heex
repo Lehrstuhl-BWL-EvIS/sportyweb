@@ -1,0 +1,26 @@
+<.header>
+  Application role <%= @application_role.id %>
+  <:subtitle>This is a application_role record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/applicationroles/#{@application_role}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit application_role</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @application_role.name %></:item>
+</.list>
+
+<.back navigate={~p"/applicationroles"}>Back to applicationroles</.back>
+
+<.modal :if={@live_action == :edit} id="application_role-modal" show on_cancel={JS.patch(~p"/applicationroles/#{@application_role}")}>
+  <.live_component
+    module={SportywebWeb.ApplicationRoleLive.FormComponent}
+    id={@application_role.id}
+    title={@page_title}
+    action={@live_action}
+    application_role={@application_role}
+    navigate={~p"/applicationroles/#{@application_role}"}
+  />
+</.modal>

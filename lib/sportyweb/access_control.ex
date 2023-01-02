@@ -331,6 +331,15 @@ defmodule Sportyweb.AccessControl do
     Repo.all(UserApplicationRole)
   end
 
+  def list_userapplicationroles_data do
+    query = from uar in UserApplicationRole,
+      join: u in assoc(uar, :user),
+      preload: [ :user, :applicationrole ],
+      order_by: u.email
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single user_application_role.
 

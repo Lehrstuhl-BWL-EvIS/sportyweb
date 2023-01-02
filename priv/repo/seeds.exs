@@ -18,6 +18,8 @@ alias Sportyweb.Organization.Department
 
 alias Sportyweb.AccessControl.ClubRole
 alias Sportyweb.AccessControl.UserClubRoles
+alias Sportyweb.AccessControl.ApplicationRole
+alias Sportyweb.AccessControl.UserApplicationRole
 
 ###################################
 # Add Users
@@ -182,6 +184,12 @@ Repo.insert!(%Club{
 ###################################
 # Add Club Roles
 
+for role <- Sportyweb.AccessControl.PolicyApplication.get_application_roles_all() do
+  Repo.insert!(%ApplicationRole{
+    name: role
+  })
+end
+
 for role <- Sportyweb.AccessControl.PolicyClub.get_club_roles_all() do
   Repo.insert!(%ClubRole{
     name: role
@@ -189,26 +197,25 @@ for role <- Sportyweb.AccessControl.PolicyClub.get_club_roles_all() do
 end
 
 ###################################
-### Create User Club Roles ###
+### Create User Role Combinations ###
 
-## Sportyweb Admin for Team ##
-swa_id = Repo.all(ClubRole) |> Enum.at(0) |> Map.get(:id)
-for swa <- ["stefan.strecker@fernuni-hagen.de","marvin.biesenbach@studium.fernuni-hagen.de","sven.christ@fernuni-hagen.de","bastian.kres@krewast.de","andrew.utley@studium.fernuni-hagen.de"] do
-  Repo.insert!(%UserClubRoles{
+## Sportyweb Admins##
+swa_id = Repo.all(ApplicationRole) |> Enum.at(0) |> Map.get(:id)
+for swa <- ["stefan.strecker@fernuni-hagen.de",
+            "marvin.biesenbach@studium.fernuni-hagen.de",
+            "sven.christ@fernuni-hagen.de",
+            "bastian.kres@krewast.de",
+            "andrew.utley@studium.fernuni-hagen.de",
+            "sportyweb_admin@tester.de"] do
+  Repo.insert!(%UserApplicationRole{
     user_id: Accounts.get_user_by_email(swa).id,
-    clubrole_id: swa_id
+    applicationrole_id: swa_id
   })
 end
 
-# Sportyweb Admin Tester #
-Repo.insert!(%UserClubRoles{
-  user_id: Accounts.get_user_by_email("sportyweb_admin@tester.de").id,
-  clubrole_id: Repo.all(ClubRole) |> Enum.at(0) |> Map.get(:id)
-})
-
 ## Tester Roles ##
 # Helper Roles #
-[swa | clubroles] = Repo.all(ClubRole)
+clubroles = Repo.all(ClubRole)
 
 # Helper TesterUser #
 tester1 = "clubadmin@tester.de"
