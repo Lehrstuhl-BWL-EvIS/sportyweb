@@ -8,7 +8,7 @@ Sportyweb is part of an academic research & development project at the ["Enterpr
 
 ------
 
-[Denken Sie mit uns](https://github.com/sportyweb/sportyweb/wiki) über eine freie integrierte webbasierte Anwendungssoftware für Amateursportvereine nach und machen Sie bei der Software-Entwicklung mit: Sportyweb soll die Vereins- und Geschäftsführung, Vereinsmitarbeiter und Vereinsmitglieder bei Vereinsführung, Vereinsmitwirkung und Vereinsteilhabe unterstützen – in Amateursportvereinen mit Angeboten in mehreren Sportarten (Multisportvereine), mit mehreren Abteilungen (und Abteilungsebenen) und einer Vereins- und Geschäftsführung, die aus mehreren Personen in verschiedenen Rollen besteht.
+Denken Sie mit uns über eine freie integrierte webbasierte Anwendungssoftware für Amateursportvereine nach und machen Sie bei der Software-Entwicklung mit: Sportyweb soll die Vereins- und Geschäftsführung, Vereinsmitarbeiter und Vereinsmitglieder bei Vereinsführung, Vereinsmitwirkung und Vereinsteilhabe unterstützen – in Amateursportvereinen mit Angeboten in mehreren Sportarten (Multisportvereine), mit mehreren Abteilungen (und Abteilungsebenen) und einer Vereins- und Geschäftsführung, die aus mehreren Personen in verschiedenen Rollen besteht.
 
 Sportyweb ist eine Initiative der [Enterprise Modelling Research Group](https://www.fernuni-hagen.de/evis/forschung/projekte/sportyweb.shtml) an der FernUniversität in Hagen. 
 
