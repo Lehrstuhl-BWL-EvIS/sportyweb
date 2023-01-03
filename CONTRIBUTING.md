@@ -35,7 +35,9 @@ Begründete Abweichungen von den nachfolgend geschilderten Abläufen sind natür
 
 &nbsp;
 
-> Hinweis: Alle Sätze in der Markdown-Datei beginnen in einer neuen Zeile, um Änderungen daran besser nachvollziehen zu können. Dargestellt werden dann aber, wie bei HTML, zusammenhängende Absätze.
+> Hinweise:
+> - Die Erklärungen in diesem Dokument sollen nicht zu spezifisch sein, dafür existiert ausreichend Fachliteratur und (meist wesentlich aktuellere) Projektdokumentation. Stattdessen sollen allgemeine Zusammenhänge verständlich gemacht und Sportyweb-spezifische Softwaredesign-Entscheidungen nachvollziehbar erklärt werden.
+> - Alle Sätze in der Markdown-Datei beginnen in einer neuen Zeile, um Änderungen daran besser nachvollziehen zu können. Dargestellt werden dann aber, wie bei HTML im Browser, zusammenhängende Absätze.
 
 &nbsp;
 
@@ -77,15 +79,130 @@ mix phx.server
 
 ## Generator (LiveView)
 
-TODO:
+Um zu vermeiden, dass jede Zeile Code von Hand geschrieben werden muss, bietet Phoenix die Möglichkeit, Code-Generatoren zu verwenden.
+Diese helfen bei der Erstellung neuer Entitäten und erzeugen automatisch Ordner und Dateien, welche den aktuellsten Konventionen des Frameworks entsprechen und die grundlegenden [CRUD](https://de.wikipedia.org/wiki/CRUD)-Operationen direkt im Code abbilden.
+Die Nutzung der Generatoren wird dringend empfohlen, da davon auszugehen ist, dass der so erzeugte Output im Vergleich zur manuellen und wesentlich zeitaufwändigeren Erstellung einheitlicher und weniger fehleranfällig ausfällt.
 
-- Erklärung Nutzung LiveView statt des regulären MVP-Ansatzes
-- Beispiel (mit Reference, binary_id) auf Command Line
-- Contexts
-- Erklärung des Outputs
-- Router
-- Notwendigkeit
+**Zur Anpassung von Code bestehender Entitäten sind die Generatoren nicht geeignet, weshalb in solchen Fällen dieses Kapitel übersprungen werden kann.**
 
+Für Sportyweb wurde die Entscheidung getroffen, durchgängig auf [Phoenix LiveViews](https://github.com/phoenixframework/phoenix_live_view) zu setzen, für die ein eigener, integrierter [Generator](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Live.html) existiert.
+Dieser erzeugt neben den LiveViews auch noch die notwendigen Templates, sowie den Context, oder erweitern diesen, falls er bereits existiert.
+
+Als einführendes Beispiel soll eine vereinfachte Variante der Abteilungen erzeugt und in den nachfolgenden Kapiteln angepasst/erweitert werden.
+Hinweis: Da die Abteilungen in Sportweb selbst bereits (in umfangreicherer Form) existieren, würde das nochmalige Ausführen des Generators zu Fehlern führen!
+
+Das minimalistische Entity Relationship Diagram:
+
+```mermaid
+erDiagram
+    Club ||--o{ Department : ""
+```
+
+Ein Club (Verein) kann beliebig viele Departments (Abteilungen) haben, aber ein Department gehört immer zu genau einem Club.
+Die Club-Entität existiert im (fiktiven) Beispiel bereits, die Departments sollen neu hinzukommen.
+
+Die Phoenix-Generatoren sind Mix-Tasks und somit über die Kommandozeile zu nutzen.
+Für das Department-Beispiel sieht der Aufruf des LiveView-Generators (`mix phx.gen.live`) so aus:
+
+```bash
+mix phx.gen.live Organization Department departments \
+  club_id:references:clubs \
+  name:string \
+  --binary-id
+```
+
+Es wird eine neue Entität mit dem Namen „ Department“ erzeugt, welche (wie auch schon die Clubs) dem Context „Organization“ zugeordnet wird.
+„departments“ definiert den Plural und auch die Datenbank-Tabelle trägt diesen Namen.
+Das Attribut „club_id“ wird als als Foreign Key auf einen bestimmten Club in der „clubs“-Tabelle (Spalte „id“) referenzieren.
+Das Attribut „name“ ist vom Typ String, weitere Datentypen sind in der [Schema-Dokumentation](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Schema.html#module-attributes) zu finden.
+Das Flag „[--binary-id](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Schema.html#module-binary_id)“ gibt an, dass als ID für die Departments keine aufsteigende Integer-Zahl verwendet werden soll, sondern eine wesentlich umfangreiche und schwer zu erratende Zahlen-/Buchstaben-Kombination.
+
+Da der „Organization“-Context bereits existiert und von der Club-Entität verwendet wird, kommt es bei der Ausführung des obigen Befehls zu einer Rückfrage, ob der bestehende Context erweitert werden soll.
+Dies ist mit „`y`“ (yes) zu bestätigen.
+
+Der Generator erzeugt im Anschluss eine Vielzahl unterschiedlicher Dateien:
+
+```bash
+* creating lib/sportyweb_web/live/department_live/show.ex
+* creating lib/sportyweb_web/live/department_live/index.ex
+* creating lib/sportyweb_web/live/department_live/form_component.ex
+* creating lib/sportyweb_web/live/department_live/index.html.heex
+* creating lib/sportyweb_web/live/department_live/show.html.heex
+```
+
+Hierbei handelt es sich um die LiveViews (`.ex`) und die dazugehörigen Templates (`.html.heex`) der neuen Entität.
+Die Form Component enthält das Formular (und die dazugehörigen Funktionen) zur Erstellung neuer, und Bearbeitung existierender Daten.
+Die Index Component wird in den nachfolgenden Kapiteln stark verändert, da Teile des generierten Codes in eine neu anzulegende, separate Component überführt werden müssen, um mit eigenständigen Views, statt den standardmäßig erzeugten Modals arbeiten zu können.
+
+Weitere Details in den Kapiteln [Live Components](#live-components) und [Heex-Templates](#heex-templates).
+
+```bash
+* creating test/sportyweb_web/live/department_live_test.exs
+```
+
+Enthält vorgefertigte Test-Cases für die unterschiedlichen LiveViews und deren (erwartetes) Verhalten.
+
+Weitere Details im [Tests](#tests)-Kapitel.
+
+```bash
+* creating lib/sportyweb/organization/department.ex
+```
+
+In dieser Datei ist das [Schema](https://hexdocs.pm/ecto/Ecto.Schema.html) zu finden, welches den Aufbau und die Attribute der Entität definiert.
+Das Schema wird vorrangig dazu verwendet, die Daten aus Datenbank auf Elixir-Structs (die von Phoenix verwendet werden) zu mappen - und umgekehrt.
+
+Außerdem sind dort ein oder mehrere [Changesets](https://hexdocs.pm/ecto/Ecto.Changeset.html) hinterlegt, die bei der Erstellung und Bearbeitung von Daten z.B.
+dafür sorgen, dass vor dem Abspeichern eine Validierung der einzelnen Attribute stattfindet und festgelegte Bedingungen einhalten werden.
+
+Weitere Details im [Schema & Changesets](#schema-changesets)-Kapitel.
+
+```bash
+* creating priv/repo/migrations/20230101093000_create_departments.exs
+```
+
+Die [Migration](https://hexdocs.pm/ecto_sql/Ecto.Migration.html)-Datei enthält die durch das Hinzukommen der neuen Entität notwendigen Anpassungen an der Datenbank.
+
+Weitere Details im [Migration](#migration)-Kapitel.
+
+```bash
+* injecting lib/sportyweb/organization.ex
+* injecting test/sportyweb/organization_test.exs
+* injecting test/support/fixtures/organization_fixtures.ex
+```
+
+Neben der Erzeugung neuer Dateien, nimmt der Generator auch Änderungen an bestehenden vor.
+Dies betrifft die Context-Dateien.
+`organization.ex` definiert den „Organization“-Context und enthält in erster Linie Funktionen zur Abfrage, Erzeugung, Aktualisierung und Löschung von Daten aus der Datenbank.
+`organization_test.exs` enthält die den „Organization“-Context betreffenden Test-Cases und in `organization_fixtures.ex` sind Fixtures für alle Entitäten definiert, die Teil dieses Contexts sind.
+
+Weitere Details in den Kapiteln [Context](#context) und [Tests](#tests).
+
+Nachdem der Generator die beschriebenen Dateien erzeugt hat, bittet er noch um die manuelle Erweiterung der [router.ex](https://gitlab.com/fuhevis/sportyweb/-/blob/development/lib/sportyweb_web/router.ex)-Datei:
+
+```bash
+Add the live routes to your browser scope in lib/sportyweb_web/router.ex:
+
+    live "/departments", Department.Live.Index, :index
+    live "/departments/new", Department.Live.Index, :new
+    live "/departments/:id/edit", Department.Live.Index, :edit
+
+    live "/departments/:id", Department.Live.Show, :show
+    live "/departments/:id/show/edit", Department.Live.Show, :edit
+```
+
+Die fünf angegebenen Routes sind zunächst ohne Anpassungen innerhalb des Bereich `scope "/"`, `live_session :require_authenticated_user` zu ergänzen.
+
+Weitere Details im [Router](#router)-Kapitel.
+
+Wenn bei der anschließenden Ausführung des `setup-dev-env.sh` Skripts keine Fehler auftreten und sich auch der lokale Server starten lässt, hat die Erzeugung geklappt.
+
+```bash
+./setup-dev-env.sh
+mix phx.server
+```
+
+Es wird empfohlen, nun alle bisherigen Veränderungen als neuen Commit im persönlichen Branch zu hinterlegen.
+So entsteht ein klarer, funktionierender Startpunkt an den jederzeit zurückgekehrt oder mit dem verglichen werden kann, wenn durch nachfolgenden Änderungen Probleme auftreten sollten.
 
 &nbsp;
 
@@ -93,9 +210,10 @@ TODO:
 
 TODO:
 
+- https://hexdocs.pm/phoenix/Phoenix.Router.html
 - Default aus Generator
 - Abgrenzung / Scope
-- index --> new_edit
+- Erklärung Auftrennung index --> new_edit
 - Umbau, Abhängigkeit zu reference_id
 
 
@@ -105,17 +223,20 @@ TODO:
 
 TODO:
 
-- Änderung bestehender Migrations, Abweichung vom normalen Vorgehen Production
+- Erklärung Migrations allgemein (statt Änderungen DB by hand)
+- Änderung bestehender Migrations, Abweichung vom normalen Vorgehen Production. setup-dev-env.sh
+- Sicherstellung der Integrität: Error auf DB-Ebene, deshalb nachfolgend im Schema zusätzliche Validierungen
 - timestamps()
 - null: false
 - Defaults
 - on_delete
 - Index (unique)
+- [Migration](https://hexdocs.pm/ecto_sql/Ecto.Migration.html)
 
 
 &nbsp;
 
-## Schema & Changeset
+## Schema & Changesets
 
 TODO:
 
@@ -135,16 +256,18 @@ TODO:
 
 TODO:
 
+- https://hexdocs.pm/phoenix/contexts.html
 - Standard-Funktionen / Naming
 - Preloads (Ecto)
 
 
 &nbsp;
 
-## LiveComponents
+## Live Components
 
 TODO:
 
+- Warum überhaupt LiveView? Erklärung Nutzung LiveView statt des regulären MVP-Ansatzes
 - Umbau index (Modals) --> new_edit (Views)
     - Router
     - show.ex
