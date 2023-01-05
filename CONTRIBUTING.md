@@ -12,7 +12,7 @@ Dieses Dokument soll als Anleitung bei der Mitentwicklung an Sportyweb dienen un
 **Schneller Einstieg und einfacheres Arbeiten:**
 
 [Elixir](https://elixir-lang.org/) ist eine funktionale Programmiersprache und somit in vielerlei Hinsicht anders, als eher bekannte imperative (Assembler, C, BASIC, ...) oder objektorientierte (Java, Ruby, Python, ...) Programmiersprachen.
-Auch das verwendete Framework [Phoenix](https://www.phoenixframework.org/) weicht durch den Einsatz von [LiveView](https://github.com/phoenixframework/phoenix_live_view) von etablierten [MVC-Webframeworks](https://de.wikipedia.org/wiki/Model_View_Controller) (Rails, Django, Laravel, ...) ab.
+Auch das verwendete Framework [Phoenix](https://www.phoenixframework.org/) weicht durch den Einsatz von [LiveView](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html) von etablierten [MVC-Webframeworks](https://de.wikipedia.org/wiki/Model_View_Controller) (Rails, Django, Laravel, ...) ab.
 Dieses Dokument wird für komplette Neueinsteiger das Studium entsprechender Fachliteratur und Projektdokumentation nicht ersetzen können, dient aber als Ausgangspunkt zum Verständnis der grundlegenden Zusammenhänge innerhalb der Codebasis und soll so einen schnellen Überblick und Einstieg ermöglichen, sowie die spätere Arbeit vereinfachen.
 
 **Einheitliche und qualitativ hochwertige Codebasis:**
@@ -111,8 +111,8 @@ mix phx.gen.live Organization Department departments \
   --binary-id
 ```
 
-Es wird eine neue Entität mit dem Namen „ Department“ erzeugt, welche (wie auch schon die Clubs) dem Context „Organization“ zugeordnet wird.
-„departments“ definiert den Plural und auch die Datenbank-Tabelle trägt diesen Namen.
+Es wird eine neue Entität mit dem Namen „ Department“ (Singular verwenden!) erzeugt, welche - wie auch schon die Clubs - dem Context „Organization“ (Singular verwenden!) zugeordnet wird.
+„departments“ definiert den zu verwendenden Plural des Entitätsnamens und auch die Datenbank-Tabelle wird so heißen.
 Das Attribut „club_id“ wird als als Foreign Key auf einen bestimmten Club in der „clubs“-Tabelle (Spalte „id“) referenzieren.
 Das Attribut „name“ ist vom Typ String, weitere Datentypen sind in der [Schema-Dokumentation](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Schema.html#module-attributes) zu finden.
 Das Flag „[--binary-id](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Schema.html#module-binary_id)“ gibt an, dass als ID für die Departments keine aufsteigende Integer-Zahl verwendet werden soll, sondern eine wesentlich umfangreiche und schwer zu erratende Zahlen-/Buchstaben-Kombination.
@@ -122,7 +122,7 @@ Dies ist mit „`y`“ (yes) zu bestätigen.
 
 Der Generator erzeugt im Anschluss eine Vielzahl unterschiedlicher Dateien:
 
-```bash
+```
 * creating lib/sportyweb_web/live/department_live/show.ex
 * creating lib/sportyweb_web/live/department_live/index.ex
 * creating lib/sportyweb_web/live/department_live/form_component.ex
@@ -136,7 +136,7 @@ Die Index Component wird in den nachfolgenden Kapiteln stark verändert, da Teil
 
 Weitere Details in den Kapiteln [Live Components](#live-components) und [Heex-Templates](#heex-templates).
 
-```bash
+```
 * creating test/sportyweb_web/live/department_live_test.exs
 ```
 
@@ -144,7 +144,7 @@ Enthält vorgefertigte Test-Cases für die unterschiedlichen LiveViews und deren
 
 Weitere Details im [Tests](#tests)-Kapitel.
 
-```bash
+```
 * creating lib/sportyweb/organization/department.ex
 ```
 
@@ -156,7 +156,7 @@ dafür sorgen, dass vor dem Abspeichern eine Validierung der einzelnen Attribute
 
 Weitere Details im [Schema & Changesets](#schema-changesets)-Kapitel.
 
-```bash
+```
 * creating priv/repo/migrations/20230101093000_create_departments.exs
 ```
 
@@ -164,7 +164,7 @@ Die [Migration](https://hexdocs.pm/ecto_sql/Ecto.Migration.html)-Datei enthält 
 
 Weitere Details im [Migration](#migration)-Kapitel.
 
-```bash
+```
 * injecting lib/sportyweb/organization.ex
 * injecting test/sportyweb/organization_test.exs
 * injecting test/support/fixtures/organization_fixtures.ex
@@ -201,21 +201,60 @@ Wenn bei der anschließenden Ausführung des `setup-dev-env.sh` Skripts keine Fe
 mix phx.server
 ```
 
-Es wird empfohlen, nun alle bisherigen Veränderungen als neuen Commit im persönlichen Branch zu hinterlegen.
+Es ist empfehlenswert, nun alle bisherigen Veränderungen als neuen Commit im persönlichen Branch zu hinterlegen.
 So entsteht ein klarer, funktionierender Startpunkt an den jederzeit zurückgekehrt oder mit dem verglichen werden kann, wenn durch nachfolgenden Änderungen Probleme auftreten sollten.
 
 &nbsp;
 
-## Router
+## Router (LiveView)
 
-TODO:
+In der [router.ex](https://gitlab.com/fuhevis/sportyweb/-/blob/development/lib/sportyweb_web/router.ex)-Datei werden die von der Applikation zur Verfügung gestellten Endpunkte definiert und mit Components und deren Funktionen verknüpft.
+Jede dieser Route-Definitionen besteht dabei aus mehreren Teilen, auf die nachfolgend genauer eingegangen werden soll.
 
-- https://hexdocs.pm/phoenix/Phoenix.Router.html
-- Default aus Generator
-- Abgrenzung / Scope
-- Erklärung Auftrennung index --> new_edit
-- Umbau, Abhängigkeit zu reference_id
+Grundlegend wichtig für das Verständnis dieses Kapitels ist, dass durch den Einsatz von [LiveViews](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html) die Route-Definitionen, anders als bei einem „klassischen“ Phoenix-Projekt, nicht mit einem der bekannten [HTTP-Verben](https://en.wikipedia.org/wiki/Representational_state_transfer) (`get`, `post`, `put`, `patch`, `delete`, ...) beginnen, sondern mit `live`.
+Deshalb sind Teile des [Phoenix Routing-Guides](https://hexdocs.pm/phoenix/routing.html) und die [Phoenix Router-Dokumentation](https://hexdocs.pm/phoenix/Phoenix.Router.html) weniger hilfreich, als die in erster Linie zu verwendende [LiveView Router-Dokumentation](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.Router.html).
 
+Im vorherigen Kapitel wurden die vom Generator automatisch erzeugten Standard-Routes manuell von der Konsole in die router.ex-Datei übertragen.
+Diese Routes passen zu den neu angelegten Components und ihren Funktionen, sollen nun aber (als erster Schritt eines umfangreicheren Umbaus) verändert werden.<br>
+Der Grund: Standardmäßig erzeugt der Generator mehrere Modals und den dazu passenden Code zum Erstellen und Bearbeiten von Entitäten.
+Für Sportyweb wurde allerdings die Entscheidung getroffen, auf Modals zu verzichten und stattdessen zwei eigenständige Views (mit jeweils eigenem Endpunkt) zum Erstellen und Bearbeiten anzulegen.
+Dies hat mehrere Vorteile:
+
+- Klar definierte Endpunkte für diese Views ermöglichen es, von einem beliebigen Punkt aus darauf zu verlinken.
+- Der zur Verfügung stehende Platz wird vollständig genutzt und auch umfangreichere Formulare sind kein Problem.
+- Ein versehentliches Schließen des Modals mit gleichzeitigem Verlust aller bisherigen Eingaben ist ausgeschlossen.
+- Zwei eigenständige Views sind wesentlich einfacher zu testen, als an verschiedensten Stellen eingesetzte Modals.
+
+Die Department-Routes sollen von nun an also folgendermaßen aussehen:
+
+```elixir
+live "/departments", DepartmentLive.Index, :index_root
+live "/clubs/:club_id/departments", DepartmentLive.Index, :index
+
+live "/clubs/:club_id/departments/new", DepartmentLive.NewEdit, :new
+live "/departments/:id/edit", DepartmentLive.NewEdit, :edit
+
+live "/departments/:id", DepartmentLive.Show, :show
+```
+
+Unter der `"/departments"`-Route werden standardmäßig alle in der Datenbank abgelegten Departments aufgelistet.
+Dies ist nicht mehr länger notwendig/erwünscht, weshalb für diesen Endpunkt in der `DepartmentLive.Index`-Component eine neue Funktion anlegt wurde, welche durch das übergebene `:index_root`-Atom via Pattern Matching aufgerufen wird.
+Die Funktion selbst führt eine Weiterleitung aus.
+
+Statt alle verfügbaren Departments zu listen, sollen stattdessen nur jene angezeigt werden, die einem bestimmten Club angehören.
+Dafür wird die `"/clubs/:club_id/departments"`-Route definiert, welche mit `:club_id` einen Parameter enthält.
+Auf Basis der in der späteren URL konkret angegebenen `club_id` wird der entsprechende Club, inklusive der zu ihm gehörenden Departments aus der Datenbank geladen und diese im Anschluss gelistet.
+
+Departments sollen nur angelegt werden können, indem sie direkt einem bestimmten Club zugeordnet werden.
+Deshalb enthält schon die Route zum Erstellungsformular die `club_id` als Parameter: `"/clubs/:club_id/departments/new"`.
+So wird vermieden, dass es Departments gibt, die ohne Referenz zu einem Club „in der Luft hängen“.
+
+Um bestehende Abteilungen zu bearbeiten, ist nur noch die Angabe der ID des Departments relevant.
+Die Route zum Bearbeitungsformular sieht dementsprechend so aus: `"/departments/:id/edit"`
+
+Die Route `"/departments/:id"` bleibt unverändert bestehen und zeigt das Department mit der entsprechenden ID an.
+
+Soweit die Einführung zum Routing, auf die dazugehörigen Teilbereiche „[Scopes](https://hexdocs.pm/phoenix/routing.html#scoped-routes)“ und „[Pipelines](https://hexdocs.pm/phoenix/routing.html#pipelines)“ soll hier nicht weiter eingegangen werden, ausführliche Informationen finden sich im verlinkten Guide.
 
 &nbsp;
 
@@ -224,6 +263,7 @@ TODO:
 TODO:
 
 - Erklärung Migrations allgemein (statt Änderungen DB by hand)
+- Erstellungsdatum im Dateinamen, Reihenfolge der Ausführung
 - Änderung bestehender Migrations, Abweichung vom normalen Vorgehen Production. setup-dev-env.sh
 - Sicherstellung der Integrität: Error auf DB-Ebene, deshalb nachfolgend im Schema zusätzliche Validierungen
 - timestamps()
@@ -259,6 +299,7 @@ TODO:
 - https://hexdocs.pm/phoenix/contexts.html
 - Standard-Funktionen / Naming
 - Preloads (Ecto)
+- https://hexdocs.pm/phoenix/ecto.html
 
 
 &nbsp;
@@ -268,6 +309,7 @@ TODO:
 TODO:
 
 - Warum überhaupt LiveView? Erklärung Nutzung LiveView statt des regulären MVP-Ansatzes
+- index_root
 - Umbau index (Modals) --> new_edit (Views)
     - Router
     - show.ex
@@ -288,6 +330,7 @@ TODO:
 
 - Rad nicht neu erfinden, an Vorarbeiten orientieren
 - CoreComponents, z.B. Cards
+- Umbau index --> new_edit
 - Formulare
     - Einheitlichkeit
     - Kompaktheit (Spalten)
@@ -326,8 +369,10 @@ TODO:
 ## Dokumentation
 
 - Notwendigkeit
+- Allgemein: Erklärung Entitäten + Attribute des Datenmodells
 - Genauigkeit / Tiefe
 - Problematik der Aktualität
+- Unterscheidung technische Dokumentation und Handbuch für Endnutzer
 - Hinzufügen / Anpassen
 - Abschlussarbeit (Konzeption, Vorgehensweise, ...)
 - Kommentaren für die einzelnen Funktionen
