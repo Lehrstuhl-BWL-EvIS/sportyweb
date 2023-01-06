@@ -182,12 +182,12 @@ Nachdem der Generator die beschriebenen Dateien erzeugt hat, bittet er noch um d
 ```bash
 Add the live routes to your browser scope in lib/sportyweb_web/router.ex:
 
-    live "/departments", Department.Live.Index, :index
-    live "/departments/new", Department.Live.Index, :new
-    live "/departments/:id/edit", Department.Live.Index, :edit
+live "/departments", Department.Live.Index, :index
+live "/departments/new", Department.Live.Index, :new
+live "/departments/:id/edit", Department.Live.Index, :edit
 
-    live "/departments/:id", Department.Live.Show, :show
-    live "/departments/:id/show/edit", Department.Live.Show, :edit
+live "/departments/:id", Department.Live.Show, :show
+live "/departments/:id/show/edit", Department.Live.Show, :edit
 ```
 
 Die fünf angegebenen Routes sind zunächst ohne Anpassungen innerhalb des Bereich `scope "/"`, `live_session :require_authenticated_user` zu ergänzen.
@@ -238,7 +238,7 @@ live "/departments/:id", DepartmentLive.Show, :show
 ```
 
 Unter der `"/departments"`-Route werden standardmäßig alle in der Datenbank abgelegten Departments aufgelistet.
-Dies ist nicht mehr länger notwendig/erwünscht, weshalb für diesen Endpunkt in der `DepartmentLive.Index`-Component eine neue Funktion anlegt wurde, welche durch das übergebene `:index_root`-Atom via Pattern Matching aufgerufen wird.
+Dies ist nicht mehr länger notwendig/erwünscht, weshalb für diesen Endpunkt in der `DepartmentLive.Index`-Component eine neue Funktion anlegt wurde, welche durch das übergebene `:index_root`-Atom (in der Dokumentation wird dieser Parameter „Action“ genannt) via Pattern Matching aufgerufen wird.
 Die Funktion selbst führt eine Weiterleitung aus.
 
 Statt alle verfügbaren Departments zu listen, sollen stattdessen nur jene angezeigt werden, die einem bestimmten Club angehören.
@@ -262,14 +262,20 @@ Soweit die Einführung zum Routing, auf die dazugehörigen Teilbereiche „[Scop
 
 TODO:
 
+- Generator legt Migrationsdatei an
+- Über lange Zeiträume hinweg
+- Datenbankunabhängig
 - Erklärung Migrations allgemein (statt Änderungen DB by hand)
 - Erstellungsdatum im Dateinamen, Reihenfolge der Ausführung
+- Vorteil: Datenbank immer wieder komplett lösch- und neu aufbaubar
+- Einheitlich für alle gleich, Entwicklung & Production
 - Änderung bestehender Migrations, Abweichung vom normalen Vorgehen Production. setup-dev-env.sh
 - Sicherstellung der Integrität: Error auf DB-Ebene, deshalb nachfolgend im Schema zusätzliche Validierungen
 - timestamps()
 - null: false
 - Defaults
 - on_delete
+- constraints
 - Index (unique)
 - [Migration](https://hexdocs.pm/ecto_sql/Ecto.Migration.html)
 
@@ -288,6 +294,7 @@ TODO:
 - validate
     - Link
     - unique (Erklärung)
+    - Constraints
 
 
 &nbsp;
@@ -297,8 +304,10 @@ TODO:
 TODO:
 
 - https://hexdocs.pm/phoenix/contexts.html
+- Nutzung der im Schema festgelegten Relationen, etc.
 - Standard-Funktionen / Naming
 - Preloads (Ecto)
+- Test für neue Funktionen nicht vergessen
 - https://hexdocs.pm/phoenix/ecto.html
 
 
@@ -349,6 +358,10 @@ TODO:
 - Hilft allen
 - Ausführung via setup-dev-env Skript, oder direkt: ...
     - Mehrfache Ausführung führt zu Validation-Errors
+- Eher nicht für als Grundlage für Tests gedacht, sondern als Abbildung "realer" Umgebungen für die Nutzung während der Entwicklung.
+- Änderungen würden die Tests brechen lassen --> Nicht der Sinn der Seed
+- Konzeption von Testdaten über Fixtures und deren Anpassungen (folgendes Kapitel)
+
 
 &nbsp;
 
@@ -360,6 +373,7 @@ TODO:
 - Genauigkeit / Tiefe
 - Hinzufügen / Anpassen
 - Fixtures
+    - References
 - asserts
 - Zusammenwirken mit Seed
 
@@ -381,15 +395,32 @@ TODO:
 
 &nbsp;
 
-## Vor dem Commit
+## Checkliste vor Commits
 
-Vor allem vor dem Merge in den Development-Branch!
+Diese Checkliste soll als Anhaltspunkt vor der Erstellung von Commits dienen.
+Da sie recht umfangreich ist, muss nicht die komplette Liste vor jedem Commit im eigenen Entwicklungsbranch genau befolgt werden.
+**Allerdings gilt es, wirklich alle Punkte vor einem Merge in den gemeinsamen Development-Branch und vor allem vor dem Push eines solchen Merges zu Gitlab abzuarbeiten!**
+Nur so kann eine durchgängig funktionsfähige und qualitativ hochwertige Codebasis mit geringem Frustrationspotential entstehen.
 
-TODO:
-
-- setup-dev-env.sh
-- Funktioniert Kompilierung?
-- Restart server
-- Tests: mix test
-- Linter: mix credo --all
-- git diff
+- **Git**
+  - [ ] Wurde der korrekte Branch für den anstehenden Commit ausgewählt?
+  - [ ] Wurden alle eventuell vorhandenen Merge-Conflicts behoben?
+  - [ ] Wurden alle Änderungen an den für diesen Commit relevanten Dateien mit `git diff` bzw. `git diff [Dateiname]` geprüft, um Flüchtigkeits- oder Tippfehler zu vermeiden?
+  - [ ] Wurden nur überschaubar viele Dateien für den anstehenden Commit ausgewählt, um die durchgeführten Änderungen auch später noch nachvollziehen zu können?
+- **Migration**
+  - [ ] Wurde durch das Hinzufügen passender Constraints und Defaults die spätere Konsistenz der Datenbank und die Integrität der Daten sichergestellt?
+- **Schema & Changesets**
+  - [ ] Wurde durch Verwendung passender Casts und Validierungen die Integrität der Daten sichergestellt?
+- **Seed**
+  - [ ] Wurde die Seed-Datei um weitere aussagekräftige und nützliche Beispiele bzgl. neu hinzugekommener Änderungen erweitert?
+- **Linter**
+  - [ ] Entspricht die Form des Codes weiterhin den Vorgaben des Linters? `mix credo --all`
+- **Tests**
+  - [ ] Wurden entsprechende Tests für neu entwickelte Funktionen, Routes, Components, etc. hinzugefügt?
+  - [ ] Laufen alle Tests mit `mix test` weiterhin fehlerfrei?
+- **Dokumentation**
+  - [ ] TODO: Ergänzen nach Erstellung des obigen Kapitels
+- **Setup Skript**
+  - [ ] Läuft das `setup-dev-env.sh` Skript weiterhin erfolgreich durch und quittiert mit „Done“?
+- **Server**
+  - [ ] Lässt sich der lokale Server mit `mix phx.server` starten (wenn er aktuell läuft: stoppen und neu starten!) und ist die Applikation unter <http://localhost:4000> erreichbar?
