@@ -35,9 +35,9 @@ Begründete Abweichungen von den nachfolgend geschilderten Abläufen sind natür
 
 &nbsp;
 
-> Hinweise:
+> **Hinweise:**
 > - Die Erklärungen in diesem Dokument sollen nicht zu spezifisch sein, dafür existiert ausreichend Fachliteratur und (meist wesentlich aktuellere) Projektdokumentation. Stattdessen sollen allgemeine Zusammenhänge verständlich gemacht und Sportyweb-spezifische Softwaredesign-Entscheidungen nachvollziehbar erklärt werden.
-> - Alle Sätze in der Markdown-Datei beginnen in einer neuen Zeile, um Änderungen daran besser nachvollziehen zu können. Dargestellt werden dann aber, wie bei HTML im Browser, zusammenhängende Absätze.
+> - Alle Sätze in der Markdown-Datei beginnen (außer in Listen) in einer neuen Zeile, um Änderungen daran besser nachvollziehen zu können. Dargestellt werden dann aber, wie bei HTML im Browser, zusammenhängende Absätze.
 
 &nbsp;
 
@@ -59,7 +59,7 @@ Das Sportyweb-Projekt kann mit `git clone` in einen beliebigen Unterordner auf d
 git clone git@gitlab.com:fuhevis/sportyweb.git
 ```
 
-Im Stammverzeichnis des Projekts befindet sich das [setup-dev-env.sh](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skript.
+Im Stammverzeichnis des Projekts befindet sich das [`setup-dev-env.sh`](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skript.
 Wird dieses ausgeführt (Anleitung hierzu in der Datei selbst), installiert es automatisch alle für Sportyweb notwendigen Abhängigkeiten, kümmert sich um das korrekte Setup der Datenbank und initialisiert diese mit ersten Beispieldaten aus der [seed.exs](https://gitlab.com/fuhevis/sportyweb/-/blob/development/priv/repo/seeds.exs)-Datei.
 Außerdem erzeugt es dynamisch die aktuellste Version der Projektdokumentation, sowie ein Entity Relationship Diagram der Datenbank.
 
@@ -194,7 +194,7 @@ Die fünf angegebenen Routes sind zunächst ohne Anpassungen innerhalb des Berei
 
 Weitere Details im [Router](#router)-Kapitel.
 
-Wenn bei der anschließenden Ausführung des `setup-dev-env.sh` Skripts keine Fehler auftreten und sich auch der lokale Server starten lässt, hat die Erzeugung geklappt.
+Wenn bei der anschließenden Ausführung des [`setup-dev-env.sh`](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skripts keine Fehler auftreten und sich auch der lokale Server starten lässt, hat die Erzeugung geklappt.
 
 ```bash
 ./setup-dev-env.sh
@@ -260,16 +260,32 @@ Soweit die Einführung zum Routing, auf die dazugehörigen Teilbereiche „[Scop
 
 ## Migration
 
-TODO:
+Wie viele andere Full-Stack-Webframeworks, nutzt auch Phoenix sogenannte [Migrations](https://hexdocs.pm/ecto_sql/Ecto.Migration.html) für Änderungen am Schema der jeweiligen Applikationsdatenbank.
+Statt händisch SQL-Befehle erstellen zu müssen, werden Migrations in Elixir geschrieben und bei der Erstellung neuer Entitäten mithilfe des Generators automatisch erzeugt.
 
-- Generator legt Migrationsdatei an
-- Über lange Zeiträume hinweg
-- Datenbankunabhängig
-- Erklärung Migrations allgemein (statt Änderungen DB by hand)
-- Erstellungsdatum im Dateinamen, Reihenfolge der Ausführung
-- Vorteil: Datenbank immer wieder komplett lösch- und neu aufbaubar
-- Einheitlich für alle gleich, Entwicklung & Production
-- Änderung bestehender Migrations, Abweichung vom normalen Vorgehen Production. setup-dev-env.sh
+Die Nutzung von Migrations hat diverse Vorteile:
+
+- **Klarheit:** Durch Migrations ist unzweifelhaft definiert, auf welche Art und Weise Schema-Änderungen vorgenommen werden. Ein persönliches Abweichen („Ich ändere das mal schnell von Hand direkt in der Datenbank“) wird ausgeschlossen.
+- **Einheitlichkeit:** Durch Migrations wird sichergestellt, dass das Datenbankschema in allen Entwicklungsumgebungen und in der späteren Produktionsumgebung exakt gleich ist. Nur so lassen sich Fehler, die aufgrund unterschiedlicher Datenbankzustände auftreten, weitestgehend vermeiden.
+- **Schnelligkeit:** Dank Migrations lassen sich frisch erstellte, noch komplett leere Datenbanken in Sekunden auf den aktuellsten Entwicklungsstand bringen. So können auch neu hinzukommende Entwickler in kürzester Zeit und ohne frustrierenden Setup-Prozess an Sportyweb mitwirken.
+- **Nachvollziehbarkeit:** Nahezu jedes Datenbankschema wächst mit der Zeit, z.B. durch neu hinzukommende Tabellen. Mithilfe von Migrations lässt sich einfach nachvollziehen wann und (in Verbindung mit Git) wie(so) Anpassungen stattgefunden haben. Auch sind die Migration-Dateien, anders als „externe“ Änderungen an der Datenbank, Teil des Projektrepositories und sind somit versioniert.
+- **Unabhängigkeit:** Auch wenn es klar definierte SQL-Standards gibt, weichen selbst sehr weit verbreitete Datenbanksysteme - häufig aus historischen Gründen - davon ab. Deshalb wäre die Erstellung von SQL-Befehlen (egal ob manuell oder automatisiert durch Generatoren) zu einem gewissen Grad immer datenbankspezifisch. In Elixir geschriebene Migrations sind hingegen unabhängig vom eingesetzten Datenbanksystem, solange es sich um ein von [Ecto](https://hexdocs.pm/phoenix/ecto.html) unterstütztes handelt.
+- **Umkehrbareit:** Mithilfe der Rollback-Funktion lassen sich durchgeführte Migrations rückgängig machen, falls es z.B. in der der Produktionsumgebung nach einem Update zu unerwarteten Problemen kommen sollte.
+
+Alle Migrations sind im Ordner [`priv/repo/migrations`](https://gitlab.com/fuhevis/sportyweb/-/tree/development/priv/repo/migrations) zu finden, wobei die dortige „echte“ Departments-Migration vom nachfolgenden, vereinfachten Beispiel durch eine höhere Anzahl an Attributen abweicht.
+
+Jede Migration-Datei hat einen Dateinamen welcher das Erstellungsdatum enthält, wodurch eine Ausführung in der richtigen (da häufig aufeinander aufbauenden) Reihenfolge möglich wird.
+Migrations werden immer nur ein einziges Mal angewendet, weshalb nachträgliche Änderungen keine Auswirkungen auf bestehende, aber durchaus auf neu erstellte Datenbanken haben.
+Deshalb wird eigentlich dringend von späteren Anpassungen abgeraten, ABER:
+
+> **Festlegung:**
+> Da es während des initialen Entwicklungsprozesses viele Änderungen am Datenbankschema geben wird und bisher noch keine durchgängig laufende Produktionsumgebung existiert, sollen, um eine sehr große und damit unübersichtliche Menge vieler kleiner Migrations zu vermeiden, bestehende Migrations von existierenden Entitäten nachträglich angepasst und erweitert werden.
+> Um diese Änderungen wirksam zu übernehmen, muss die lokale Datenbank neu aufgesetzt werden, was durch die Ausführung des [`setup-dev-env.sh`](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skripts aber vollkommen unkompliziert und schnell geschieht.
+
+&nbsp;
+
+TODO: Erklärung notwendige Anpassungen/Erweiterungen (Teil 2)
+
 - Sicherstellung der Integrität: Error auf DB-Ebene, deshalb nachfolgend im Schema zusätzliche Validierungen
 - timestamps()
 - null: false
@@ -361,6 +377,7 @@ TODO:
 - Eher nicht für als Grundlage für Tests gedacht, sondern als Abbildung "realer" Umgebungen für die Nutzung während der Entwicklung.
 - Änderungen würden die Tests brechen lassen --> Nicht der Sinn der Seed
 - Konzeption von Testdaten über Fixtures und deren Anpassungen (folgendes Kapitel)
+- https://gitlab.com/fuhevis/sportyweb/-/blob/development/priv/repo/seeds.exs
 
 
 &nbsp;
@@ -421,6 +438,6 @@ Nur so kann eine durchgängig funktionsfähige und qualitativ hochwertige Codeba
 - **Dokumentation**
   - [ ] TODO: Ergänzen nach Erstellung des obigen Kapitels
 - **Setup Skript**
-  - [ ] Läuft das `setup-dev-env.sh` Skript weiterhin erfolgreich durch und quittiert mit „Done“?
+  - [ ] Läuft das [`setup-dev-env.sh`](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skript weiterhin erfolgreich durch und quittiert mit „Done“? (Wichtig um zu testen, ob alle Migrations weiterhin mit einer neu erstellen Datenbank funktionieren und der Import der Seed-Datei klappt.)
 - **Server**
   - [ ] Lässt sich der lokale Server mit `mix phx.server` starten (wenn er aktuell läuft: stoppen und neu starten!) und ist die Applikation unter <http://localhost:4000> erreichbar?
