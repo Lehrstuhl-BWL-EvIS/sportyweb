@@ -28,5 +28,12 @@ erDiagram
 		date ende
 		money zusatzgebuehr
 	}
+	Mitglied ||--|{ Mitgliedsvertrag : unterhaelt
 ```
 
+
+```mermaid
+classDiagram
+	Mitglied "1..1" -- "0..*" Sportteilnahme : nimmt_teil
+	Sportartangebot "1..1" -- "0..*" Sportteilnahme : bezieht_sich_auf
+```
