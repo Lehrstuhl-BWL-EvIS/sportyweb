@@ -21,14 +21,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ```mermaid
 erDiagram
-	Mitglied ||--o{ Sportteilnahme : nimmt_teil
+	Mitglied ||--|| Verein : ist_Mitglied_in
+	Mitglied ||--|{ Vereinseinheit : ist_Mitglied_in
+    Vereinseinheit ||--o{ Vereinseinheit : ist_Untereinheit_von
+    Mitglied ||--o{ Sportteilnahme : nimmt_teil
 	Sportartangebot ||--o{ Sportteilnahme : bezieht_sich_auf
 	Sportteilnahme {
 		money zusatzgebuehr
 	}
-	Mitglied ||--|| Verein : ist_Mitglied_in
-	Mitglied ||--|{ Vereinseinheit : ist_Mitglied_in
-  Vereinseinheit ||--o{ Vereinseinheit : ist_Untereinheit_von
+	Vereinseinheit ||--|{ Sportartangebot : richtet_aus
 ```
 <!-- 
 
