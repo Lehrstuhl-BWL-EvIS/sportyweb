@@ -28,12 +28,13 @@ erDiagram
 		date ende
 		money zusatzgebuehr
 	}
-	Mitglied ||--|{ Mitgliedsvertrag : unterhaelt
+	Mitglied ||--|{ Vereinseinheit : ist_Mitglied_in
+  Vereinseinheit ||--o{ Vereinseinheit : ist_Untereinheit_von
 ```
-
+<!-- 
 
 ```mermaid
 classDiagram
 	Mitglied "1..1" -- "0..*" Sportteilnahme : nimmt_teil
 	Sportartangebot "1..1" -- "0..*" Sportteilnahme : bezieht_sich_auf
-```
+``` -->
