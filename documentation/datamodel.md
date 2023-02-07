@@ -30,6 +30,7 @@ erDiagram
 	}
 	Mitglied ||--|{ Vereinseinheit : ist_Mitglied_in
   Vereinseinheit ||--o{ Vereinseinheit : ist_Untereinheit_von
+	Mitglied ||--|| Verein : ist_Mitglied_in
 ```
 <!-- 
 
