@@ -24,13 +24,11 @@ erDiagram
 	Mitglied ||--o{ Sportteilnahme : nimmt_teil
 	Sportartangebot ||--o{ Sportteilnahme : bezieht_sich_auf
 	Sportteilnahme {
-		date beginn
-		date ende
 		money zusatzgebuehr
 	}
+	Mitglied ||--|| Verein : ist_Mitglied_in
 	Mitglied ||--|{ Vereinseinheit : ist_Mitglied_in
   Vereinseinheit ||--o{ Vereinseinheit : ist_Untereinheit_von
-	Mitglied ||--|| Verein : ist_Mitglied_in
 ```
 <!-- 
 
