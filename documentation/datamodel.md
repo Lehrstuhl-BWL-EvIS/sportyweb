@@ -2,7 +2,7 @@
 title: Sportyweb - Conceptual data model (ER diagram) of Sportyweb data management
 language: yaml
 license:
-Copyright (C) 2022­–2023 Stefan Strecker, stefan.strecker@fernuni-hagen.de
+Copyright (C) 2022­–2023 Sportyweb Team 
 https://gitlab.com/fuhevis/sportyweb
 
 This program is free software: you can redistribute it and/or modify
@@ -23,5 +23,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 erDiagram
 	Mitglied ||--o{ Sportteilnahme : nimmt_teil
 	Sportartangebot ||--o{ Sportteilnahme : bezieht_sich_auf
+	Sportteilnahme {
+		date beginn
+		date ende
+		money zusatzgebuehr
+	}
 ```
 
