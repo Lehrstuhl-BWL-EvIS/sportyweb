@@ -21,7 +21,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ```mermaid
 erDiagram
-	CUSTOMER ||--o{ ORDER : places
-	ORDER ||--|{ LINE-ITEM : contains
-	CUSTOMER }|..|{ DELIVERY-ADDRESS : uses
+	Mitglied ||--o{ Sportteilnahme : nimmt_teil
+	Sportartangebot ||--o{ Sportteilnahme : bezieht_sich_auf
 ```
