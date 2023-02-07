@@ -1,5 +1,11 @@
+```mermaid
+erDiagram
+	Mitglied ||--o{ Sportteilnahme : nimmt_teil
+	Sportartangebot ||--o{ Sportteilnahme : bezieht_sich_auf
+```
+
 ---
-title: Sportyweb - ER diagram of Sportyweb database design
+title: Sportyweb - Conceptual data model (ER diagram) of Sportyweb data management
 language: yaml
 license:
 Copyright (C) 2022­–2023 Stefan Strecker, stefan.strecker@fernuni-hagen.de
@@ -18,9 +24,3 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---
-
-```mermaid
-erDiagram
-	Mitglied ||--o{ Sportteilnahme : nimmt_teil
-	Sportartangebot ||--o{ Sportteilnahme : bezieht_sich_auf
-```
