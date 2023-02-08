@@ -75,11 +75,11 @@ defmodule SportywebWeb.Router do
       # Clubs
 
       live "/clubs", ClubLive.Index, :index
-      live "/clubs/new", ClubLive.Index, :new
-      live "/clubs/:id/edit", ClubLive.Index, :edit
+
+      live "/clubs/new", ClubLive.NewEdit, :new
+      live "/clubs/:id/edit", ClubLive.NewEdit, :edit
 
       live "/clubs/:id", ClubLive.Show, :show
-      live "/clubs/:id/show/edit", ClubLive.Show, :edit
 
       live "/clubs/:id/userrolemanagement", ClubLive.Userrolemanagement, :userrolemanagement
 
@@ -87,11 +87,11 @@ defmodule SportywebWeb.Router do
 
       live "/departments", DepartmentLive.Index, :index_root
       live "/clubs/:club_id/departments", DepartmentLive.Index, :index
-      live "/clubs/:club_id/departments/new", DepartmentLive.Index, :new
-      live "/departments/:id/edit", DepartmentLive.Index, :edit
+
+      live "/clubs/:club_id/departments/new", DepartmentLive.NewEdit, :new
+      live "/departments/:id/edit", DepartmentLive.NewEdit, :edit
 
       live "/departments/:id", DepartmentLive.Show, :show
-      live "/departments/:id/show/edit", DepartmentLive.Show, :edit
 
       # Households
 

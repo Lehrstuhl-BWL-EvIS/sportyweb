@@ -20,7 +20,7 @@ defmodule Sportyweb.Organization.Department do
   @doc false
   def changeset(department, attrs) do
     department
-    |> cast(attrs, [:name, :type, :created_at, :club_id])
+    |> cast(attrs, [:name, :type, :created_at, :club_id], empty_values: [])
     |> validate_required([:name, :created_at, :club_id])
     |> validate_length(:name, max: 250)
     |> validate_length(:type, max: 250)

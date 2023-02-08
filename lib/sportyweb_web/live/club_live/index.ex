@@ -4,7 +4,6 @@ defmodule SportywebWeb.ClubLive.Index do
   alias Sportyweb.AccessControl.PolicyClub
 
   alias Sportyweb.Organization
-  alias Sportyweb.Organization.Club
 
   @impl true
   def mount(_params, _session, socket) do
@@ -13,14 +12,7 @@ defmodule SportywebWeb.ClubLive.Index do
 
   @impl true
   def handle_params(params, _url, socket) do
-    if PolicyClub.can?(socket.assigns.current_user, socket.assigns.live_action, params) do
-      {:noreply, apply_action(socket, socket.assigns.live_action, params)}
-    else
-      {:noreply,
-        socket
-        |> put_flash(:error, "No permission to #{Atom.to_string(socket.assigns.live_action)} club")
-        |> redirect(to: ~p"/clubs")}
-    end
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
@@ -38,7 +30,7 @@ defmodule SportywebWeb.ClubLive.Index do
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:clubs, PolicyClub.load_authorized_clubs(socket.assigns.current_user))
-    |> assign(:page_title, "Listing Clubs")
+    |> assign(:page_title, "Alle Vereine")
     |> assign(:club, nil)
   end
 

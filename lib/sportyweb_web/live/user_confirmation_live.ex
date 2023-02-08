@@ -7,18 +7,19 @@ defmodule SportywebWeb.UserConfirmationLive do
     ~H"""
     <.header>Confirm Account</.header>
 
-    <.simple_form :let={f} for={:user} id="confirmation_form" phx-submit="confirm_account">
-      <.input field={{f, :token}} type="hidden" value={@token} />
-      <:actions>
-        <.button phx-disable-with="Confirming...">Confirm my account</.button>
-      </:actions>
-    </.simple_form>
+    <.card class="mt-8">
+      <.simple_form :let={f} for={:user} id="confirmation_form" phx-submit="confirm_account">
+        <.input field={{f, :token}} type="hidden" value={@token} />
+        <:actions>
+          <.button phx-disable-with="Confirming...">Confirm my account</.button>
+        </:actions>
+      </.simple_form>
+    </.card>
 
-    <p>
-      <.link href={~p"/users/register"}>Register</.link>
-      |
-      <.link href={~p"/users/log_in"}>Log in</.link>
-    </p>
+    <.live_component
+      module={SportywebWeb.UserRegistrationLoginLinksComponent}
+      id="user-registration-login-links"
+    />
     """
   end
 

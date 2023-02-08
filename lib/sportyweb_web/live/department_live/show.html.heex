@@ -1,29 +1,20 @@
 <.header>
-  Department <%= @department.id %>
-  <:subtitle>This is a department record from your database.</:subtitle>
+  <%= @page_title %>
   <:actions>
-    <.link patch={~p"/departments/#{@department}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit department</.button>
+    <.link navigate={~p"/departments/#{@department}/edit"}>
+      <.button>Abteilung bearbeiten</.button>
     </.link>
   </:actions>
 </.header>
 
-<.list>
-  <:item title="Club"><%= @department.club.name %></:item>
-  <:item title="Name"><%= @department.name %></:item>
-  <:item title="Type"><%= @department.type %></:item>
-  <:item title="Created at"><%= Calendar.strftime(@department.created_at, "%d.%m.%Y") %></:item>
-</.list>
+<.card>
+  <.list>
+    <:item title="Verein"><%= @department.club.name %></:item>
+    <:item title="ID"><%= @department.id %></:item>
+    <:item title="Name"><%= @department.name %></:item>
+    <:item title="Art"><%= @department.type %></:item>
+    <:item title="Erstellungsdatum"><%= Calendar.strftime(@department.created_at, "%d.%m.%Y") %></:item>
+  </.list>
+</.card>
 
-<.back navigate={~p"/clubs/#{@department.club}"}>Back to club</.back>
-
-<.modal :if={@live_action == :edit} id="department-modal" show on_cancel={JS.patch(~p"/departments/#{@department}")}>
-  <.live_component
-    module={SportywebWeb.DepartmentLive.FormComponent}
-    id={@department.id}
-    title={@page_title}
-    action={@live_action}
-    department={@department}
-    navigate={~p"/departments/#{@department}"}
-  />
-</.modal>
+<.back navigate={~p"/clubs/#{@department.club}"}>Zurück zum Dashboard</.back>

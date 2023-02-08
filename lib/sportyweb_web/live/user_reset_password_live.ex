@@ -7,34 +7,35 @@ defmodule SportywebWeb.UserResetPasswordLive do
     ~H"""
     <.header>Reset Password</.header>
 
-    <.simple_form
-      :let={f}
-      for={@changeset}
-      id="reset_password_form"
-      phx-submit="reset_password"
-      phx-change="validate"
-    >
-      <.error :if={@changeset.action == :insert}>
-        Oops, something went wrong! Please check the errors below.
-      </.error>
+    <.card class="mt-8">
+      <.simple_form
+        :let={f}
+        for={@changeset}
+        id="reset_password_form"
+        phx-submit="reset_password"
+        phx-change="validate"
+      >
+        <.error :if={@changeset.action == :insert}>
+          Oops, something went wrong! Please check the errors below.
+        </.error>
 
-      <.input field={{f, :password}} type="password" label="New password" required />
-      <.input
-        field={{f, :password_confirmation}}
-        type="password"
-        label="Confirm new password"
-        required
-      />
-      <:actions>
-        <.button phx-disable-with="Resetting...">Reset Password</.button>
-      </:actions>
-    </.simple_form>
+        <.input field={{f, :password}} type="password" label="New password" required />
+        <.input
+          field={{f, :password_confirmation}}
+          type="password"
+          label="Confirm new password"
+          required
+        />
+        <:actions>
+          <.button phx-disable-with="Resetting...">Reset Password</.button>
+        </:actions>
+      </.simple_form>
+    </.card>
 
-    <p>
-      <.link href={~p"/users/register"}>Register</.link>
-      |
-      <.link href={~p"/users/log_in"}>Log in</.link>
-    </p>
+    <.live_component
+      module={SportywebWeb.UserRegistrationLoginLinksComponent}
+      id="user-registration-login-links"
+    />
     """
   end
 

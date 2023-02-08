@@ -1,3 +1,6 @@
+# macOS
+.DS_Store
+
 # The directory Mix will write compiled artifacts to.
 /_build/
 
@@ -34,3 +37,4 @@ npm-debug.log
 
 # Don't commit the ERD file, recreate it with each setup-dev-env.sh run
 documentation/erd.pdf
+

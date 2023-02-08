@@ -14,7 +14,10 @@
 # To run/execute the script:
 # ./setup-dev-env.sh
 
-set -e
+set -o errexit
+set -o nounset
+set -o pipefail
+
 echo "- Setup Development Environment: Start"
 
 echo "- Install and update dependencies"
@@ -35,6 +38,9 @@ MIX_ENV=test mix ecto.migrate
 echo "- Run seed file"
 MIX_ENV=dev mix run priv/repo/seeds.exs
 MIX_ENV=test mix run priv/repo/seeds.exs
+
+echo "- Generate the ExDoc project documentation"
+mix docs
 
 echo "- Generate an ERD (Entity Relationship Diagram)"
 if command -v dot &> /dev/null

@@ -9,7 +9,17 @@ defmodule Sportyweb.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+
+      # Docs configuration (via ExDoc)
+      name: "Sportweb",
+      source_url: "https://gitlab.com/fuhevis/sportyweb",
+      homepage_url: "https://gitlab.com/fuhevis/sportyweb",
+      docs: [
+        main: "Sportweb", # The main page in the docs
+        extras: ["README.md", "CONTRIBUTING.md"],
+        formatters: ["html"]
+      ]
     ]
   end
 
@@ -42,17 +52,17 @@ defmodule Sportyweb.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.18.3"},
+      {:phoenix_live_view, "~> 0.18.11"},
       {:heroicons, "~> 0.5"},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.7.2"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.1.8", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev},
       {:swoosh, "~> 1.3"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 0.22"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
 
@@ -63,6 +73,11 @@ defmodule Sportyweb.MixProject do
       # https://hexdocs.pm/ecto_erd/Mix.Tasks.Ecto.Gen.Erd.html
       # https://github.com/fuelen/ecto_erd
       {:ecto_erd, "~> 0.5", only: :dev},
+
+      # To generate the documentation for the entire project
+      # https://hexdocs.pm/ex_doc/readme.html
+      # https://github.com/elixir-lang/ex_doc
+      {:ex_doc, "~> 0.29", only: :dev, runtime: false},
 
       # TimeZoneDatabase for DateTime (which per default only supports UTC)
       # https://hexdocs.pm/tzdata/readme.html

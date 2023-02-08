@@ -11,14 +11,21 @@ defmodule SportywebWeb.UserForgotPasswordLive do
         <:subtitle>We'll send a password reset link to your inbox</:subtitle>
       </.header>
 
-      <.simple_form :let={f} id="reset_password_form" for={:user} phx-submit="send_email">
-        <.input field={{f, :email}} type="email" placeholder="Email" required />
-        <:actions>
-          <.button phx-disable-with="Sending..." class="w-full">
-            Send password reset instructions
-          </.button>
-        </:actions>
-      </.simple_form>
+      <.card class="mt-8">
+        <.simple_form :let={f} id="reset_password_form" for={:user} phx-submit="send_email">
+          <.input field={{f, :email}} type="email" placeholder="Email" required />
+          <:actions>
+            <.button phx-disable-with="Sending..." class="w-full">
+              Send password reset instructions
+            </.button>
+          </:actions>
+        </.simple_form>
+      </.card>
+
+      <.live_component
+        module={SportywebWeb.UserRegistrationLoginLinksComponent}
+        id="user-registration-login-links"
+      />
     </div>
     """
   end

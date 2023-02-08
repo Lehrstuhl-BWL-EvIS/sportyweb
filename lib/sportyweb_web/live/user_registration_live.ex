@@ -18,28 +18,30 @@ defmodule SportywebWeb.UserRegistrationLive do
         </:subtitle>
       </.header>
 
-      <.simple_form
-        :let={f}
-        id="registration_form"
-        for={@changeset}
-        phx-submit="save"
-        phx-change="validate"
-        phx-trigger-action={@trigger_submit}
-        action={~p"/users/log_in?_action=registered"}
-        method="post"
-        as={:user}
-      >
-        <.error :if={@changeset.action == :insert}>
-          Oops, something went wrong! Please check the errors below.
-        </.error>
+      <.card class="mt-8">
+        <.simple_form
+          :let={f}
+          id="registration_form"
+          for={@changeset}
+          phx-submit="save"
+          phx-change="validate"
+          phx-trigger-action={@trigger_submit}
+          action={~p"/users/log_in?_action=registered"}
+          method="post"
+          as={:user}
+        >
+          <.error :if={@changeset.action == :insert}>
+            Oops, something went wrong! Please check the errors below.
+          </.error>
 
-        <.input field={{f, :email}} type="email" label="Email" required />
-        <.input field={{f, :password}} type="password" label="Password" required />
+          <.input field={{f, :email}} type="email" label="Email" required />
+          <.input field={{f, :password}} type="password" label="Password" required />
 
-        <:actions>
-          <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
-        </:actions>
-      </.simple_form>
+          <:actions>
+            <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
+          </:actions>
+        </.simple_form>
+      </.card>
     </div>
     """
   end
