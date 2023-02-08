@@ -15,6 +15,7 @@ defmodule SportywebWeb.ClubLive.NewEdit do
         action={@live_action}
         club={@club}
         navigate={if @club.id, do: ~p"/clubs/#{@club}", else: ~p"/clubs"}
+        current_user={@current_user}
       />
     </div>
     """
