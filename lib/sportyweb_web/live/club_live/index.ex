@@ -4,6 +4,7 @@ defmodule SportywebWeb.ClubLive.Index do
   alias Sportyweb.AccessControl.PolicyClub
 
   alias Sportyweb.Organization
+  alias Sportyweb.Organization.Club
 
   @impl true
   def mount(_params, _session, socket) do
