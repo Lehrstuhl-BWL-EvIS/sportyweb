@@ -22,6 +22,13 @@ defmodule SportywebWeb.ClubLive.NewEdit do
   end
 
   @impl true
+  def mount(_params, _session, socket) do
+    {:ok,
+    socket
+    |> assign(:club_navigation_current_item, :dashboard)}
+  end
+
+  @impl true
   def handle_params(params, _url, socket) do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end

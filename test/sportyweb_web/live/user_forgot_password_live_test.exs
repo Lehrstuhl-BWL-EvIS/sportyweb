@@ -12,8 +12,8 @@ defmodule SportywebWeb.UserForgotPasswordLiveTest do
       {:ok, _lv, html} = live(conn, ~p"/users/reset_password")
 
       assert html =~ "Forgot your password?"
-      assert html =~ "Register</a>"
-      assert html =~ "Log in</a>"
+      assert html =~ "Sign up</a>"
+      assert html =~ "Sign in</a>"
     end
 
     test "redirects if already logged in", %{conn: conn} do

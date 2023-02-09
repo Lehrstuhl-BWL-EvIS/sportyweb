@@ -18,11 +18,11 @@ defmodule SportywebWeb.UserSessionControllerTest do
       assert redirected_to(conn) == ~p"/"
 
       # Now do a logged in request and assert on the menu
-      conn = get(conn, ~p"/")
+      conn = get(conn, ~p"/clubs")
       response = html_response(conn, 200)
       assert response =~ user.email
-      assert response =~ "Settings</a>"
-      assert response =~ "Log out</a>"
+      assert response =~ "Profil"
+      assert response =~ "Abmelden"
     end
 
     test "logs the user in with remember me", %{conn: conn, user: user} do

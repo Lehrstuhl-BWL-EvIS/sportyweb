@@ -20,9 +20,20 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <.input field={{f, :name}} type="text" label="name" />
-          <.input field={{f, :type}} type="text" label="type" />
-          <.input field={{f, :created_at}} type="date" label="created_at" />
+          <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+            <div class="col-span-12">
+              <.input field={{f, :name}} type="text" label="Name" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :type}} type="text" label="Art" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :created_at}} type="date" label="Erstellungsdatum" />
+            </div>
+          </div>
+
           <:actions>
             <.button phx-disable-with="Speichern...">Speichern</.button>
             <.button

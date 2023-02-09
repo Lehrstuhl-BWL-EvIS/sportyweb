@@ -2,11 +2,16 @@ defmodule SportywebWeb.ClubLiveTest do
   use SportywebWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Sportyweb.AccountsFixtures
   import Sportyweb.OrganizationFixtures
 
-  @create_attrs %{founded_at: "2022-11-5", name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
-  @update_attrs %{founded_at: "2022-11-6", name: "some updated name", reference_number: "some updated reference_number", website_url: "some updated website_url"}
+  @create_attrs %{founded_at: ~D[2022-11-05], name: "some name", reference_number: "some reference_number", website_url: "https://www.website_url.com"}
+  @update_attrs %{founded_at: ~D[2022-11-06], name: "some updated name", reference_number: "some updated reference_number", website_url: "https://www.updated_website_url.com"}
   @invalid_attrs %{founded_at: nil, name: nil, reference_number: nil, website_url: nil}
+
+  setup do
+    %{user: user_fixture()}
+  end
 
   defp create_club(_) do
     club = club_fixture()
@@ -16,95 +21,97 @@ defmodule SportywebWeb.ClubLiveTest do
   describe "Index" do
     setup [:create_club]
 
-    test "lists all clubs", %{conn: conn, club: club} do
+    test "lists all clubs", %{conn: conn, user: user, club: club} do
+      {:error, _} = live(conn, ~p"/clubs")
+
+      conn = conn |> log_in_user(user)
       {:ok, _index_live, html} = live(conn, ~p"/clubs")
 
-      assert html =~ "Listing Clubs"
+      assert html =~ "Vereinsübersicht"
       assert html =~ club.name
     end
+  end
 
-    test "saves new club", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/clubs")
+  describe "New/Edit" do
+    setup [:create_club]
 
-      assert index_live |> element("a", "New Club") |> render_click() =~
-               "New Club"
+    test "saves new club", %{conn: conn, user: user} do
+      {:error, _} = live(conn, ~p"/clubs/new")
 
-      assert_patch(index_live, ~p"/clubs/new")
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, html} = live(conn, ~p"/clubs/new")
 
-      assert index_live
+      assert html =~ "Verein erstellen"
+
+      assert new_live
              |> form("#club-form", club: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
-        index_live
+        new_live
         |> form("#club-form", club: @create_attrs)
         |> render_submit()
         |> follow_redirect(conn, ~p"/clubs")
 
-      assert html =~ "Club created successfully"
+      assert html =~ "Verein erfolgreich erstellt"
       assert html =~ "some name"
     end
 
-    test "updates club in listing", %{conn: conn, club: club} do
-      {:ok, index_live, _html} = live(conn, ~p"/clubs")
+    test "updates club", %{conn: conn, user: user, club: club} do
+      {:error, _} = live(conn, ~p"/clubs/#{club}/edit")
 
-      assert index_live |> element("#clubs-#{club.id} a", "Edit") |> render_click() =~
-               "Edit Club"
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/clubs/#{club}/edit")
 
-      assert_patch(index_live, ~p"/clubs/#{club}/edit")
+      assert html =~ "Verein bearbeiten"
 
-      assert index_live
+      assert edit_live
              |> form("#club-form", club: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
-        index_live
+        edit_live
         |> form("#club-form", club: @update_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/clubs")
+        |> follow_redirect(conn, ~p"/clubs/#{club}")
 
-      assert html =~ "Club updated successfully"
+      assert html =~ "Verein erfolgreich aktualisiert"
       assert html =~ "some updated name"
     end
 
-    test "deletes club in listing", %{conn: conn, club: club} do
-      {:ok, index_live, _html} = live(conn, ~p"/clubs")
+    test "deletes club", %{conn: conn, user: user, club: club} do
+      {:error, _} = live(conn, ~p"/clubs/#{club}/edit")
 
-      assert index_live |> element("#clubs-#{club.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#club-#{club.id}")
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, _html} = live(conn, ~p"/clubs/#{club}/edit")
+
+      # The original club should exist in the list
+      {:ok, _index_live, html} = live(conn, ~p"/clubs")
+      assert html =~ "some name"
+
+      {:ok, _, html} =
+        edit_live
+        |> element("#club-form button", "Löschen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs")
+
+      # The original club should no longer exist in the list
+      assert html =~ "Verein erfolgreich gelöscht"
+      refute html =~ "some name"
     end
   end
 
   describe "Show" do
     setup [:create_club]
 
-    test "displays club", %{conn: conn, club: club} do
+    test "displays club", %{conn: conn, user: user, club: club} do
+      {:error, _} = live(conn, ~p"/clubs/#{club}")
+
+      conn = conn |> log_in_user(user)
       {:ok, _show_live, html} = live(conn, ~p"/clubs/#{club}")
 
-      assert html =~ "Show Club"
+      assert html =~ "Dashboard"
       assert html =~ club.name
-    end
-
-    test "updates club within modal", %{conn: conn, club: club} do
-      {:ok, show_live, _html} = live(conn, ~p"/clubs/#{club}")
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Club"
-
-      assert_patch(show_live, ~p"/clubs/#{club}/show/edit")
-
-      assert show_live
-             |> form("#club-form", club: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      {:ok, _, html} =
-        show_live
-        |> form("#club-form", club: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/clubs/#{club}")
-
-      assert html =~ "Club updated successfully"
-      assert html =~ "some updated name"
     end
   end
 end

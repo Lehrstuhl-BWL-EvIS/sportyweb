@@ -7,7 +7,7 @@ defmodule Sportyweb.OrganizationFixtures do
   @doc """
   Generate a unique club website_url.
   """
-  def unique_club_website_url, do: "some website_url#{System.unique_integer([:positive])}"
+  def unique_club_website_url, do: "https://www.website_url_#{System.unique_integer([:positive])}.com"
 
   @doc """
   Generate a club.

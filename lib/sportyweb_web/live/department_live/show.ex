@@ -5,7 +5,9 @@ defmodule SportywebWeb.DepartmentLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok,
+    socket
+    |> assign(:club_navigation_current_item, :dashboard)}
   end
 
   @impl true

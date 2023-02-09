@@ -22,10 +22,24 @@ defmodule SportywebWeb.ClubLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <.input field={{f, :name}} type="text" label="name" />
-          <.input field={{f, :reference_number}} type="text" label="reference_number" />
-          <.input field={{f, :website_url}} type="text" label="website_url" />
-          <.input field={{f, :founded_at}} type="date" label="founded_at" />
+          <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :name}} type="text" label="Name" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :reference_number}} type="text" label="Referenznummer" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :website_url}} type="text" label="URL" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :founded_at}} type="date" label="Gründungsdatum" />
+            </div>
+          </div>
+
           <:actions>
             <.button phx-disable-with="Speichern...">Speichern</.button>
             <.button
