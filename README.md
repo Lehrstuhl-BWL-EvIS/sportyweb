@@ -1,5 +1,7 @@
 # Sportyweb - Make managing sports clubs a breeze! 
 
+![Hero](documentation/evolution/v0.1.0-Dashboard.png)
+
 We are currently initiating development of a web application for managing, organising and running amateur sports clubs. Amateur sports clubs range from small clubs with a handful of members to large clubs with several thousand members. We target amateur multi-sports clubs with a few hundred to several thousand members and a dedicated multi-person club management. Multi-sports clubs offer their members activities in different sports such as soccer, volleyball, tennis, fitness and track & field. Club management involves membership management, management of practices & courses, facilities & their availability, tournaments & leagues etc. in addition to finance & accounting and other administrative and organisational tasks. 
 
 Join us in [discussing](https://github.com/sportyweb/sportyweb/wiki) the application domain of multi-sports clubs management with regard to software requirements (in German, though 😉).
