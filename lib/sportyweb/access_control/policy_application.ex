@@ -12,7 +12,7 @@ defmodule Sportyweb.AccessControl.PolicyApplication do
   ### ROLE-PERMISSION-MATRIX ###
   def role_permission_matrix, do: RPM.role_permission_matrix(:application)
 
-  def get_application_roles_all, do: Keyword.keys(role_permission_matrix()) |> Enum.map(&( Atom.to_string(&1)))
+  def get_application_roles_all, do: role_permission_matrix() |> Keyword.keys() |> Enum.map(&(Atom.to_string(&1)))
 
   def is_sportyweb_admin(%User{id: user_id}) do
     query = from uar in UAR,

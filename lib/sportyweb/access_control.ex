@@ -121,7 +121,7 @@ defmodule Sportyweb.AccessControl do
   def list_userclubroles_data do
     query = from ucr in UserClubRole,
       join: u in assoc(ucr, :user),
-      preload: [ :user, :club, :clubrole ],
+      preload: [:user, :club, :clubrole],
       order_by: u.email
 
     Repo.all(query)
@@ -334,7 +334,7 @@ defmodule Sportyweb.AccessControl do
   def list_userapplicationroles_data do
     query = from uar in UserApplicationRole,
       join: u in assoc(uar, :user),
-      preload: [ :user, :applicationrole ],
+      preload: [:user, :applicationrole],
       order_by: u.email
 
     Repo.all(query)

@@ -29,7 +29,7 @@ defmodule SportywebWeb.ClubLive.Userrolemanagement do
   end
 
   def handle_event("role_selected", %{"ucr_id" => ucr_id, "role" => role }, socket) do
-    update_ucrchanges = Map.put(socket.assigns.ucrchanges, ucr_id, role) |> clean_ucrchanges(ucr_id, role)
+    update_ucrchanges = socket.assigns.ucrchanges |> Map.put(ucr_id, role) |> clean_ucrchanges(ucr_id, role)
     {:noreply, socket |> assign(ucrchanges: update_ucrchanges)}
   end
 

@@ -14,12 +14,12 @@ defmodule Sportyweb.AccessControl.PolicyClub do
   ### ROLE-PERMISSION-MATRIX ###
   def role_permission_matrix, do: RPM.role_permission_matrix(:club)
 
-  def get_club_roles_all, do: Keyword.keys(role_permission_matrix()) |> Enum.map(&( Atom.to_string(&1)))
+  def get_club_roles_all, do: role_permission_matrix() |> Keyword.keys() |> Enum.map(&(Atom.to_string(&1)))
   def get_club_roles_for_administration(user, club_id) do
     role = if PolicyApplication.is_sportyweb_admin(user) do
       get_club_roles_all() |> Enum.at(0)
     else
-      has_club_role(user, club_id) |> Enum.at(0)
+      user |> has_club_role(club_id) |> Enum.at(0)
     end
 
     get_club_roles_all()
@@ -56,7 +56,7 @@ defmodule Sportyweb.AccessControl.PolicyClub do
       join: c in assoc(ucr, :club),
       select: c.name
 
-    Repo.all(query_clubname) |> Enum.at(0)
+      query_clubname |> Repo.all() |> Enum.at(0)
   end
 
   ### ACCESS POLICY ###
@@ -69,7 +69,7 @@ defmodule Sportyweb.AccessControl.PolicyClub do
     if PolicyApplication.is_sportyweb_admin(user) ||
        user
        |> has_club_role(club_id)
-       |> Enum.map(fn role -> Keyword.get(role_permission_matrix(), String.to_atom(role)) end)
+       |> Enum.map(fn role -> Keyword.get(role_permission_matrix(), String.to_existing_atom(role)) end)
        |> List.flatten()
        |> Enum.uniq()
        |> Enum.member?(action),
