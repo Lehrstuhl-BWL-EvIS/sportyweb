@@ -44,7 +44,7 @@ Begründete Abweichungen von den nachfolgend geschilderten Abläufen sind natür
 # Entwicklungsumgebung aufsetzen
 
 Um an Sportyweb mitzuwirken, muss das Projekt auf dem lokalen System zum Laufen gebracht werden.
-Dafür notwendig sind die Programmiersprachen Erlang und Elixir (Elixir basiert auf Erlang, deshalb diese Abhängigkeit), sowie das Datenbanksystem PostgreSQL.
+Dafür notwendig sind die Programmiersprachen [Erlang](https://www.erlang.org/) und [Elixir](https://elixir-lang.org/) (Elixir basiert auf Erlang, deshalb diese Abhängigkeit), sowie das Datenbanksystem [PostgreSQL](https://www.postgresql.org/).
 Eine Installationsanleitung mit der Angabe der jeweils notwendigen Version ist in der [README](https://gitlab.com/fuhevis/sportyweb/-/blob/development/README.md)-Datei zu finden, wobei spezifische Unterschiede bzgl.
 des eingesetzten Betriebssystems zu beachten sind.
 
@@ -111,13 +111,13 @@ mix phx.gen.live Organization Department departments \
   --binary-id
 ```
 
-Es wird eine neue Entität mit dem Namen „ Department“ (Singular verwenden!) erzeugt, welche - wie auch schon die Clubs - dem Context „Organization“ (Singular verwenden!) zugeordnet wird.
-„departments“ definiert den zu verwendenden Plural des Entitätsnamens und auch die Datenbank-Tabelle wird so heißen.
-Das Attribut „club_id“ wird als als Foreign Key auf einen bestimmten Club in der „clubs“-Tabelle (Spalte „id“) referenzieren.
-Das Attribut „name“ ist vom Typ String, weitere Datentypen sind in der [Schema-Dokumentation](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Schema.html#module-attributes) zu finden.
-Das Flag „[--binary-id](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Schema.html#module-binary_id)“ gibt an, dass als ID für die Departments keine aufsteigende Integer-Zahl verwendet werden soll, sondern eine wesentlich umfangreiche und schwer zu erratende Zahlen-/Buchstaben-Kombination.
+Es wird eine neue Entität mit dem Namen `Department` (Singular verwenden!) erzeugt, welche - wie auch schon die Clubs - dem Context `Organization` (Singular verwenden!) zugeordnet wird.
+`departments` definiert den zu verwendenden Plural des Entitätsnamens und auch die Datenbank-Tabelle wird so heißen.
+Das Attribut `club_id` wird als als Foreign Key auf einen bestimmten Club in der `clubs`-Tabelle (Spalte `id`) referenzieren.
+Das Attribut `name` ist vom Typ String, weitere Datentypen sind in der [Schema-Dokumentation](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Schema.html#module-attributes) zu finden.
+Das Flag [`--binary-id`](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.Gen.Schema.html#module-binary_id) gibt an, dass als ID für die Departments keine aufsteigende Integer-Zahl verwendet werden soll, sondern eine wesentlich umfangreiche und schwer zu erratende Zahlen-/Buchstaben-Kombination.
 
-Da der „Organization“-Context bereits existiert und von der Club-Entität verwendet wird, kommt es bei der Ausführung des obigen Befehls zu einer Rückfrage, ob der bestehende Context erweitert werden soll.
+Da der `Organization`-Context bereits existiert und von der Club-Entität verwendet wird, kommt es bei der Ausführung des obigen Befehls zu einer Rückfrage, ob der bestehende Context erweitert werden soll.
 Dies ist mit „`y`“ (yes) zu bestätigen.
 
 Der Generator erzeugt im Anschluss eine Vielzahl unterschiedlicher Dateien:
@@ -248,6 +248,7 @@ Auf Basis der in der späteren URL konkret angegebenen `club_id` wird der entspr
 Departments sollen nur angelegt werden können, indem sie direkt einem bestimmten Club zugeordnet werden.
 Deshalb enthält schon die Route zum Erstellungsformular die `club_id` als Parameter: `"/clubs/:club_id/departments/new"`.
 So wird vermieden, dass es Departments gibt, die ohne Referenz zu einem Club „in der Luft hängen“.
+Der Plural `departments` wird hier - obwohl nur ein einzelnes neues Department angelegt wird - absichtlich verwendet, um einheitliche, aufeinander aufbauende Routes zu gewährleisten.
 
 Um bestehende Abteilungen zu bearbeiten, ist nur noch die Angabe der ID des Departments relevant.
 Die Route zum Bearbeitungsformular sieht dementsprechend so aus: `"/departments/:id/edit"`
@@ -267,10 +268,10 @@ Die Nutzung von Migrations hat diverse Vorteile:
 
 - **Klarheit:** Durch Migrations ist unzweifelhaft definiert, auf welche Art und Weise Schema-Änderungen vorgenommen werden. Ein persönliches Abweichen („Ich ändere das mal schnell von Hand direkt in der Datenbank“) wird ausgeschlossen.
 - **Einheitlichkeit:** Durch Migrations wird sichergestellt, dass das Datenbankschema in allen Entwicklungsumgebungen und in der späteren Produktionsumgebung exakt gleich ist. Nur so lassen sich Fehler, die aufgrund unterschiedlicher Datenbankzustände auftreten, weitestgehend vermeiden.
-- **Schnelligkeit:** Dank Migrations lassen sich frisch erstellte, noch komplett leere Datenbanken in Sekunden auf den aktuellsten Entwicklungsstand bringen. So können auch neu hinzukommende Entwickler in kürzester Zeit und ohne frustrierenden Setup-Prozess an Sportyweb mitwirken.
-- **Nachvollziehbarkeit:** Nahezu jedes Datenbankschema wächst mit der Zeit, z.B. durch neu hinzukommende Tabellen. Mithilfe von Migrations lässt sich einfach nachvollziehen wann und (in Verbindung mit Git) wie(so) Anpassungen stattgefunden haben. Auch sind die Migration-Dateien, anders als „externe“ Änderungen an der Datenbank, Teil des Projektrepositories und sind somit versioniert.
+- **Schnelligkeit:** Dank Migrations lassen sich frisch erstellte, noch komplett leere Datenbanken in wenigen Sekunden auf den aktuellsten Entwicklungsstand bringen. So können auch neu hinzukommende Entwickler in kürzester Zeit und ohne frustrierenden Setup-Prozess an Sportyweb mitwirken.
+- **Nachvollziehbarkeit:** Nahezu jedes Datenbankschema wächst mit der Zeit, z.B. durch neu hinzukommende Tabellen. Mithilfe von Migrations lässt sich einfach nachvollziehen wann und (in Verbindung mit Git) wie(so) Anpassungen stattgefunden haben. Auch sind die Migration-Dateien, anders als „externe“ Änderungen an der Datenbank, Teil des Projektrepositories und somit versioniert.
 - **Unabhängigkeit:** Auch wenn es klar definierte SQL-Standards gibt, weichen selbst sehr weit verbreitete Datenbanksysteme - häufig aus historischen Gründen - davon ab. Deshalb wäre die Erstellung von SQL-Befehlen (egal ob manuell oder automatisiert durch Generatoren) zu einem gewissen Grad immer datenbankspezifisch. In Elixir geschriebene Migrations sind hingegen unabhängig vom eingesetzten Datenbanksystem, solange es sich um ein von [Ecto](https://hexdocs.pm/phoenix/ecto.html) unterstütztes handelt.
-- **Umkehrbareit:** Mithilfe der Rollback-Funktion lassen sich durchgeführte Migrations rückgängig machen, falls es z.B. in der der Produktionsumgebung nach einem Update zu unerwarteten Problemen kommen sollte.
+- **Umkehrbarkeit:** Mithilfe der Rollback-Funktion ([`mix ecto.rollback`](https://hexdocs.pm/ecto_sql/Mix.Tasks.Ecto.Rollback.html)) lassen sich durchgeführte Migrations rückgängig machen, falls es z.B. in der Produktionsumgebung nach einem Update zu unerwarteten Problemen kommen sollte.
 
 Alle Migrations sind im Ordner [`priv/repo/migrations`](https://gitlab.com/fuhevis/sportyweb/-/tree/development/priv/repo/migrations) zu finden, wobei die dortige „echte“ Departments-Migration vom nachfolgenden, vereinfachten Beispiel durch eine höhere Anzahl an Attributen abweicht.
 
@@ -280,7 +281,7 @@ Deshalb wird eigentlich dringend von späteren Anpassungen abgeraten, ABER:
 
 > **Festlegung:**
 > Da es während des initialen Entwicklungsprozesses viele Änderungen am Datenbankschema geben wird und bisher noch keine durchgängig laufende Produktionsumgebung existiert, sollen, um eine sehr große und damit unübersichtliche Menge vieler kleiner Migrations zu vermeiden, bestehende Migrations von existierenden Entitäten nachträglich angepasst und erweitert werden.
-> Um diese Änderungen wirksam zu übernehmen, muss die lokale Datenbank neu aufgesetzt werden, was durch die Ausführung des [`setup-dev-env.sh`](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skripts aber vollkommen unkompliziert und schnell geschieht.
+> Um diese Änderungen wirksam zu übernehmen, muss die lokale Datenbank neu aufgesetzt werden, was durch die Ausführung des [`setup-dev-env.sh`](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skripts aber vollkommen unkompliziert und schnell möglich ist.
 
 &nbsp;
 
@@ -342,6 +343,7 @@ TODO:
         defp page_title(:show), do: "Show ..."
         defp page_title(:edit), do: "Edit ..."
     - ...
+- Wenn komplexer, dann zwei Views (New & Edit) mit jeweils eigenen Templates
 - assigns
     - Club auf Socket, Navigation Sidebar
     - Breadcrumbs
@@ -393,6 +395,7 @@ TODO:
     - References
 - asserts
 - Zusammenwirken mit Seed
+- Kein Auskommentieren
 
 
 &nbsp;
@@ -406,7 +409,7 @@ TODO:
 - Unterscheidung technische Dokumentation und Handbuch für Endnutzer
 - Hinzufügen / Anpassen
 - Abschlussarbeit (Konzeption, Vorgehensweise, ...)
-- Kommentaren für die einzelnen Funktionen
+- Kommentare für die einzelnen Funktionen
 - Tests
 
 
