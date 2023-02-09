@@ -128,7 +128,7 @@ defmodule SportywebWeb.UserAuthTest do
       assert updated_socket.assigns.current_user.id == user.id
     end
 
-    test "assigns nil to current_ user assign if there isn't a valid user_token ", %{conn: conn} do
+    test "assigns nil to current_user assign if there isn't a valid user_token ", %{conn: conn} do
       user_token = "invalid_token"
       session = conn |> put_session(:user_token, user_token) |> get_session()
 
@@ -138,7 +138,7 @@ defmodule SportywebWeb.UserAuthTest do
       assert updated_socket.assigns.current_user == nil
     end
 
-    test "assigns nil to current_ user assign if there isn't a user_token", %{conn: conn} do
+    test "assigns nil to current_user assign if there isn't a user_token", %{conn: conn} do
       session = conn |> get_session()
 
       {:cont, updated_socket} =

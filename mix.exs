@@ -45,7 +45,7 @@ defmodule Sportyweb.MixProject do
       ###################################
       # Default Phoenix Dependencies
 
-      {:bcrypt_elixir, "~> 3.0"},
+      {:argon2_elixir, "~> 3.0"},
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
