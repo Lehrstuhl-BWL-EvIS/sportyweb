@@ -25,7 +25,12 @@ defmodule SportywebWeb.DepartmentLiveTest do
       {:error, _} = live(conn, ~p"/departments")
 
       conn = conn |> log_in_user(user)
-      {:ok, _} = live(conn, ~p"/departments") |> follow_redirect(conn, ~p"/clubs")
+      {:ok, conn} =
+        conn
+        |> live(~p"/departments")
+        |> follow_redirect(conn, ~p"/clubs")
+
+      assert conn.resp_body =~ "Vereinsübersicht"
     end
 
     test "lists all departments", %{conn: conn, user: user, department: department} do
