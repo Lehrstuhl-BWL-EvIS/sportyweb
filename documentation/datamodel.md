@@ -24,9 +24,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 erDiagram
 	Club ||--o{ Department : organizes
 	Department ||--o{ Group : organizes
-	Club ||--o{ Category : _tbd_
-	Category ||--o{ GroupCategory : _tbd_
-	Group ||--o{ GroupCategory : _tbd_
+	Club ||--o{ Category : tbd
+	Category ||--o{ GroupCategory : tbd
+	Group ||--o{ GroupCategory : tbd
 ```
 
 
