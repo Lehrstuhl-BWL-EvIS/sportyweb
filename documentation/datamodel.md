@@ -27,6 +27,8 @@ erDiagram
 	Club ||--o{ Category : tbd
 	Category ||--o{ GroupCategory : tbd
 	Group ||--o{ GroupCategory : tbd
+    Club ||--o{ Venue : runs
+    Venue ||--o{ Equipment : holds
 ```
 
 
