@@ -8,7 +8,7 @@ defmodule SportywebWeb.DepartmentLive.Index do
     {:ok,
     socket
     |> assign(:departments, list_departments(club_id))
-    |> assign(:club_navigation_current_item, :dashboard)}
+    |> assign(:club_navigation_current_item, :structure)}
   end
 
   @impl true
