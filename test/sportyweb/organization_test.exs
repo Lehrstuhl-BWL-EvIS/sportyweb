@@ -136,4 +136,64 @@ defmodule Sportyweb.OrganizationTest do
       assert %Ecto.Changeset{} = Organization.change_department(department)
     end
   end
+
+  describe "groups" do
+    alias Sportyweb.Organization.Group
+
+    import Sportyweb.OrganizationFixtures
+
+    @invalid_attrs %{created_at: nil, description: nil, name: nil, reference_number: nil}
+
+    test "list_groups/0 returns all groups" do
+      group = group_fixture()
+      assert Organization.list_groups() == [group]
+    end
+
+    test "get_group!/1 returns the group with given id" do
+      group = group_fixture()
+      assert Organization.get_group!(group.id) == group
+    end
+
+    test "create_group/1 with valid data creates a group" do
+      valid_attrs = %{created_at: ~D[2023-02-11], description: "some description", name: "some name", reference_number: "some reference_number"}
+
+      assert {:ok, %Group{} = group} = Organization.create_group(valid_attrs)
+      assert group.created_at == ~D[2023-02-11]
+      assert group.description == "some description"
+      assert group.name == "some name"
+      assert group.reference_number == "some reference_number"
+    end
+
+    test "create_group/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Organization.create_group(@invalid_attrs)
+    end
+
+    test "update_group/2 with valid data updates the group" do
+      group = group_fixture()
+      update_attrs = %{created_at: ~D[2023-02-12], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
+
+      assert {:ok, %Group{} = group} = Organization.update_group(group, update_attrs)
+      assert group.created_at == ~D[2023-02-12]
+      assert group.description == "some updated description"
+      assert group.name == "some updated name"
+      assert group.reference_number == "some updated reference_number"
+    end
+
+    test "update_group/2 with invalid data returns error changeset" do
+      group = group_fixture()
+      assert {:error, %Ecto.Changeset{}} = Organization.update_group(group, @invalid_attrs)
+      assert group == Organization.get_group!(group.id)
+    end
+
+    test "delete_group/1 deletes the group" do
+      group = group_fixture()
+      assert {:ok, %Group{}} = Organization.delete_group(group)
+      assert_raise Ecto.NoResultsError, fn -> Organization.get_group!(group.id) end
+    end
+
+    test "change_group/1 returns a group changeset" do
+      group = group_fixture()
+      assert %Ecto.Changeset{} = Organization.change_group(group)
+    end
+  end
 end

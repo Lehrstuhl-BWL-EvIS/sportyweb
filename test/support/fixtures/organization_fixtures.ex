@@ -44,4 +44,21 @@ defmodule Sportyweb.OrganizationFixtures do
 
     department
   end
+
+  @doc """
+  Generate a group.
+  """
+  def group_fixture(attrs \\ %{}) do
+    {:ok, group} =
+      attrs
+      |> Enum.into(%{
+        created_at: ~D[2023-02-11],
+        description: "some description",
+        name: "some name",
+        reference_number: "some reference_number"
+      })
+      |> Sportyweb.Organization.create_group()
+
+    group
+  end
 end

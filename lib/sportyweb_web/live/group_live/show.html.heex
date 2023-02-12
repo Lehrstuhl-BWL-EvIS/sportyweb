@@ -1,0 +1,29 @@
+<.header>
+  Group <%= @group.id %>
+  <:subtitle>This is a group record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/groups/#{@group}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit group</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @group.name %></:item>
+  <:item title="Reference number"><%= @group.reference_number %></:item>
+  <:item title="Description"><%= @group.description %></:item>
+  <:item title="Created at"><%= @group.created_at %></:item>
+</.list>
+
+<.back navigate={~p"/groups"}>Back to groups</.back>
+
+<.modal :if={@live_action == :edit} id="group-modal" show on_cancel={JS.patch(~p"/groups/#{@group}")}>
+  <.live_component
+    module={SportywebWeb.GroupLive.FormComponent}
+    id={@group.id}
+    title={@page_title}
+    action={@live_action}
+    group={@group}
+    navigate={~p"/groups/#{@group}"}
+  />
+</.modal>
