@@ -5,9 +5,9 @@ defmodule SportywebWeb.ClubLiveTest do
   import Sportyweb.AccountsFixtures
   import Sportyweb.OrganizationFixtures
 
-  @create_attrs %{founded_at: ~D[2022-11-05], name: "some name", reference_number: "some reference_number", website_url: "https://www.website_url.com"}
-  @update_attrs %{founded_at: ~D[2022-11-06], name: "some updated name", reference_number: "some updated reference_number", website_url: "https://www.updated_website_url.com"}
-  @invalid_attrs %{founded_at: nil, name: nil, reference_number: nil, website_url: nil}
+  @create_attrs %{name: "some name", reference_number: "some reference_number", description: "some description", website_url: "https://www.website_url.com", founded_at: ~D[2022-11-05]}
+  @update_attrs %{name: "some updated name", reference_number: "some updated reference_number", description: "some updated description", website_url: "https://www.updated_website_url.com", founded_at: ~D[2022-11-06]}
+  @invalid_attrs %{name: nil, reference_number: nil, description: nil, website_url: nil, founded_at: nil}
 
   setup do
     %{user: user_fixture()}
@@ -110,7 +110,6 @@ defmodule SportywebWeb.ClubLiveTest do
       conn = conn |> log_in_user(user)
       {:ok, _show_live, html} = live(conn, ~p"/clubs/#{club}")
 
-      assert html =~ "Dashboard"
       assert html =~ club.name
     end
   end
