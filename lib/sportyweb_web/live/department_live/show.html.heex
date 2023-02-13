@@ -9,12 +9,36 @@
 
 <.card>
   <.list>
-    <:item title="Verein"><%= @department.club.name %></:item>
-    <:item title="ID"><%= @department.id %></:item>
-    <:item title="Name"><%= @department.name %></:item>
-    <:item title="Art"><%= @department.type %></:item>
+    <:item title="Referenznummer"><%= @department.reference_number %></:item>
+    <:item title="Beschreibung"><%= @department.description %></:item>
     <:item title="Erstellungsdatum"><%= Calendar.strftime(@department.created_at, "%d.%m.%Y") %></:item>
   </.list>
 </.card>
 
-<.back navigate={~p"/clubs/#{@department.club}"}>Zurück zum Dashboard</.back>
+<.header level="2" class="mt-12">
+  Gruppen
+  <:actions>
+    <.link navigate={~p"/departments/#{@department}/groups/new"}>
+      <.button>Gruppe erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@department.groups) do %>
+    <.table id="groups" rows={@department.groups} row_click={&JS.navigate(~p"/groups/#{&1}")}>
+      <:col :let={group} label="Name"><%= group.name %></:col>
+      <:col :let={group} label="Erstellungsdatum"><%= Calendar.strftime(group.created_at, "%d.%m.%Y") %></:col>
+      <:action :let={group}>
+        <div class="sr-only">
+          <.link navigate={~p"/groups/#{group}"}>Anzeigen</.link>
+        </div>
+        <.link navigate={~p"/groups/#{group}/edit"}>Bearbeiten</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>Bisher wurde noch keine Gruppe erstellt.</p>
+  <% end %>
+</.card>
+
+<.back navigate={~p"/clubs/#{@department.club}/departments"} class="mt-12">Zur Abteilungsübersicht</.back>

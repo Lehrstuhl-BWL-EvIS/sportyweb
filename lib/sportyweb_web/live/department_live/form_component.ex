@@ -21,12 +21,16 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
           phx-submit="save"
         >
           <div class="grid grid-cols-12 gap-x-4 gap-y-6">
-            <div class="col-span-12">
+            <div class="col-span-12 md:col-span-6">
               <.input field={{f, :name}} type="text" label="Name" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :type}} type="text" label="Art" />
+              <.input field={{f, :reference_number}} type="text" label="Referenznummer" />
+            </div>
+
+            <div class="col-span-12">
+              <.input field={{f, :description}} type="text" label="Beschreibung" />
             </div>
 
             <div class="col-span-12 md:col-span-6">

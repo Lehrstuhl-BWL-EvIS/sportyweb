@@ -1,24 +1,31 @@
 <.header>
   <%= @club.name %>: Abteilungen
   <:actions>
-    <.link navigate={~p"/clubs/#{@club.id}/departments/new"}>
+    <.link navigate={~p"/clubs/#{@club}/departments/new"}>
       <.button>Abteilung erstellen</.button>
     </.link>
   </:actions>
 </.header>
 
 <.card>
-  <.table id="departments" rows={@departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
-    <:col :let={department} label="Name"><%= department.name %></:col>
-    <:col :let={department} label="Art"><%= department.type %></:col>
-    <:col :let={department} label="Erstellungsdatum"><%= Calendar.strftime(department.created_at, "%d.%m.%Y") %></:col>
-    <:action :let={department}>
-      <div class="sr-only">
+  <%= if Enum.any?(@departments) do %>
+    <.table id="departments" rows={@departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
+      <:col :let={department} label="Name"><%= department.name %></:col>
+      <:col :let={department} label="Referenznummer"><%= department.reference_number %></:col>
+      <:col :let={department} label="Beschreibung">
+        <div class="max-w-[200px] truncate overflow-hidden">
+          <%= department.description %>
+          </div>
+      </:col>
+      <:col :let={department} label="Erstellungsdatum"><%= Calendar.strftime(department.created_at, "%d.%m.%Y") %></:col>
+      <:action :let={department}>
         <.link navigate={~p"/departments/#{department}"}>Anzeigen</.link>
-      </div>
-      <.link navigate={~p"/departments/#{department}/edit"}>Bearbeiten</.link>
-    </:action>
-  </.table>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Bisher wurde noch keine Abteilung erstellt.<br>
+      Gruppen können erst angelegt werden, wenn mindestens eine Abteilung existiert.
+    </p>
+  <% end %>
 </.card>
-
-<.back navigate={~p"/clubs/#{@club}"}>Zurück zum Dashboard</.back>

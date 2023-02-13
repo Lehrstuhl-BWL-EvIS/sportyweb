@@ -2,17 +2,21 @@ defmodule Sportyweb.Organization.Department do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Sportyweb.Organization.Department
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Organization.Department
+  alias Sportyweb.Organization.Group
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "departments" do
-    field :name, :string
-    field :type, :string
-    field :created_at, :date
     belongs_to :club, Club
     belongs_to :parent, Department
+    has_many :groups, Group, on_delete: :delete_all
+
+    field :name, :string
+    field :reference_number, :string
+    field :description, :string
+    field :created_at, :date
 
     timestamps()
   end
@@ -20,9 +24,10 @@ defmodule Sportyweb.Organization.Department do
   @doc false
   def changeset(department, attrs) do
     department
-    |> cast(attrs, [:name, :type, :created_at, :club_id], empty_values: [])
-    |> validate_required([:name, :created_at, :club_id])
+    |> cast(attrs, [:club_id, :name, :reference_number, :description, :created_at], empty_values: [])
+    |> validate_required([:club_id, :name, :created_at])
     |> validate_length(:name, max: 250)
-    |> validate_length(:type, max: 250)
+    |> validate_length(:reference_number, max: 250)
+    |> validate_length(:description, max: 20_000)
   end
 end
