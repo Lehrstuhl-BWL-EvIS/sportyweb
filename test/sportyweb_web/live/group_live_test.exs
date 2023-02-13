@@ -2,11 +2,16 @@ defmodule SportywebWeb.GroupLiveTest do
   use SportywebWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Sportyweb.AccountsFixtures
   import Sportyweb.OrganizationFixtures
 
-  @create_attrs %{created_at: "2023-2-11", description: "some description", name: "some name", reference_number: "some reference_number"}
-  @update_attrs %{created_at: "2023-2-12", description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
-  @invalid_attrs %{created_at: nil, description: nil, name: nil, reference_number: nil}
+  @create_attrs %{name: "some name", reference_number: "some reference_number", description: "some description", created_at: ~D[2022-11-05]}
+  @update_attrs %{name: "some updated name", reference_number: "some updated reference_number", description: "some updated description", created_at: ~D[2022-11-06]}
+  @invalid_attrs %{name: nil, reference_number: nil, description: nil, created_at: nil}
+
+  setup do
+    %{user: user_fixture()}
+  end
 
   defp create_group(_) do
     group = group_fixture()
@@ -16,95 +21,92 @@ defmodule SportywebWeb.GroupLiveTest do
   describe "Index" do
     setup [:create_group]
 
-    test "lists all groups", %{conn: conn, group: group} do
-      {:ok, _index_live, html} = live(conn, ~p"/groups")
+    test "lists all groups - default redirect", %{conn: conn, user: user} do
+      {:error, _} = live(conn, ~p"/groups")
 
-      assert html =~ "Listing Groups"
-      assert html =~ group.description
+      conn = conn |> log_in_user(user)
+      {:ok, conn} =
+        conn
+        |> live(~p"/groups")
+        |> follow_redirect(conn, ~p"/clubs")
+
+      assert conn.resp_body =~ "Vereinsübersicht"
     end
 
-    test "saves new group", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/groups")
+    test "lists all groups - redirect", %{conn: conn, user: user, group: group} do
+      {:error, _} = live(conn, ~p"/departments/#{group.department_id}/groups")
 
-      assert index_live |> element("a", "New Group") |> render_click() =~
-               "New Group"
+      conn = conn |> log_in_user(user)
+      {:ok, conn} =
+        conn
+        |> live(~p"/departments/#{group.department_id}/groups")
+        |> follow_redirect(conn, ~p"/departments/#{group.department_id}")
 
-      assert_patch(index_live, ~p"/groups/new")
+      assert conn.resp_body =~ "Abteilung:"
+    end
+  end
 
-      assert index_live
-             |> form("#group-form", group: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+  describe "New/Edit" do
+    setup [:create_group]
+
+    test "saves new group", %{conn: conn, user: user} do
+      department = department_fixture()
+
+      {:error, _} = live(conn, ~p"/departments/#{department}/groups/new")
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, html} = live(conn, ~p"/departments/#{department}/groups/new")
+
+      assert html =~ "Gruppe erstellen"
+
+      assert new_live
+              |> form("#group-form", group: @invalid_attrs)
+              |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
-        index_live
+        new_live
         |> form("#group-form", group: @create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/groups")
+        |> follow_redirect(conn, ~p"/departments/#{department}")
 
-      assert html =~ "Group created successfully"
-      assert html =~ "some description"
+      assert html =~ "Gruppe erfolgreich erstellt"
+      assert html =~ "some name"
     end
 
-    test "updates group in listing", %{conn: conn, group: group} do
-      {:ok, index_live, _html} = live(conn, ~p"/groups")
+    test "updates group", %{conn: conn, user: user, group: group} do
+      {:error, _} = live(conn, ~p"/groups/#{group}/edit")
 
-      assert index_live |> element("#groups-#{group.id} a", "Edit") |> render_click() =~
-               "Edit Group"
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/groups/#{group}/edit")
 
-      assert_patch(index_live, ~p"/groups/#{group}/edit")
+      assert html =~ "Gruppe bearbeiten"
 
-      assert index_live
+      assert edit_live
              |> form("#group-form", group: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
-        index_live
+        edit_live
         |> form("#group-form", group: @update_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/groups")
+        |> follow_redirect(conn, ~p"/groups/#{group}")
 
-      assert html =~ "Group updated successfully"
-      assert html =~ "some updated description"
-    end
-
-    test "deletes group in listing", %{conn: conn, group: group} do
-      {:ok, index_live, _html} = live(conn, ~p"/groups")
-
-      assert index_live |> element("#groups-#{group.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#group-#{group.id}")
+      assert html =~ "Gruppe erfolgreich aktualisiert"
+      assert html =~ "some updated name"
     end
   end
 
   describe "Show" do
     setup [:create_group]
 
-    test "displays group", %{conn: conn, group: group} do
+    test "displays group", %{conn: conn, user: user, group: group} do
+      {:error, _} = live(conn, ~p"/groups/#{group}")
+
+      conn = conn |> log_in_user(user)
       {:ok, _show_live, html} = live(conn, ~p"/groups/#{group}")
 
-      assert html =~ "Show Group"
-      assert html =~ group.description
-    end
-
-    test "updates group within modal", %{conn: conn, group: group} do
-      {:ok, show_live, _html} = live(conn, ~p"/groups/#{group}")
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Group"
-
-      assert_patch(show_live, ~p"/groups/#{group}/show/edit")
-
-      assert show_live
-             |> form("#group-form", group: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      {:ok, _, html} =
-        show_live
-        |> form("#group-form", group: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/groups/#{group}")
-
-      assert html =~ "Group updated successfully"
-      assert html =~ "some updated description"
+      assert html =~ "Gruppe:"
+      assert html =~ group.name
     end
   end
 end

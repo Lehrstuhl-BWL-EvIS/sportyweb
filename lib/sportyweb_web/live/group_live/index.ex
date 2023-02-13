@@ -1,12 +1,15 @@
 defmodule SportywebWeb.GroupLive.Index do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Organization
-  alias Sportyweb.Organization.Group
+  @impl true
+  def render(assigns) do
+    ~H"""
+    """
+  end
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :groups, list_groups())}
+    {:ok, socket}
   end
 
   @impl true
@@ -14,33 +17,13 @@ defmodule SportywebWeb.GroupLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :index_root, _params) do
     socket
-    |> assign(:page_title, "Edit Group")
-    |> assign(:group, Organization.get_group!(id))
+    |> redirect(to: "/clubs")
   end
 
-  defp apply_action(socket, :new, _params) do
+  defp apply_action(socket, :index, %{"department_id" => department_id}) do
     socket
-    |> assign(:page_title, "New Group")
-    |> assign(:group, %Group{})
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Groups")
-    |> assign(:group, nil)
-  end
-
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    group = Organization.get_group!(id)
-    {:ok, _} = Organization.delete_group(group)
-
-    {:noreply, assign(socket, :groups, list_groups())}
-  end
-
-  defp list_groups do
-    Organization.list_groups()
+    |> redirect(to: "/departments/#{department_id}")
   end
 end

@@ -9,25 +9,48 @@ defmodule SportywebWeb.GroupLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage group records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
-        :let={f}
-        for={@changeset}
-        id="group-form"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
-      >
-        <.input field={{f, :name}} type="text" label="Name" />
-        <.input field={{f, :reference_number}} type="text" label="Reference number" />
-        <.input field={{f, :description}} type="text" label="Description" />
-        <.input field={{f, :created_at}} type="date" label="Created at" />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Group</.button>
-        </:actions>
-      </.simple_form>
+      <.card>
+        <.simple_form
+          :let={f}
+          for={@changeset}
+          id="group-form"
+          phx-target={@myself}
+          phx-change="validate"
+          phx-submit="save"
+        >
+          <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :name}} type="text" label="Name" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :reference_number}} type="text" label="Referenznummer" />
+            </div>
+
+            <div class="col-span-12">
+              <.input field={{f, :description}} type="text" label="Beschreibung" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :created_at}} type="date" label="Created at" />
+            </div>
+          </div>
+
+          <:actions>
+            <.button phx-disable-with="Speichern...">Speichern</.button>
+            <.button
+                :if={@group.id}
+                class="bg-rose-700 hover:bg-rose-800"
+                phx-click={JS.push("delete", value: %{id: @group.id})}
+                data-confirm="Unwiderruflich löschen?">
+                Löschen
+              </.button>
+          </:actions>
+        </.simple_form>
+      </.card>
     </div>
     """
   end
@@ -53,6 +76,10 @@ defmodule SportywebWeb.GroupLive.FormComponent do
   end
 
   def handle_event("save", %{"group" => group_params}, socket) do
+    group_params = Enum.into(group_params, %{
+      "department_id" => socket.assigns.group.department.id
+    })
+
     save_group(socket, socket.assigns.action, group_params)
   end
 
@@ -61,7 +88,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
       {:ok, _group} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Group updated successfully")
+         |> put_flash(:info, "Gruppe erfolgreich aktualisiert")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -74,7 +101,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
       {:ok, _group} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Group created successfully")
+         |> put_flash(:info, "Gruppe erfolgreich erstellt")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

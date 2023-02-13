@@ -18,6 +18,7 @@ defmodule Sportyweb.OrganizationFixtures do
       |> Enum.into(%{
         name: "some name",
         reference_number: "some reference_number",
+        description: "some description",
         website_url: unique_club_website_url(),
         founded_at: ~D[2022-11-05]
       })
@@ -35,10 +36,11 @@ defmodule Sportyweb.OrganizationFixtures do
     {:ok, department} =
       attrs
       |> Enum.into(%{
+        club_id: club.id,
         name: "some name",
-        type: "some type",
-        created_at: ~D[2022-11-05],
-        club_id: club.id
+        reference_number: "some reference_number",
+        description: "some description",
+        created_at: ~D[2022-11-05]
       })
       |> Sportyweb.Organization.create_department()
 
@@ -49,13 +51,16 @@ defmodule Sportyweb.OrganizationFixtures do
   Generate a group.
   """
   def group_fixture(attrs \\ %{}) do
+    department = department_fixture()
+
     {:ok, group} =
       attrs
       |> Enum.into(%{
-        created_at: ~D[2023-02-11],
-        description: "some description",
+        department_id: department.id,
         name: "some name",
-        reference_number: "some reference_number"
+        reference_number: "some reference_number",
+        description: "some description",
+        created_at: ~D[2022-11-05]
       })
       |> Sportyweb.Organization.create_group()
 

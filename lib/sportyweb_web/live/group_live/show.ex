@@ -5,17 +5,21 @@ defmodule SportywebWeb.GroupLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok,
+    socket
+    |> assign(:club_navigation_current_item, :structure)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    group = Organization.get_group!(id, [:department])
+    department = Organization.get_department!(group.department.id, [:club])
+
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:group, Organization.get_group!(id))}
+     |> assign(:page_title, "Gruppe: #{group.name}")
+     |> assign(:group, group)
+     |> assign(:department, department)
+     |> assign(:club, department.club)}
   end
-
-  defp page_title(:show), do: "Show Group"
-  defp page_title(:edit), do: "Edit Group"
 end

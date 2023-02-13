@@ -93,12 +93,13 @@ defmodule SportywebWeb.Router do
 
       # Groups (each belongs to a department)
 
-      live "/groups", GroupLive.Index, :index
-      live "/groups/new", GroupLive.Index, :new
-      live "/groups/:id/edit", GroupLive.Index, :edit
+      live "/groups", GroupLive.Index, :index_root
+      live "/departments/:department_id/groups", GroupLive.Index, :index
+
+      live "/departments/:department_id/groups/new", GroupLive.NewEdit, :new
+      live "/groups/:id/edit", GroupLive.NewEdit, :edit
 
       live "/groups/:id", GroupLive.Show, :show
-      live "/groups/:id/show/edit", GroupLive.Show, :edit
 
       # Households
 

@@ -243,16 +243,17 @@ defmodule Sportyweb.Organization do
   alias Sportyweb.Organization.Group
 
   @doc """
-  Returns the list of groups.
+  Returns a departments list of groups.
 
   ## Examples
 
-      iex> list_groups()
+      iex> list_groups(1)
       [%Group{}, ...]
 
   """
-  def list_groups do
-    Repo.all(Group)
+  def list_groups(department_id) do
+    query = from(g in Group, where: g.department_id == ^department_id, order_by: g.name)
+    Repo.all(query)
   end
 
   @doc """
@@ -270,6 +271,26 @@ defmodule Sportyweb.Organization do
 
   """
   def get_group!(id), do: Repo.get!(Group, id)
+
+  @doc """
+  Gets a single group. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Group does not exist.
+
+  ## Examples
+
+      iex> get_group!(123, [:department])
+      %Department{}
+
+      iex> get_group!(456, [:department])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_group!(id, preloads) do
+    Group
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a group.
