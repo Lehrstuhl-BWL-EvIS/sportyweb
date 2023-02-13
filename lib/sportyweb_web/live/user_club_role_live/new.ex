@@ -24,5 +24,5 @@ defmodule SportywebWeb.UserClubRoleLive.New do
   end
 
   defp list_visible_users(), do:  Accounts.list_all_users
-  defp list_users_in_a_club(club_id), do: UserRole.list_users_in_a_club(club_id) |> Enum.map(&(&1.user))
+  defp list_users_in_a_club(club_id), do: club_id |> UserRole.list_users_in_a_club() |> Enum.map(&(&1.user))
 end

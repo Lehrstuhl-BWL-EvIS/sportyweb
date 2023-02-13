@@ -9,18 +9,25 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
   def role_permission_matrix(:club) do
     [
       vereins_administration: %{
-        ClubLive:               [:index, :edit, :show],
+        ClubLive:               [:edit, :show],
         DepartmentLive:         [:index, :new, :edit, :show],
-        HouseholdLive:          [:index, :new, :edit, :show]
+        HouseholdLive:          [:index, :new, :edit, :show],
+        UserClubRoleLive:       [:index, :new, :edit, :show]
       },
 
       vorstand: %{
-        ClubLive:               [:index, :edit, :show],
+        ClubLive:               [:edit, :show],
         DepartmentLive:         [:index, :show],
-        HouseholdLive:          [:index, :show]
+        HouseholdLive:          [:index, :show],
+        UserClubRoleLive:       [:index]
       },
 
-      rollen_verwaltung: %{}
+      rollen_verwaltung: %{
+        ClubLive:               [:show],
+        DepartmentLive:         [:index, :show],
+        HouseholdLive:          [],
+        UserClubRoleLive:       [:index, :new, :edit, :show]
+      }
     ]
   end
 
