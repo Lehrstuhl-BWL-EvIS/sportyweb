@@ -15,6 +15,7 @@ alias Sportyweb.Repo
 alias Sportyweb.Accounts
 alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
+alias Sportyweb.Organization.Group
 
 ###################################
 # Add Users
@@ -52,43 +53,99 @@ end
 
 club_1 = Repo.insert!(%Club{
   name: "FC Bayern München",
-  reference_number: "0815",
+  reference_number: "FCB",
+  description: "One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin.",
   website_url: "https://fcbayern.com/",
   founded_at: ~D[1900-02-27]
 })
 
-Repo.insert!(%Department{
+department = Repo.insert!(%Department{
   club: club_1,
   name: "Fußball Herren",
-  type: "Hauptabteilung",
   created_at: ~D[1900-03-01]
 })
 
-Repo.insert!(%Department{
+Repo.insert!(%Group{
+  department: department,
+  name: "1. Herrenmannschaft",
+  created_at: ~D[1900-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "2. Herrenmannschaft",
+  created_at: ~D[1901-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "A-Jugend",
+  created_at: ~D[1902-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "B-Jugend",
+  created_at: ~D[1903-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "Kinder",
+  created_at: ~D[1904-03-01]
+})
+
+department = Repo.insert!(%Department{
   club: club_1,
   name: "Fußball Damen",
-  type: "Hauptabteilung",
   created_at: ~D[1905-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "1. Damenmannschaft",
+  created_at: ~D[1905-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "2. Damenmannschaft",
+  created_at: ~D[1906-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "A-Jugend",
+  created_at: ~D[1907-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "B-Jugend",
+  created_at: ~D[1908-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "Kinder",
+  created_at: ~D[1909-03-01]
 })
 
 Repo.insert!(%Department{
   club: club_1,
   name: "Basketball",
-  type: "Hauptabteilung",
   created_at: ~D[1910-03-01]
 })
 
 Repo.insert!(%Department{
   club: club_1,
   name: "Handball",
-  type: "Hauptabteilung",
   created_at: ~D[1915-03-01]
 })
 
 Repo.insert!(%Department{
   club: club_1,
   name: "Schach",
-  type: "Hauptabteilung",
   created_at: ~D[1920-03-01]
 })
 
@@ -97,36 +154,93 @@ Repo.insert!(%Department{
 
 club_2 = Repo.insert!(%Club{
   name: "1. FC Köln",
-  reference_number: "xyz",
+  reference_number: "Effzeh",
+  description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
   website_url: "https://fc.de/",
   founded_at: ~D[1948-02-13]
 })
 
-Repo.insert!(%Department{
+department = Repo.insert!(%Department{
   club: club_2,
   name: "Fußball Herren",
-  type: "Hauptabteilung",
   created_at: ~D[1948-03-01]
 })
 
-Repo.insert!(%Department{
+Repo.insert!(%Group{
+  department: department,
+  name: "1. Herrenmannschaft",
+  created_at: ~D[1948-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "2. Herrenmannschaft",
+  created_at: ~D[1949-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "A-Jugend",
+  created_at: ~D[1950-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "B-Jugend",
+  created_at: ~D[1951-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "Kinder",
+  created_at: ~D[1952-03-01]
+})
+
+department = Repo.insert!(%Department{
   club: club_2,
   name: "Fußball Damen",
-  type: "Hauptabteilung",
   created_at: ~D[1950-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "1. Damenmannschaft",
+  created_at: ~D[1950-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "2. Damenmannschaft",
+  created_at: ~D[1951-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "A-Jugend",
+  created_at: ~D[1952-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "B-Jugend",
+  created_at: ~D[1953-03-01]
+})
+
+Repo.insert!(%Group{
+  department: department,
+  name: "Kinder",
+  created_at: ~D[1954-03-01]
 })
 
 Repo.insert!(%Department{
   club: club_2,
   name: "Handball",
-  type: "Hauptabteilung",
   created_at: ~D[1955-03-01]
 })
 
 Repo.insert!(%Department{
   club: club_2,
   name: "Tischtennis",
-  type: "Hauptabteilung",
   created_at: ~D[1960-03-01]
 })
 
@@ -135,7 +249,8 @@ Repo.insert!(%Department{
 
 Repo.insert!(%Club{
   name: "FC St. Pauli",
-  reference_number: "",
+  reference_number: "-",
+  description: "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.",
   website_url: "https://www.fcstpauli.com/",
   founded_at: ~D[1910-05-15]
 })
@@ -144,8 +259,9 @@ Repo.insert!(%Club{
 # Add Club 4
 
 Repo.insert!(%Club{
-  name: "Keine-Website-Verein",
+  name: "Leerer Verein",
   reference_number: "",
+  description: "",
   website_url: "",
   founded_at: ~D[2020-04-01]
 })
