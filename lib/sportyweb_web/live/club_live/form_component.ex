@@ -29,6 +29,10 @@ defmodule SportywebWeb.ClubLive.FormComponent do
               <.input field={{f, :reference_number}} type="text" label="Referenznummer" />
             </div>
 
+            <div class="col-span-12">
+              <.input field={{f, :description}} type="text" label="Beschreibung" />
+            </div>
+
             <div class="col-span-12 md:col-span-6">
               <.input field={{f, :website_url}} type="text" label="URL" />
             </div>
