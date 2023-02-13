@@ -31,7 +31,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
             </div>
 
             <div class="col-span-12">
-              <.input field={{f, :description}} type="text" label="Beschreibung" />
+              <.input field={{f, :description}} type="textarea" label="Beschreibung" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
