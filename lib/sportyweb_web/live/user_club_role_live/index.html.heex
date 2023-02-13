@@ -1,39 +1,23 @@
 <.header>
-  Rollenverwaltung
+  Nutzer & Rollen
   <:actions>
-    <.link patch={~p"/userclubroles/new"}>
+    <.link patch={~p"/clubs/#{@club.id}/userclubroles/new"}>
       <.button>Mitarbeiter hinzufügen</.button>
     </.link>
   </:actions>
 </.header>
 
 <.card>
-  <.table id="userclubroles" rows={@userclubroles} row_click={&JS.navigate(~p"/userclubroles/#{&1}")}>
+  <.table id="userclubroles" rows={@userclubroles} row_click={&JS.navigate(~p"/clubs/#{@club.id}/userclubroles/#{&1}")}>
     <:col :let={userclubroles} label="Mitarbeiter"><%= userclubroles.email %></:col>
     <:col :let={userclubroles} label="Rollen"><%= userclubroles.roles %></:col>
     <:action :let={user_club_role}>
       <div class="sr-only">
-        <.link navigate={~p"/userclubroles/#{user_club_role}"}>Anzeigen</.link>
+        <.link navigate={~p"/clubs/#{@club.id}/userclubroles/#{user_club_role.id}"}>Anzeigen</.link>
       </div>
-      <.link patch={~p"/userclubroles/#{user_club_role}/edit"}>Bearbeiten</.link>
+      <.link patch={~p"/clubs/#{@club.id}/userclubroles/#{user_club_role}"}>Bearbeiten</.link>
     </:action>
   </.table>
 </.card>
 
 <.back navigate={~p"/clubs/#{@club}"}>Zurück zum Dashboard</.back>
-
-<.modal
-  :if={@live_action in [:new, :edit]}
-  id="user_club_role-modal"
-  show
-  on_cancel={JS.navigate(~p"/userclubroles")}
->
-  <.live_component
-    module={SportywebWeb.UserClubRoleLive.FormComponent}
-    id={@user_club_role.id || :new}
-    title={@page_title}
-    action={@live_action}
-    user_club_role={@user_club_role}
-    navigate={~p"/userclubroles"}
-  />
-</.modal>

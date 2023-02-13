@@ -18,7 +18,9 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
         ClubLive:               [:index, :edit, :show],
         DepartmentLive:         [:index, :show],
         HouseholdLive:          [:index, :show]
-      }
+      },
+
+      temp: %{}
     ]
   end
 

@@ -1,25 +1,28 @@
 <.header>
-  User club role <%= @user_club_role.id %>
-  <:subtitle>This is a user_club_role record from your database.</:subtitle>
-  <:actions>
-    <.link patch={~p"/userclubroles/#{@user_club_role}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit user_club_role</.button>
-    </.link>
-  </:actions>
+  Rollen von <%= @user.email %>
+  <:subtitle><%= @club.name %></:subtitle>
 </.header>
 
-<.list>
-</.list>
+<.card>
+  <.table id="userclubroles" rows={@userclubroles}>
+    <:col :let={userclubrole} label="Zugewiesene Rollen"><%= userclubrole.clubrole.name %></:col>
+    <:action :let={userclubrole}>
+      <.button class="bg-red-700 hover:bg-red-400" phx-click={JS.push("delete", value: %{id: userclubrole.id})} data-confirm="Unwiderruflich löschen?">
+        Entfernen
+      </.button>
+    </:action>
+  </.table>
+</.card>
 
-<.back navigate={~p"/userclubroles"}>Back to userclubroles</.back>
+<.card class="mt-10">
+  <.table id="open_clubroles" rows={@open_clubroles}>
+    <:col :let={open_clubrole} label="Verfügbare Rollen zur Zuweisung"><%= open_clubrole.name %></:col>
+    <:action :let={open_clubrole}>
+      <.button class="bg-green-700 hover:bg-green-400" phx-click={JS.push("add", value: %{id: open_clubrole.id})} data-confirm="Wirklich hinzufügen?">
+        Hinzufügen
+      </.button>
+    </:action>
+  </.table>
+</.card>
 
-<.modal :if={@live_action == :edit} id="user_club_role-modal" show on_cancel={JS.patch(~p"/userclubroles/#{@user_club_role}")}>
-  <.live_component
-    module={SportywebWeb.UserClubRoleLive.FormComponent}
-    id={@user_club_role.id}
-    title={@page_title}
-    action={@live_action}
-    user_club_role={@user_club_role}
-    navigate={~p"/userclubroles/#{@user_club_role}"}
-  />
-</.modal>
+<.back navigate={~p"/clubs/#{@club.id}/userclubroles"}>Zurück zur Rollenverwaltung</.back>

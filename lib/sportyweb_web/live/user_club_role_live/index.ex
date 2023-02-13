@@ -15,7 +15,6 @@ defmodule SportywebWeb.UserClubRoleLive.Index do
 
     {:ok,
       socket
-      |> assign(:userclubroles, convert_to_role_administration(list_userclubroles(params)))
       |> assign(:club_navigation_current_item, :authorization)
     }
   end
@@ -37,13 +36,14 @@ defmodule SportywebWeb.UserClubRoleLive.Index do
     |> assign(:user_club_role, %UserClubRole{})
   end
 
-  defp apply_action(socket, :index, %{"club_id" => club_id}) do
+  defp apply_action(socket, :index, %{"club_id" => club_id} = params) do
     club = Organization.get_club!(club_id)
 
     socket
     |> assign(:page_title, "Listing Userclubroles")
     |> assign(:user_club_role, nil)
     |> assign(:club, club)
+    |> assign(:userclubroles, list_role_administration(list_userclubroles(params)))
   end
 
   @impl true
@@ -62,13 +62,12 @@ defmodule SportywebWeb.UserClubRoleLive.Index do
     UserRole.list_clubs_userclubroles(club_id)
   end
 
-  defp convert_to_role_administration(list_of_ucrs) do
+  defp list_role_administration(list_of_ucrs) do
     list_of_ucrs
     |> Enum.reduce(%{}, fn x, acc ->
-        Map.merge(acc, %{x.user => x.clubrole.name}, fn _k, roles, role -> roles <> ", " <> role end)
+        Map.merge(acc, %{x.user => [x]}, fn _k, roles, role -> roles ++ role end)
       end)
     |> Enum.to_list()
-    |> Enum.map(fn {key, value} -> %RoleAdministration{id: key.id, email: key.email, roles: value} end)
-    |> IO.inspect()
+    |> Enum.map(fn {key, value} -> %RoleAdministration{id: key.id, email: key.email, roles: value |> Enum.map_join(", ", fn x -> x.clubrole.name end)} end)
   end
 end
