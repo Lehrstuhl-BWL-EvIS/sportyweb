@@ -11,7 +11,13 @@
   <.list>
     <:item title="Referenznummer"><%= @club.reference_number %></:item>
     <:item title="Beschreibung"><%= @club.description %></:item>
-    <:item title="URL"><%= @club.website_url %></:item>
+    <:item title="URL">
+      <%= if @club.website_url do %>
+        <.link href={@club.website_url} target="_blank">
+          <span class="text-indigo-600 hover:underline"><%= @club.website_url %></span>
+        </.link>
+      <% end %>
+    </:item>
     <:item title="Gründungsdatum"><%= Calendar.strftime(@club.founded_at, "%d.%m.%Y") %></:item>
   </.list>
 </.card>
