@@ -1,0 +1,16 @@
+<.header>
+    Mitarbeiter zu <%= @club.name %> hinzufügen
+    <:subtitle>Verwalter: <%= @current_user.email %></:subtitle>
+</.header>
+  
+<.card>
+    <.table id="users" rows={@users} row_click={&JS.navigate(~p"/clubs/#{@club.id}/userclubroles/#{&1}")}>
+      <:col :let={user} label="Für Sie einsehbare Nutzer"><%= user.email %></:col>
+      <:action :let={user}>
+        <.link patch={~p"/clubs/#{@club.id}/userclubroles/#{user.id}"}>Bearbeiten</.link>
+      </:action>
+    </.table>
+</.card>
+  
+<.back navigate={~p"/clubs/#{@club.id}/userclubroles"}>Zurück zur Nutzer & Rollen</.back>
+  

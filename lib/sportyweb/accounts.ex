@@ -350,4 +350,18 @@ defmodule Sportyweb.Accounts do
       {:error, :user, changeset, _} -> {:error, changeset}
     end
   end
+
+  @doc """
+  Returns the list of all users.
+
+  ## Examples
+
+      iex> list_all_users()
+      [%User{}, ...]
+
+  """
+  def list_all_users() do
+    Repo.all(User)
+  end
+
 end

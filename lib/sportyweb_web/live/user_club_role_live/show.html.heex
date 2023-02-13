@@ -1,6 +1,6 @@
 <.header>
   Rollen von <%= @user.email %>
-  <:subtitle><%= @club.name %></:subtitle>
+  <:subtitle>im <%= @club.name %></:subtitle>
 </.header>
 
 <.card>
@@ -25,4 +25,4 @@
   </.table>
 </.card>
 
-<.back navigate={~p"/clubs/#{@club.id}/userclubroles"}>Zurück zur Rollenverwaltung</.back>
+<.back navigate={~p"/clubs/#{@club.id}/userclubroles"}>Zurück zur Nutzer & Rollen</.back>

@@ -11,7 +11,7 @@ defmodule SportywebWeb.UserClubRoleLive.Index do
   end
 
   @impl true
-  def mount(params, _session, socket) do
+  def mount(_params, _session, socket) do
 
     {:ok,
       socket
@@ -63,11 +63,22 @@ defmodule SportywebWeb.UserClubRoleLive.Index do
   end
 
   defp list_role_administration(list_of_ucrs) do
+    sort = Sportyweb.RBAC.Role.RolePermissionMatrix.get_roles(:club)
+
     list_of_ucrs
     |> Enum.reduce(%{}, fn x, acc ->
         Map.merge(acc, %{x.user => [x]}, fn _k, roles, role -> roles ++ role end)
       end)
     |> Enum.to_list()
-    |> Enum.map(fn {key, value} -> %RoleAdministration{id: key.id, email: key.email, roles: value |> Enum.map_join(", ", fn x -> x.clubrole.name end)} end)
+    |> Enum.map(fn {key, value} ->
+        %RoleAdministration{
+          id: key.id,
+          email: key.email,
+          roles: value
+            |> Enum.map(fn x -> x.clubrole.name end)
+            |> Enum.sort(&(Enum.find_index(sort, fn x -> x == &1 end) <= Enum.find_index(sort, fn x -> x == &2 end)))
+            |> Enum.join(", ")
+        }
+      end)
   end
 end

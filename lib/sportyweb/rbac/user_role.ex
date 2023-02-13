@@ -35,6 +35,31 @@ defmodule Sportyweb.RBAC.UserRole do
   end
 
   @doc """
+  Returns list of userclubroles of the club.
+  """
+
+  def list_users_clubroles_in_a_club(user_id, club_id) do
+    query = from ucr in UserClubRole,
+      where: ucr.club_id == ^club_id,
+      where: ucr.user_id == ^user_id,
+      join: cr in assoc(ucr, :clubrole),
+      preload: [clubrole: cr]
+
+    Repo.all(query)
+  end
+
+  def list_users_clubroles_in_a_club_depr(userclubrole) do
+    query = from ucr in UserClubRole,
+      where: ucr.club_id == ^userclubrole.club_id,
+      where: ucr.user_id == ^userclubrole.user_id,
+      join: u in assoc(ucr, :user),
+      join: cr in assoc(ucr, :clubrole),
+      preload: [user: u, clubrole: cr]
+
+    Repo.all(query)
+  end
+
+  @doc """
   Gets a single user_club_role.
 
   Raises `Ecto.NoResultsError` if the User club role does not exist.
@@ -62,6 +87,18 @@ defmodule Sportyweb.RBAC.UserRole do
       {:error, %Ecto.Changeset{}}
 
   """
+
+  def get_user_club_role_preload(id) do
+    query = from ucr in UserClubRole,
+      where: ucr.id == ^id,
+      join: u in assoc(ucr, :user),
+      join: c in assoc(ucr, :club),
+      join: cr in assoc(ucr, :clubrole),
+      preload: [user: u, club: c, clubrole: cr]
+
+    Repo.all(query)
+  end
+
   def create_user_club_role(attrs \\ %{}) do
     %UserClubRole{}
     |> UserClubRole.changeset(attrs)
