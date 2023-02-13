@@ -33,7 +33,7 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
   defp rename_roles(role) do
     role
     |> String.split("_")
-    |> Enum.map(&(String.capitalize(&1)))
-    |> Enum.join(" ")
+    |> Enum.map_join(" ", &(String.capitalize(&1)))
   end
+
 end

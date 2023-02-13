@@ -16,6 +16,9 @@ alias Sportyweb.Accounts
 alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
 
+alias Sportyweb.RBAC.Role.ClubRole
+alias Sportyweb.RBAC.Role.RolePermissionMatrix, as: RPM
+
 ###################################
 # Add Users
 # Only in the dev environment!
@@ -149,3 +152,12 @@ Repo.insert!(%Club{
   website_url: "",
   founded_at: ~D[2020-04-01]
 })
+
+###################################
+# Add Roles
+
+for clubrole <- RPM.get_roles(:club) do
+  Repo.insert!(%ClubRole{
+    name: clubrole
+  })
+end
