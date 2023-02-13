@@ -48,6 +48,15 @@ defmodule Sportyweb.RBAC.UserRole do
     Repo.all(query)
   end
 
+  def list_users_in_a_club(club_id) do
+    query = from ucr in UserClubRole,
+      where: ucr.club_id == ^club_id,
+      join: u in assoc(ucr, :user),
+      preload: [user: u]
+
+    Repo.all(query)
+  end
+
   def list_users_clubroles_in_a_club_depr(userclubrole) do
     query = from ucr in UserClubRole,
       where: ucr.club_id == ^userclubrole.club_id,
@@ -75,6 +84,17 @@ defmodule Sportyweb.RBAC.UserRole do
   """
   def get_user_club_role!(id), do: Repo.get!(UserClubRole, id)
 
+  def get_user_club_role_preload(id) do
+    query = from ucr in UserClubRole,
+      where: ucr.id == ^id,
+      join: u in assoc(ucr, :user),
+      join: c in assoc(ucr, :club),
+      join: cr in assoc(ucr, :clubrole),
+      preload: [user: u, club: c, clubrole: cr]
+
+    Repo.all(query)
+  end
+
   @doc """
   Creates a user_club_role.
 
@@ -87,17 +107,6 @@ defmodule Sportyweb.RBAC.UserRole do
       {:error, %Ecto.Changeset{}}
 
   """
-
-  def get_user_club_role_preload(id) do
-    query = from ucr in UserClubRole,
-      where: ucr.id == ^id,
-      join: u in assoc(ucr, :user),
-      join: c in assoc(ucr, :club),
-      join: cr in assoc(ucr, :clubrole),
-      preload: [user: u, club: c, clubrole: cr]
-
-    Repo.all(query)
-  end
 
   def create_user_club_role(attrs \\ %{}) do
     %UserClubRole{}

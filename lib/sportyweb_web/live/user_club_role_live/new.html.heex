@@ -7,7 +7,7 @@
     <.table id="users" rows={@users} row_click={&JS.navigate(~p"/clubs/#{@club.id}/userclubroles/#{&1}")}>
       <:col :let={user} label="Für Sie einsehbare Nutzer"><%= user.email %></:col>
       <:action :let={user}>
-        <.link patch={~p"/clubs/#{@club.id}/userclubroles/#{user.id}"}>Bearbeiten</.link>
+        <.link patch={~p"/clubs/#{@club.id}/userclubroles/#{user.id}"}>Hinzufügen</.link>
       </:action>
     </.table>
 </.card>
