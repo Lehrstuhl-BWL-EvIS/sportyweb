@@ -140,6 +140,24 @@ defmodule Sportyweb.Organization do
   end
 
   @doc """
+  Returns a clubs list of departments. Preloads groups.
+
+  ## Examples
+
+      iex> list_departments_with_preloaded_groups(1)
+      [%Department{}, ...]
+
+  """
+  def list_departments_with_preloaded_groups(club_id) do
+    Repo.all from d in Department,
+      where: d.club_id == ^club_id,
+      left_join: groups in assoc(d, :groups),
+      group_by: d.id,
+      order_by: d.name,
+      preload: ([:groups])
+  end
+
+  @doc """
   Gets a single department.
 
   Raises `Ecto.NoResultsError` if the Department does not exist.

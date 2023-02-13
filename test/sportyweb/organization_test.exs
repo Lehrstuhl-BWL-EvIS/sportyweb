@@ -85,6 +85,16 @@ defmodule Sportyweb.OrganizationTest do
       assert Organization.list_departments(department.club_id) == [department]
     end
 
+    test "list_departments_with_preloaded_groups/1 returns all departments of a given club with preloaded groups" do
+      department = department_fixture()
+      group = group_fixture(department_id: department.id)
+
+      departments = Organization.list_departments_with_preloaded_groups(department.club_id)
+
+      assert List.first(departments).groups != []
+      assert List.first(departments).groups == [group]
+    end
+
     test "get_department!/1 returns the department with given id" do
       department = department_fixture()
       assert Organization.get_department!(department.id) == department

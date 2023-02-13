@@ -18,6 +18,7 @@
           </div>
       </:col>
       <:col :let={department} label="Erstellungsdatum"><%= Calendar.strftime(department.created_at, "%d.%m.%Y") %></:col>
+      <:col :let={department} label="Gruppen"><%= Enum.count(department.groups) %></:col>
       <:action :let={department}>
         <.link navigate={~p"/departments/#{department}"}>Anzeigen</.link>
       </:action>
