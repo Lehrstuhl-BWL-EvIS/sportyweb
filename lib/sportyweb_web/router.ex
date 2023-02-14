@@ -112,12 +112,13 @@ defmodule SportywebWeb.Router do
 
       # Venues (Each belongs to a club)
 
-      live "/venues", VenueLive.Index, :index
-      live "/venues/new", VenueLive.Index, :new
-      live "/venues/:id/edit", VenueLive.Index, :edit
+      live "/venues", VenueLive.Index, :index_root
+      live "/clubs/:club_id/venues", VenueLive.Index, :index
+
+      live "/clubs/:club_id/venues/new", VenueLive.NewEdit, :new
+      live "/venues/:id/edit", VenueLive.NewEdit, :edit
 
       live "/venues/:id", VenueLive.Show, :show
-      live "/venues/:id/show/edit", VenueLive.Show, :edit
     end
   end
 

@@ -9,25 +9,47 @@ defmodule SportywebWeb.VenueLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage venue records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
-        :let={f}
-        for={@changeset}
-        id="venue-form"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
-      >
-        <.input field={{f, :is_main}} type="checkbox" label="Is main" />
-        <.input field={{f, :name}} type="text" label="Name" />
-        <.input field={{f, :reference_number}} type="text" label="Reference number" />
-        <.input field={{f, :description}} type="text" label="Description" />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Venue</.button>
-        </:actions>
-      </.simple_form>
+      <.card>
+        <.simple_form
+          :let={f}
+          for={@changeset}
+          id="venue-form"
+          phx-target={@myself}
+          phx-change="validate"
+          phx-submit="save"
+        >
+          <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :name}} type="text" label="Name" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :reference_number}} type="text" label="Referenznummer" />
+            </div>
+
+            <div class="col-span-12">
+              <.input field={{f, :description}} type="textarea" label="Beschreibung" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :is_main}} type="checkbox" label="Hauptstandort?" />
+            </div>
+          </div>
+
+          <:actions>
+            <.button phx-disable-with="Speichern...">Speichern</.button>
+            <.button
+              :if={@venue.id}
+              class="bg-rose-700 hover:bg-rose-800"
+              phx-click={JS.push("delete", value: %{id: @venue.id})}
+              data-confirm="Unwiderruflich löschen?">
+              Löschen
+            </.button>
+          </:actions>
+        </.simple_form>
+      </.card>
     </div>
     """
   end
@@ -53,6 +75,10 @@ defmodule SportywebWeb.VenueLive.FormComponent do
   end
 
   def handle_event("save", %{"venue" => venue_params}, socket) do
+    venue_params = Enum.into(venue_params, %{
+      "club_id" => socket.assigns.venue.club.id
+    })
+
     save_venue(socket, socket.assigns.action, venue_params)
   end
 
@@ -61,7 +87,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
       {:ok, _venue} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Venue updated successfully")
+         |> put_flash(:info, "Standort erfolgreich aktualisiert")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -74,7 +100,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
       {:ok, _venue} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Venue created successfully")
+         |> put_flash(:info, "Standort erfolgreich erstellt")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

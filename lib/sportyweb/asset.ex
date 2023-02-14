@@ -9,16 +9,30 @@ defmodule Sportyweb.Asset do
   alias Sportyweb.Asset.Venue
 
   @doc """
-  Returns the list of venues.
+  Returns a clubs list of venues.
 
   ## Examples
 
-      iex> list_venues()
+      iex> list_venues(1)
       [%Venue{}, ...]
 
   """
-  def list_venues do
-    Repo.all(Venue)
+  def list_venues(club_id) do
+    query = from(v in Venue, where: v.club_id == ^club_id, order_by: v.name)
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns a clubs list of venues. Preloads associations.
+
+  ## Examples
+
+      iex> list_venues(1, [:equipment])
+      [%Venue{}, ...]
+
+  """
+  def list_venues(club_id, preloads) do
+    Repo.preload(list_venues(club_id), preloads)
   end
 
   @doc """
@@ -36,6 +50,26 @@ defmodule Sportyweb.Asset do
 
   """
   def get_venue!(id), do: Repo.get!(Venue, id)
+
+  @doc """
+  Gets a single venue. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Venue does not exist.
+
+  ## Examples
+
+      iex> get_venue!(123, [:club])
+      %Department{}
+
+      iex> get_venue!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_venue!(id, preloads) do
+    Venue
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a venue.

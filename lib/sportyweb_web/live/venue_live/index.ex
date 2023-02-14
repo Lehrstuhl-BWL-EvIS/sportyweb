@@ -1,12 +1,20 @@
 defmodule SportywebWeb.VenueLive.Index do
   use SportywebWeb, :live_view
 
+  alias Sportyweb.Organization
   alias Sportyweb.Asset
-  alias Sportyweb.Asset.Venue
+
+  @impl true
+  def mount(%{"club_id" => club_id}, _session, socket) do
+    {:ok,
+    socket
+    |> assign(:venues, Asset.list_venues(club_id))
+    |> assign(:club_navigation_current_item, :assets)}
+  end
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :venues, list_venues())}
+    {:ok, socket}
   end
 
   @impl true
@@ -14,33 +22,17 @@ defmodule SportywebWeb.VenueLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :index_root, _params) do
     socket
-    |> assign(:page_title, "Edit Venue")
-    |> assign(:venue, Asset.get_venue!(id))
+    |> redirect(to: "/clubs")
   end
 
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Venue")
-    |> assign(:venue, %Venue{})
-  end
+  defp apply_action(socket, :index, %{"club_id" => club_id}) do
+    club = Organization.get_club!(club_id)
 
-  defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Venues")
+    |> assign(:page_title, "Alle Standorte")
     |> assign(:venue, nil)
-  end
-
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    venue = Asset.get_venue!(id)
-    {:ok, _} = Asset.delete_venue(venue)
-
-    {:noreply, assign(socket, :venues, list_venues())}
-  end
-
-  defp list_venues do
-    Asset.list_venues()
+    |> assign(:club, club)
   end
 end

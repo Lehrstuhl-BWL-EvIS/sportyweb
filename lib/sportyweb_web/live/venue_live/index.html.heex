@@ -1,42 +1,31 @@
 <.header>
-  Listing Venues
+  Standorte & Equipment
   <:actions>
-    <.link patch={~p"/venues/new"}>
-      <.button>New Venue</.button>
+    <.link navigate={~p"/clubs/#{@club}/venues/new"}>
+      <.button>Standort erstellen</.button>
     </.link>
   </:actions>
 </.header>
 
-<.table id="venues" rows={@venues} row_click={&JS.navigate(~p"/venues/#{&1}")}>
-  <:col :let={venue} label="Is main"><%= venue.is_main %></:col>
-  <:col :let={venue} label="Name"><%= venue.name %></:col>
-  <:col :let={venue} label="Reference number"><%= venue.reference_number %></:col>
-  <:col :let={venue} label="Description"><%= venue.description %></:col>
-  <:action :let={venue}>
-    <div class="sr-only">
-      <.link navigate={~p"/venues/#{venue}"}>Show</.link>
-    </div>
-    <.link patch={~p"/venues/#{venue}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={venue}>
-    <.link phx-click={JS.push("delete", value: %{id: venue.id})} data-confirm="Are you sure?">
-      Delete
-    </.link>
-  </:action>
-</.table>
-
-<.modal
-  :if={@live_action in [:new, :edit]}
-  id="venue-modal"
-  show
-  on_cancel={JS.navigate(~p"/venues")}
->
-  <.live_component
-    module={SportywebWeb.VenueLive.FormComponent}
-    id={@venue.id || :new}
-    title={@page_title}
-    action={@live_action}
-    venue={@venue}
-    navigate={~p"/venues"}
-  />
-</.modal>
+<.card>
+  <%= if Enum.any?(@venues) do %>
+    <.table id="venues" rows={@venues} row_click={&JS.navigate(~p"/venues/#{&1}")}>
+      <:col :let={venue} label="Name"><%= venue.name %></:col>
+      <:col :let={venue} label="Referenznummer"><%= venue.reference_number %></:col>
+      <:col :let={venue} label="Beschreibung">
+        <div class="max-w-[200px] truncate overflow-hidden">
+          <%= venue.description %>
+          </div>
+      </:col>
+      <:col :let={venue} label="Hauptstandort?"><%= venue.is_main %></:col>
+      <:action :let={venue}>
+        <.link navigate={~p"/venues/#{venue}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Bisher wurde noch kein Standort erstellt.<br>
+      Equipment kann erst angelegt werden, wenn mindestens ein Standort existiert.
+    </p>
+  <% end %>
+</.card>

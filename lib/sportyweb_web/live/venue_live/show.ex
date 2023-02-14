@@ -5,17 +5,19 @@ defmodule SportywebWeb.VenueLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok,
+    socket
+    |> assign(:club_navigation_current_item, :assets)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
+    venue = Asset.get_venue!(id, [:club])
+
     {:noreply,
      socket
-     |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:venue, Asset.get_venue!(id))}
+     |> assign(:page_title, "Standort: #{venue.name}")
+     |> assign(:venue, venue)
+     |> assign(:club, venue.club)}
   end
-
-  defp page_title(:show), do: "Show Venue"
-  defp page_title(:edit), do: "Edit Venue"
 end

@@ -3,11 +3,13 @@ defmodule Sportyweb.Organization.Club do
   import Ecto.Changeset
 
   alias Sportyweb.Organization.Department
+  alias Sportyweb.Asset.Venue
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "clubs" do
     has_many :departments, Department, on_delete: :delete_all
+    has_many :venues, Venue, on_delete: :delete_all
 
     field :name, :string
     field :reference_number, :string
