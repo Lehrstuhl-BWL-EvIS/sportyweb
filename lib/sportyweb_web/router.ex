@@ -72,7 +72,7 @@ defmodule SportywebWeb.Router do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
 
-      # Clubs
+      # Clubs (Root element)
 
       live "/clubs", ClubLive.Index, :index
 
@@ -81,7 +81,7 @@ defmodule SportywebWeb.Router do
 
       live "/clubs/:id", ClubLive.Show, :show
 
-      # Departments (each belongs to a club)
+      # Departments (Each belongs to a club)
 
       live "/departments", DepartmentLive.Index, :index_root
       live "/clubs/:club_id/departments", DepartmentLive.Index, :index
@@ -91,7 +91,7 @@ defmodule SportywebWeb.Router do
 
       live "/departments/:id", DepartmentLive.Show, :show
 
-      # Groups (each belongs to a department)
+      # Groups (Each belongs to a department)
 
       live "/groups", GroupLive.Index, :index_root
       live "/departments/:department_id/groups", GroupLive.Index, :index
@@ -109,6 +109,15 @@ defmodule SportywebWeb.Router do
 
       live "/households/:id", HouseholdLive.Show, :show
       live "/households/:id/show/edit", HouseholdLive.Show, :edit
+
+      # Venues (Each belongs to a club)
+
+      live "/venues", VenueLive.Index, :index
+      live "/venues/new", VenueLive.Index, :new
+      live "/venues/:id/edit", VenueLive.Index, :edit
+
+      live "/venues/:id", VenueLive.Show, :show
+      live "/venues/:id/show/edit", VenueLive.Show, :edit
     end
   end
 

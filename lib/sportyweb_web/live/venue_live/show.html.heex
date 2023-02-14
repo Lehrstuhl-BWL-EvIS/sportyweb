@@ -1,0 +1,29 @@
+<.header>
+  Venue <%= @venue.id %>
+  <:subtitle>This is a venue record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/venues/#{@venue}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit venue</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Is main"><%= @venue.is_main %></:item>
+  <:item title="Name"><%= @venue.name %></:item>
+  <:item title="Reference number"><%= @venue.reference_number %></:item>
+  <:item title="Description"><%= @venue.description %></:item>
+</.list>
+
+<.back navigate={~p"/venues"}>Back to venues</.back>
+
+<.modal :if={@live_action == :edit} id="venue-modal" show on_cancel={JS.patch(~p"/venues/#{@venue}")}>
+  <.live_component
+    module={SportywebWeb.VenueLive.FormComponent}
+    id={@venue.id}
+    title={@page_title}
+    action={@live_action}
+    venue={@venue}
+    navigate={~p"/venues/#{@venue}"}
+  />
+</.modal>
