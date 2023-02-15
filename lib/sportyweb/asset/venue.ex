@@ -2,16 +2,18 @@ defmodule Sportyweb.Asset.Venue do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Asset.Equipment
   alias Sportyweb.Organization.Club
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "venues" do
     belongs_to :club, Club
+    has_many :equipment, Equipment, on_delete: :delete_all
 
-    field :name, :string
-    field :reference_number, :string
-    field :description, :string
+    field :name, :string, default: ""
+    field :reference_number, :string, default: ""
+    field :description, :string, default: ""
     field :is_main, :boolean, default: false
 
     timestamps()
@@ -20,7 +22,13 @@ defmodule Sportyweb.Asset.Venue do
   @doc false
   def changeset(venue, attrs) do
     venue
-    |> cast(attrs, [:club_id, :is_main, :name, :reference_number, :description], empty_values: [])
+    |> cast(attrs, [
+      :club_id,
+      :name,
+      :reference_number,
+      :description,
+      :is_main
+      ], empty_values: ["", nil])
     |> validate_required([:club_id, :name])
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)

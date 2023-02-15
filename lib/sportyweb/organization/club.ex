@@ -11,11 +11,11 @@ defmodule Sportyweb.Organization.Club do
     has_many :departments, Department, on_delete: :delete_all
     has_many :venues, Venue, on_delete: :delete_all
 
-    field :name, :string
-    field :reference_number, :string
-    field :description, :string
-    field :website_url, :string
-    field :founded_at, :date
+    field :name, :string, default: ""
+    field :reference_number, :string, default: ""
+    field :description, :string, default: ""
+    field :website_url, :string, default: ""
+    field :founded_at, :date, default: nil
 
     timestamps()
   end
@@ -23,7 +23,13 @@ defmodule Sportyweb.Organization.Club do
   @doc false
   def changeset(club, attrs) do
     club
-    |> cast(attrs, [:name, :reference_number, :description, :website_url, :founded_at], empty_values: [])
+    |> cast(attrs, [
+      :name,
+      :reference_number,
+      :description,
+      :website_url,
+      :founded_at
+      ], empty_values: ["", nil])
     |> validate_required([:name, :founded_at])
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)

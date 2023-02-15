@@ -9,10 +9,10 @@ defmodule Sportyweb.Organization.Group do
   schema "groups" do
     belongs_to :department, Department
 
-    field :name, :string
-    field :reference_number, :string
-    field :description, :string
-    field :created_at, :date
+    field :name, :string, default: ""
+    field :reference_number, :string, default: ""
+    field :description, :string, default: ""
+    field :created_at, :date, default: nil
 
     timestamps()
   end
@@ -20,7 +20,13 @@ defmodule Sportyweb.Organization.Group do
   @doc false
   def changeset(group, attrs) do
     group
-    |> cast(attrs, [:department_id, :name, :reference_number, :description, :created_at], empty_values: [])
+    |> cast(attrs, [
+      :department_id,
+      :name,
+      :reference_number,
+      :description,
+      :created_at
+      ], empty_values: ["", nil])
     |> validate_required([:department_id, :name, :created_at])
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)

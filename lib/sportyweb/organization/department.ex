@@ -13,10 +13,10 @@ defmodule Sportyweb.Organization.Department do
     belongs_to :parent, Department
     has_many :groups, Group, on_delete: :delete_all
 
-    field :name, :string
-    field :reference_number, :string
-    field :description, :string
-    field :created_at, :date
+    field :name, :string, default: ""
+    field :reference_number, :string, default: ""
+    field :description, :string, default: ""
+    field :created_at, :date, default: nil
 
     timestamps()
   end
@@ -24,7 +24,13 @@ defmodule Sportyweb.Organization.Department do
   @doc false
   def changeset(department, attrs) do
     department
-    |> cast(attrs, [:club_id, :name, :reference_number, :description, :created_at], empty_values: [])
+    |> cast(attrs, [
+      :club_id,
+      :name,
+      :reference_number,
+      :description,
+      :created_at
+      ], empty_values: ["", nil])
     |> validate_required([:club_id, :name, :created_at])
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
