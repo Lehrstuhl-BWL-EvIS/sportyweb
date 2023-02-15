@@ -119,6 +119,15 @@ defmodule SportywebWeb.Router do
       live "/venues/:id/edit", VenueLive.NewEdit, :edit
 
       live "/venues/:id", VenueLive.Show, :show
+
+      # Equipment (Each belongs to a venue)
+
+      live "/equipment", EquipmentLive.Index, :index
+      live "/equipment/new", EquipmentLive.Index, :new
+      live "/equipment/:id/edit", EquipmentLive.Index, :edit
+
+      live "/equipment/:id", EquipmentLive.Show, :show
+      live "/equipment/:id/show/edit", EquipmentLive.Show, :edit
     end
   end
 

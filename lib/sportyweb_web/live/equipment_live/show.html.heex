@@ -1,0 +1,32 @@
+<.header>
+  Equipment <%= @equipment.id %>
+  <:subtitle>This is a equipment record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/equipment/#{@equipment}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit equipment</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @equipment.name %></:item>
+  <:item title="Reference number"><%= @equipment.reference_number %></:item>
+  <:item title="Serial number"><%= @equipment.serial_number %></:item>
+  <:item title="Description"><%= @equipment.description %></:item>
+  <:item title="Purchased at"><%= @equipment.purchased_at %></:item>
+  <:item title="Commission at"><%= @equipment.commission_at %></:item>
+  <:item title="Decommission at"><%= @equipment.decommission_at %></:item>
+</.list>
+
+<.back navigate={~p"/equipment"}>Back to equipment</.back>
+
+<.modal :if={@live_action == :edit} id="equipment-modal" show on_cancel={JS.patch(~p"/equipment/#{@equipment}")}>
+  <.live_component
+    module={SportywebWeb.EquipmentLive.FormComponent}
+    id={@equipment.id}
+    title={@page_title}
+    action={@live_action}
+    equipment={@equipment}
+    navigate={~p"/equipment/#{@equipment}"}
+  />
+</.modal>
