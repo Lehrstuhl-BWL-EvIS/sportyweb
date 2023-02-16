@@ -18,6 +18,7 @@
           </div>
       </:col>
       <:col :let={venue} label="Hauptstandort?"><%= venue.is_main %></:col>
+      <:col :let={venue} label="Equipment"><%= Enum.count(venue.equipment) %></:col>
       <:action :let={venue}>
         <.link navigate={~p"/venues/#{venue}"}>Anzeigen</.link>
       </:action>

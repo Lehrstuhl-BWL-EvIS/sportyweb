@@ -12,7 +12,7 @@ defmodule SportywebWeb.VenueLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    venue = Asset.get_venue!(id, [:club])
+    venue = Asset.get_venue!(id, [:club, :equipment])
 
     {:noreply,
      socket

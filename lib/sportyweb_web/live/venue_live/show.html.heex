@@ -15,4 +15,33 @@
   </.list>
 </.card>
 
+<.header level="2" class="mt-12">
+  Equipment
+  <:actions>
+    <.link navigate={~p"/venues/#{@venue}/equipment/new"}>
+      <.button>Equipment erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@venue.equipment) do %>
+    <.table id="equipment" rows={@venue.equipment} row_click={&JS.navigate(~p"/equipment/#{&1}")}>
+      <:col :let={equipment} label="Name"><%= equipment.name %></:col>
+      <:col :let={equipment} label="Referenznummer"><%= equipment.reference_number %></:col>
+      <:col :let={equipment} label="Seriennummer"><%= equipment.serial_number %></:col>
+      <:col :let={equipment} label="Beschreibung">
+        <div class="max-w-[200px] truncate overflow-hidden">
+          <%= equipment.description %>
+          </div>
+      </:col>
+      <:action :let={equipment}>
+        <.link navigate={~p"/equipment/#{equipment}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>Bisher wurde noch keine Gruppe erstellt.</p>
+  <% end %>
+</.card>
+
 <.back navigate={~p"/clubs/#{@venue.club}/venues"} class="mt-12">Zur Standortübersicht</.back>
