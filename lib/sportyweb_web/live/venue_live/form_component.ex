@@ -26,11 +26,11 @@ defmodule SportywebWeb.VenueLive.FormComponent do
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :reference_number}} type="text" label="Referenznummer" />
+              <.input field={{f, :reference_number}} type="text" label="Referenznummer (optional)" />
             </div>
 
             <div class="col-span-12">
-              <.input field={{f, :description}} type="textarea" label="Beschreibung" />
+              <.input field={{f, :description}} type="textarea" label="Beschreibung (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-6">

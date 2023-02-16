@@ -26,27 +26,27 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
             </div>
 
             <div class="col-span-12 md:col-span-3">
-              <.input field={{f, :reference_number}} type="text" label="Referenznummer" />
+              <.input field={{f, :reference_number}} type="text" label="Referenznummer (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-3">
-              <.input field={{f, :serial_number}} type="text" label="Seriennummer" />
+              <.input field={{f, :serial_number}} type="text" label="Seriennummer (optional)" />
             </div>
 
             <div class="col-span-12">
-              <.input field={{f, :description}} type="textarea" label="Beschreibung" />
+              <.input field={{f, :description}} type="textarea" label="Beschreibung (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-4">
-              <.input field={{f, :purchased_at}} type="date" label="Gekauft am" />
+              <.input field={{f, :purchased_at}} type="date" label="Gekauft am (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-4">
-              <.input field={{f, :commission_at}} type="date" label="Nutzung ab" />
+              <.input field={{f, :commission_at}} type="date" label="Nutzung ab (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-4">
-              <.input field={{f, :decommission_at}} type="date" label="Nutzung bis" />
+              <.input field={{f, :decommission_at}} type="date" label="Nutzung bis (optional)" />
             </div>
           </div>
 
