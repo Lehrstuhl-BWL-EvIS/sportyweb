@@ -7,8 +7,8 @@ defmodule Sportyweb.Repo.Migrations.CreateGroups do
       add :name, :string, null: false, default: ""
       add :reference_number, :string, null: false, default: ""
       add :description, :text, null: false, default: ""
-      add :created_at, :date, null: false
-      add :department_id, references(:departments, on_delete: :delete_all, type: :binary_id), null: false
+      add :created_at, :date, null: false, default: nil
+      add :department_id, references(:departments, on_delete: :delete_all, type: :binary_id), null: false, default: nil
 
       timestamps()
     end

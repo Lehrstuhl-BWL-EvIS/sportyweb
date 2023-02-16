@@ -11,7 +11,7 @@ defmodule Sportyweb.Repo.Migrations.CreateEquipment do
       add :purchased_at, :date, null: true, default: nil
       add :commission_at, :date, null: true, default: nil
       add :decommission_at, :date, null: true, default: nil
-      add :venue_id, references(:venues, on_delete: :delete_all, type: :binary_id), null: false
+      add :venue_id, references(:venues, on_delete: :delete_all, type: :binary_id), null: false, default: nil
 
       timestamps()
     end

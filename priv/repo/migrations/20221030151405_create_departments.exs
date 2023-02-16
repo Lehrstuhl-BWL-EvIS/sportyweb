@@ -7,9 +7,9 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartments do
       add :name, :string, null: false, default: ""
       add :reference_number, :string, null: false, default: ""
       add :description, :text, null: false, default: ""
-      add :created_at, :date, null: false
-      add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
-      add :parent_id, references(:departments, on_delete: :nothing, type: :binary_id) # NULL if department is not a parent
+      add :created_at, :date, null: false, default: nil
+      add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false, default: nil
+      add :parent_id, references(:departments, on_delete: :delete_all, type: :binary_id), null: true, default: nil # NULL if department is not a parent
 
       timestamps()
     end

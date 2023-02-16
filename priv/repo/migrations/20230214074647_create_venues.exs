@@ -7,8 +7,8 @@ defmodule Sportyweb.Repo.Migrations.CreateVenues do
       add :name, :string, null: false, default: ""
       add :reference_number, :string, null: false, default: ""
       add :description, :text, null: false, default: ""
-      add :is_main, :boolean, default: false, null: false
-      add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
+      add :is_main, :boolean, null: false, default: false
+      add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false, default: nil
 
       timestamps()
     end
