@@ -9,28 +9,59 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage equipment records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
-        :let={f}
-        for={@changeset}
-        id="equipment-form"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
-      >
-        <.input field={{f, :name}} type="text" label="Name" />
-        <.input field={{f, :reference_number}} type="text" label="Reference number" />
-        <.input field={{f, :serial_number}} type="text" label="Serial number" />
-        <.input field={{f, :description}} type="text" label="Description" />
-        <.input field={{f, :purchased_at}} type="date" label="Purchased at" />
-        <.input field={{f, :commission_at}} type="date" label="Commission at" />
-        <.input field={{f, :decommission_at}} type="date" label="Decommission at" />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Equipment</.button>
-        </:actions>
-      </.simple_form>
+      <.card>
+        <.simple_form
+          :let={f}
+          for={@changeset}
+          id="equipment-form"
+          phx-target={@myself}
+          phx-change="validate"
+          phx-submit="save"
+        >
+          <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :name}} type="text" label="Name" />
+            </div>
+
+            <div class="col-span-12 md:col-span-3">
+              <.input field={{f, :reference_number}} type="text" label="Referenznummer" />
+            </div>
+
+            <div class="col-span-12 md:col-span-3">
+              <.input field={{f, :serial_number}} type="text" label="Seriennummer" />
+            </div>
+
+            <div class="col-span-12">
+              <.input field={{f, :description}} type="textarea" label="Beschreibung" />
+            </div>
+
+            <div class="col-span-12 md:col-span-4">
+              <.input field={{f, :purchased_at}} type="date" label="Gekauft am" />
+            </div>
+
+            <div class="col-span-12 md:col-span-4">
+              <.input field={{f, :commission_at}} type="date" label="Nutzung ab" />
+            </div>
+
+            <div class="col-span-12 md:col-span-4">
+              <.input field={{f, :decommission_at}} type="date" label="Nutzung bis" />
+            </div>
+          </div>
+
+          <:actions>
+            <.button phx-disable-with="Speichern...">Speichern</.button>
+            <.button
+                :if={@equipment.id}
+                class="bg-rose-700 hover:bg-rose-800"
+                phx-click={JS.push("delete", value: %{id: @equipment.id})}
+                data-confirm="Unwiderruflich löschen?">
+                Löschen
+              </.button>
+          </:actions>
+        </.simple_form>
+      </.card>
     </div>
     """
   end
@@ -56,6 +87,10 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
   end
 
   def handle_event("save", %{"equipment" => equipment_params}, socket) do
+    equipment_params = Enum.into(equipment_params, %{
+      "venue_id" => socket.assigns.equipment.venue.id
+    })
+
     save_equipment(socket, socket.assigns.action, equipment_params)
   end
 
@@ -64,7 +99,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
       {:ok, _equipment} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Equipment updated successfully")
+         |> put_flash(:info, "Equipment erfolgreich aktualisiert")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -77,7 +112,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
       {:ok, _equipment} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Equipment created successfully")
+         |> put_flash(:info, "Equipment erfolgreich erstellt")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

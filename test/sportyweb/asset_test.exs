@@ -16,7 +16,13 @@ defmodule Sportyweb.AssetTest do
       assert Asset.list_venues(venue.club_id) == [venue]
     end
 
-    # TODO: Add a test for list_venues/2 after the implementation of equipment!
+    test "list_venues/2 returns all venues of a given club with preloaded associations" do
+      equipment = equipment_fixture()
+      venue = Asset.get_venue!(equipment.venue_id)
+
+      venues = Asset.list_venues(venue.club_id, [:equipment])
+      assert List.first(venues).equipment == [equipment]
+    end
 
     test "get_venue!/1 returns the venue with given id" do
       venue = venue_fixture()
@@ -76,7 +82,7 @@ defmodule Sportyweb.AssetTest do
 
     test "list_equipment/0 returns all equipment" do
       equipment = equipment_fixture()
-      assert Asset.list_equipment() == [equipment]
+      assert Asset.list_equipment(equipment.venue_id) == [equipment]
     end
 
     test "get_equipment!/1 returns the equipment with given id" do
@@ -85,7 +91,8 @@ defmodule Sportyweb.AssetTest do
     end
 
     test "create_equipment/1 with valid data creates a equipment" do
-      valid_attrs = %{commission_at: ~D[2023-02-14], decommission_at: ~D[2023-02-14], description: "some description", name: "some name", purchased_at: ~D[2023-02-14], reference_number: "some reference_number", serial_number: "some serial_number"}
+      venue = venue_fixture()
+      valid_attrs = %{venue_id: venue.id, commission_at: ~D[2023-02-14], decommission_at: ~D[2023-02-14], description: "some description", name: "some name", purchased_at: ~D[2023-02-14], reference_number: "some reference_number", serial_number: "some serial_number"}
 
       assert {:ok, %Equipment{} = equipment} = Asset.create_equipment(valid_attrs)
       assert equipment.commission_at == ~D[2023-02-14]

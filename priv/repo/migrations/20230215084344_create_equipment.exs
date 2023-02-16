@@ -4,18 +4,19 @@ defmodule Sportyweb.Repo.Migrations.CreateEquipment do
   def change do
     create table(:equipment, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :name, :string
-      add :reference_number, :string
-      add :serial_number, :string
-      add :description, :text
-      add :purchased_at, :date
-      add :commission_at, :date
-      add :decommission_at, :date
-      add :venue_id, references(:venues, on_delete: :nothing, type: :binary_id)
+      add :name, :string, null: false, default: ""
+      add :reference_number, :string, null: false, default: ""
+      add :serial_number, :string, null: false, default: ""
+      add :description, :text, null: false, default: ""
+      add :purchased_at, :date, null: true, default: nil
+      add :commission_at, :date, null: true, default: nil
+      add :decommission_at, :date, null: true, default: nil
+      add :venue_id, references(:venues, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end
 
     create index(:equipment, [:venue_id])
+    create unique_index(:equipment, [:venue_id, :name])
   end
 end

@@ -30,16 +30,19 @@ defmodule Sportyweb.AssetFixtures do
   Generate a equipment.
   """
   def equipment_fixture(attrs \\ %{}) do
+    venue = venue_fixture()
+
     {:ok, equipment} =
       attrs
       |> Enum.into(%{
-        commission_at: ~D[2023-02-14],
-        decommission_at: ~D[2023-02-14],
-        description: "some description",
+        venue_id: venue.id,
         name: "some name",
-        purchased_at: ~D[2023-02-14],
         reference_number: "some reference_number",
-        serial_number: "some serial_number"
+        serial_number: "some serial_number",
+        description: "some description",
+        purchased_at: ~D[2022-11-05],
+        commission_at: ~D[2022-11-10],
+        decommission_at: ~D[2022-11-15],
       })
       |> Sportyweb.Asset.create_equipment()
 

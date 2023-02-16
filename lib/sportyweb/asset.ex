@@ -139,16 +139,17 @@ defmodule Sportyweb.Asset do
   alias Sportyweb.Asset.Equipment
 
   @doc """
-  Returns the list of equipment.
+  Returns a venues list of equipment.
 
   ## Examples
 
-      iex> list_equipment()
+      iex> list_equipment(1)
       [%Equipment{}, ...]
 
   """
-  def list_equipment do
-    Repo.all(Equipment)
+  def list_equipment(venue_id) do
+    query = from(e in Equipment, where: e.venue_id == ^venue_id, order_by: e.name)
+    Repo.all(query)
   end
 
   @doc """
@@ -166,6 +167,26 @@ defmodule Sportyweb.Asset do
 
   """
   def get_equipment!(id), do: Repo.get!(Equipment, id)
+
+  @doc """
+  Gets a single equipment. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Equipment does not exist.
+
+  ## Examples
+
+      iex> get_equipment!(123, [:venue])
+      %Department{}
+
+      iex> get_equipment!(456, [:venue])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_equipment!(id, preloads) do
+    Equipment
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a equipment.
