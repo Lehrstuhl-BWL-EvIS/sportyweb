@@ -11,7 +11,7 @@
   <.list>
     <:item title="Referenznummer"><%= @group.reference_number %></:item>
     <:item title="Beschreibung"><%= @group.description %></:item>
-    <:item title="Erstellungsdatum"><%= @group.created_at %></:item>
+    <:item title="Erstellungsdatum"><%= Calendar.strftime(@group.created_at, "%d.%m.%Y") %></:item>
   </.list>
 </.card>
 

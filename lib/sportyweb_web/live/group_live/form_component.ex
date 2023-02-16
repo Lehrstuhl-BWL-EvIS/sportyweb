@@ -21,7 +21,6 @@ defmodule SportywebWeb.GroupLive.FormComponent do
           phx-submit="save"
         >
           <div class="grid grid-cols-12 gap-x-4 gap-y-6">
-
             <div class="col-span-12 md:col-span-6">
               <.input field={{f, :name}} type="text" label="Name" />
             </div>
@@ -35,7 +34,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :created_at}} type="date" label="Created at" />
+              <.input field={{f, :created_at}} type="date" label="Erstellungsdatum" />
             </div>
           </div>
 
