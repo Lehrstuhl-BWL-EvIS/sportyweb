@@ -65,12 +65,17 @@ defmodule SportywebWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     live_session :require_authenticated_user,
-      on_mount: [{SportywebWeb.UserAuth, :ensure_authenticated}, {Sportyweb.RBAC.Policy, :permissions}] do
+      on_mount: [{SportywebWeb.UserAuth, :ensure_authenticated}] do
 
       # Users
 
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+
+    end
+
+    live_session :rbac,
+      on_mount: [{SportywebWeb.UserAuth, :ensure_authenticated}, {Sportyweb.RBAC.Policy, :permissions}] do
 
       # Clubs
 
