@@ -63,7 +63,7 @@ defmodule SportywebWeb.UserClubRoleLive.Index do
   end
 
   defp list_role_administration(list_of_ucrs) do
-    sort = Sportyweb.RBAC.Role.RolePermissionMatrix.get_roles(:club)
+    sort = Sportyweb.RBAC.Role.RolePermissionMatrix.get_role_names(:club)
 
     list_of_ucrs
     |> Enum.reduce(%{}, fn x, acc ->

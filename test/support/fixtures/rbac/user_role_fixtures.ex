@@ -9,11 +9,7 @@ defmodule Sportyweb.RBAC.UserRoleFixtures do
   """
   def user_club_role_fixture(attrs \\ %{}) do
     {:ok, user_club_role} =
-      attrs
-      |> Enum.into(%{
-
-      })
-      |> Sportyweb.RBAC.UserRole.create_user_club_role()
+      attrs |> Sportyweb.RBAC.UserRole.create_user_club_role()
 
     user_club_role
   end
