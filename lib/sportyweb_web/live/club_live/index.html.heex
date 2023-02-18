@@ -14,9 +14,10 @@
     <:col :let={club} label="Beschreibung">
       <div class="max-w-[200px] truncate overflow-hidden">
         <%= club.description %>
-        </div>
+      </div>
     </:col>
     <:col :let={club} label="Gründungsdatum"><%= Calendar.strftime(club.founded_at, "%d.%m.%Y") %></:col>
+
     <:action :let={club}>
       <.link navigate={~p"/clubs/#{club}"}>Anzeigen</.link>
     </:action>

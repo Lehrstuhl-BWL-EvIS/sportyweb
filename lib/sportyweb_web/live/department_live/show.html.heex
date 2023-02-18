@@ -32,7 +32,7 @@
       <:col :let={group} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
           <%= group.description %>
-          </div>
+        </div>
       </:col>
       <:col :let={group} label="Erstellungsdatum"><%= Calendar.strftime(group.created_at, "%d.%m.%Y") %></:col>
       <:action :let={group}>
