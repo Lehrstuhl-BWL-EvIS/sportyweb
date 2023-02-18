@@ -35,5 +35,6 @@ defmodule Sportyweb.Organization.Club do
     |> validate_length(:reference_number, max: 250)
     |> validate_length(:description, max: 20_000)
     |> validate_length(:website_url, max: 250)
+    |> update_change(:website_url, &String.downcase/1)
   end
 end
