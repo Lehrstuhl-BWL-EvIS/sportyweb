@@ -39,7 +39,12 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
           </div>
 
           <:actions>
-            <.button phx-disable-with="Speichern...">Speichern</.button>
+            <div>
+              <.button phx-disable-with="Speichern...">Speichern</.button>
+              <.link navigate={@navigate} class="mx-2 py-1 px-1 text-sm font-semibold hover:underline">
+                Abbrechen
+              </.link>
+            </div>
             <.button
               :if={@department.id}
               class="bg-rose-700 hover:bg-rose-800"
