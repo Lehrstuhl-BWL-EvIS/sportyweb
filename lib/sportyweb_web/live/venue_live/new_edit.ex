@@ -59,6 +59,6 @@ defmodule SportywebWeb.VenueLive.NewEdit do
     {:noreply,
      socket
      |> put_flash(:info, "Standort erfolgreich gelöscht")
-     |> push_navigate(to: "/clubs/#{venue.club_id}")}
+     |> push_navigate(to: "/clubs/#{venue.club_id}/venues")}
   end
 end

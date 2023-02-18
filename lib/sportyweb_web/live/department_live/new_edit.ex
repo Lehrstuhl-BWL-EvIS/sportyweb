@@ -58,6 +58,6 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
     {:noreply,
      socket
      |> put_flash(:info, "Abteilung erfolgreich gelöscht")
-     |> push_navigate(to: "/clubs/#{department.club_id}")}
+     |> push_navigate(to: "/clubs/#{department.club_id}/departments")}
   end
 end
