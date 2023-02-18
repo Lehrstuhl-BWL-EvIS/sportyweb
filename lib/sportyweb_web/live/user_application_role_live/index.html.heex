@@ -8,6 +8,9 @@
 </.header>
 
 <.table id="userapplicationroles" rows={@userapplicationroles} row_click={&JS.navigate(~p"/userapplicationroles/#{&1}")}>
+  <:col :let={userapplicationroles} label="ID"><%= userapplicationroles.id %></:col>
+  <:col :let={userapplicationroles} label="User"><%= userapplicationroles.user_id %></:col>
+  <:col :let={userapplicationroles} label="ApplicationRole"><%= userapplicationroles.applicationrole_id %></:col>
   <:action :let={user_application_role}>
     <div class="sr-only">
       <.link navigate={~p"/userapplicationroles/#{user_application_role}"}>Show</.link>

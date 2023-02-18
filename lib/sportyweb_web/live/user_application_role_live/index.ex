@@ -14,18 +14,6 @@ defmodule SportywebWeb.UserApplicationRoleLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
-    socket
-    |> assign(:page_title, "Edit User application role")
-    |> assign(:user_application_role, UserRole.get_user_application_role!(id))
-  end
-
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New User application role")
-    |> assign(:user_application_role, %UserApplicationRole{})
-  end
-
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Listing Userapplicationroles")

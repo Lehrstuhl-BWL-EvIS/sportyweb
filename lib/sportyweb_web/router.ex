@@ -134,12 +134,8 @@ defmodule SportywebWeb.Router do
       # User Application Roles
 
       live "/userapplicationroles", UserApplicationRoleLive.Index, :index
-      live "/userapplicationroles/new", UserApplicationRoleLive.Index, :new
-      live "/userapplicationroles/:id/edit", UserApplicationRoleLive.Index, :edit
 
       live "/userapplicationroles/:id", UserApplicationRoleLive.Show, :show
-      live "/userapplicationroles/:id/show/edit", UserApplicationRoleLive.Show, :edit
-
     end
   end
 

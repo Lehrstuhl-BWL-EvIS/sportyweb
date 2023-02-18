@@ -10,7 +10,7 @@ defmodule Sportyweb.RBAC.UserRoleTest do
   import Sportyweb.RBAC.RoleFixtures
 
   setup do
-    %{user: user_fixture(), club: club_fixture(), clubrole: club_role_fixture()}
+    %{user: user_fixture(), club: club_fixture(), clubrole: club_role_fixture(), applicationrole: application_role_fixture()}
   end
 
   describe "userclubroles" do
@@ -70,20 +70,20 @@ defmodule Sportyweb.RBAC.UserRoleTest do
 
     import Sportyweb.RBAC.UserRoleFixtures
 
-    @invalid_attrs %{}
+    @invalid_attrs %{user_id: 0, applicationrole_id: 0}
 
-    test "list_userapplicationroles/0 returns all userapplicationroles" do
-      user_application_role = user_application_role_fixture()
+    test "list_userapplicationroles/0 returns all userapplicationroles", %{user: user, applicationrole: applicationrole} do
+      user_application_role = user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
       assert UserRole.list_userapplicationroles() == [user_application_role]
     end
 
-    test "get_user_application_role!/1 returns the user_application_role with given id" do
-      user_application_role = user_application_role_fixture()
+    test "get_user_application_role!/1 returns the user_application_role with given id", %{user: user, applicationrole: applicationrole} do
+      user_application_role = user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
       assert UserRole.get_user_application_role!(user_application_role.id) == user_application_role
     end
 
-    test "create_user_application_role/1 with valid data creates a user_application_role" do
-      valid_attrs = %{}
+    test "create_user_application_role/1 with valid data creates a user_application_role", %{user: user, applicationrole: applicationrole} do
+      valid_attrs = %{user_id: user.id, applicationrole_id: applicationrole.id}
 
       assert {:ok, %UserApplicationRole{} = user_application_role} = UserRole.create_user_application_role(valid_attrs)
     end
@@ -92,27 +92,27 @@ defmodule Sportyweb.RBAC.UserRoleTest do
       assert {:error, %Ecto.Changeset{}} = UserRole.create_user_application_role(@invalid_attrs)
     end
 
-    test "update_user_application_role/2 with valid data updates the user_application_role" do
-      user_application_role = user_application_role_fixture()
+    test "update_user_application_role/2 with valid data updates the user_application_role", %{user: user, applicationrole: applicationrole} do
+      user_application_role = user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
       update_attrs = %{}
 
       assert {:ok, %UserApplicationRole{} = user_application_role} = UserRole.update_user_application_role(user_application_role, update_attrs)
     end
 
-    test "update_user_application_role/2 with invalid data returns error changeset" do
-      user_application_role = user_application_role_fixture()
+    test "update_user_application_role/2 with invalid data returns error changeset", %{user: user, applicationrole: applicationrole} do
+      user_application_role = user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
       assert {:error, %Ecto.Changeset{}} = UserRole.update_user_application_role(user_application_role, @invalid_attrs)
       assert user_application_role == UserRole.get_user_application_role!(user_application_role.id)
     end
 
-    test "delete_user_application_role/1 deletes the user_application_role" do
-      user_application_role = user_application_role_fixture()
+    test "delete_user_application_role/1 deletes the user_application_role", %{user: user, applicationrole: applicationrole} do
+      user_application_role = user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
       assert {:ok, %UserApplicationRole{}} = UserRole.delete_user_application_role(user_application_role)
       assert_raise Ecto.NoResultsError, fn -> UserRole.get_user_application_role!(user_application_role.id) end
     end
 
-    test "change_user_application_role/1 returns a user_application_role changeset" do
-      user_application_role = user_application_role_fixture()
+    test "change_user_application_role/1 returns a user_application_role changeset", %{user: user, applicationrole: applicationrole} do
+      user_application_role = user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
       assert %Ecto.Changeset{} = UserRole.change_user_application_role(user_application_role)
     end
   end

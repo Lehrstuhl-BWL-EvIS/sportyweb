@@ -17,5 +17,4 @@ defmodule SportywebWeb.UserApplicationRoleLive.Show do
   end
 
   defp page_title(:show), do: "Show User application role"
-  defp page_title(:edit), do: "Edit User application role"
 end
