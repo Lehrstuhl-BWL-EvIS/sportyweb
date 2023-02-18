@@ -8,14 +8,10 @@ defmodule Sportyweb.RBAC.Policy do
   alias Sportyweb.RBAC.Role.RolePermissionMatrix, as: RPM
 
   def on_mount(:permissions, params, _session, socket) do
-    #user = socket.assigns.current_user.email |> String.split("@") |> Enum.at(0)
     action = socket.assigns.live_action
     view = get_live_view(socket.view)
-    #dbg([user, action, view, params])
-    #IO.inspect([user, action, view, params])
 
-    if permit?(socket.assigns.current_user, action, view, params) do
-    #if true do
+    if is_application_admin_or_tester(socket.assigns.current_user) || permit?(socket.assigns.current_user, action, view, params) do
       {:cont, socket}
     else
       {:halt,
@@ -23,6 +19,14 @@ defmodule Sportyweb.RBAC.Policy do
         |> Phoenix.LiveView.put_flash(:error, "Zugriff verweigert.")
         |> Phoenix.LiveView.redirect(to: error_redirect(action, view, params))}
     end
+  end
+
+  defp is_application_admin_or_tester(user) do
+    UserRole.list_users_applicationroles(user)
+    |> Enum.map(&(&1.applicationrole.name))
+    |> Enum.map(&(RPM.to_role_atom(:application, &1)))
+    |> Enum.map(&(Enum.member?([:admin, :tester], &1)))
+    |> Enum.member?(true)
   end
 
   defp permit?(_user, :index, :ClubLive, _params), do: true
@@ -85,5 +89,4 @@ defmodule Sportyweb.RBAC.Policy do
   defp error_redirect(_action, :DepartmentLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}"
   defp error_redirect(_action, :DepartmentLive, %{"id" => dept_id}), do: ~p"/clubs/#{dept_id |> Organization.get_department!() |> Map.get(:club_id)}"
   defp error_redirect(_action, :UserClubRoleLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}"
-
 end

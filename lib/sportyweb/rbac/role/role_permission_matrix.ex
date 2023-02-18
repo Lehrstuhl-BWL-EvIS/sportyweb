@@ -2,7 +2,13 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
 
   def role_permission_matrix(:application) do
     [
-      sportyweb_administrator: []
+      admin: %{
+        Name:                   "Sportyweb Administration",
+      },
+
+      tester: %{
+        Name:                   "Tester",
+      }
     ]
   end
 
@@ -25,7 +31,7 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
       },
 
       mitarbeiter_rollen: %{
-        Name:                   "TEST Mitarbeiter- & Rollenverwaltung",
+        Name:                   "Mitarbeiter- & Rollenverwaltung",
         UserClubRoleLive:       [:index, :new, :edit, :show]
       },
 
@@ -44,14 +50,6 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
 
       pr: %{
         Name:                   "Öffentlichkeitsarbeit",
-      },
-
-      tester: %{
-        Name:                   "Tester",
-        ClubLive:               [:index, :new, :edit, :show],
-        DepartmentLive:         [:index, :new, :edit, :show],
-        HouseholdLive:          [:index, :new, :edit, :show],
-        UserClubRoleLive:       [:index, :new, :edit, :show]
       }
     ]
   end
