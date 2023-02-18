@@ -105,6 +105,15 @@ defmodule SportywebWeb.Router do
       live "/households/:id", HouseholdLive.Show, :show
       live "/households/:id/show/edit", HouseholdLive.Show, :edit
 
+      # ApplicationRoles
+
+      live "/applicationroles", ApplicationRoleLive.Index, :index
+      live "/applicationroles/new", ApplicationRoleLive.Index, :new
+      live "/applicationroles/:id/edit", ApplicationRoleLive.Index, :edit
+
+      live "/applicationroles/:id", ApplicationRoleLive.Show, :show
+      live "/applicationroles/:id/show/edit", ApplicationRoleLive.Show, :edit
+
       # ClubRoles
 
       live "/clubroles", ClubRoleLive.Index, :index
@@ -121,6 +130,16 @@ defmodule SportywebWeb.Router do
       live "/clubs/:club_id/userclubroles/new", UserClubRoleLive.New, :new
 
       live "/clubs/:club_id/userclubroles/:user_id", UserClubRoleLive.Show, :show
+
+      # User Application Roles
+
+      live "/userapplicationroles", UserApplicationRoleLive.Index, :index
+      live "/userapplicationroles/new", UserApplicationRoleLive.Index, :new
+      live "/userapplicationroles/:id/edit", UserApplicationRoleLive.Index, :edit
+
+      live "/userapplicationroles/:id", UserApplicationRoleLive.Show, :show
+      live "/userapplicationroles/:id/show/edit", UserApplicationRoleLive.Show, :edit
+
     end
   end
 
