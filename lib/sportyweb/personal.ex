@@ -13,12 +13,26 @@ defmodule Sportyweb.Personal do
 
   ## Examples
 
-      iex> list_contacts()
+      iex> list_contacts(1)
       [%Contact{}, ...]
 
   """
-  def list_contacts do
-    Repo.all(Contact)
+  def list_contacts(club_id) do
+    query = from(c in Contact, where: c.club_id == ^club_id, order_by: [c.organization_name, c.person_last_name, c.person_first_name_1, c.person_first_name_2])
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns a clubs list of contacts. Preloads associations.
+
+  ## Examples
+
+      iex> list_contacts(1, [:club])
+      [%Contact{}, ...]
+
+  """
+  def list_contacts(club_id, preloads) do
+    Repo.preload(list_contacts(club_id), preloads)
   end
 
   @doc """
@@ -36,6 +50,26 @@ defmodule Sportyweb.Personal do
 
   """
   def get_contact!(id), do: Repo.get!(Contact, id)
+
+  @doc """
+  Gets a single contact. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Contact does not exist.
+
+  ## Examples
+
+      iex> get_contact!(123, [:club])
+      %Department{}
+
+      iex> get_contact!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_contact!(id, preloads) do
+    Contact
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a contact.

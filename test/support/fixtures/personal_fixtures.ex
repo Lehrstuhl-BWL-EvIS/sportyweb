@@ -4,20 +4,25 @@ defmodule Sportyweb.PersonalFixtures do
   entities via the `Sportyweb.Personal` context.
   """
 
+  import Sportyweb.OrganizationFixtures
+
   @doc """
   Generate a contact.
   """
   def contact_fixture(attrs \\ %{}) do
+    club = club_fixture()
+
     {:ok, contact} =
       attrs
       |> Enum.into(%{
+        club_id: club.id,
+        type: "some type",
         organization_name: "some organization_name",
-        person_birthday: ~D[2023-02-15],
+        person_last_name: "some person_last_name",
         person_first_name_1: "some person_first_name_1",
         person_first_name_2: "some person_first_name_2",
         person_gender: "some person_gender",
-        person_last_name: "some person_last_name",
-        type: "some type"
+        person_birthday: ~D[2023-02-15]
       })
       |> Sportyweb.Personal.create_contact()
 

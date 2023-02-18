@@ -1,45 +1,26 @@
 <.header>
-  Listing Contacts
+  Kontakte
   <:actions>
-    <.link patch={~p"/contacts/new"}>
-      <.button>New Contact</.button>
+    <.link navigate={~p"/clubs/#{@club}/contacts/new"}>
+      <.button>Kontakt erstellen</.button>
     </.link>
   </:actions>
 </.header>
 
-<.table id="contacts" rows={@contacts} row_click={&JS.navigate(~p"/contacts/#{&1}")}>
-  <:col :let={contact} label="Type"><%= contact.type %></:col>
-  <:col :let={contact} label="Organization name"><%= contact.organization_name %></:col>
-  <:col :let={contact} label="Person last name"><%= contact.person_last_name %></:col>
-  <:col :let={contact} label="Person first name 1"><%= contact.person_first_name_1 %></:col>
-  <:col :let={contact} label="Person first name 2"><%= contact.person_first_name_2 %></:col>
-  <:col :let={contact} label="Person gender"><%= contact.person_gender %></:col>
-  <:col :let={contact} label="Person birthday"><%= contact.person_birthday %></:col>
-  <:action :let={contact}>
-    <div class="sr-only">
-      <.link navigate={~p"/contacts/#{contact}"}>Show</.link>
-    </div>
-    <.link patch={~p"/contacts/#{contact}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={contact}>
-    <.link phx-click={JS.push("delete", value: %{id: contact.id})} data-confirm="Are you sure?">
-      Delete
-    </.link>
-  </:action>
-</.table>
+<.card>
+  <%= if Enum.any?(@contacts) do %>
+    <.table id="contacts" rows={@contacts} row_click={&JS.navigate(~p"/contacts/#{&1}")}>
+      <:col :let={contact} label="Art"><%= contact.type %></:col>
+      <:col :let={contact} label="Organization name"><%= contact.organization_name %></:col>
+      <:col :let={contact} label="Person last name"><%= contact.person_last_name %></:col>
 
-<.modal
-  :if={@live_action in [:new, :edit]}
-  id="contact-modal"
-  show
-  on_cancel={JS.navigate(~p"/contacts")}
->
-  <.live_component
-    module={SportywebWeb.ContactLive.FormComponent}
-    id={@contact.id || :new}
-    title={@page_title}
-    action={@live_action}
-    contact={@contact}
-    navigate={~p"/contacts"}
-  />
-</.modal>
+      <:action :let={contact}>
+        <.link navigate={~p"/contacts/#{contact}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Bisher wurde noch keine Kontakt erstellt.
+    </p>
+  <% end %>
+</.card>

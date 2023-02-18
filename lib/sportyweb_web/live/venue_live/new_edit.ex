@@ -1,9 +1,9 @@
 defmodule SportywebWeb.VenueLive.NewEdit do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Organization
   alias Sportyweb.Asset
   alias Sportyweb.Asset.Venue
+  alias Sportyweb.Organization
 
   @impl true
   def render(assigns) do

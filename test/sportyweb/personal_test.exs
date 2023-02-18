@@ -7,12 +7,17 @@ defmodule Sportyweb.PersonalTest do
     alias Sportyweb.Personal.Contact
 
     import Sportyweb.PersonalFixtures
+    import Sportyweb.OrganizationFixtures
 
     @invalid_attrs %{organization_name: nil, person_birthday: nil, person_first_name_1: nil, person_first_name_2: nil, person_gender: nil, person_last_name: nil, type: nil}
 
-    test "list_contacts/0 returns all contacts" do
+    test "list_contacts/1 returns all contacts of a given club" do
       contact = contact_fixture()
-      assert Personal.list_contacts() == [contact]
+      assert Personal.list_contacts(contact.club_id) == [contact]
+    end
+
+    test "list_contacts/2 returns all contacts of a given club with preloaded associations" do
+      # TODO
     end
 
     test "get_contact!/1 returns the contact with given id" do
@@ -21,7 +26,8 @@ defmodule Sportyweb.PersonalTest do
     end
 
     test "create_contact/1 with valid data creates a contact" do
-      valid_attrs = %{organization_name: "some organization_name", person_birthday: ~D[2023-02-15], person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "some person_gender", person_last_name: "some person_last_name", type: "some type"}
+      club = club_fixture()
+      valid_attrs = %{club_id: club.id, organization_name: "some organization_name", person_birthday: ~D[2023-02-15], person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "some person_gender", person_last_name: "some person_last_name", type: "some type"}
 
       assert {:ok, %Contact{} = contact} = Personal.create_contact(valid_attrs)
       assert contact.organization_name == "some organization_name"

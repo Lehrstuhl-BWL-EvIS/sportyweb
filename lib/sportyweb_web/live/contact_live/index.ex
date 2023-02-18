@@ -1,12 +1,20 @@
 defmodule SportywebWeb.ContactLive.Index do
   use SportywebWeb, :live_view
 
+  alias Sportyweb.Organization
   alias Sportyweb.Personal
-  alias Sportyweb.Personal.Contact
+
+  @impl true
+  def mount(%{"club_id" => club_id}, _session, socket) do
+    {:ok,
+    socket
+    |> assign(:contacts, Personal.list_contacts(club_id))
+    |> assign(:club_navigation_current_item, :contacts)}
+  end
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :contacts, list_contacts())}
+    {:ok, socket}
   end
 
   @impl true
@@ -14,33 +22,17 @@ defmodule SportywebWeb.ContactLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :index_root, _params) do
     socket
-    |> assign(:page_title, "Edit Contact")
-    |> assign(:contact, Personal.get_contact!(id))
+    |> redirect(to: "/clubs")
   end
 
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Contact")
-    |> assign(:contact, %Contact{})
-  end
+  defp apply_action(socket, :index, %{"club_id" => club_id}) do
+    club = Organization.get_club!(club_id)
 
-  defp apply_action(socket, :index, _params) do
     socket
-    |> assign(:page_title, "Listing Contacts")
+    |> assign(:page_title, "Alle Kontakte")
     |> assign(:contact, nil)
-  end
-
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    contact = Personal.get_contact!(id)
-    {:ok, _} = Personal.delete_contact(contact)
-
-    {:noreply, assign(socket, :contacts, list_contacts())}
-  end
-
-  defp list_contacts do
-    Personal.list_contacts()
+    |> assign(:club, club)
   end
 end

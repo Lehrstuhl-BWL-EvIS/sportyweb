@@ -103,12 +103,13 @@ defmodule SportywebWeb.Router do
 
       # Contacts (Each belongs to a club)
 
-      live "/contacts", ContactLive.Index, :index
-      live "/contacts/new", ContactLive.Index, :new
-      live "/contacts/:id/edit", ContactLive.Index, :edit
+      live "/contacts", ContactLive.Index, :index_root
+      live "/clubs/:club_id/contacts", ContactLive.Index, :index
+
+      live "/clubs/:club_id/contacts/new", ContactLive.NewEdit, :new
+      live "/contacts/:id/edit", ContactLive.NewEdit, :edit
 
       live "/contacts/:id", ContactLive.Show, :show
-      live "/contacts/:id/show/edit", ContactLive.Show, :edit
 
       # Households
 

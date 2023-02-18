@@ -4,14 +4,14 @@ defmodule Sportyweb.Repo.Migrations.CreateContacts do
   def change do
     create table(:contacts, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :type, :string
-      add :organization_name, :string
-      add :person_last_name, :string
-      add :person_first_name_1, :string
-      add :person_first_name_2, :string
-      add :person_gender, :string
-      add :person_birthday, :date
-      add :club_id, references(:clubs, on_delete: :nothing, type: :binary_id)
+      add :type, :string, null: false, default: ""
+      add :organization_name, :string, null: false, default: ""
+      add :person_last_name, :string, null: false, default: ""
+      add :person_first_name_1, :string, null: false, default: ""
+      add :person_first_name_2, :string, null: false, default: ""
+      add :person_gender, :string, null: false, default: ""
+      add :person_birthday, :date, null: true, default: nil
+      add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false, default: nil
 
       timestamps()
     end

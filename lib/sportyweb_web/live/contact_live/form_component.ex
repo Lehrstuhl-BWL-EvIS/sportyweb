@@ -9,28 +9,59 @@ defmodule SportywebWeb.ContactLive.FormComponent do
     <div>
       <.header>
         <%= @title %>
-        <:subtitle>Use this form to manage contact records in your database.</:subtitle>
       </.header>
 
-      <.simple_form
-        :let={f}
-        for={@changeset}
-        id="contact-form"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-submit="save"
-      >
-        <.input field={{f, :type}} type="text" label="Type" />
-        <.input field={{f, :organization_name}} type="text" label="Organization name" />
-        <.input field={{f, :person_last_name}} type="text" label="Person last name" />
-        <.input field={{f, :person_first_name_1}} type="text" label="Person first name 1" />
-        <.input field={{f, :person_first_name_2}} type="text" label="Person first name 2" />
-        <.input field={{f, :person_gender}} type="text" label="Person gender" />
-        <.input field={{f, :person_birthday}} type="date" label="Person birthday" />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Contact</.button>
-        </:actions>
-      </.simple_form>
+      <.card>
+        <.simple_form
+          :let={f}
+          for={@changeset}
+          id="contact-form"
+          phx-target={@myself}
+          phx-change="validate"
+          phx-submit="save"
+        >
+          <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+            <div class="col-span-12">
+              <.input field={{f, :type}} type="text" label="Art" />
+            </div>
+
+            <div class="col-span-12">
+              <.input field={{f, :organization_name}} type="text" label="Organisationsname" />
+            </div>
+
+            <div class="col-span-12 md:col-span-4">
+              <.input field={{f, :person_last_name}} type="text" label="Nachname" />
+            </div>
+
+            <div class="col-span-12 md:col-span-4">
+              <.input field={{f, :person_first_name_1}} type="text" label="Vorname" />
+            </div>
+
+            <div class="col-span-12 md:col-span-4">
+              <.input field={{f, :person_first_name_2}} type="text" label="2. Vorname (optional)" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :person_gender}} type="text" label="Geschlecht" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :person_birthday}} type="date" label="Geburtstag" />
+            </div>
+          </div>
+
+          <:actions>
+            <.button phx-disable-with="Speichern...">Speichern</.button>
+            <.button
+              :if={@contact.id}
+              class="bg-rose-700 hover:bg-rose-800"
+              phx-click={JS.push("delete", value: %{id: @contact.id})}
+              data-confirm="Unwiderruflich löschen?">
+              Löschen
+            </.button>
+          </:actions>
+        </.simple_form>
+      </.card>
     </div>
     """
   end
@@ -56,6 +87,10 @@ defmodule SportywebWeb.ContactLive.FormComponent do
   end
 
   def handle_event("save", %{"contact" => contact_params}, socket) do
+    contact_params = Enum.into(contact_params, %{
+      "club_id" => socket.assigns.contact.club.id
+    })
+
     save_contact(socket, socket.assigns.action, contact_params)
   end
 
@@ -64,7 +99,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
       {:ok, _contact} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Contact updated successfully")
+         |> put_flash(:info, "Kontakt erfolgreich aktualisiert")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -77,7 +112,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
       {:ok, _contact} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Contact created successfully")
+         |> put_flash(:info, "Kontakt erfolgreich erstellt")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->

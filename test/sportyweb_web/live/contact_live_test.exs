@@ -2,11 +2,17 @@ defmodule SportywebWeb.ContactLiveTest do
   use SportywebWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Sportyweb.AccountsFixtures
+  import Sportyweb.OrganizationFixtures
   import Sportyweb.PersonalFixtures
 
-  @create_attrs %{organization_name: "some organization_name", person_birthday: "2023-2-15", person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "some person_gender", person_last_name: "some person_last_name", type: "some type"}
-  @update_attrs %{organization_name: "some updated organization_name", person_birthday: "2023-2-16", person_first_name_1: "some updated person_first_name_1", person_first_name_2: "some updated person_first_name_2", person_gender: "some updated person_gender", person_last_name: "some updated person_last_name", type: "some updated type"}
+  @create_attrs %{organization_name: "some organization_name", person_birthday: ~D[2022-11-05], person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "some person_gender", person_last_name: "some person_last_name", type: "some type"}
+  @update_attrs %{organization_name: "some updated organization_name", person_birthday: ~D[2022-11-06], person_first_name_1: "some updated person_first_name_1", person_first_name_2: "some updated person_first_name_2", person_gender: "some updated person_gender", person_last_name: "some updated person_last_name", type: "some updated type"}
   @invalid_attrs %{organization_name: nil, person_birthday: nil, person_first_name_1: nil, person_first_name_2: nil, person_gender: nil, person_last_name: nil, type: nil}
+
+  setup do
+    %{user: user_fixture()}
+  end
 
   defp create_contact(_) do
     contact = contact_fixture()
@@ -16,95 +22,90 @@ defmodule SportywebWeb.ContactLiveTest do
   describe "Index" do
     setup [:create_contact]
 
-    test "lists all contacts", %{conn: conn, contact: contact} do
-      {:ok, _index_live, html} = live(conn, ~p"/contacts")
+    test "lists all contacts - default redirect", %{conn: conn, user: user} do
+      {:error, _} = live(conn, ~p"/contacts")
 
-      assert html =~ "Listing Contacts"
-      assert html =~ contact.organization_name
+      conn = conn |> log_in_user(user)
+      {:ok, conn} =
+        conn
+        |> live(~p"/contacts")
+        |> follow_redirect(conn, ~p"/clubs")
+
+      assert conn.resp_body =~ "Vereinsübersicht"
     end
 
-    test "saves new contact", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/contacts")
+    test "lists all contacts", %{conn: conn, user: user, contact: contact} do
+      {:error, _} = live(conn, ~p"/clubs/#{contact.club_id}/contacts")
 
-      assert index_live |> element("a", "New Contact") |> render_click() =~
-               "New Contact"
+      conn = conn |> log_in_user(user)
+      {:ok, _index_live, html} = live(conn, ~p"/clubs/#{contact.club_id}/contacts")
 
-      assert_patch(index_live, ~p"/contacts/new")
+      assert html =~ "Kontakte"
+      assert html =~ contact.organization_name
+    end
+  end
 
-      assert index_live
-             |> form("#contact-form", contact: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+  describe "New/Edit" do
+    setup [:create_contact]
+
+    test "saves new contact", %{conn: conn, user: user} do
+      club = club_fixture()
+
+      {:error, _} = live(conn, ~p"/clubs/#{club}/contacts/new")
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, html} = live(conn, ~p"/clubs/#{club}/contacts/new")
+
+      assert html =~ "Kontakt erstellen"
+
+      assert new_live
+              |> form("#contact-form", contact: @invalid_attrs)
+              |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
-        index_live
+        new_live
         |> form("#contact-form", contact: @create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/contacts")
+        |> follow_redirect(conn, ~p"/clubs/#{club}/contacts")
 
-      assert html =~ "Contact created successfully"
+      assert html =~ "Kontakt erfolgreich erstellt"
       assert html =~ "some organization_name"
     end
 
-    test "updates contact in listing", %{conn: conn, contact: contact} do
-      {:ok, index_live, _html} = live(conn, ~p"/contacts")
+    test "updates contact", %{conn: conn, user: user, contact: contact} do
+      {:error, _} = live(conn, ~p"/contacts/#{contact}/edit")
 
-      assert index_live |> element("#contacts-#{contact.id} a", "Edit") |> render_click() =~
-               "Edit Contact"
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/contacts/#{contact}/edit")
 
-      assert_patch(index_live, ~p"/contacts/#{contact}/edit")
+      assert html =~ "Kontakt bearbeiten"
 
-      assert index_live
+      assert edit_live
              |> form("#contact-form", contact: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
-        index_live
+        edit_live
         |> form("#contact-form", contact: @update_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/contacts")
+        |> follow_redirect(conn, ~p"/contacts/#{contact}")
 
-      assert html =~ "Contact updated successfully"
+      assert html =~ "Kontakt erfolgreich aktualisiert"
       assert html =~ "some updated organization_name"
-    end
-
-    test "deletes contact in listing", %{conn: conn, contact: contact} do
-      {:ok, index_live, _html} = live(conn, ~p"/contacts")
-
-      assert index_live |> element("#contacts-#{contact.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#contact-#{contact.id}")
     end
   end
 
   describe "Show" do
     setup [:create_contact]
 
-    test "displays contact", %{conn: conn, contact: contact} do
+    test "displays contact", %{conn: conn, user: user, contact: contact} do
+      {:error, _} = live(conn, ~p"/contacts/#{contact}")
+
+      conn = conn |> log_in_user(user)
       {:ok, _show_live, html} = live(conn, ~p"/contacts/#{contact}")
 
-      assert html =~ "Show Contact"
+      assert html =~ "Kontakt:"
       assert html =~ contact.organization_name
-    end
-
-    test "updates contact within modal", %{conn: conn, contact: contact} do
-      {:ok, show_live, _html} = live(conn, ~p"/contacts/#{contact}")
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Contact"
-
-      assert_patch(show_live, ~p"/contacts/#{contact}/show/edit")
-
-      assert show_live
-             |> form("#contact-form", contact: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      {:ok, _, html} =
-        show_live
-        |> form("#contact-form", contact: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/contacts/#{contact}")
-
-      assert html =~ "Contact updated successfully"
-      assert html =~ "some updated organization_name"
     end
   end
 end
