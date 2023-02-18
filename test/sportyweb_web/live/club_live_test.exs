@@ -4,13 +4,19 @@ defmodule SportywebWeb.ClubLiveTest do
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.RBAC.RoleFixtures
+  import Sportyweb.RBAC.UserRoleFixtures
 
   @create_attrs %{founded_at: ~D[2022-11-05], name: "some name", reference_number: "some reference_number", website_url: "https://www.website_url.com"}
   @update_attrs %{founded_at: ~D[2022-11-06], name: "some updated name", reference_number: "some updated reference_number", website_url: "https://www.updated_website_url.com"}
   @invalid_attrs %{founded_at: nil, name: nil, reference_number: nil, website_url: nil}
 
   setup do
-    %{user: user_fixture()}
+    user = user_fixture()
+    applicationrole = application_role_fixture()
+    user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
+
+    %{user: user}
   end
 
   defp create_club(_) do
