@@ -16,6 +16,7 @@ alias Sportyweb.Accounts
 alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
 
+alias Sportyweb.RBAC.Role.ApplicationRole
 alias Sportyweb.RBAC.Role.ClubRole
 alias Sportyweb.RBAC.Role.RolePermissionMatrix, as: RPM
 
@@ -156,10 +157,16 @@ Repo.insert!(%Club{
 ###################################
 # Add Roles
 
+for applicationrole <- RPM.get_role_names(:application) do
+  Repo.insert!(%ApplicationRole{
+    name: applicationrole
+  })
+end
+
 for clubrole <- RPM.get_role_names(:club) do
   Repo.insert!(%ClubRole{
     name: clubrole
   })
 end
 
-#create_department_roles()
+#Sportyweb.RBAC.DevHelper.seed_sporty_web_admin()
