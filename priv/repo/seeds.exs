@@ -156,8 +156,10 @@ Repo.insert!(%Club{
 ###################################
 # Add Roles
 
-for clubrole <- RPM.get_roles(:club) do
+for clubrole <- RPM.get_role_names(:club) do
   Repo.insert!(%ClubRole{
     name: clubrole
   })
 end
+
+#create_department_roles()
