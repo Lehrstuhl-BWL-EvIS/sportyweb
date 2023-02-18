@@ -160,4 +160,110 @@ defmodule Sportyweb.RBAC.UserRole do
   def change_user_club_role(%UserClubRole{} = user_club_role, attrs \\ %{}) do
     UserClubRole.changeset(user_club_role, attrs)
   end
+
+  alias Sportyweb.RBAC.UserRole.UserApplicationRole
+
+  @doc """
+  Returns the list of userapplicationroles.
+
+  ## Examples
+
+      iex> list_userapplicationroles()
+      [%UserApplicationRole{}, ...]
+
+  """
+  def list_userapplicationroles do
+    Repo.all(UserApplicationRole)
+  end
+
+  def list_users_applicationroles(user) do
+    query = from uar in UserApplicationRole,
+      where: uar.user_id == ^user.id,
+      join: ar in assoc(uar, :applicationrole),
+      preload: [applicationrole: ar]
+
+    Repo.all(query)
+
+  end
+
+  @doc """
+  Gets a single user_application_role.
+
+  Raises `Ecto.NoResultsError` if the User application role does not exist.
+
+  ## Examples
+
+      iex> get_user_application_role!(123)
+      %UserApplicationRole{}
+
+      iex> get_user_application_role!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_user_application_role!(id), do: Repo.get!(UserApplicationRole, id)
+
+  @doc """
+  Creates a user_application_role.
+
+  ## Examples
+
+      iex> create_user_application_role(%{field: value})
+      {:ok, %UserApplicationRole{}}
+
+      iex> create_user_application_role(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_user_application_role(attrs \\ %{}) do
+    %UserApplicationRole{}
+    |> UserApplicationRole.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a user_application_role.
+
+  ## Examples
+
+      iex> update_user_application_role(user_application_role, %{field: new_value})
+      {:ok, %UserApplicationRole{}}
+
+      iex> update_user_application_role(user_application_role, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_application_role(%UserApplicationRole{} = user_application_role, attrs) do
+    user_application_role
+    |> UserApplicationRole.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a user_application_role.
+
+  ## Examples
+
+      iex> delete_user_application_role(user_application_role)
+      {:ok, %UserApplicationRole{}}
+
+      iex> delete_user_application_role(user_application_role)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_user_application_role(%UserApplicationRole{} = user_application_role) do
+    Repo.delete(user_application_role)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking user_application_role changes.
+
+  ## Examples
+
+      iex> change_user_application_role(user_application_role)
+      %Ecto.Changeset{data: %UserApplicationRole{}}
+
+  """
+  def change_user_application_role(%UserApplicationRole{} = user_application_role, attrs \\ %{}) do
+    UserApplicationRole.changeset(user_application_role, attrs)
+  end
 end
