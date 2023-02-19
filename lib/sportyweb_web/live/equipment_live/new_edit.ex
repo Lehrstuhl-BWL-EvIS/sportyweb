@@ -33,14 +33,13 @@ defmodule SportywebWeb.EquipmentLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    equipment = Asset.get_equipment!(id, [:venue])
-    venue = Asset.get_venue!(equipment.venue.id, [:club])
+    equipment = Asset.get_equipment!(id, [venue: :club])
 
     socket
      |> assign(:page_title, "Equipment bearbeiten")
      |> assign(:equipment, equipment)
-     |> assign(:venue, venue)
-     |> assign(:club, venue.club)
+     |> assign(:venue, equipment.venue)
+     |> assign(:club, equipment.venue.club)
   end
 
   defp apply_action(socket, :new, %{"venue_id" => venue_id}) do
@@ -48,7 +47,7 @@ defmodule SportywebWeb.EquipmentLive.NewEdit do
 
     socket
     |> assign(:page_title, "Equipment erstellen")
-    |> assign(:equipment, %Equipment{venue: venue})
+    |> assign(:equipment, %Equipment{venue_id: venue.id, venue: venue})
     |> assign(:venue, venue)
     |> assign(:club, venue.club)
   end

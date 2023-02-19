@@ -21,6 +21,13 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
           phx-submit="save"
         >
           <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+            <%= if @equipment.id do %>
+              <div class="col-span-12">
+                <.input field={{f, :venue_id}} type="select" label="Standort"
+                options={Asset.list_venues(@equipment.venue.club_id) |> Enum.map(&{&1.name, &1.id})} />
+              </div>
+            <% end %>
+
             <div class="col-span-12 md:col-span-6">
               <.input field={{f, :name}} type="text" label="Name" />
             </div>
