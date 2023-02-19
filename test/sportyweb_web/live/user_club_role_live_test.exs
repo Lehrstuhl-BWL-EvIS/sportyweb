@@ -7,10 +7,6 @@ defmodule SportywebWeb.UserClubRoleLiveTest do
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{}
-  @update_attrs %{}
-  @invalid_attrs %{}
-
   setup do
     user = user_fixture()
     applicationrole = application_role_fixture()

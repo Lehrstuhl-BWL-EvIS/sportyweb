@@ -22,8 +22,6 @@ defmodule Sportyweb.RBACTest do
   end
 
   describe "roles" do
-    alias Sportyweb.RBAC.Role
-
     import Sportyweb.RBACFixtures
 
     test "list_roles/1 returns list of role structs of a club", %{club: club, role_attr: role_attr} do

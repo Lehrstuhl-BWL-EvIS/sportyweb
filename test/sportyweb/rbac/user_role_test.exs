@@ -1,8 +1,6 @@
 defmodule Sportyweb.RBAC.UserRoleTest do
   use Sportyweb.DataCase
 
-  import Phoenix.LiveViewTest
-
   alias Sportyweb.RBAC.UserRole
 
   import Sportyweb.AccountsFixtures
@@ -34,6 +32,9 @@ defmodule Sportyweb.RBAC.UserRoleTest do
       valid_attrs = %{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id}
 
       assert {:ok, %UserClubRole{} = user_club_role} = UserRole.create_user_club_role(valid_attrs)
+      assert user_club_role.user_id == user.id
+      assert user_club_role.club_id == club.id
+      assert user_club_role.clubrole_id == clubrole.id
     end
 
     test "create_user_club_role/1 with invalid data returns error changeset" do
@@ -42,9 +43,12 @@ defmodule Sportyweb.RBAC.UserRoleTest do
 
     test "update_user_club_role/2 with valid data updates the user_club_role", %{user: user, club: club, clubrole: clubrole} do
       user_club_role = user_club_role_fixture(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
-      update_attrs = %{}
+      new_clubrole = club_role_fixture(%{name: "new name"})
+      update_attrs = %{clubrole_id: new_clubrole.id}
 
-      assert {:ok, %UserClubRole{} = user_club_role} = UserRole.update_user_club_role(user_club_role, update_attrs)
+      assert {:ok, %UserClubRole{} = updated_user_club_role} = UserRole.update_user_club_role(user_club_role, update_attrs)
+      assert updated_user_club_role.clubrole_id == new_clubrole.id
+      assert updated_user_club_role.id == user_club_role.id
     end
 
     test "update_user_club_role/2 with invalid data returns error changeset", %{user: user, club: club, clubrole: clubrole} do
@@ -86,6 +90,8 @@ defmodule Sportyweb.RBAC.UserRoleTest do
       valid_attrs = %{user_id: user.id, applicationrole_id: applicationrole.id}
 
       assert {:ok, %UserApplicationRole{} = user_application_role} = UserRole.create_user_application_role(valid_attrs)
+      assert user_application_role.user_id == user.id
+      assert user_application_role.applicationrole_id == applicationrole.id
     end
 
     test "create_user_application_role/1 with invalid data returns error changeset" do
@@ -94,9 +100,12 @@ defmodule Sportyweb.RBAC.UserRoleTest do
 
     test "update_user_application_role/2 with valid data updates the user_application_role", %{user: user, applicationrole: applicationrole} do
       user_application_role = user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
-      update_attrs = %{}
+      new_applicationrole = application_role_fixture(%{name: "new application role"})
+      update_attrs = %{applicationrole_id: new_applicationrole.id}
 
-      assert {:ok, %UserApplicationRole{} = user_application_role} = UserRole.update_user_application_role(user_application_role, update_attrs)
+      assert {:ok, %UserApplicationRole{} = updated_user_application_role} = UserRole.update_user_application_role(user_application_role, update_attrs)
+      assert updated_user_application_role.applicationrole_id == new_applicationrole.id
+      assert updated_user_application_role.id == user_application_role.id
     end
 
     test "update_user_application_role/2 with invalid data returns error changeset", %{user: user, applicationrole: applicationrole} do

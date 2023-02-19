@@ -7,10 +7,6 @@ defmodule SportywebWeb.RoleLiveTest do
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{name: "some name", roles: ["option1", "option2"]}
-  @update_attrs %{name: "some updated name", roles: ["option1"]}
-  @invalid_attrs %{name: nil, roles: []}
-
   setup do
     user = user_fixture()
     applicationrole = application_role_fixture()
