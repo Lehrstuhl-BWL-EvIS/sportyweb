@@ -169,4 +169,12 @@ for clubrole <- RPM.get_role_names(:club) do
   })
 end
 
-#Sportyweb.RBAC.DevHelper.seed_sporty_web_admin()
+# Seed sportyweb admins
+ar = ApplicationRole
+|> Repo.all()
+|> Enum.filter(&(String.contains?(&1.name, "Sportyweb")))
+|> Enum.at(0)
+
+for user <- Repo.all(Accounts.User) do
+  Sportyweb.RBAC.UserRole.create_user_application_role(%{user_id: user.id, applicationrole_id: ar.id})
+end
