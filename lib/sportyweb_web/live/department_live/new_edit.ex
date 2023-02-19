@@ -46,7 +46,7 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
 
     socket
     |> assign(:page_title, "Abteilung erstellen")
-    |> assign(:department, %Department{club: club})
+    |> assign(:department, %Department{club_id: club.id, club: club})
     |> assign(:club, club)
   end
 
