@@ -1,8 +1,6 @@
 defmodule SportywebWeb.ClubLive.FormComponent do
   use SportywebWeb, :live_component
 
-  alias Sportyweb.AccessControl.PolicyClub
-
   alias Sportyweb.Organization
 
   @impl true
@@ -77,14 +75,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
   end
 
   def handle_event("save", %{"club" => club_params}, socket) do
-    if PolicyClub.can?(socket.assigns.current_user, socket.assigns.action, socket.assigns.club.id) do
-      save_club(socket, socket.assigns.action, club_params)
-    else
-      {:noreply,
-        socket
-        |> put_flash(:error, "No permission to #{Atom.to_string(socket.assigns.action)} club")
-        |> redirect(to: ~p"/clubs")}
-    end
+    save_club(socket, socket.assigns.action, club_params)
   end
 
   defp save_club(socket, :edit, club_params) do
