@@ -2,7 +2,6 @@ defmodule SportywebWeb.UserApplicationRoleLive.Index do
   use SportywebWeb, :live_view
 
   alias Sportyweb.RBAC.UserRole
-  alias Sportyweb.RBAC.UserRole.UserApplicationRole
 
   @impl true
   def mount(_params, _session, socket) do

@@ -17,5 +17,4 @@ defmodule SportywebWeb.UserClubRoleLive.Show do
   end
 
   defp page_title(:show), do: "Show User club role"
-  defp page_title(:edit), do: "Edit User club role"
 end

@@ -22,7 +22,8 @@ defmodule SportywebWeb.UserApplicationRoleLiveTest do
     user = user_fixture()
     applicationrole = application_role_fixture(%{name: "some name"})
     user_application_role = user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
-    %{user_application_role: user_application_role, applicationrole: applicationrole.id}
+
+    %{user_application_role: user_application_role}
   end
 
   describe "Index" do
