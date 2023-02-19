@@ -13,6 +13,7 @@
 alias Sportyweb.Repo
 
 alias Sportyweb.Accounts
+alias Sportyweb.Asset.Venue
 alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
 alias Sportyweb.Organization.Group
@@ -58,6 +59,24 @@ club_1 = Repo.insert!(%Club{
   website_url: "https://fcbayern.com/",
   founded_at: ~D[1900-02-27]
 })
+
+Repo.insert!(%Venue{
+  club: club_1,
+  name: "Hauptsitz",
+  reference_number: "001",
+  description: "Zentrale des FCB",
+  is_main: true
+})
+
+for i <- 1..5 do
+  Repo.insert!(%Venue{
+    club: club_1,
+    name: "Standort #{i + 1}",
+    reference_number: "00#{i + 1}",
+    description: Faker.Lorem.paragraph(),
+    is_main: false
+  })
+end
 
 department = Repo.insert!(%Department{
   club: club_1,
@@ -159,6 +178,24 @@ club_2 = Repo.insert!(%Club{
   website_url: "https://fc.de/",
   founded_at: ~D[1948-02-13]
 })
+
+Repo.insert!(%Venue{
+  club: club_2,
+  name: "Hauptsitz",
+  reference_number: "001",
+  description: "Zentrale des 1. FC Köln",
+  is_main: true
+})
+
+for i <- 1..5 do
+  Repo.insert!(%Venue{
+    club: club_2,
+    name: "Standort #{i + 1}",
+    reference_number: "00#{i + 1}",
+    description: Faker.Lorem.paragraph(),
+    is_main: false
+  })
+end
 
 department = Repo.insert!(%Department{
   club: club_2,
