@@ -24,7 +24,7 @@ alias Sportyweb.RBAC.Role.RolePermissionMatrix, as: RPM
 # Add Users
 # Only in the dev environment!
 
-#if Mix.env() in [:dev] do
+if Mix.env() in [:dev] do
   Accounts.register_user(%{
     email: "stefan.strecker@fernuni-hagen.de",
     password: "NTU5MTM5NGNmZjY"
@@ -49,33 +49,7 @@ alias Sportyweb.RBAC.Role.RolePermissionMatrix, as: RPM
     email: "andrew.utley@studium.fernuni-hagen.de",
     password: "MGI3MTNlMzczZjR"
   })
-
-  ### Tester ###
-  Accounts.register_user(%{
-    email: "sportyweb_admin@tester.de",
-    password: "testertester"
-  })
-
-  Accounts.register_user(%{
-    email: "clubadmin@tester.de",
-    password: "testertester"
-  })
-
-  Accounts.register_user(%{
-    email: "clubsubadmin@tester.de",
-    password: "testertester"
-  })
-
-  Accounts.register_user(%{
-    email: "clubreadwritemember@tester.de",
-    password: "testertester"
-  })
-
-  Accounts.register_user(%{
-    email: "clubmember@tester.de",
-    password: "testertester"
-  })
-#end
+end
 
 ###################################
 # Add Club 1
