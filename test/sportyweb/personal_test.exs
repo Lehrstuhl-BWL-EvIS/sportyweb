@@ -27,16 +27,16 @@ defmodule Sportyweb.PersonalTest do
 
     test "create_contact/1 with valid data creates a contact" do
       club = club_fixture()
-      valid_attrs = %{club_id: club.id, organization_name: "some organization_name", person_birthday: ~D[2023-02-15], person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "some person_gender", person_last_name: "some person_last_name", type: "some type"}
+      valid_attrs = %{club_id: club.id, organization_name: "some organization_name", person_birthday: ~D[2023-02-15], person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "female", person_last_name: "some person_last_name", type: "person"}
 
       assert {:ok, %Contact{} = contact} = Personal.create_contact(valid_attrs)
       assert contact.organization_name == "some organization_name"
       assert contact.person_birthday == ~D[2023-02-15]
       assert contact.person_first_name_1 == "some person_first_name_1"
       assert contact.person_first_name_2 == "some person_first_name_2"
-      assert contact.person_gender == "some person_gender"
+      assert contact.person_gender == "female"
       assert contact.person_last_name == "some person_last_name"
-      assert contact.type == "some type"
+      assert contact.type == "person"
     end
 
     test "create_contact/1 with invalid data returns error changeset" do
@@ -45,16 +45,16 @@ defmodule Sportyweb.PersonalTest do
 
     test "update_contact/2 with valid data updates the contact" do
       contact = contact_fixture()
-      update_attrs = %{organization_name: "some updated organization_name", person_birthday: ~D[2023-02-16], person_first_name_1: "some updated person_first_name_1", person_first_name_2: "some updated person_first_name_2", person_gender: "some updated person_gender", person_last_name: "some updated person_last_name", type: "some updated type"}
+      update_attrs = %{organization_name: "some updated organization_name", person_birthday: ~D[2023-02-16], person_first_name_1: "some updated person_first_name_1", person_first_name_2: "some updated person_first_name_2", person_gender: "male", person_last_name: "some updated person_last_name", type: "organization"}
 
       assert {:ok, %Contact{} = contact} = Personal.update_contact(contact, update_attrs)
       assert contact.organization_name == "some updated organization_name"
       assert contact.person_birthday == ~D[2023-02-16]
       assert contact.person_first_name_1 == "some updated person_first_name_1"
       assert contact.person_first_name_2 == "some updated person_first_name_2"
-      assert contact.person_gender == "some updated person_gender"
+      assert contact.person_gender == "male"
       assert contact.person_last_name == "some updated person_last_name"
-      assert contact.type == "some updated type"
+      assert contact.type == "organization"
     end
 
     test "update_contact/2 with invalid data returns error changeset" do

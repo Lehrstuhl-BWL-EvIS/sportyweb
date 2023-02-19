@@ -16,12 +16,12 @@ defmodule Sportyweb.PersonalFixtures do
       attrs
       |> Enum.into(%{
         club_id: club.id,
-        type: "some type",
+        type: "person",
         organization_name: "some organization_name",
         person_last_name: "some person_last_name",
         person_first_name_1: "some person_first_name_1",
         person_first_name_2: "some person_first_name_2",
-        person_gender: "some person_gender",
+        person_gender: "other",
         person_birthday: ~D[2023-02-15]
       })
       |> Sportyweb.Personal.create_contact()

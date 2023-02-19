@@ -2,6 +2,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
   use SportywebWeb, :live_component
 
   alias Sportyweb.Personal
+  alias Sportyweb.Personal.Contact
 
   @impl true
   def render(assigns) do
@@ -22,7 +23,8 @@ defmodule SportywebWeb.ContactLive.FormComponent do
         >
           <div class="grid grid-cols-12 gap-x-4 gap-y-6">
             <div class="col-span-12">
-              <.input field={{f, :type}} type="text" label="Art" />
+              <.input field={{f, :type}} type="select" label="Art"
+              options={Contact.get_valid_types} prompt="Bitte auswählen" />
             </div>
 
             <div class="col-span-12">
@@ -42,7 +44,8 @@ defmodule SportywebWeb.ContactLive.FormComponent do
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :person_gender}} type="text" label="Geschlecht" />
+              <.input field={{f, :person_gender}} type="select" label="Geschlecht"
+              options={Contact.get_valid_genders} prompt="Bitte auswählen" />
             </div>
 
             <div class="col-span-12 md:col-span-6">

@@ -20,6 +20,22 @@ defmodule Sportyweb.Personal.Contact do
     timestamps()
   end
 
+  def get_valid_types do
+    [
+      [key: "Organisation", value: "organization"],
+      [key: "Person", value: "person"]
+    ]
+  end
+
+  def get_valid_genders do
+    [
+      [key: "Männlich", value: "male"],
+      [key: "Weiblich", value: "female"],
+      [key: "Divers", value: "other"],
+      [key: "Keine Angabe", value: "no_info"]
+    ]
+  end
+
   @doc false
   def changeset(contact, attrs) do
     contact
@@ -34,11 +50,15 @@ defmodule Sportyweb.Personal.Contact do
       :person_birthday
       ], empty_values: ["", nil])
     |> validate_required([:type])
-    |> validate_length(:type, max: 250) # TODO: Validate "in key list"
+    |> validate_inclusion(
+      :type,
+      get_valid_types() |> Enum.map(fn type -> type[:value] end))
     |> validate_length(:organization_name, max: 250)
     |> validate_length(:person_last_name, max: 250)
     |> validate_length(:person_first_name_1, max: 250)
     |> validate_length(:person_first_name_2, max: 250)
-    |> validate_length(:person_gender, max: 250) # TODO: Validate "in key list"
+    |> validate_inclusion(
+      :person_gender,
+      get_valid_genders() |> Enum.map(fn gender -> gender[:value] end))
   end
 end

@@ -6,8 +6,8 @@ defmodule SportywebWeb.ContactLiveTest do
   import Sportyweb.OrganizationFixtures
   import Sportyweb.PersonalFixtures
 
-  @create_attrs %{organization_name: "some organization_name", person_birthday: ~D[2022-11-05], person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "some person_gender", person_last_name: "some person_last_name", type: "some type"}
-  @update_attrs %{organization_name: "some updated organization_name", person_birthday: ~D[2022-11-06], person_first_name_1: "some updated person_first_name_1", person_first_name_2: "some updated person_first_name_2", person_gender: "some updated person_gender", person_last_name: "some updated person_last_name", type: "some updated type"}
+  @create_attrs %{organization_name: "some organization_name", person_birthday: ~D[2022-11-05], person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "male", person_last_name: "some person_last_name", type: "person"}
+  @update_attrs %{organization_name: "some updated organization_name", person_birthday: ~D[2022-11-06], person_first_name_1: "some updated person_first_name_1", person_first_name_2: "some updated person_first_name_2", person_gender: "female", person_last_name: "some updated person_last_name", type: "organization"}
   @invalid_attrs %{organization_name: nil, person_birthday: nil, person_first_name_1: nil, person_first_name_2: nil, person_gender: nil, person_last_name: nil, type: nil}
 
   setup do

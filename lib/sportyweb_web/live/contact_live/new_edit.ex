@@ -47,7 +47,7 @@ defmodule SportywebWeb.ContactLive.NewEdit do
 
     socket
     |> assign(:page_title, "Kontakt erstellen")
-    |> assign(:contact, %Contact{club: club})
+    |> assign(:contact, %Contact{club_id: club.id, club: club})
     |> assign(:club, club)
   end
 
