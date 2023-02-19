@@ -21,7 +21,7 @@ defmodule Sportyweb.RBAC.PolicyTest do
     club = club_fixture()
 
     #ClubRoles
-    clubroles = RPM.get_role_names(:club) |> Enum.map(&(club_role_fixture(%{name: &1})))
+    clubroles = :club |> RPM.get_role_names() |> Enum.map(&(club_role_fixture(%{name: &1})))
 
     %{
       app_admin: app_admin,
@@ -49,13 +49,13 @@ defmodule Sportyweb.RBAC.PolicyTest do
       for clubrole <- clubroles do
         {:ok, ucr} = UserRole.create_user_club_role(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
         case RPM.to_role_atom(:club, clubrole.name) do
-          :club_admin ->                  assert [true, false, true,  true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))),"Rolle: #{clubrole.name}"
-          :vorstand ->                    assert [true, false, true,  true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))),"Rolle: #{clubrole.name}"
-          :mitarbeiter_rollen ->          assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))),"Rolle: #{clubrole.name}"
-          :mitglieder_verwaltung ->       assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))),"Rolle: #{clubrole.name}"
-          :anlagen_geraete_verwaltung ->  assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))),"Rolle: #{clubrole.name}"
-          :finanz_verwaltung ->           assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))),"Rolle: #{clubrole.name}"
-          :pr ->                          assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))),"Rolle: #{clubrole.name}"
+          :club_admin ->                  assert [true, false, true,  true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :vorstand ->                    assert [true, false, true,  true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :mitarbeiter_rollen ->          assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :mitglieder_verwaltung ->       assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :anlagen_geraete_verwaltung ->  assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :finanz_verwaltung ->           assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :pr ->                          assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
         end
         UserRole.delete_user_club_role(ucr)
       end
@@ -87,13 +87,13 @@ defmodule Sportyweb.RBAC.PolicyTest do
       for clubrole <- clubroles do
         {:ok, ucr} = UserRole.create_user_club_role(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
         case RPM.to_role_atom(:club, clubrole.name) do
-          :club_admin ->                  assert [true,  true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))),"Rolle: #{clubrole.name}"
-          :vorstand ->                    assert [true,  false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))),"Rolle: #{clubrole.name}"
-          :mitarbeiter_rollen ->          assert [true,  true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))),"Rolle: #{clubrole.name}"
-          :mitglieder_verwaltung ->       assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))),"Rolle: #{clubrole.name}"
-          :anlagen_geraete_verwaltung ->  assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))),"Rolle: #{clubrole.name}"
-          :finanz_verwaltung ->           assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))),"Rolle: #{clubrole.name}"
-          :pr ->                          assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))),"Rolle: #{clubrole.name}"
+          :club_admin ->                  assert [true,  true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :vorstand ->                    assert [true,  false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :mitarbeiter_rollen ->          assert [true,  true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :mitglieder_verwaltung ->       assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :anlagen_geraete_verwaltung ->  assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :finanz_verwaltung ->           assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :pr ->                          assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
         end
         UserRole.delete_user_club_role(ucr)
       end
