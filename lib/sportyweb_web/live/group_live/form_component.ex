@@ -21,6 +21,13 @@ defmodule SportywebWeb.GroupLive.FormComponent do
           phx-submit="save"
         >
           <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+            <%= if @group.id do %>
+              <div class="col-span-12">
+                <.input field={{f, :department_id}} type="select" label="Abteilung"
+                options={Organization.list_departments(@group.department.club_id) |> Enum.map(&{&1.name, &1.id})} />
+              </div>
+            <% end %>
+
             <div class="col-span-12 md:col-span-6">
               <.input field={{f, :name}} type="text" label="Name" />
             </div>

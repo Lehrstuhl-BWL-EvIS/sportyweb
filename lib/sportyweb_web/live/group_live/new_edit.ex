@@ -33,14 +33,13 @@ defmodule SportywebWeb.GroupLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    group = Organization.get_group!(id, [:department])
-    department = Organization.get_department!(group.department.id, [:club])
+    group = Organization.get_group!(id, [department: :club])
 
     socket
      |> assign(:page_title, "Gruppe bearbeiten")
      |> assign(:group, group)
-     |> assign(:department, department)
-     |> assign(:club, department.club)
+     |> assign(:department, group.department)
+     |> assign(:club, group.department.club)
   end
 
   defp apply_action(socket, :new, %{"department_id" => department_id}) do
@@ -48,7 +47,7 @@ defmodule SportywebWeb.GroupLive.NewEdit do
 
     socket
     |> assign(:page_title, "Gruppe erstellen")
-    |> assign(:group, %Group{department: department})
+    |> assign(:group, %Group{department_id: department.id, department: department})
     |> assign(:department, department)
     |> assign(:club, department.club)
   end
