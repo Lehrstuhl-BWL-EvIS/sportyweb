@@ -7,15 +7,19 @@ defmodule Sportyweb.RBACFixtures do
   @doc """
   Generate a role.
   """
-  def role_fixture(attrs \\ %{}) do
-    {:ok, role} =
-      attrs
-      |> Enum.into(%{
-        name: "some name",
-        roles: ["option1", "option2"]
-      })
-      |> Sportyweb.RBAC.create_role()
+  def role_fixture() do
+    %Sportyweb.RBAC.Role{
+      id: 1,
+      name: "some@name.com",
+      roles: "some role"
+    }
+  end
 
-    role
+  def role_fixture(attrs) do
+    %Sportyweb.RBAC.Role{
+      id: attrs.id,
+      name: attrs.name,
+      roles: attrs.roles
+    }
   end
 end

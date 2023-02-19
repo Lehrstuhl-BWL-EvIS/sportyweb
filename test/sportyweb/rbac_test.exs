@@ -1,61 +1,34 @@
 defmodule Sportyweb.RBACTest do
   use Sportyweb.DataCase
 
+  import Sportyweb.AccountsFixtures
+  import Sportyweb.OrganizationFixtures
+  import Sportyweb.RBAC.RoleFixtures
+  import Sportyweb.RBAC.UserRoleFixtures
+
   alias Sportyweb.RBAC
+
+  setup do
+    user = user_fixture()
+    club = club_fixture()
+    clubrole = club_role_fixture()
+    clubrole2 = club_role_fixture(%{name: "other name"})
+    user_club_role_fixture(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
+    user_club_role_fixture(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole2.id})
+
+    roles = [clubrole, clubrole2] |> Enum.map(&(&1.name)) |> Enum.sort(:desc) |> Enum.join(", ")
+
+    %{club: club, role_attr: %{id: user.id, name: user.email, roles: roles}}
+  end
 
   describe "roles" do
     alias Sportyweb.RBAC.Role
 
     import Sportyweb.RBACFixtures
 
-    @invalid_attrs %{name: nil, roles: nil}
-
-    test "list_roles/0 returns all roles" do
-      role = role_fixture()
-      assert RBAC.list_roles() == [role]
-    end
-
-    test "get_role!/1 returns the role with given id" do
-      role = role_fixture()
-      assert RBAC.get_role!(role.id) == role
-    end
-
-    test "create_role/1 with valid data creates a role" do
-      valid_attrs = %{name: "some name", roles: ["option1", "option2"]}
-
-      assert {:ok, %Role{} = role} = RBAC.create_role(valid_attrs)
-      assert role.name == "some name"
-      assert role.roles == ["option1", "option2"]
-    end
-
-    test "create_role/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = RBAC.create_role(@invalid_attrs)
-    end
-
-    test "update_role/2 with valid data updates the role" do
-      role = role_fixture()
-      update_attrs = %{name: "some updated name", roles: ["option1"]}
-
-      assert {:ok, %Role{} = role} = RBAC.update_role(role, update_attrs)
-      assert role.name == "some updated name"
-      assert role.roles == ["option1"]
-    end
-
-    test "update_role/2 with invalid data returns error changeset" do
-      role = role_fixture()
-      assert {:error, %Ecto.Changeset{}} = RBAC.update_role(role, @invalid_attrs)
-      assert role == RBAC.get_role!(role.id)
-    end
-
-    test "delete_role/1 deletes the role" do
-      role = role_fixture()
-      assert {:ok, %Role{}} = RBAC.delete_role(role)
-      assert_raise Ecto.NoResultsError, fn -> RBAC.get_role!(role.id) end
-    end
-
-    test "change_role/1 returns a role changeset" do
-      role = role_fixture()
-      assert %Ecto.Changeset{} = RBAC.change_role(role)
+    test "list_roles/1 returns list of role structs of a club", %{club: club, role_attr: role_attr} do
+      role = role_fixture(role_attr)
+      assert RBAC.list_roles(club.id) == [role]
     end
   end
 end
