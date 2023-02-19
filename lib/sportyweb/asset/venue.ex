@@ -37,9 +37,5 @@ defmodule Sportyweb.Asset.Venue do
       :name,
       name: "venues_club_id_name_index",
       message: "Name bereits vergeben!")
-    |> unique_constraint(
-      :is_main,
-      name: "venues_club_id_is_main_index",
-      message: "Hauptstandort bereits gesetzt!")
   end
 end

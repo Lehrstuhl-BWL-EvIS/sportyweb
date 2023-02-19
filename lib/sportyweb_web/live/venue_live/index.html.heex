@@ -10,14 +10,18 @@
 <.card>
   <%= if Enum.any?(@venues) do %>
     <.table id="venues" rows={@venues} row_click={&JS.navigate(~p"/venues/#{&1}")}>
-      <:col :let={venue} label="Name"><%= venue.name %></:col>
+      <:col :let={venue} label="Name">
+        <%= venue.name %>
+        <%= if venue.is_main do %>
+          <Heroicons.check_badge class="ml-1 inline-block w-[20px] text-green-800" />
+        <% end %>
+      </:col>
       <:col :let={venue} label="Referenznummer"><%= venue.reference_number %></:col>
       <:col :let={venue} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
           <%= venue.description %>
         </div>
       </:col>
-      <:col :let={venue} label="Hauptstandort?"><%= venue.is_main %></:col>
       <:col :let={venue} label="Equipment"><%= Enum.count(venue.equipment) %></:col>
 
       <:action :let={venue}>
@@ -31,3 +35,8 @@
     </p>
   <% end %>
 </.card>
+
+<div class="mt-4 flex align-middle">
+  <Heroicons.check_badge class="mr-1 inline-block w-[20px] text-green-800" />
+  Hauptsitz
+</div>

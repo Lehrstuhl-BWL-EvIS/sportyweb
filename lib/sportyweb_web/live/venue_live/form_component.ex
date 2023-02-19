@@ -32,10 +32,6 @@ defmodule SportywebWeb.VenueLive.FormComponent do
             <div class="col-span-12">
               <.input field={{f, :description}} type="textarea" label="Beschreibung (optional)" />
             </div>
-
-            <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :is_main}} type="checkbox" label="Hauptstandort?" />
-            </div>
           </div>
 
           <:actions>
@@ -46,7 +42,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
               </.link>
             </div>
             <.button
-              :if={@venue.id}
+              :if={@venue.id && !@venue.is_main}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @venue.id})}
               data-confirm="Unwiderruflich löschen?">

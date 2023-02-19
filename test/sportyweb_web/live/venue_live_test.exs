@@ -6,9 +6,9 @@ defmodule SportywebWeb.VenueLiveTest do
   import Sportyweb.AssetFixtures
   import Sportyweb.OrganizationFixtures
 
-  @create_attrs %{description: "some description", is_main: true, name: "some name", reference_number: "some reference_number"}
-  @update_attrs %{description: "some updated description", is_main: false, name: "some updated name", reference_number: "some updated reference_number"}
-  @invalid_attrs %{description: nil, is_main: false, name: nil, reference_number: nil}
+  @create_attrs %{description: "some description", name: "some name", reference_number: "some reference_number"}
+  @update_attrs %{description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
+  @invalid_attrs %{description: nil, name: nil, reference_number: nil}
 
   setup do
     %{user: user_fixture()}

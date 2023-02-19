@@ -18,7 +18,7 @@ defmodule Sportyweb.Asset do
 
   """
   def list_venues(club_id) do
-    query = from(v in Venue, where: v.club_id == ^club_id, order_by: v.name)
+    query = from(v in Venue, where: v.club_id == ^club_id, order_by: [not v.is_main, v.name])
     Repo.all(query)
   end
 
