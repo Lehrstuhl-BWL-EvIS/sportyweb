@@ -1,0 +1,23 @@
+<.header>
+  Nutzer & Rollen
+  <:actions>
+    <.link patch={~p"/clubs/#{@club.id}/roles/new"}>
+      <.button>Nutzer hinzufügen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <.table id="roles" rows={@roles} row_click={&JS.navigate(~p"/clubs/#{@club.id}/roles/#{&1}/edit")}>
+    <:col :let={role} label="Mitarbeiter"><%= role.name %></:col>
+    <:col :let={role} label="Rollen"><%= role.roles %></:col>
+    <:action :let={role}>
+      <div class="sr-only">
+        <.link navigate={~p"/clubs/#{@club.id}/roles/#{role}/edit"}>Bearbeiten</.link>
+      </div>
+      <.link patch={~p"/clubs/#{@club.id}/roles/#{role}/edit"}>Bearbeiten</.link>
+    </:action>
+  </.table>
+</.card>
+
+<.back navigate={~p"/clubs/#{@club}"}>Zurück zum Dashboard</.back>

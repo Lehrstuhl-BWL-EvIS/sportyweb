@@ -47,7 +47,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
           <span class="truncate">Gebühren</span>
         </.link>
 
-        <.link navigate={~p"/clubs/#{@club}/userclubroles"} class={[@default_link_classes, (if @club_navigation_current_item == :authorization, do: @current_link_classes)]}>
+        <.link navigate={~p"/clubs/#{@club}/roles"} class={[@default_link_classes, (if @club_navigation_current_item == :authorization, do: @current_link_classes)]}>
           <Heroicons.lock_closed class={@default_icon_classes} />
           <span class="truncate">Nutzer & Rollen</span>
         </.link>

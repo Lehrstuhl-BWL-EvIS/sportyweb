@@ -1,4 +1,7 @@
 defmodule Sportyweb.RBAC.Role do
+
+  defstruct [:id, :name, :roles]
+
   @moduledoc """
   The RBAC.Role context.
   """
