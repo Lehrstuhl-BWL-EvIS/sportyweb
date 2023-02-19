@@ -14,6 +14,5 @@ defmodule Sportyweb.Repo.Migrations.CreateGroups do
     end
 
     create index(:groups, [:department_id])
-    create unique_index(:groups, [:department_id, :name])
   end
 end

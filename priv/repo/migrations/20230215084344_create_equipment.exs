@@ -17,6 +17,5 @@ defmodule Sportyweb.Repo.Migrations.CreateEquipment do
     end
 
     create index(:equipment, [:venue_id])
-    create unique_index(:equipment, [:venue_id, :name])
   end
 end

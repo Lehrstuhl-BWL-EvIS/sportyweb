@@ -3,14 +3,12 @@ defmodule Sportyweb.Organization.Department do
   import Ecto.Changeset
 
   alias Sportyweb.Organization.Club
-  alias Sportyweb.Organization.Department
   alias Sportyweb.Organization.Group
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "departments" do
     belongs_to :club, Club
-    belongs_to :parent, Department
     has_many :groups, Group, on_delete: :delete_all
 
     field :name, :string, default: ""
@@ -35,5 +33,9 @@ defmodule Sportyweb.Organization.Department do
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
     |> validate_length(:description, max: 20_000)
+    |> unique_constraint(
+      :name,
+      name: "departments_club_id_name_index",
+      message: "Name bereits vergeben!")
   end
 end

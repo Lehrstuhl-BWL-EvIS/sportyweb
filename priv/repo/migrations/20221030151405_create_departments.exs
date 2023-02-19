@@ -9,13 +9,11 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartments do
       add :description, :text, null: false, default: ""
       add :created_at, :date, null: false, default: nil
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false, default: nil
-      add :parent_id, references(:departments, on_delete: :delete_all, type: :binary_id), null: true, default: nil # NULL if department is not a parent
 
       timestamps()
     end
 
     create index(:departments, [:club_id])
-    create index(:departments, [:parent_id])
-    create unique_index(:departments, [:club_id, :parent_id, :name])
+    create unique_index(:departments, [:club_id, :name])
   end
 end

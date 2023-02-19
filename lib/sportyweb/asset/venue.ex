@@ -33,5 +33,13 @@ defmodule Sportyweb.Asset.Venue do
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
     |> validate_length(:description, max: 20_000)
+    |> unique_constraint(
+      :name,
+      name: "venues_club_id_name_index",
+      message: "Name bereits vergeben!")
+    |> unique_constraint(
+      :is_main,
+      name: "venues_club_id_is_main_index",
+      message: "Hauptstandort bereits gesetzt!")
   end
 end
