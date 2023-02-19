@@ -11,8 +11,8 @@ defmodule Sportyweb.RBACTest do
   setup do
     user = user_fixture()
     club = club_fixture()
-    clubrole = club_role_fixture()
-    clubrole2 = club_role_fixture(%{name: "other role"})
+    clubrole = club_role_fixture(%{name: "Vereins Administration"})
+    clubrole2 = club_role_fixture(%{name: "Vorstand"})
     user_club_role_fixture(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
     user_club_role_fixture(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole2.id})
 

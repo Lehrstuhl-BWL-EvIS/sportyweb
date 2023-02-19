@@ -1,5 +1,4 @@
 defmodule Sportyweb.RBAC.Policy do
-
   use SportywebWeb, :verified_routes
 
   alias Sportyweb.Organization
@@ -21,27 +20,28 @@ defmodule Sportyweb.RBAC.Policy do
     end
   end
 
-  defp is_application_admin_or_tester(user) do
-    UserRole.list_users_applicationroles(user)
+  def is_application_admin_or_tester(user) do
+    user
+    |> UserRole.list_users_applicationroles()
     |> Enum.map(&(&1.applicationrole.name))
     |> Enum.map(&(RPM.to_role_atom(:application, &1)))
     |> Enum.map(&(Enum.member?([:admin, :tester], &1)))
     |> Enum.member?(true)
   end
 
-  defp permit?(_user, :index, :ClubLive, _params), do: true
-  defp permit?(_user, :new, :ClubLive, _params), do: false
-  defp permit?(user, action, :ClubLive, %{"id" => club_id}), do: is_allowed?(user.id, action, club_id, :ClubLive)
+  def permit?(_user, :index, :ClubLive, _params), do: true
+  def permit?(_user, :new, :ClubLive, _params), do: false
+  def permit?(user, action, :ClubLive, %{"id" => club_id}), do: is_allowed?(user.id, action, club_id, :ClubLive)
 
-  defp permit?(user, action, :DepartmentLive, params) do
+  def permit?(user, action, :DepartmentLive, params) do
     club_id = if Map.has_key?(params, "club_id"), do: params["club_id"], else: params["id"] |> Organization.get_department!() |> Map.get(:club_id)
     dept_id = if Map.has_key?(params, "id"), do: params["id"], else: nil
     is_allowed?(user.id, action, club_id, :DepartmentLive, dept_id)
   end
 
-  defp permit?(user, action, :UserClubRoleLive, %{"club_id" => club_id}), do: is_allowed?(user.id, action, club_id, :UserClubRoleLive)
+  def permit?(user, action, :UserClubRoleLive, %{"club_id" => club_id}), do: is_allowed?(user.id, action, club_id, :UserClubRoleLive)
 
-  defp permit?(_user, _action, _view, _params), do: false
+  def permit?(_user, _action, _view, _params), do: false
 
 
   defp get_live_view(view), do: view |> Kernel.inspect() |> String.split(".") |> Enum.at(1) |> String.to_atom()

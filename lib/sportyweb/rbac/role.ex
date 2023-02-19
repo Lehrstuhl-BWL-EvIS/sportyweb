@@ -113,7 +113,7 @@ defmodule Sportyweb.RBAC.Role do
       #IO.inspect(club)
       for department <- Sportyweb.Organization.list_departments(club.id) do
         #IO.inspect(department)
-        Sportyweb.RBAC.Role.RolePermissionMatrix.get_role_names(:department) |> Enum.map(&(IO.puts("#{&1} - #{department.name}")))
+        :department |> Sportyweb.RBAC.Role.RolePermissionMatrix.get_role_names() |> Enum.map(&(IO.puts("#{&1} - #{department.name}")))
       end
     end
   end
