@@ -84,7 +84,7 @@ defmodule Sportyweb.RBAC.Policy do
     |> Kernel.++(current_roles)
   end
 
-  defp error_redirect(action, :ClubLive, _params) when action in [:new, :edit, :show], do: ~p"/clubs" #TODO: remove edit after fixing loop hole
+  defp error_redirect(action, :ClubLive, _params) when action in [:new, :edit, :show], do: ~p"/clubs"
   defp error_redirect(_action, :ClubLive, %{"id" => club_id}), do: ~p"/clubs/#{club_id}"
   defp error_redirect(_action, :DepartmentLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}"
   defp error_redirect(_action, :DepartmentLive, %{"id" => dept_id}), do: ~p"/clubs/#{dept_id |> Organization.get_department!() |> Map.get(:club_id)}"

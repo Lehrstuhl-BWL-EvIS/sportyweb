@@ -105,20 +105,6 @@ defmodule Sportyweb.RBAC.Role do
     ClubRole.changeset(club_role, attrs)
   end
 
-  @doc """
-  Creates the role set linked to each department.
-  """
-  def create_department_roles do
-    for club <- Sportyweb.Organization.list_clubs() do
-      #IO.inspect(club)
-      for department <- Sportyweb.Organization.list_departments(club.id) do
-        #IO.inspect(department)
-        :department |> Sportyweb.RBAC.Role.RolePermissionMatrix.get_role_names() |> Enum.map(&(IO.puts("#{&1} - #{department.name}")))
-      end
-    end
-  end
-
-
   alias Sportyweb.RBAC.Role.ApplicationRole
 
   @doc """

@@ -15,7 +15,6 @@
     <div class="sr-only">
       <.link navigate={~p"/userapplicationroles/#{user_application_role}"}>Show</.link>
     </div>
-    <.link patch={~p"/userapplicationroles/#{user_application_role}/edit"}>Edit</.link>
   </:action>
   <:action :let={user_application_role}>
     <.link phx-click={JS.push("delete", value: %{id: user_application_role.id})} data-confirm="Are you sure?">
