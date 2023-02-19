@@ -75,7 +75,7 @@ defmodule Sportyweb.RBAC.Policy do
   end
 
   defp maybe_add_department_roles(current_roles, _user_id, nil), do: current_roles
-  defp maybe_add_department_roles(current_roles, user_id, dept_id) do
+  defp maybe_add_department_roles(current_roles, _user_id, _dept_id) do
     #user_id
     #|> UserRole.list_users_departmentroles_in_a_club(dept_id)
     #|> Enum.map(&(&1.department.name))
