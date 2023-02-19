@@ -12,11 +12,11 @@ defmodule Sportyweb.RBACTest do
     user = user_fixture()
     club = club_fixture()
     clubrole = club_role_fixture()
-    clubrole2 = club_role_fixture(%{name: "other name"})
+    clubrole2 = club_role_fixture(%{name: "other role"})
     user_club_role_fixture(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
     user_club_role_fixture(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole2.id})
 
-    roles = [clubrole, clubrole2] |> Enum.map(&(&1.name)) |> Enum.sort(:desc) |> Enum.join(", ")
+    roles = [clubrole, clubrole2] |> Enum.map_join(", ", &(&1.name))
 
     %{club: club, role_attr: %{id: user.id, name: user.email, roles: roles}}
   end

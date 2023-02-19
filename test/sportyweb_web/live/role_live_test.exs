@@ -2,109 +2,127 @@ defmodule SportywebWeb.RoleLiveTest do
   use SportywebWeb.ConnCase
 
   import Phoenix.LiveViewTest
-  import Sportyweb.RBACFixtures
+  import Sportyweb.AccountsFixtures
+  import Sportyweb.OrganizationFixtures
+  import Sportyweb.RBAC.RoleFixtures
+  import Sportyweb.RBAC.UserRoleFixtures
 
   @create_attrs %{name: "some name", roles: ["option1", "option2"]}
   @update_attrs %{name: "some updated name", roles: ["option1"]}
   @invalid_attrs %{name: nil, roles: []}
 
-  defp create_role(_) do
-    role = role_fixture()
-    %{role: role}
+  setup do
+    user = user_fixture()
+    applicationrole = application_role_fixture()
+    user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
+
+    club_admin = user_fixture()
+    club = club_fixture()
+    clubrole_admin = club_role_fixture(%{name: "Vereins Administration"})
+    ucr_admin = user_club_role_fixture(%{user_id: club_admin.id, club_id: club.id, clubrole_id: clubrole_admin.id})
+
+    user_not_in_club = user_fixture()
+    clubrole_other = club_role_fixture(%{name: "Vorstand"})
+
+    %{
+      user: user,
+      club_admin: club_admin,
+      user_not_in_club: user_not_in_club,
+      club: club,
+      clubrole_admin: clubrole_admin,
+      clubrole_other: clubrole_other,
+      ucr_admin: ucr_admin
+    }
   end
 
   describe "Index" do
-    setup [:create_role]
+    test "lists all userclubroles in club", %{conn: conn, user: user, club: club, club_admin: club_admin, clubrole_admin: clubrole_admin} do
+      {:error, _} = live(conn, ~p"/clubs/#{club.id}/roles")
 
-    test "lists all roles", %{conn: conn, role: role} do
-      {:ok, _index_live, html} = live(conn, ~p"/roles")
+      conn = conn |> log_in_user(user)
+      {:ok, index_live, html} = live(conn, ~p"/clubs/#{club.id}/roles")
 
-      assert html =~ "Listing Roles"
-      assert html =~ role.name
-    end
+      assert html =~ "Rollen"
+      assert html =~ club_admin.email
+      assert html =~ clubrole_admin.name
 
-    test "saves new role", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/roles")
+      {:ok, _, newhtml} = index_live
+             |> element("#roles-#{club_admin.id} a", "Bearbeiten")
+             |> render_click()
+             |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
-      assert index_live |> element("a", "New Role") |> render_click() =~
-               "New Role"
-
-      assert_patch(index_live, ~p"/roles/new")
-
-      assert index_live
-             |> form("#role-form", role: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      {:ok, _, html} =
-        index_live
-        |> form("#role-form", role: @create_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/roles")
-
-      assert html =~ "Role created successfully"
-      assert html =~ "some name"
-    end
-
-    test "updates role in listing", %{conn: conn, role: role} do
-      {:ok, index_live, _html} = live(conn, ~p"/roles")
-
-      assert index_live |> element("#roles-#{role.id} a", "Edit") |> render_click() =~
-               "Edit Role"
-
-      assert_patch(index_live, ~p"/roles/#{role}/edit")
-
-      assert index_live
-             |> form("#role-form", role: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      {:ok, _, html} =
-        index_live
-        |> form("#role-form", role: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/roles")
-
-      assert html =~ "Role updated successfully"
-      assert html =~ "some updated name"
-    end
-
-    test "deletes role in listing", %{conn: conn, role: role} do
-      {:ok, index_live, _html} = live(conn, ~p"/roles")
-
-      assert index_live |> element("#roles-#{role.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#role-#{role.id}")
+      assert newhtml =~ "Rollen von #{club_admin.email}"
     end
   end
 
-  describe "Show" do
-    setup [:create_role]
+  describe "Edit" do
+    test "add clubrole to user in club", %{conn: conn, user: user, club_admin: club_admin, club: club, clubrole_other: clubrole_other} do
+      {:error, _} = live(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
-    test "displays role", %{conn: conn, role: role} do
-      {:ok, _show_live, html} = live(conn, ~p"/roles/#{role}")
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
-      assert html =~ "Show Role"
-      assert html =~ role.name
+      assert html =~ "Rollen von #{club_admin.email}"
+      assert html =~ "im Verein #{club.name}"
+      assert html =~ "im Verein #{club.name}"
+      assert html =~ "Zugewiesene Rollen"
+      assert html =~ "Entfernen"
+      assert html =~ "Verfügbare Rollen zur Zuweisung"
+      assert html =~ "Hinzufügen"
+
+      {:ok, _, addhtml} =
+        edit_live
+        |> element("#open_clubroles-#{clubrole_other.id} button", "Hinzufügen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
+
+        assert addhtml =~ "Rollen von #{club_admin.email}"
+        refute addhtml =~ "Hinzufügen"
+        assert addhtml =~ "Die Rolle wurde dem Nutzer erfolgreich hinzugefügt."
     end
 
-    test "updates role within modal", %{conn: conn, role: role} do
-      {:ok, show_live, _html} = live(conn, ~p"/roles/#{role}")
+    test "remove clubrole to user in club", %{conn: conn, user: user, club_admin: club_admin, club: club, ucr_admin: ucr_admin} do
+      {:error, _} = live(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Role"
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
-      assert_patch(show_live, ~p"/roles/#{role}/show/edit")
+      assert html =~ "Rollen von #{club_admin.email}"
+      assert html =~ "im Verein #{club.name}"
+      assert html =~ "im Verein #{club.name}"
+      assert html =~ "Zugewiesene Rollen"
+      assert html =~ "Entfernen"
+      assert html =~ "Verfügbare Rollen zur Zuweisung"
+      assert html =~ "Hinzufügen"
 
-      assert show_live
-             |> form("#role-form", role: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+      {:ok, _, removehtml} =
+      edit_live
+      |> element("#userclubroles-#{ucr_admin.id} button", "Entfernen")
+      |> render_click()
+      |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
-      {:ok, _, html} =
-        show_live
-        |> form("#role-form", role: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/roles/#{role}")
+      assert removehtml =~ "Rollen von #{club_admin.email}"
+      refute removehtml =~ "Entfernen"
+      assert removehtml =~ "Die Rolle wurde erfolgreich vom Nutzer entfernt."
+    end
+  end
 
-      assert html =~ "Role updated successfully"
-      assert html =~ "some updated name"
+  describe "New" do
+    test "add userclubrole to club", %{conn: conn, user: user, club: club, user_not_in_club: user_not_in_club} do
+      {:error, _} = live(conn, ~p"/clubs/#{club.id}/roles/new")
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, html} = live(conn, ~p"/clubs/#{club.id}/roles/new")
+
+      assert html =~ "Mitarbeiter zu #{club.name} hinzufügen"
+      assert html =~ "Verwalter: #{user.email}"
+
+      {:ok, _, newhtml} = new_live
+             |> element("#users-#{user_not_in_club.id} a", "Hinzufügen")
+             |> render_click()
+             |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{user_not_in_club.id}/edit")
+
+      assert newhtml =~ "Rollen von #{user_not_in_club.email}"
     end
   end
 end

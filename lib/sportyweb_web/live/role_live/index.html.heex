@@ -12,10 +12,7 @@
     <:col :let={role} label="Mitarbeiter"><%= role.name %></:col>
     <:col :let={role} label="Rollen"><%= role.roles %></:col>
     <:action :let={role}>
-      <div class="sr-only">
-        <.link navigate={~p"/clubs/#{@club.id}/roles/#{role}/edit"}>Bearbeiten</.link>
-      </div>
-      <.link patch={~p"/clubs/#{@club.id}/roles/#{role}/edit"}>Bearbeiten</.link>
+      <.link navigate={~p"/clubs/#{@club.id}/roles/#{role}/edit"}>Bearbeiten</.link>
     </:action>
   </.table>
 </.card>
