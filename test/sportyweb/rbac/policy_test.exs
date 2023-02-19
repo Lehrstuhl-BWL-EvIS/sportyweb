@@ -43,57 +43,60 @@ defmodule Sportyweb.RBAC.PolicyTest do
     end
 
     test "permit?/4 user to do action in ClubLive", %{club_user: user, club: club, clubroles: clubroles} do
+      view = :ClubLive
       actions = [:index, :new, :edit, :show]
-      assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{id: club.id})))
+      assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{id: club.id})))
 
       for clubrole <- clubroles do
         {:ok, ucr} = UserRole.create_user_club_role(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
         case RPM.to_role_atom(:club, clubrole.name) do
-          :club_admin ->                  assert [true, false, true,  true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
-          :vorstand ->                    assert [true, false, true,  true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
-          :mitarbeiter_rollen ->          assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
-          :mitglieder_verwaltung ->       assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
-          :anlagen_geraete_verwaltung ->  assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
-          :finanz_verwaltung ->           assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
-          :pr ->                          assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, :ClubLive, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :club_admin ->                  assert [true, false, true,  true] == actions |> Enum.map(&(permit?(user, &1, view, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :vorstand ->                    assert [true, false, true,  true] == actions |> Enum.map(&(permit?(user, &1, view, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :mitarbeiter_rollen ->          assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, view, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :mitglieder_verwaltung ->       assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, view, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :anlagen_geraete_verwaltung ->  assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, view, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :finanz_verwaltung ->           assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, view, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
+          :pr ->                          assert [true, false, false, true] == actions |> Enum.map(&(permit?(user, &1, view, %{"id" => club.id}))), "Rolle: #{clubrole.name}"
         end
         UserRole.delete_user_club_role(ucr)
       end
     end
 
     test "permit?/4 user to do action in DepartmentLive", %{club_user: user, club: club, clubroles: clubroles} do
+      view = :DepartmentLive
       actions = [:index, :new, :edit, :show]
       assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :DepartmentLive, %{"club_id" => club.id}))), "#{user.email}"
 
       for clubrole <- clubroles do
         {:ok, ucr} = UserRole.create_user_club_role(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
         case RPM.to_role_atom(:club, clubrole.name) do
-          :club_admin ->                  assert [true, true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, :DepartmentLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :vorstand ->                    assert [true, false, false, true]  == actions |> Enum.map(&(permit?(user, &1, :DepartmentLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :mitarbeiter_rollen ->          assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :DepartmentLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :mitglieder_verwaltung ->       assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :DepartmentLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :anlagen_geraete_verwaltung ->  assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :DepartmentLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :finanz_verwaltung ->           assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :DepartmentLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :pr ->                          assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :DepartmentLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :club_admin ->                  assert [true, true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :vorstand ->                    assert [true, false, false, true]  == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :mitarbeiter_rollen ->          assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :mitglieder_verwaltung ->       assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :anlagen_geraete_verwaltung ->  assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :finanz_verwaltung ->           assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :pr ->                          assert [true, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
         end
         UserRole.delete_user_club_role(ucr)
       end
     end
 
-    test "permit?/4 user to do action in UserClubRoleLive", %{club_user: user, club: club, clubroles: clubroles} do
+    test "permit?/4 user to do action in RoleLive", %{club_user: user, club: club, clubroles: clubroles} do
+      view = :RoleLive
       actions = [:index, :new, :edit, :show]
-      assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{id: club.id})))
+      assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :RoleLive, %{id: club.id})))
 
       for clubrole <- clubroles do
         {:ok, ucr} = UserRole.create_user_club_role(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
         case RPM.to_role_atom(:club, clubrole.name) do
-          :club_admin ->                  assert [true,  true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :vorstand ->                    assert [true,  false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :mitarbeiter_rollen ->          assert [true,  true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :mitglieder_verwaltung ->       assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :anlagen_geraete_verwaltung ->  assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :finanz_verwaltung ->           assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :pr ->                          assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, :UserClubRoleLive, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :club_admin ->                  assert [true,  true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :vorstand ->                    assert [true,  false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :mitarbeiter_rollen ->          assert [true,  true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :mitglieder_verwaltung ->       assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :anlagen_geraete_verwaltung ->  assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :finanz_verwaltung ->           assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :pr ->                          assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
         end
         UserRole.delete_user_club_role(ucr)
       end

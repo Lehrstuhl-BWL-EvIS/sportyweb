@@ -31,15 +31,15 @@ defmodule Sportyweb.RBAC.Policy do
 
   def permit?(_user, :index, :ClubLive, _params), do: true
   def permit?(_user, :new, :ClubLive, _params), do: false
-  def permit?(user, action, :ClubLive, %{"id" => club_id}), do: is_allowed?(user.id, action, club_id, :ClubLive)
+  def permit?(user, action, :ClubLive = view, %{"id" => club_id}), do: is_allowed?(user.id, action, club_id, view)
 
-  def permit?(user, action, :DepartmentLive, params) do
+  def permit?(user, action, :DepartmentLive = view, params) do
     club_id = if Map.has_key?(params, "club_id"), do: params["club_id"], else: params["id"] |> Organization.get_department!() |> Map.get(:club_id)
     dept_id = if Map.has_key?(params, "id"), do: params["id"], else: nil
-    is_allowed?(user.id, action, club_id, :DepartmentLive, dept_id)
+    is_allowed?(user.id, action, club_id, view, dept_id)
   end
 
-  def permit?(user, action, :UserClubRoleLive, %{"club_id" => club_id}), do: is_allowed?(user.id, action, club_id, :UserClubRoleLive)
+  def permit?(user, action, :RoleLive = view, %{"club_id" => club_id}), do: is_allowed?(user.id, action, club_id, view)
 
   def permit?(_user, _action, _view, _params), do: false
 
@@ -88,5 +88,6 @@ defmodule Sportyweb.RBAC.Policy do
   defp error_redirect(_action, :ClubLive, %{"id" => club_id}), do: ~p"/clubs/#{club_id}"
   defp error_redirect(_action, :DepartmentLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}"
   defp error_redirect(_action, :DepartmentLive, %{"id" => dept_id}), do: ~p"/clubs/#{dept_id |> Organization.get_department!() |> Map.get(:club_id)}"
-  defp error_redirect(_action, :UserClubRoleLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}"
+  defp error_redirect(_action, :RoleLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}"
+  defp error_redirect(_action, _view, _params), do: ~p"/clubs"
 end

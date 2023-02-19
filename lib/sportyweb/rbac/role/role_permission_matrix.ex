@@ -19,7 +19,7 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
         ClubLive:               [:edit],
         DepartmentLive:         [:index, :new, :edit, :show],
         HouseholdLive:          [:index, :new, :edit, :show],
-        UserClubRoleLive:       [:index, :new, :edit, :show]
+        RoleLive:               [:index, :new, :edit, :show]
       },
 
       vorstand: %{
@@ -27,12 +27,12 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
         ClubLive:               [:edit],
         DepartmentLive:         [:show],
         HouseholdLive:          [:index, :show],
-        UserClubRoleLive:       [:index]
+        RoleLive:               [:index]
       },
 
       mitarbeiter_rollen: %{
         Name:                   "Mitarbeiter- & Rollenverwaltung",
-        UserClubRoleLive:       [:index, :new, :edit, :show]
+        RoleLive:               [:index, :new, :edit, :show]
       },
 
       mitglieder_verwaltung: %{
