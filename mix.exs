@@ -79,10 +79,15 @@ defmodule Sportyweb.MixProject do
       # https://github.com/fuelen/ecto_erd
       {:ecto_erd, "~> 0.5", only: :dev},
 
-      # To generate the documentation for the entire project
+      # Generates the documentation for the entire project
       # https://hexdocs.pm/ex_doc/readme.html
       # https://github.com/elixir-lang/ex_doc
       {:ex_doc, "~> 0.29", only: :dev, runtime: false},
+
+      # Generates fake data (primarily for the seed)
+      # https://hexdocs.pm/faker/readme.html
+      # https://github.com/elixirs/faker
+      {:faker, "~> 0.17", only: [:dev, :test]},
 
       # TimeZoneDatabase for DateTime (which per default only supports UTC)
       # https://hexdocs.pm/tzdata/readme.html
