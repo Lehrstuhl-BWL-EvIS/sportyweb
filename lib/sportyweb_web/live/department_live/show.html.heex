@@ -12,6 +12,15 @@
     <:item title="Referenznummer"><%= @department.reference_number %></:item>
     <:item title="Beschreibung"><%= @department.description %></:item>
     <:item title="Erstellungsdatum"><%= Calendar.strftime(@department.created_at, "%d.%m.%Y") %></:item>
+    <:item title="Notizen">
+      <div class="divide-y divide-zinc-100">
+        <%= for note <- @department.notes do %>
+          <div class="py-4 first:pt-0 last:pb-0">
+            <%= note.value %>
+          </div>
+        <% end %>
+      </div>
+    </:item>
   </.list>
 </.card>
 

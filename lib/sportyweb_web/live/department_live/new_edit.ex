@@ -33,7 +33,7 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    department = Organization.get_department!(id, [:club])
+    department = Organization.get_department!(id, [:club, :notes])
 
     socket
     |> assign(:page_title, "Abteilung bearbeiten")

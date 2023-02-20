@@ -2,12 +2,14 @@ defmodule Sportyweb.Organization.DepartmentNote do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Organization.Department
+  alias Sportyweb.Polymorphic.Note
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "department_notes" do
-
-    field :department_id, :binary_id
-    field :note_id, :binary_id
+    belongs_to :department, Department
+    belongs_to :note, Note
 
     timestamps()
   end
@@ -15,7 +17,7 @@ defmodule Sportyweb.Organization.DepartmentNote do
   @doc false
   def changeset(department_note, attrs) do
     department_note
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:department_id, :note_id])
+    |> validate_required([:department_id, :note_id])
   end
 end

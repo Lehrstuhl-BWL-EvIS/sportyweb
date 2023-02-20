@@ -17,6 +17,7 @@ alias Sportyweb.Asset.Venue
 alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
 alias Sportyweb.Organization.Group
+alias Sportyweb.Polymorphic.Note
 
 ###################################
 # Add Users
@@ -73,7 +74,7 @@ for i <- 1..5 do
     club: club_1,
     name: "Standort #{i + 1}",
     reference_number: "00#{i + 1}",
-    description: Faker.Lorem.paragraph(),
+    description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
     is_main: false
   })
 end
@@ -81,7 +82,11 @@ end
 department = Repo.insert!(%Department{
   club: club_1,
   name: "Fußball Herren",
-  created_at: ~D[1900-03-01]
+  created_at: ~D[1900-03-01],
+  notes: [
+    %Note{value: Faker.Lorem.paragraph()},
+    %Note{value: Faker.Lorem.paragraph()}
+  ]
 })
 
 Repo.insert!(%Group{
@@ -192,7 +197,7 @@ for i <- 1..5 do
     club: club_2,
     name: "Standort #{i + 1}",
     reference_number: "00#{i + 1}",
-    description: Faker.Lorem.paragraph(),
+    description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
     is_main: false
   })
 end
@@ -200,7 +205,10 @@ end
 department = Repo.insert!(%Department{
   club: club_2,
   name: "Fußball Herren",
-  created_at: ~D[1948-03-01]
+  created_at: ~D[1948-03-01],
+  notes: [
+    %Note{value: Faker.Lorem.paragraph()}
+  ]
 })
 
 Repo.insert!(%Group{

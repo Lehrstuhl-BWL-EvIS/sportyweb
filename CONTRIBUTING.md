@@ -313,7 +313,7 @@ TODO:
     - Link
     - unique (Erklärung)
     - Constraints
-
+- https://hexdocs.pm/ecto/polymorphic-associations-with-many-to-many.html#polymorphism-with-many_to_many
 
 &nbsp;
 
