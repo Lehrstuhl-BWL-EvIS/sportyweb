@@ -5,7 +5,7 @@ defmodule Sportyweb.Polymorphic.Note do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "notes" do
-    field :value, :string
+    field :value, :string, default: ""
 
     timestamps()
   end
@@ -13,7 +13,8 @@ defmodule Sportyweb.Polymorphic.Note do
   @doc false
   def changeset(note, attrs) do
     note
-    |> cast(attrs, [:value])
+    |> cast(attrs, [:value], empty_values: ["", nil])
     |> validate_required([:value])
+    |> validate_length(:value, max: 20_000)
   end
 end
