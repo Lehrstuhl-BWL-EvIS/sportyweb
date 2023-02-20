@@ -27,8 +27,13 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               options={Contact.get_valid_types} prompt="Bitte auswählen" />
             </div>
 
-            <div class="col-span-12">
+            <div class="col-span-12 md:col-span-6">
               <.input field={{f, :organization_name}} type="text" label="Organisationsname" />
+            </div>
+
+            <div class="col-span-12 md:col-span-6">
+              <.input field={{f, :organization_type}} type="select" label="Organisationstyp"
+              options={Contact.get_valid_organization_types} prompt="Bitte auswählen" />
             </div>
 
             <div class="col-span-12 md:col-span-4">
