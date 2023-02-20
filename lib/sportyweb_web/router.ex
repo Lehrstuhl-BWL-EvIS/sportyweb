@@ -111,15 +111,6 @@ defmodule SportywebWeb.Router do
 
       live "/contacts/:id", ContactLive.Show, :show
 
-      # Households
-
-      live "/households", HouseholdLive.Index, :index
-      live "/households/new", HouseholdLive.Index, :new
-      live "/households/:id/edit", HouseholdLive.Index, :edit
-
-      live "/households/:id", HouseholdLive.Show, :show
-      live "/households/:id/show/edit", HouseholdLive.Show, :edit
-
       # Venues (Each belongs to a club)
 
       live "/venues", VenueLive.Index, :index_root
