@@ -10,13 +10,14 @@
 <.card>
   <.list>
     <:item title="Art"><%= @contact.type %></:item>
-    <:item title="Organisationsname"><%= @contact.organization_name %></:item>
-    <:item title="Organisationstyp"><%= @contact.organization_type %></:item>
-    <:item title="Nachname"><%= @contact.person_last_name %></:item>
-    <:item title="Vorname"><%= @contact.person_first_name_1 %></:item>
-    <:item title="2. Vorname"><%= @contact.person_first_name_2 %></:item>
-    <:item title="Geschlecht"><%= @contact.person_gender %></:item>
-    <:item title="Geburtstag">
+    <:item title="Name"><%= @contact.name %></:item>
+    <:item title="Organisationstyp" :if={Sportyweb.Personal.Contact.is_organization?(@contact)}>
+      <%= @contact.organization_type %>
+    </:item>
+    <:item title="Geschlecht" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
+      <%= @contact.person_gender %>
+    </:item>
+    <:item title="Geburtstag" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
       <%= if @contact.person_birthday, do: Calendar.strftime(@contact.person_birthday, "%d.%m.%Y"), else: "-" %>
     </:item>
   </.list>

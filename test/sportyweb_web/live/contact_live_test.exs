@@ -6,8 +6,8 @@ defmodule SportywebWeb.ContactLiveTest do
   import Sportyweb.OrganizationFixtures
   import Sportyweb.PersonalFixtures
 
-  @create_attrs %{organization_name: "some organization_name", organization_type: "some organization_type", person_birthday: ~D[2022-11-05], person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "male", person_last_name: "some person_last_name", type: "person"}
-  @update_attrs %{organization_name: "some updated organization_name", organization_type: "some updated organization_type", person_birthday: ~D[2022-11-06], person_first_name_1: "some updated person_first_name_1", person_first_name_2: "some updated person_first_name_2", person_gender: "female", person_last_name: "some updated person_last_name", type: "organization"}
+  @create_attrs %{organization_name: "some organization_name", organization_type: "club", person_birthday: ~D[2022-11-05], person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "male", person_last_name: "some person_last_name", type: "person"}
+  @update_attrs %{organization_name: "some updated organization_name", organization_type: "corporation", person_birthday: ~D[2022-11-06], person_first_name_1: "some updated person_first_name_1", person_first_name_2: "some updated person_first_name_2", person_gender: "female", person_last_name: "some updated person_last_name", type: "organization"}
   @invalid_attrs %{organization_name: nil, organization_type: nil, person_birthday: nil, person_first_name_1: nil, person_first_name_2: nil, person_gender: nil, person_last_name: nil, type: nil}
 
   setup do
@@ -41,7 +41,7 @@ defmodule SportywebWeb.ContactLiveTest do
       {:ok, _index_live, html} = live(conn, ~p"/clubs/#{contact.club_id}/contacts")
 
       assert html =~ "Kontakte"
-      assert html =~ contact.organization_name
+      assert html =~ contact.name
     end
   end
 
@@ -69,7 +69,7 @@ defmodule SportywebWeb.ContactLiveTest do
         |> follow_redirect(conn, ~p"/clubs/#{club}/contacts")
 
       assert html =~ "Kontakt erfolgreich erstellt"
-      assert html =~ "some organization_name"
+      assert html =~ "some person_last_name"
     end
 
     test "updates contact", %{conn: conn, user: user, contact: contact} do
@@ -91,7 +91,7 @@ defmodule SportywebWeb.ContactLiveTest do
         |> follow_redirect(conn, ~p"/contacts/#{contact}")
 
       assert html =~ "Kontakt erfolgreich aktualisiert"
-      assert html =~ "some updated organization_name"
+      assert html =~ contact.name
     end
   end
 
@@ -105,7 +105,7 @@ defmodule SportywebWeb.ContactLiveTest do
       {:ok, _show_live, html} = live(conn, ~p"/contacts/#{contact}")
 
       assert html =~ "Kontakt:"
-      assert html =~ contact.organization_name
+      assert html =~ contact.name
     end
   end
 end

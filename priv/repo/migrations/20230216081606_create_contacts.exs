@@ -5,6 +5,7 @@ defmodule Sportyweb.Repo.Migrations.CreateContacts do
     create table(:contacts, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :type, :string, null: false, default: ""
+      add :name, :string, null: false, default: ""
       add :organization_name, :string, null: false, default: ""
       add :organization_type, :string, null: false, default: ""
       add :person_last_name, :string, null: false, default: ""

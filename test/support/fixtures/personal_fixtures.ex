@@ -18,7 +18,7 @@ defmodule Sportyweb.PersonalFixtures do
         club_id: club.id,
         type: "person",
         organization_name: "some organization_name",
-        organization_type: "some organization_type",
+        organization_type: "club",
         person_last_name: "some person_last_name",
         person_first_name_1: "some person_first_name_1",
         person_first_name_2: "some person_first_name_2",

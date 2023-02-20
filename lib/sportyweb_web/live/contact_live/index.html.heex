@@ -10,9 +10,8 @@
 <.card>
   <%= if Enum.any?(@contacts) do %>
     <.table id="contacts" rows={@contacts} row_click={&JS.navigate(~p"/contacts/#{&1}")}>
+      <:col :let={contact} label="Name"><%= contact.name %></:col>
       <:col :let={contact} label="Art"><%= contact.type %></:col>
-      <:col :let={contact} label="Organization name"><%= contact.organization_name %></:col>
-      <:col :let={contact} label="Person last name"><%= contact.person_last_name %></:col>
 
       <:action :let={contact}>
         <.link navigate={~p"/contacts/#{contact}"}>Anzeigen</.link>
@@ -20,7 +19,7 @@
     </.table>
   <% else %>
     <p>
-      Bisher wurde noch keine Kontakt erstellt.
+      Bisher wurde noch kein Kontakt erstellt.
     </p>
   <% end %>
 </.card>

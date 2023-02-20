@@ -10,6 +10,7 @@ defmodule Sportyweb.Personal.Contact do
     belongs_to :club, Club
 
     field :type, :string, default: ""
+    field :name, :string, default: ""
     field :organization_name, :string, default: ""
     field :organization_type, :string, default: ""
     field :person_last_name, :string, default: ""
@@ -50,6 +51,14 @@ defmodule Sportyweb.Personal.Contact do
     ]
   end
 
+  def is_organization?(contact) do
+    contact.type == "organization"
+  end
+
+  def is_person?(contact) do
+    contact.type == "person"
+  end
+
   @doc false
   def changeset(contact, attrs) do
     contact
@@ -78,5 +87,23 @@ defmodule Sportyweb.Personal.Contact do
     |> validate_inclusion(
       :person_gender,
       get_valid_genders() |> Enum.map(fn gender -> gender[:value] end))
+    |> set_name(attrs)
   end
+
+  defp set_name(changeset, %{
+    "type" => type,
+    "organization_name" => organization_name,
+    "person_last_name" => person_last_name,
+    "person_first_name_1" => person_first_name_1,
+    "person_first_name_2" => person_first_name_2}) do
+    name = case type do
+      "organization" -> organization_name
+      "person"       -> "#{person_last_name}, #{person_first_name_1} #{person_first_name_2}"
+      _              -> ""
+    end
+
+    changeset |> Ecto.Changeset.change(name: String.trim(name))
+  end
+
+  defp set_name(changeset, _attrs), do: changeset
 end
