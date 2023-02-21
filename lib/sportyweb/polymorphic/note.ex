@@ -14,7 +14,7 @@ defmodule Sportyweb.Polymorphic.Note do
   def changeset(note, attrs) do
     note
     |> cast(attrs, [:value], empty_values: ["", nil])
-    |> validate_required([:value])
+    |> validate_required([])
     |> validate_length(:value, max: 20_000)
   end
 end

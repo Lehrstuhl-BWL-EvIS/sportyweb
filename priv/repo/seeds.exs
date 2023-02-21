@@ -108,7 +108,8 @@ Repo.insert!(%Group{
 department = Repo.insert!(%Department{
   club: club_1,
   name: "Fußball Damen",
-  created_at: ~D[1905-03-01]
+  created_at: ~D[1905-03-01],
+  notes: [%Note{}]
 })
 
 Repo.insert!(%Group{
@@ -144,19 +145,22 @@ Repo.insert!(%Group{
 Repo.insert!(%Department{
   club: club_1,
   name: "Basketball",
-  created_at: ~D[1910-03-01]
+  created_at: ~D[1910-03-01],
+  notes: [%Note{}]
 })
 
 Repo.insert!(%Department{
   club: club_1,
   name: "Handball",
-  created_at: ~D[1915-03-01]
+  created_at: ~D[1915-03-01],
+  notes: [%Note{}]
 })
 
 Repo.insert!(%Department{
   club: club_1,
   name: "Schach",
-  created_at: ~D[1920-03-01]
+  created_at: ~D[1920-03-01],
+  notes: [%Note{}]
 })
 
 ###################################
@@ -212,7 +216,8 @@ Repo.insert!(%Group{
 department = Repo.insert!(%Department{
   club: club_2,
   name: "Fußball Damen",
-  created_at: ~D[1950-03-01]
+  created_at: ~D[1950-03-01],
+  notes: [%Note{}]
 })
 
 Repo.insert!(%Group{
@@ -248,13 +253,15 @@ Repo.insert!(%Group{
 Repo.insert!(%Department{
   club: club_2,
   name: "Handball",
-  created_at: ~D[1955-03-01]
+  created_at: ~D[1955-03-01],
+  notes: [%Note{}]
 })
 
 Repo.insert!(%Department{
   club: club_2,
   name: "Tischtennis",
-  created_at: ~D[1960-03-01]
+  created_at: ~D[1960-03-01],
+  notes: [%Note{}]
 })
 
 ###################################

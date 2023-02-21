@@ -3,6 +3,7 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
 
   alias Sportyweb.Organization
   alias Sportyweb.Organization.Department
+  alias Sportyweb.Polymorphic.Note
 
   @impl true
   def render(assigns) do
@@ -46,7 +47,7 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
 
     socket
     |> assign(:page_title, "Abteilung erstellen")
-    |> assign(:department, %Department{club_id: club.id, club: club})
+    |> assign(:department, %Department{club_id: club.id, club: club, notes: [%Note{}]})
     |> assign(:club, club)
   end
 
