@@ -9,16 +9,24 @@
 
 <.card>
   <.list>
-    <:item title="Referenznummer"><%= @club.reference_number %></:item>
-    <:item title="Beschreibung"><%= @club.description %></:item>
+    <:item title="Referenznummer">
+      <%= format_string_field(@club.reference_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@club.description) %>
+    </:item>
     <:item title="URL">
       <%= if @club.website_url do %>
         <.link href={@club.website_url} target="_blank">
-          <span class="text-indigo-600 hover:underline"><%= @club.website_url %></span>
+          <span class="text-indigo-600 hover:underline">
+            <%= format_string_field(@club.website_url) %>
+          </span>
         </.link>
       <% end %>
     </:item>
-    <:item title="Gründungsdatum"><%= Calendar.strftime(@club.founded_at, "%d.%m.%Y") %></:item>
+    <:item title="Gründungsdatum">
+      <%= format_date_field_dmy(@club.founded_at) %>
+    </:item>
   </.list>
 </.card>
 

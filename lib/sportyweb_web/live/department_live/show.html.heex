@@ -9,14 +9,20 @@
 
 <.card>
   <.list>
-    <:item title="Referenznummer"><%= @department.reference_number %></:item>
-    <:item title="Beschreibung"><%= @department.description %></:item>
-    <:item title="Erstellungsdatum"><%= Calendar.strftime(@department.created_at, "%d.%m.%Y") %></:item>
+    <:item title="Referenznummer">
+      <%= format_string_field(@department.reference_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@department.description) %>
+    </:item>
+    <:item title="Erstellungsdatum">
+      <%= format_date_field_dmy(@department.created_at) %>
+    </:item>
     <:item title="Notizen">
       <div class="divide-y divide-zinc-100">
         <%= for note <- @department.notes do %>
           <div class="py-4 first:pt-0 last:pb-0">
-            <%= note.value %>
+            <%= format_string_field(note.value) %>
           </div>
         <% end %>
       </div>
@@ -36,14 +42,21 @@
 <.card>
   <%= if Enum.any?(@department.groups) do %>
     <.table id="groups" rows={@department.groups} row_click={&JS.navigate(~p"/groups/#{&1}")}>
-      <:col :let={group} label="Name"><%= group.name %></:col>
-      <:col :let={group} label="Referenznummer"><%= group.reference_number %></:col>
+      <:col :let={group} label="Name">
+        <%= format_string_field(group.name) %>
+      </:col>
+      <:col :let={group} label="Referenznummer">
+        <%= format_string_field(group.reference_number) %>
+      </:col>
       <:col :let={group} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
-          <%= group.description %>
+          <%= format_string_field(group.description) %>
         </div>
       </:col>
-      <:col :let={group} label="Erstellungsdatum"><%= Calendar.strftime(group.created_at, "%d.%m.%Y") %></:col>
+      <:col :let={group} label="Erstellungsdatum">
+        <%= format_date_field_dmy(group.created_at) %>
+      </:col>
+
       <:action :let={group}>
         <.link navigate={~p"/groups/#{group}"}>Anzeigen</.link>
       </:action>

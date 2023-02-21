@@ -2,6 +2,7 @@ defmodule SportywebWeb.ContactLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Personal
+  alias Sportyweb.Personal.Contact
 
   @impl true
   def mount(_params, _session, socket) do

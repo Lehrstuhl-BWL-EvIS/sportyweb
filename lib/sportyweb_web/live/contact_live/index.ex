@@ -3,6 +3,7 @@ defmodule SportywebWeb.ContactLive.Index do
 
   alias Sportyweb.Organization
   alias Sportyweb.Personal
+  alias Sportyweb.Personal.Contact
 
   @impl true
   def mount(%{"club_id" => club_id}, _session, socket) do
@@ -31,7 +32,7 @@ defmodule SportywebWeb.ContactLive.Index do
     club = Organization.get_club!(club_id)
 
     socket
-    |> assign(:page_title, "Alle Kontakte")
+    |> assign(:page_title, "Mitglieder & Kontakte")
     |> assign(:contact, nil)
     |> assign(:club, club)
   end

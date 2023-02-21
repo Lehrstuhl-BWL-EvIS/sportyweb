@@ -9,8 +9,12 @@
 
 <.card>
   <.list>
-    <:item title="Referenznummer"><%= @venue.reference_number %></:item>
-    <:item title="Beschreibung"><%= @venue.description %></:item>
+    <:item title="Referenznummer">
+      <%= format_string_field(@venue.reference_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@venue.description) %>
+    </:item>
     <:item title="Hauptsitz" :if={@venue.is_main}>
       <Heroicons.check_badge class="inline-block w-[20px] text-green-800" />
     </:item>
@@ -29,14 +33,18 @@
 <.card>
   <%= if Enum.any?(@venue.equipment) do %>
     <.table id="equipment" rows={@venue.equipment} row_click={&JS.navigate(~p"/equipment/#{&1}")}>
-      <:col :let={equipment} label="Name"><%= equipment.name %></:col>
-      <:col :let={equipment} label="Referenznummer"><%= equipment.reference_number %></:col>
-      <:col :let={equipment} label="Seriennummer"><%= equipment.serial_number %></:col>
+      <:col :let={equipment} label="Name">
+        <%= format_string_field(equipment.name) %>
+      </:col>
+      <:col :let={equipment} label="Referenznummer">
+        <%= format_string_field(equipment.reference_number) %>
+      </:col>
       <:col :let={equipment} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
-          <%= equipment.description %>
+          <%= format_string_field(equipment.description) %>
         </div>
       </:col>
+
       <:action :let={equipment}>
         <.link navigate={~p"/equipment/#{equipment}"}>Anzeigen</.link>
       </:action>

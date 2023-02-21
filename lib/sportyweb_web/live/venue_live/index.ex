@@ -31,7 +31,7 @@ defmodule SportywebWeb.VenueLive.Index do
     club = Organization.get_club!(club_id)
 
     socket
-    |> assign(:page_title, "Alle Standorte")
+    |> assign(:page_title, "Standorte & Equipment")
     |> assign(:venue, nil)
     |> assign(:club, club)
   end

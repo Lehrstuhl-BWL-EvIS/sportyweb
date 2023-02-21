@@ -9,16 +9,20 @@
 
 <.card>
   <.list>
-    <:item title="Art"><%= @contact.type %></:item>
-    <:item title="Name"><%= @contact.name %></:item>
+    <:item title="Art">
+      <%= get_key_for_value(Contact.get_valid_types(), @contact.type) %>
+    </:item>
+    <:item title="Name">
+      <%= format_string_field(@contact.name) %>
+    </:item>
     <:item title="Organisationstyp" :if={Sportyweb.Personal.Contact.is_organization?(@contact)}>
-      <%= @contact.organization_type %>
+      <%= get_key_for_value(Contact.get_valid_organization_types(), @contact.organization_type) %>
     </:item>
     <:item title="Geschlecht" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
-      <%= @contact.person_gender %>
+      <%= get_key_for_value(Contact.get_valid_genders(), @contact.person_gender) %>
     </:item>
     <:item title="Geburtstag" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
-      <%= if @contact.person_birthday, do: Calendar.strftime(@contact.person_birthday, "%d.%m.%Y"), else: "-" %>
+      <%= format_date_field_dmy(@contact.person_birthday) %>
     </:item>
   </.list>
 </.card>

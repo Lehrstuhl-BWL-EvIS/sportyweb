@@ -1,5 +1,5 @@
 <.header>
-  Kontakte
+  <%= @page_title %>
   <:actions>
     <.link navigate={~p"/clubs/#{@club}/contacts/new"}>
       <.button>Kontakt erstellen</.button>
@@ -10,8 +10,12 @@
 <.card>
   <%= if Enum.any?(@contacts) do %>
     <.table id="contacts" rows={@contacts} row_click={&JS.navigate(~p"/contacts/#{&1}")}>
-      <:col :let={contact} label="Name"><%= contact.name %></:col>
-      <:col :let={contact} label="Art"><%= contact.type %></:col>
+      <:col :let={contact} label="Name">
+        <%= format_string_field(contact.name) %>
+      </:col>
+      <:col :let={contact} label="Art">
+        <%= get_key_for_value(Contact.get_valid_types(), contact.type) %>
+      </:col>
 
       <:action :let={contact}>
         <.link navigate={~p"/contacts/#{contact}"}>Anzeigen</.link>

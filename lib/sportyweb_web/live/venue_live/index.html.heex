@@ -1,5 +1,5 @@
 <.header>
-  Standorte & Equipment
+  <%= @page_title %>
   <:actions>
     <.link navigate={~p"/clubs/#{@club}/venues/new"}>
       <.button>Standort erstellen</.button>
@@ -11,18 +11,22 @@
   <%= if Enum.any?(@venues) do %>
     <.table id="venues" rows={@venues} row_click={&JS.navigate(~p"/venues/#{&1}")}>
       <:col :let={venue} label="Name">
-        <%= venue.name %>
+        <%= format_string_field(venue.name) %>
         <%= if venue.is_main do %>
           <Heroicons.check_badge class="ml-1 inline-block w-[20px] text-green-800" />
         <% end %>
       </:col>
-      <:col :let={venue} label="Referenznummer"><%= venue.reference_number %></:col>
+      <:col :let={venue} label="Referenznummer">
+        <%= format_string_field(venue.reference_number) %>
+      </:col>
       <:col :let={venue} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
-          <%= venue.description %>
+          <%= format_string_field(venue.description) %>
         </div>
       </:col>
-      <:col :let={venue} label="Equipment"><%= Enum.count(venue.equipment) %></:col>
+      <:col :let={venue} label="Equipment">
+        <%= Enum.count(venue.equipment) %>
+      </:col>
 
       <:action :let={venue}>
         <.link navigate={~p"/venues/#{venue}"}>Anzeigen</.link>

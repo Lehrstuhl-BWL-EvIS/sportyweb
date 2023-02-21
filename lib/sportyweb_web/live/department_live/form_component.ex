@@ -37,11 +37,12 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
               <.input field={{f, :created_at}} type="date" label="Erstellungsdatum" />
             </div>
 
-            <.inputs_for :let={fp} field={f[:notes]}>
-              <div class="col-span-12">
-                <.input field={{fp, :value}} type="textarea" label="Notizen (optional)" />
-              </div>
-            </.inputs_for>
+            <div class="col-span-12">
+              <.label>Notizen (optional)</.label>
+              <.inputs_for :let={fp} field={f[:notes]}>
+                <.input field={{fp, :value}} type="textarea" />
+              </.inputs_for>
+            </div>
           </div>
 
           <:actions>

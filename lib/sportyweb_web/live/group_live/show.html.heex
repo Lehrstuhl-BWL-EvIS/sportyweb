@@ -9,10 +9,18 @@
 
 <.card>
   <.list>
-    <:item title="Abteilung"><%= @group.department.name %></:item>
-    <:item title="Referenznummer"><%= @group.reference_number %></:item>
-    <:item title="Beschreibung"><%= @group.description %></:item>
-    <:item title="Erstellungsdatum"><%= Calendar.strftime(@group.created_at, "%d.%m.%Y") %></:item>
+    <:item title="Abteilung">
+      <%= format_string_field(@group.department.name) %>
+    </:item>
+    <:item title="Referenznummer">
+      <%= format_string_field(@group.reference_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@group.description) %>
+    </:item>
+    <:item title="Erstellungsdatum">
+      <%= format_date_field_dmy(@group.created_at) %>
+    </:item>
   </.list>
 </.card>
 

@@ -1,5 +1,5 @@
 <.header>
-  Abteilungen & Gruppen
+  <%= @page_title %>
   <:actions>
     <.link navigate={~p"/clubs/#{@club}/departments/new"}>
       <.button>Abteilung erstellen</.button>
@@ -10,15 +10,23 @@
 <.card>
   <%= if Enum.any?(@departments) do %>
     <.table id="departments" rows={@departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
-      <:col :let={department} label="Name"><%= department.name %></:col>
-      <:col :let={department} label="Referenznummer"><%= department.reference_number %></:col>
+      <:col :let={department} label="Name">
+        <%= format_string_field(department.name) %>
+      </:col>
+      <:col :let={department} label="Referenznummer">
+        <%= format_string_field(department.reference_number) %>
+      </:col>
       <:col :let={department} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
-          <%= department.description %>
+          <%= format_string_field(department.description) %>
         </div>
       </:col>
-      <:col :let={department} label="Erstellungsdatum"><%= Calendar.strftime(department.created_at, "%d.%m.%Y") %></:col>
-      <:col :let={department} label="Gruppen"><%= Enum.count(department.groups) %></:col>
+      <:col :let={department} label="Erstellungsdatum">
+        <%= format_date_field_dmy(department.created_at) %>
+      </:col>
+      <:col :let={department} label="Gruppen">
+        <%= Enum.count(department.groups) %>
+      </:col>
 
       <:action :let={department}>
         <.link navigate={~p"/departments/#{department}"}>Anzeigen</.link>

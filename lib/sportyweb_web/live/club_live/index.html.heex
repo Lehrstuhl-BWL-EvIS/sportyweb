@@ -9,14 +9,20 @@
 
 <.card>
   <.table id="clubs" rows={@clubs} row_click={&JS.navigate(~p"/clubs/#{&1}")}>
-    <:col :let={club} label="Name"><%= club.name %></:col>
-    <:col :let={club} label="Referenznummer"><%= club.reference_number %></:col>
+    <:col :let={club} label="Name">
+      <%= format_string_field(club.name) %>
+    </:col>
+    <:col :let={club} label="Referenznummer">
+      <%= format_string_field(club.reference_number) %>
+    </:col>
     <:col :let={club} label="Beschreibung">
       <div class="max-w-[200px] truncate overflow-hidden">
-        <%= club.description %>
+        <%= format_string_field(club.description) %>
       </div>
     </:col>
-    <:col :let={club} label="Gründungsdatum"><%= Calendar.strftime(club.founded_at, "%d.%m.%Y") %></:col>
+    <:col :let={club} label="Gründungsdatum">
+      <%= format_date_field_dmy(club.founded_at) %>
+    </:col>
 
     <:action :let={club}>
       <.link navigate={~p"/clubs/#{club}"}>Anzeigen</.link>

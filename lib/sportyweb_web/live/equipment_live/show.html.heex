@@ -9,13 +9,27 @@
 
 <.card>
   <.list>
-    <:item title="Standort"><%= @equipment.venue.name %></:item>
-    <:item title="Referenznummer"><%= @equipment.reference_number %></:item>
-    <:item title="Seriennummer"><%= @equipment.serial_number %></:item>
-    <:item title="Beschreibung"><%= @equipment.description %></:item>
-    <:item title="Gekauft am"><%= if @equipment.purchased_at, do: Calendar.strftime(@equipment.purchased_at, "%d.%m.%Y"), else: "-" %></:item>
-    <:item title="Nutzung ab"><%= if @equipment.commission_at, do: Calendar.strftime(@equipment.commission_at, "%d.%m.%Y"), else: "-" %></:item>
-    <:item title="Nutzung bis"><%= if @equipment.decommission_at, do: Calendar.strftime(@equipment.decommission_at, "%d.%m.%Y"), else: "-" %></:item>
+    <:item title="Standort">
+      <%= format_string_field(@equipment.venue.name) %>
+    </:item>
+    <:item title="Referenznummer">
+      <%= format_string_field(@equipment.reference_number) %>
+    </:item>
+    <:item title="Seriennummer">
+      <%= format_string_field(@equipment.serial_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@equipment.description) %>
+    </:item>
+    <:item title="Gekauft am">
+      <%= format_date_field_dmy(@equipment.purchased_at) %>
+    </:item>
+    <:item title="Nutzung ab">
+      <%= format_date_field_dmy(@equipment.commission_at) %>
+    </:item>
+    <:item title="Nutzung bis">
+      <%= format_date_field_dmy(@equipment.decommission_at) %>
+    </:item>
   </.list>
 </.card>
 
