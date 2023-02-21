@@ -26,7 +26,7 @@ defmodule Sportyweb.AssetTest do
 
     test "get_venue!/1 returns the venue with given id" do
       venue = venue_fixture()
-      assert Asset.get_venue!(venue.id) == venue
+      assert Asset.get_venue!(venue.id).id == venue.id
     end
 
     test "create_venue/1 with valid data creates a venue" do
@@ -58,7 +58,7 @@ defmodule Sportyweb.AssetTest do
     test "update_venue/2 with invalid data returns error changeset" do
       venue = venue_fixture()
       assert {:error, %Ecto.Changeset{}} = Asset.update_venue(venue, @invalid_attrs)
-      assert venue == Asset.get_venue!(venue.id)
+      assert venue.id == Asset.get_venue!(venue.id).id
     end
 
     test "delete_venue/1 deletes the venue" do
