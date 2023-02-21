@@ -14,9 +14,13 @@ alias Sportyweb.Repo
 
 alias Sportyweb.Accounts
 alias Sportyweb.Asset.Venue
+alias Sportyweb.Asset.Equipment
+alias Sportyweb.Organization
 alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
 alias Sportyweb.Organization.Group
+alias Sportyweb.Personal
+alias Sportyweb.Personal.Contact
 alias Sportyweb.Polymorphic.Note
 
 ###################################
@@ -60,24 +64,6 @@ club_1 = Repo.insert!(%Club{
   website_url: "https://fcbayern.com/",
   founded_at: ~D[1900-02-27]
 })
-
-Repo.insert!(%Venue{
-  club: club_1,
-  name: "Hauptsitz",
-  reference_number: "001",
-  description: "Zentrale des FCB",
-  is_main: true
-})
-
-for i <- 1..5 do
-  Repo.insert!(%Venue{
-    club: club_1,
-    name: "Standort #{i + 1}",
-    reference_number: "00#{i + 1}",
-    description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
-    is_main: false
-  })
-end
 
 department = Repo.insert!(%Department{
   club: club_1,
@@ -184,24 +170,6 @@ club_2 = Repo.insert!(%Club{
   founded_at: ~D[1948-02-13]
 })
 
-Repo.insert!(%Venue{
-  club: club_2,
-  name: "Hauptsitz",
-  reference_number: "001",
-  description: "Zentrale des 1. FC Köln",
-  is_main: true
-})
-
-for i <- 1..5 do
-  Repo.insert!(%Venue{
-    club: club_2,
-    name: "Standort #{i + 1}",
-    reference_number: "00#{i + 1}",
-    description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
-    is_main: false
-  })
-end
-
 department = Repo.insert!(%Department{
   club: club_2,
   name: "Fußball Herren",
@@ -292,7 +260,7 @@ Repo.insert!(%Department{
 ###################################
 # Add Club 3
 
-Repo.insert!(%Club{
+club_3 = Repo.insert!(%Club{
   name: "FC St. Pauli",
   reference_number: "-",
   description: "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.",
@@ -303,10 +271,65 @@ Repo.insert!(%Club{
 ###################################
 # Add Club 4
 
-Repo.insert!(%Club{
+club_4 = Repo.insert!(%Club{
   name: "Leerer Verein",
   reference_number: "",
   description: "",
   website_url: "",
   founded_at: ~D[2020-04-01]
 })
+
+
+###################################
+# Randomly generated associated data
+
+Organization.list_clubs()
+|> Enum.with_index()
+|> Enum.each(fn {club, index} ->
+    # No data for the "empty club"!
+    if club.id != club_4.id do
+
+      # Contacts
+
+      for i <- 0..Enum.random(10..30) do
+        Personal.create_contact(%{
+          club_id: club.id,
+          type: (if :rand.uniform() < 0.7, do: "person", else: "organization"),
+          organization_name: "#{Faker.Company.buzzword_prefix()} #{Faker.Industry.sub_sector()} #{Faker.Company.buzzword_prefix()}",
+          organization_type: Contact.get_valid_organization_types()|> Enum.map(fn organization_type -> organization_type[:value] end) |> Enum.random(),
+          person_last_name: Faker.Person.last_name(),
+          person_first_name_1: Faker.Person.first_name(),
+          person_first_name_2: Faker.Person.first_name(),
+          person_gender: Contact.get_valid_genders() |> Enum.map(fn gender -> gender[:value] end) |> Enum.random(),
+          person_birthday: Faker.Date.date_of_birth(6..99)
+        })
+      end
+
+      # Venues
+
+      for i <- 0..Enum.random(3..7) do
+        venue = Repo.insert!(%Venue{
+          club_id: club.id,
+          name: (if i == 0, do: "Zentrale", else: "Standort #{i + 1}"),
+          reference_number: String.pad_leading("#{i + 1}", 3, "0"),
+          description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
+          is_main: i == 0
+        })
+
+        # Equipment
+
+        for j <- 0..Enum.random(1..30) do
+          Repo.insert!(%Equipment{
+            venue_id: venue.id,
+            name: Faker.Commerce.product_name(),
+            reference_number: :crypto.strong_rand_bytes(50) |> Base.encode64() |> String.slice(0, 5),
+            serial_number: :crypto.strong_rand_bytes(50) |> Base.encode64() |> String.slice(0, 15),
+            description: (if :rand.uniform() < 0.50, do: Faker.Lorem.paragraph(), else: ""),
+            purchased_at: Faker.Date.backward(Enum.random(300..2000)),
+            commission_at: Faker.Date.backward(Enum.random(0..299)),
+            decommission_at: (if :rand.uniform() < 0.65, do: Faker.Date.forward(Enum.random(100..2000)), else: nil)
+          })
+        end
+      end
+    end
+  end)
