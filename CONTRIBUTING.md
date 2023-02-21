@@ -358,13 +358,14 @@ TODO:
 
 - Rad nicht neu erfinden, an Vorarbeiten orientieren
 - CoreComponents, z.B. Cards
+- SportywebWeb.CommonHelper-Funktionen
 - Umbau index --> new_edit
 - Formulare
     - Einheitlichkeit
     - Kompaktheit (Spalten)
     - Anmerkungen / Erklärungen Felder
+    - 12-column-grid
 - Übersetzungen, Einheitlichkeit
-
 
 &nbsp;
 

@@ -55,6 +55,8 @@ defmodule SportywebWeb do
       use Phoenix.LiveView,
         layout: {SportywebWeb.Layouts, :app}
 
+      import SportywebWeb.CommonHelper
+
       unquote(html_helpers())
     end
   end
