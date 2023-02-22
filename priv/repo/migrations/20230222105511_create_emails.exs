@@ -4,9 +4,9 @@ defmodule Sportyweb.Repo.Migrations.CreateEmails do
   def change do
     create table(:emails, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :type, :string
-      add :address, :string
-      add :is_main, :boolean, default: false, null: false
+      add :type, :string, null: false, default: ""
+      add :address, :string, null: false, default: ""
+      add :is_main, :boolean, null: false, default: false
 
       timestamps()
     end

@@ -5,17 +5,30 @@ defmodule Sportyweb.Polymorphic.Email do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "emails" do
-    field :address, :string
+    field :type, :string, default: ""
+    field :address, :string, default: ""
     field :is_main, :boolean, default: false
-    field :type, :string
 
     timestamps()
+  end
+
+  def get_valid_types do
+    [
+      [key: "Privat", value: "private"],
+      [key: "Arbeit", value: "work"],
+      [key: "Zentrale", value: "organization"],
+      [key: "Andere", value: "other"]
+    ]
   end
 
   @doc false
   def changeset(email, attrs) do
     email
-    |> cast(attrs, [:type, :address, :is_main])
-    |> validate_required([:type, :address, :is_main])
+    |> cast(attrs, [:type, :address, :is_main], empty_values: ["", nil])
+    |> validate_required([:type, :address])
+    |> validate_inclusion(
+      :type,
+      get_valid_types() |> Enum.map(fn type -> type[:value] end))
+    |> validate_length(:address, max: 250)
   end
 end
