@@ -28,7 +28,7 @@ defmodule Sportyweb.Polymorphic.Phone do
   @doc false
   def changeset(phone, attrs) do
     phone
-    |> cast(attrs, [:type, :number, :is_main])
+    |> cast(attrs, [:type, :number, :is_main], empty_values: ["", nil])
     |> validate_required([:type, :number])
     |> validate_inclusion(
       :type,
