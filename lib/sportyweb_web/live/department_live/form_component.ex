@@ -39,8 +39,8 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
 
             <div class="col-span-12">
               <.label>Notizen (optional)</.label>
-              <.inputs_for :let={fp} field={f[:notes]}>
-                <.input field={{fp, :value}} type="textarea" />
+              <.inputs_for :let={f_nested} field={f[:notes]}>
+                <.input field={{f_nested, :content}} type="textarea" />
               </.inputs_for>
             </div>
           </div>

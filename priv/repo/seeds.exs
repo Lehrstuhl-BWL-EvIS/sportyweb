@@ -70,8 +70,8 @@ department = Repo.insert!(%Department{
   name: "Fußball Herren",
   created_at: ~D[1900-03-01],
   notes: [
-    %Note{value: Faker.Lorem.paragraph()},
-    %Note{value: Faker.Lorem.paragraph()}
+    %Note{content: Faker.Lorem.paragraph()},
+    %Note{content: Faker.Lorem.paragraph()}
   ]
 })
 
@@ -179,7 +179,7 @@ department = Repo.insert!(%Department{
   name: "Fußball Herren",
   created_at: ~D[1948-03-01],
   notes: [
-    %Note{value: Faker.Lorem.paragraph()}
+    %Note{content: Faker.Lorem.paragraph()}
   ]
 })
 
