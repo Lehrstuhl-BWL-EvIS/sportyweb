@@ -299,6 +299,7 @@ Organization.list_clubs()
       # Contacts
 
       for i <- 0..Enum.random(10..30) do
+        # Use the context function instead of Repo.insert!() to invoke the changeset which sets the name.
         Personal.create_contact(%{
           club_id: club.id,
           type: (if :rand.uniform() < 0.7, do: "person", else: "organization"),

@@ -87,15 +87,19 @@ defmodule Sportyweb.Personal.Contact do
     |> validate_inclusion(
       :person_gender,
       get_valid_genders() |> Enum.map(fn gender -> gender[:value] end))
-    |> set_name(attrs)
+    |> set_name()
   end
 
-  defp set_name(changeset, %{
-    "type" => type,
-    "organization_name" => organization_name,
-    "person_last_name" => person_last_name,
-    "person_first_name_1" => person_first_name_1,
-    "person_first_name_2" => person_first_name_2}) do
+  defp set_name(changeset) do
+    # The "name" field is only set internally and its content is based on
+    # the contact type and the content of (multiple) other fields.
+
+    type                = get_field(changeset, :type)
+    organization_name   = get_field(changeset, :organization_name)
+    person_last_name    = get_field(changeset, :person_last_name)
+    person_first_name_1 = get_field(changeset, :person_first_name_1)
+    person_first_name_2 = get_field(changeset, :person_first_name_2)
+
     name = case type do
       "organization" -> organization_name
       "person"       -> "#{person_last_name}, #{person_first_name_1} #{person_first_name_2}"
@@ -104,6 +108,4 @@ defmodule Sportyweb.Personal.Contact do
 
     changeset |> Ecto.Changeset.change(name: String.trim(name))
   end
-
-  defp set_name(changeset, _attrs), do: changeset
 end
