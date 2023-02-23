@@ -348,7 +348,8 @@ TODO:
 - assigns
     - Club auf Socket, Navigation Sidebar
     - Breadcrumbs
-
+- https://hexdocs.pm/phoenix_live_view/Phoenix.LiveComponent.html#module-targeting-component-events
+- https://hexdocs.pm/phoenix_live_view/Phoenix.LiveComponent.html#c:handle_event/3
 
 &nbsp;
 

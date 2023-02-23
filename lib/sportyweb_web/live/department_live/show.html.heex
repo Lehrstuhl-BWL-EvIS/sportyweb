@@ -19,13 +19,17 @@
       <%= format_date_field_dmy(@department.created_at) %>
     </:item>
     <:item title="Notizen">
-      <div class="divide-y divide-zinc-100">
-        <%= for note <- @department.notes do %>
-          <div class="py-4 first:pt-0 last:pb-0">
-            <%= format_string_field(note.content) %>
-          </div>
-        <% end %>
-      </div>
+      <%= if Enum.any?(@department.notes) do %>
+        <div class="divide-y divide-zinc-100">
+          <%= for note <- @department.notes do %>
+            <div class="py-4 first:pt-0 last:pb-0">
+              <%= format_string_field(note.content) %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        -
+      <% end %>
     </:item>
   </.list>
 </.card>

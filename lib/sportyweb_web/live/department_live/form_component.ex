@@ -2,6 +2,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
   use SportywebWeb, :live_component
 
   alias Sportyweb.Organization
+  alias Sportyweb.Polymorphic.Note
 
   @impl true
   def render(assigns) do
@@ -40,8 +41,23 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
             <div class="col-span-12">
               <.label>Notizen (optional)</.label>
               <.inputs_for :let={f_nested} field={f[:notes]}>
-                <.input field={{f_nested, :content}} type="textarea" />
+                <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+                  <div class="col-span-11">
+                    <.input field={{f_nested, :content}} type="textarea" />
+                  </div>
+
+                  <div class="col-span-1">
+                    <.input field={{f_nested, :delete}} type="checkbox" />
+                    <.button type="button" class="bg-rose-700 hover:bg-rose-800">
+                      <Heroicons.trash class="text-white h-4 w-4" />
+                    </.button>
+                  </div>
+                </div>
               </.inputs_for>
+            </div>
+
+            <div class="col-span-12">
+              <.button type="button" phx-click="add_note" phx-target={@myself}>Notiz hinzufügen</.button>
             </div>
           </div>
 
@@ -92,6 +108,19 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
     })
 
     save_department(socket, socket.assigns.action, department_params)
+  end
+
+  def handle_event("add_note", _params, socket) do
+    # Get the current, already changed list of notes or the original list as fallback
+    current_notes = Map.get(socket.assigns.changeset.changes, :notes, socket.assigns.department.notes)
+    # Append a new, empty note
+    new_notes = current_notes ++ [%Note{}]
+    # Create a new changeset with the new, longer list
+    changeset =
+      socket.assigns.changeset
+      |> Ecto.Changeset.put_assoc(:notes, new_notes)
+
+    {:noreply, assign(socket, :changeset, changeset)}
   end
 
   defp save_department(socket, :edit, department_params) do
