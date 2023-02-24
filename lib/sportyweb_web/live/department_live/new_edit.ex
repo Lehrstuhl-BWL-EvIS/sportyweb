@@ -3,7 +3,9 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
 
   alias Sportyweb.Organization
   alias Sportyweb.Organization.Department
+  alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.Note
+  alias Sportyweb.Polymorphic.Phone
 
   @impl true
   def render(assigns) do
@@ -34,7 +36,7 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    department = Organization.get_department!(id, [:club, :notes])
+    department = Organization.get_department!(id, [:club, :emails, :phones, :notes])
 
     socket
     |> assign(:page_title, "Abteilung bearbeiten")
@@ -47,7 +49,12 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
 
     socket
     |> assign(:page_title, "Abteilung erstellen")
-    |> assign(:department, %Department{club_id: club.id, club: club, notes: [%Note{}]})
+    |> assign(:department, %Department{
+      club_id: club.id,
+      club: club,
+      emails: [%Email{}],
+      phones: [%Phone{}],
+      notes: [%Note{}]})
     |> assign(:club, club)
   end
 

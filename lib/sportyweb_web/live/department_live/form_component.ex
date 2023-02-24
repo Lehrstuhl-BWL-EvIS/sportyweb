@@ -2,7 +2,9 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
   use SportywebWeb, :live_component
 
   alias Sportyweb.Organization
+  alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.Note
+  alias Sportyweb.Polymorphic.Phone
 
   @impl true
   def render(assigns) do
@@ -36,6 +38,36 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
 
             <div class="col-span-12 md:col-span-6">
               <.input field={{f, :created_at}} type="date" label="Erstellungsdatum" />
+            </div>
+
+            <div class="col-span-12">
+              <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+                <.inputs_for :let={f_nested} field={f[:emails]}>
+                  <div class="col-span-12 md:col-span-8">
+                    <.input field={{f_nested, :address}} type="text" label="E-Mail" />
+                  </div>
+
+                  <div class="col-span-12 md:col-span-4">
+                    <.input field={{f_nested, :type}} type="select" label="Art"
+                    options={Email.get_valid_types} prompt="Bitte auswählen" />
+                  </div>
+                </.inputs_for>
+              </div>
+            </div>
+
+            <div class="col-span-12">
+              <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+                <.inputs_for :let={f_nested} field={f[:phones]}>
+                  <div class="col-span-12 md:col-span-8">
+                    <.input field={{f_nested, :number}} type="text" label="Telefon" />
+                  </div>
+
+                  <div class="col-span-12 md:col-span-4">
+                    <.input field={{f_nested, :type}} type="select" label="Art"
+                    options={Phone.get_valid_types} prompt="Bitte auswählen" />
+                  </div>
+                </.inputs_for>
+              </div>
             </div>
 
             <div class="col-span-12">

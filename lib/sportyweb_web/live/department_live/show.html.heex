@@ -18,6 +18,12 @@
     <:item title="Erstellungsdatum">
       <%= format_date_field_dmy(@department.created_at) %>
     </:item>
+    <:item title="E-Mail">
+      <%= format_struct_list(@department.emails, :address) %>
+    </:item>
+    <:item title="Telefon">
+      <%= format_struct_list(@department.phones, :number) %>
+    </:item>
     <:item title="Notizen">
       <%= if Enum.any?(@department.notes) do %>
         <div class="divide-y divide-zinc-100">
