@@ -35,6 +35,9 @@ echo "- Run database migrations (Dev & Test)"
 MIX_ENV=dev  mix ecto.migrate
 MIX_ENV=test mix ecto.migrate
 
+echo "- Generate a dump of the SQL structure"
+MIX_ENV=dev mix ecto.dump
+
 echo "- Run seed file"
 mix run priv/repo/seeds.exs
 
