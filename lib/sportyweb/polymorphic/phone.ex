@@ -5,7 +5,7 @@ defmodule Sportyweb.Polymorphic.Phone do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "phones" do
-    field :type, :string, default: ""
+    field :type, :string, default: "other"
     field :number, :string, default: ""
     field :is_main, :boolean, default: false
 
@@ -29,10 +29,12 @@ defmodule Sportyweb.Polymorphic.Phone do
   def changeset(phone, attrs) do
     phone
     |> cast(attrs, [:type, :number, :is_main], empty_values: ["", nil])
-    |> validate_required([:type, :number])
+    |> validate_required([:type])
     |> validate_inclusion(
       :type,
       get_valid_types() |> Enum.map(fn type -> type[:value] end))
+    |> update_change(:number, &String.trim/1)
+    |> validate_format(:number, ~r/^$|^[0-9\s\/\(\)\+\-]/) # Empty or contains valid chars
     |> validate_length(:number, max: 250)
   end
 end
