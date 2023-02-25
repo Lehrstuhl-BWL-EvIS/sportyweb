@@ -23,24 +23,26 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <.input_grid>
-            <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :name}} type="text" label="Name" />
-            </div>
+          <div class="divide-y divide-zinc-200 space-y-8">
+            <.input_grid>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={{f, :name}} type="text" label="Name" />
+              </div>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :reference_number}} type="text" label="Referenznummer (optional)" />
-            </div>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={{f, :reference_number}} type="text" label="Referenznummer (optional)" />
+              </div>
 
-            <div class="col-span-12">
-              <.input field={{f, :description}} type="textarea" label="Beschreibung (optional)" />
-            </div>
+              <div class="col-span-12">
+                <.input field={{f, :description}} type="textarea" label="Beschreibung (optional)" />
+              </div>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :created_at}} type="date" label="Erstellungsdatum" />
-            </div>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={{f, :created_at}} type="date" label="Erstellungsdatum" />
+              </div>
+            </.input_grid>
 
-            <div class="col-span-12">
+            <div class="pt-6">
               <.input_grid>
                 <.inputs_for :let={f_nested} field={f[:emails]}>
                   <div class="col-span-12 md:col-span-8">
@@ -52,11 +54,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
                     options={Email.get_valid_types} prompt="Bitte auswählen" />
                   </div>
                 </.inputs_for>
-              </.input_grid>
-            </div>
 
-            <div class="col-span-12">
-              <.input_grid>
                 <.inputs_for :let={f_nested} field={f[:phones]}>
                   <div class="col-span-12 md:col-span-8">
                     <.input field={{f_nested, :number}} type="text" label="Telefon" />
@@ -70,28 +68,30 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
               </.input_grid>
             </div>
 
-            <div class="col-span-12">
-              <.label>Notizen (optional)</.label>
-              <.inputs_for :let={f_nested} field={f[:notes]}>
-                <.input_grid>
-                  <div class="col-span-11">
-                    <.input field={{f_nested, :content}} type="textarea" />
-                  </div>
+            <.input_grid class="pt-6">
+              <div class="col-span-12">
+                <.label>Notizen (optional)</.label>
+                <.inputs_for :let={f_nested} field={f[:notes]}>
+                  <.input_grid>
+                    <div class="col-span-11">
+                      <.input field={{f_nested, :content}} type="textarea" />
+                    </div>
 
-                  <div class="col-span-1">
-                    <.input field={{f_nested, :delete}} type="checkbox" />
-                    <.button type="button" class="bg-rose-700 hover:bg-rose-800">
-                      <Heroicons.trash class="text-white h-4 w-4" />
-                    </.button>
-                  </div>
-                </.input_grid>
-              </.inputs_for>
-            </div>
+                    <div class="col-span-1">
+                      <.input field={{f_nested, :delete}} type="checkbox" />
+                      <.button type="button" class="bg-rose-700 hover:bg-rose-800">
+                        <Heroicons.trash class="text-white h-4 w-4" />
+                      </.button>
+                    </div>
+                  </.input_grid>
+                </.inputs_for>
+              </div>
 
-            <div class="col-span-12">
-              <.button type="button" phx-click="add_note" phx-target={@myself}>Notiz hinzufügen</.button>
-            </div>
-          </.input_grid>
+              <div class="col-span-12">
+                <.button type="button" phx-click="add_note" phx-target={@myself}>Notiz hinzufügen</.button>
+              </div>
+            </.input_grid>
+          </div>
 
           <:actions>
             <div>
