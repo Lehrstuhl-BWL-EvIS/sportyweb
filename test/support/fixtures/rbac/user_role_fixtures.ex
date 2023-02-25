@@ -23,4 +23,18 @@ defmodule Sportyweb.RBAC.UserRoleFixtures do
 
     user_application_role
   end
+
+  @doc """
+  Generate a user_department_role.
+  """
+  def user_department_role_fixture(attrs \\ %{}) do
+    {:ok, user_department_role} =
+      attrs
+      |> Enum.into(%{
+
+      })
+      |> Sportyweb.RBAC.UserRole.create_user_department_role()
+
+    user_department_role
+  end
 end

@@ -125,4 +125,56 @@ defmodule Sportyweb.RBAC.UserRoleTest do
       assert %Ecto.Changeset{} = UserRole.change_user_application_role(user_application_role)
     end
   end
+
+  describe "userdepartmentroles" do
+    alias Sportyweb.RBAC.UserRole.UserDepartmentRole
+
+    import Sportyweb.RBAC.UserRoleFixtures
+
+    @invalid_attrs %{}
+
+    test "list_userdepartmentroles/0 returns all userdepartmentroles" do
+      user_department_role = user_department_role_fixture()
+      assert UserRole.list_userdepartmentroles() == [user_department_role]
+    end
+
+    test "get_user_department_role!/1 returns the user_department_role with given id" do
+      user_department_role = user_department_role_fixture()
+      assert UserRole.get_user_department_role!(user_department_role.id) == user_department_role
+    end
+
+    test "create_user_department_role/1 with valid data creates a user_department_role" do
+      valid_attrs = %{}
+
+      assert {:ok, %UserDepartmentRole{} = user_department_role} = UserRole.create_user_department_role(valid_attrs)
+    end
+
+    test "create_user_department_role/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = UserRole.create_user_department_role(@invalid_attrs)
+    end
+
+    test "update_user_department_role/2 with valid data updates the user_department_role" do
+      user_department_role = user_department_role_fixture()
+      update_attrs = %{}
+
+      assert {:ok, %UserDepartmentRole{} = user_department_role} = UserRole.update_user_department_role(user_department_role, update_attrs)
+    end
+
+    test "update_user_department_role/2 with invalid data returns error changeset" do
+      user_department_role = user_department_role_fixture()
+      assert {:error, %Ecto.Changeset{}} = UserRole.update_user_department_role(user_department_role, @invalid_attrs)
+      assert user_department_role == UserRole.get_user_department_role!(user_department_role.id)
+    end
+
+    test "delete_user_department_role/1 deletes the user_department_role" do
+      user_department_role = user_department_role_fixture()
+      assert {:ok, %UserDepartmentRole{}} = UserRole.delete_user_department_role(user_department_role)
+      assert_raise Ecto.NoResultsError, fn -> UserRole.get_user_department_role!(user_department_role.id) end
+    end
+
+    test "change_user_department_role/1 returns a user_department_role changeset" do
+      user_department_role = user_department_role_fixture()
+      assert %Ecto.Changeset{} = UserRole.change_user_department_role(user_department_role)
+    end
+  end
 end

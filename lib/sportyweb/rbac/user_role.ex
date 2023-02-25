@@ -266,4 +266,100 @@ defmodule Sportyweb.RBAC.UserRole do
   def change_user_application_role(%UserApplicationRole{} = user_application_role, attrs \\ %{}) do
     UserApplicationRole.changeset(user_application_role, attrs)
   end
+
+  alias Sportyweb.RBAC.UserRole.UserDepartmentRole
+
+  @doc """
+  Returns the list of userdepartmentroles.
+
+  ## Examples
+
+      iex> list_userdepartmentroles()
+      [%UserDepartmentRole{}, ...]
+
+  """
+  def list_userdepartmentroles do
+    Repo.all(UserDepartmentRole)
+  end
+
+  @doc """
+  Gets a single user_department_role.
+
+  Raises `Ecto.NoResultsError` if the User department role does not exist.
+
+  ## Examples
+
+      iex> get_user_department_role!(123)
+      %UserDepartmentRole{}
+
+      iex> get_user_department_role!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_user_department_role!(id), do: Repo.get!(UserDepartmentRole, id)
+
+  @doc """
+  Creates a user_department_role.
+
+  ## Examples
+
+      iex> create_user_department_role(%{field: value})
+      {:ok, %UserDepartmentRole{}}
+
+      iex> create_user_department_role(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_user_department_role(attrs \\ %{}) do
+    %UserDepartmentRole{}
+    |> UserDepartmentRole.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a user_department_role.
+
+  ## Examples
+
+      iex> update_user_department_role(user_department_role, %{field: new_value})
+      {:ok, %UserDepartmentRole{}}
+
+      iex> update_user_department_role(user_department_role, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_department_role(%UserDepartmentRole{} = user_department_role, attrs) do
+    user_department_role
+    |> UserDepartmentRole.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a user_department_role.
+
+  ## Examples
+
+      iex> delete_user_department_role(user_department_role)
+      {:ok, %UserDepartmentRole{}}
+
+      iex> delete_user_department_role(user_department_role)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_user_department_role(%UserDepartmentRole{} = user_department_role) do
+    Repo.delete(user_department_role)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking user_department_role changes.
+
+  ## Examples
+
+      iex> change_user_department_role(user_department_role)
+      %Ecto.Changeset{data: %UserDepartmentRole{}}
+
+  """
+  def change_user_department_role(%UserDepartmentRole{} = user_department_role, attrs \\ %{}) do
+    UserDepartmentRole.changeset(user_department_role, attrs)
+  end
 end
