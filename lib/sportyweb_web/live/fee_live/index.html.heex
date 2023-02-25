@@ -1,0 +1,58 @@
+<.header>
+  Listing Fees
+  <:actions>
+    <.link patch={~p"/fees/new"}>
+      <.button>New Fee</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="fees"
+  rows={@streams.fees}
+  row_click={fn {_id, fee} -> JS.navigate(~p"/fees/#{fee}") end}
+>
+  <:col :let={{_id, fee}} label="Type"><%= fee.type %></:col>
+  <:col :let={{_id, fee}} label="Name"><%= fee.name %></:col>
+  <:col :let={{_id, fee}} label="Reference number"><%= fee.reference_number %></:col>
+  <:col :let={{_id, fee}} label="Description"><%= fee.description %></:col>
+  <:col :let={{_id, fee}} label="Base fee in eur cent"><%= fee.base_fee_in_eur_cent %></:col>
+  <:col :let={{_id, fee}} label="Has admission fee"><%= fee.has_admission_fee %></:col>
+  <:col :let={{_id, fee}} label="Admission fee in eur cent"><%= fee.admission_fee_in_eur_cent %></:col>
+  <:col :let={{_id, fee}} label="Is recurring"><%= fee.is_recurring %></:col>
+  <:col :let={{_id, fee}} label="Is group only"><%= fee.is_group_only %></:col>
+  <:col :let={{_id, fee}} label="Minimum age in years"><%= fee.minimum_age_in_years %></:col>
+  <:col :let={{_id, fee}} label="Maximum age in years"><%= fee.maximum_age_in_years %></:col>
+  <:col :let={{_id, fee}} label="Commission at"><%= fee.commission_at %></:col>
+  <:col :let={{_id, fee}} label="Decommission at"><%= fee.decommission_at %></:col>
+  <:action :let={{_id, fee}}>
+    <div class="sr-only">
+      <.link navigate={~p"/fees/#{fee}"}>Show</.link>
+    </div>
+    <.link patch={~p"/fees/#{fee}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, fee}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: fee.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="fee-modal"
+  show
+  on_cancel={JS.navigate(~p"/fees")}
+>
+  <.live_component
+    module={SportywebWeb.FeeLive.FormComponent}
+    id={@fee.id || :new}
+    title={@page_title}
+    action={@live_action}
+    fee={@fee}
+    patch={~p"/fees"}
+  />
+</.modal>

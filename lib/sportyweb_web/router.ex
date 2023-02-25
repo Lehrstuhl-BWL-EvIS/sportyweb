@@ -130,6 +130,15 @@ defmodule SportywebWeb.Router do
       live "/equipment/:id/edit", EquipmentLive.NewEdit, :edit
 
       live "/equipment/:id", EquipmentLive.Show, :show
+
+      # Fees (Polymorphic)
+
+      live "/fees", FeeLive.Index, :index
+      live "/fees/new", FeeLive.Index, :new
+      live "/fees/:id/edit", FeeLive.Index, :edit
+
+      live "/fees/:id", FeeLive.Show, :show
+      live "/fees/:id/show/edit", FeeLive.Show, :edit
     end
   end
 

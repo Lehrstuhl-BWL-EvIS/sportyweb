@@ -1,0 +1,38 @@
+<.header>
+  Fee <%= @fee.id %>
+  <:subtitle>This is a fee record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/fees/#{@fee}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit fee</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Type"><%= @fee.type %></:item>
+  <:item title="Name"><%= @fee.name %></:item>
+  <:item title="Reference number"><%= @fee.reference_number %></:item>
+  <:item title="Description"><%= @fee.description %></:item>
+  <:item title="Base fee in eur cent"><%= @fee.base_fee_in_eur_cent %></:item>
+  <:item title="Has admission fee"><%= @fee.has_admission_fee %></:item>
+  <:item title="Admission fee in eur cent"><%= @fee.admission_fee_in_eur_cent %></:item>
+  <:item title="Is recurring"><%= @fee.is_recurring %></:item>
+  <:item title="Is group only"><%= @fee.is_group_only %></:item>
+  <:item title="Minimum age in years"><%= @fee.minimum_age_in_years %></:item>
+  <:item title="Maximum age in years"><%= @fee.maximum_age_in_years %></:item>
+  <:item title="Commission at"><%= @fee.commission_at %></:item>
+  <:item title="Decommission at"><%= @fee.decommission_at %></:item>
+</.list>
+
+<.back navigate={~p"/fees"}>Back to fees</.back>
+
+<.modal :if={@live_action == :edit} id="fee-modal" show on_cancel={JS.patch(~p"/fees/#{@fee}")}>
+  <.live_component
+    module={SportywebWeb.FeeLive.FormComponent}
+    id={@fee.id}
+    title={@page_title}
+    action={@live_action}
+    fee={@fee}
+    patch={~p"/fees/#{@fee}"}
+  />
+</.modal>
