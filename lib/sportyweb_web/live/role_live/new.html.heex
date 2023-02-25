@@ -2,15 +2,26 @@
     Mitarbeiter zu <%= @club.name %> hinzufügen
     <:subtitle>Verwalter: <%= @current_user.email %></:subtitle>
 </.header>
-  
-<.card>
-    <.table id="users" rows={@users} row_click={&JS.navigate(~p"/clubs/#{@club.id}/roles/#{&1}/edit")}>
-      <:col :let={user} label="Für Sie einsehbare Nutzer"><%= user.email %></:col>
-      <:action :let={user}>
-        <.link navigate={~p"/clubs/#{@club.id}/roles/#{user.id}/edit"}>Hinzufügen</.link>
-      </:action>
-    </.table>
+
+<.card class="mt-8">
+  <.simple_form
+    id="add_user_form"  
+    :let={f}
+    for={@changeset}
+    phx-submit="add"
+    phx-change="validate"
+    as={:user}
+  >
+    <.error :if={@changeset.action == :insert}>
+      Oops, something went wrong! Please check the errors below.
+    </.error>
+    
+    <.input field={{f, :email}} type="email" label="Bitte geben Sie die Email des hinzuzufügenden Nutzers ein" required />
+    <:actions>
+      <.button phx-disable-with="Nutzer wird hinzugefügt..." class="w-full">Hinzufügen</.button>
+    </:actions>
+  </.simple_form>
 </.card>
-  
+
 <.back navigate={~p"/clubs/#{@club.id}/roles"}>Zurück zur Nutzer & Rollen</.back>
   

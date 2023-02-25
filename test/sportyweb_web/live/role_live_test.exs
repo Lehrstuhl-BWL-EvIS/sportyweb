@@ -17,13 +17,11 @@ defmodule SportywebWeb.RoleLiveTest do
     clubrole_admin = club_role_fixture(%{name: "Vereins Administration"})
     ucr_admin = user_club_role_fixture(%{user_id: club_admin.id, club_id: club.id, clubrole_id: clubrole_admin.id})
 
-    user_not_in_club = user_fixture()
     clubrole_other = club_role_fixture(%{name: "Vorstand"})
 
     %{
       user: user,
       club_admin: club_admin,
-      user_not_in_club: user_not_in_club,
       club: club,
       clubrole_admin: clubrole_admin,
       clubrole_other: clubrole_other,
@@ -85,7 +83,6 @@ defmodule SportywebWeb.RoleLiveTest do
 
       assert html =~ "Rollen von #{club_admin.email}"
       assert html =~ "im Verein #{club.name}"
-      assert html =~ "im Verein #{club.name}"
       assert html =~ "Zugewiesene Rollen"
       assert html =~ "Entfernen"
       assert html =~ "Verfügbare Rollen zur Zuweisung"
@@ -104,7 +101,7 @@ defmodule SportywebWeb.RoleLiveTest do
   end
 
   describe "New" do
-    test "add userclubrole to club", %{conn: conn, user: user, club: club, user_not_in_club: user_not_in_club} do
+    test "add userclubrole to club", %{conn: conn, user: user, club: club} do
       {:error, _} = live(conn, ~p"/clubs/#{club.id}/roles/new")
 
       conn = conn |> log_in_user(user)
@@ -113,12 +110,22 @@ defmodule SportywebWeb.RoleLiveTest do
       assert html =~ "Mitarbeiter zu #{club.name} hinzufügen"
       assert html =~ "Verwalter: #{user.email}"
 
+      email = unique_user_email()
       {:ok, _, newhtml} = new_live
-             |> element("#users-#{user_not_in_club.id} a", "Hinzufügen")
-             |> render_click()
-             |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{user_not_in_club.id}/edit")
+      |> form("#add_user_form", user: %{email: email})
+      |> render_submit()
+      |> follow_redirect(conn,  ~p"/clubs/#{club.id}/roles/#{Sportyweb.Accounts.get_user_by_email(email).id}/edit")
 
-      assert newhtml =~ "Rollen von #{user_not_in_club.email}"
+      added_user = Sportyweb.Accounts.get_user_by_email(email)
+      assert email == added_user.email
+
+      assert newhtml =~ "Vergib dem Nutzer eine Rolle um ihn dem Verein hinzuzufügen."
+      assert newhtml =~ "Rollen von #{added_user.email}"
+      assert newhtml =~ "im Verein #{club.name}"
+      assert newhtml =~ "Zugewiesene Rollen"
+      refute newhtml =~ "Entfernen"
+      assert newhtml =~ "Verfügbare Rollen zur Zuweisung"
+      assert newhtml =~ "Hinzufügen"
     end
   end
 end

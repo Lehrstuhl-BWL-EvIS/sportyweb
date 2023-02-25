@@ -2,12 +2,12 @@ defmodule SportywebWeb.RoleLive.New do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Accounts
+  alias Sportyweb.Accounts.User
   alias Sportyweb.Organization
-  alias Sportyweb.RBAC.UserRole
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign(:club_navigation_current_item, :authorization)}
+    {:ok, socket |> assign(:club_navigation_current_item, :authorization), temporary_assigns: [changeset: nil]}
   end
 
   @impl true
@@ -16,13 +16,31 @@ defmodule SportywebWeb.RoleLive.New do
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
-    users = list_visible_users() -- list_users_in_a_club(club_id)
+    changeset = Accounts.change_user_registration(%User{})
 
     socket
-    |> assign(:users, users |> Enum.sort())
-    |> assign(:club, Organization.get_club!(club_id))
+    |> assign(club: Organization.get_club!(club_id))
+    |> assign(changeset: changeset)
   end
 
-  defp list_visible_users(), do:  Accounts.list_all_users
-  defp list_users_in_a_club(club_id), do: club_id |> UserRole.list_users_in_a_club() |> Enum.map(&(&1.user))
+  @impl true
+  def handle_event("validate", %{"user" => user_params}, socket) do
+    changeset = Accounts.change_user_registration(%User{}, user_params)
+    {:noreply, assign(socket, changeset: Map.put(changeset, :action, :validate))}
+  end
+
+  def handle_event("add", %{"user" => %{"email" => email}}, socket) do
+    user = email |> maybe_create_user(socket)
+
+    {:noreply, socket
+      |> put_flash(:info, "Vergib dem Nutzer eine Rolle um ihn dem Verein hinzuzufügen.")
+      |> push_navigate(to: ~p"/clubs/#{socket.assigns.club.id}/roles/#{user.id}/edit")}
+  end
+
+  defp maybe_create_user(email, socket) do
+    case Accounts.get_user_by_email(email) do
+      %User{} = user -> user
+      _ -> Accounts.register_user_for_club(email, socket.assigns.club, url(~p"/users/log_in/"))
+    end
+  end
 end

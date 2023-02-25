@@ -81,6 +81,18 @@ defmodule Sportyweb.Accounts do
   end
 
   @doc """
+  Have a user registered in order to be added to a club.
+  """
+  def register_user_for_club(email, club, info_url_fun, len \\ User.min_password_length) do
+    temp_password = len |> :crypto.strong_rand_bytes() |> Base.encode64 |> binary_part(0, len)
+    {:ok, %User{} = user} = register_user(%{email: email, password: temp_password})
+
+    UserNotifier.deliver_info_of_being_added_to_club(user, club, info_url_fun, temp_password)
+
+    user
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.
 
   ## Examples
