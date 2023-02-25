@@ -232,6 +232,37 @@ defmodule SportywebWeb.CoreComponents do
   end
 
   @doc """
+  Renders a (per default) 12 column grid container for input fields.
+
+  ## Examples
+
+      <.input_grid>
+        <div class="col-span-12">
+          <.input ... />
+        </div>
+
+        <div class="col-span-12 md:col-span-6">
+          <.input ... />
+        </div>
+
+        <div class="col-span-12 md:col-span-6">
+          <.input ... />
+        </div>
+      </.input_grid>
+  """
+  attr :class, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def input_grid(assigns) do
+    ~H"""
+    <div class={["grid grid-cols-12 gap-x-4 gap-y-6", @class]}>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  @doc """
   Renders an input with label and error messages.
 
   A `%Phoenix.HTML.Form{}` and field name may be passed to the input
@@ -441,6 +472,12 @@ defmodule SportywebWeb.CoreComponents do
 
   @doc """
   Renders a card element with acts as container.
+
+  ## Examples
+
+      <.card>
+        Content
+      </.card>
   """
   attr :class, :string, default: nil
 
