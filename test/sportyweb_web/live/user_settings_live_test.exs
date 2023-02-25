@@ -62,7 +62,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
         })
 
       assert result =~ "E-Mail-Adresse ändern"
-      assert result =~ "must have the @ sign and no spaces"
+      assert result =~ "Muss das @-Zeichen enthalten und keine Leerzeichen."
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn, user: user} do

@@ -12,6 +12,8 @@ defmodule Sportyweb.Accounts.User do
     timestamps()
   end
 
+  @min_password_length 12
+  def min_password_length, do: @min_password_length
   @doc """
   A user changeset for registration.
 
@@ -45,7 +47,7 @@ defmodule Sportyweb.Accounts.User do
   defp validate_email(changeset, opts) do
     changeset
     |> validate_required([:email])
-    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
+    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "Muss das @-Zeichen enthalten und keine Leerzeichen.")
     |> validate_length(:email, max: 160)
     |> maybe_validate_unique_email(opts)
   end
@@ -53,7 +55,7 @@ defmodule Sportyweb.Accounts.User do
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: 12, max: 72)
+    |> validate_length(:password, min: @min_password_length, max: 72)
     # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
     # |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
