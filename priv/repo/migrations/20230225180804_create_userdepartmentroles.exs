@@ -15,6 +15,6 @@ defmodule Sportyweb.Repo.Migrations.CreateUserdepartmentroles do
     create index(:userdepartmentroles, [:department_id])
     create index(:userdepartmentroles, [:departmentrole_id])
 
-    create unique_index(:userclubroles, [:user_id, :department_id, :departmentrole_id])
+    create unique_index(:userdepartmentroles, [:user_id, :department_id, :departmentrole_id])
   end
 end
