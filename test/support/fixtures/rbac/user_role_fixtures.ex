@@ -8,8 +8,7 @@ defmodule Sportyweb.RBAC.UserRoleFixtures do
   Generate a user_club_role.
   """
   def user_club_role_fixture(attrs \\ %{}) do
-    {:ok, user_club_role} =
-      attrs |> Sportyweb.RBAC.UserRole.create_user_club_role()
+    {:ok, user_club_role} = attrs |> Sportyweb.RBAC.UserRole.create_user_club_role()
 
     user_club_role
   end
@@ -18,8 +17,7 @@ defmodule Sportyweb.RBAC.UserRoleFixtures do
   Generate a user_application_role.
   """
   def user_application_role_fixture(attrs \\ %{}) do
-    {:ok, user_application_role} =
-      attrs |> Sportyweb.RBAC.UserRole.create_user_application_role()
+    {:ok, user_application_role} = attrs |> Sportyweb.RBAC.UserRole.create_user_application_role()
 
     user_application_role
   end
@@ -28,12 +26,7 @@ defmodule Sportyweb.RBAC.UserRoleFixtures do
   Generate a user_department_role.
   """
   def user_department_role_fixture(attrs \\ %{}) do
-    {:ok, user_department_role} =
-      attrs
-      |> Enum.into(%{
-
-      })
-      |> Sportyweb.RBAC.UserRole.create_user_department_role()
+    {:ok, user_department_role} = attrs |> Sportyweb.RBAC.UserRole.create_user_department_role()
 
     user_department_role
   end

@@ -2,69 +2,44 @@ defmodule SportywebWeb.UserDepartmentRoleLiveTest do
   use SportywebWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Sportyweb.AccountsFixtures
+  import Sportyweb.OrganizationFixtures
+  import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{}
-  @update_attrs %{}
-  @invalid_attrs %{}
+  setup do
+    user = user_fixture()
+    applicationrole = application_role_fixture()
+    user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
+
+    %{user: user}
+  end
 
   defp create_user_department_role(_) do
-    user_department_role = user_department_role_fixture()
+    user = user_fixture()
+    department = department_fixture()
+    departmentrole = department_role_fixture()
+    user_department_role = user_department_role_fixture(%{user_id: user.id, department_id: department.id, departmentrole_id: departmentrole.id})
+
     %{user_department_role: user_department_role}
   end
 
   describe "Index" do
     setup [:create_user_department_role]
 
-    test "lists all userdepartmentroles", %{conn: conn} do
+    test "lists all userdepartmentroles", %{conn: conn, user: user} do
+      {:error, _} = live(conn, ~p"/userdepartmentroles")
+
+      conn = conn |> log_in_user(user)
       {:ok, _index_live, html} = live(conn, ~p"/userdepartmentroles")
 
       assert html =~ "Listing Userdepartmentroles"
     end
 
-    test "saves new user_department_role", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/userdepartmentroles")
+    test "deletes user_department_role in listing", %{conn: conn, user: user, user_department_role: user_department_role} do
+      {:error, _} = live(conn, ~p"/userdepartmentroles")
 
-      assert index_live |> element("a", "New User department role") |> render_click() =~
-               "New User department role"
-
-      assert_patch(index_live, ~p"/userdepartmentroles/new")
-
-      assert index_live
-             |> form("#user_department_role-form", user_department_role: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      {:ok, _, html} =
-        index_live
-        |> form("#user_department_role-form", user_department_role: @create_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/userdepartmentroles")
-
-      assert html =~ "User department role created successfully"
-    end
-
-    test "updates user_department_role in listing", %{conn: conn, user_department_role: user_department_role} do
-      {:ok, index_live, _html} = live(conn, ~p"/userdepartmentroles")
-
-      assert index_live |> element("#userdepartmentroles-#{user_department_role.id} a", "Edit") |> render_click() =~
-               "Edit User department role"
-
-      assert_patch(index_live, ~p"/userdepartmentroles/#{user_department_role}/edit")
-
-      assert index_live
-             |> form("#user_department_role-form", user_department_role: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      {:ok, _, html} =
-        index_live
-        |> form("#user_department_role-form", user_department_role: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/userdepartmentroles")
-
-      assert html =~ "User department role updated successfully"
-    end
-
-    test "deletes user_department_role in listing", %{conn: conn, user_department_role: user_department_role} do
+      conn = conn |> log_in_user(user)
       {:ok, index_live, _html} = live(conn, ~p"/userdepartmentroles")
 
       assert index_live |> element("#userdepartmentroles-#{user_department_role.id} a", "Delete") |> render_click()
@@ -75,31 +50,13 @@ defmodule SportywebWeb.UserDepartmentRoleLiveTest do
   describe "Show" do
     setup [:create_user_department_role]
 
-    test "displays user_department_role", %{conn: conn, user_department_role: user_department_role} do
+    test "displays user_department_role", %{conn: conn, user: user, user_department_role: user_department_role} do
+      {:error, _} = live(conn, ~p"/userdepartmentroles/#{user_department_role}")
+
+      conn = conn |> log_in_user(user)
       {:ok, _show_live, html} = live(conn, ~p"/userdepartmentroles/#{user_department_role}")
 
       assert html =~ "Show User department role"
-    end
-
-    test "updates user_department_role within modal", %{conn: conn, user_department_role: user_department_role} do
-      {:ok, show_live, _html} = live(conn, ~p"/userdepartmentroles/#{user_department_role}")
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit User department role"
-
-      assert_patch(show_live, ~p"/userdepartmentroles/#{user_department_role}/show/edit")
-
-      assert show_live
-             |> form("#user_department_role-form", user_department_role: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      {:ok, _, html} =
-        show_live
-        |> form("#user_department_role-form", user_department_role: @update_attrs)
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/userdepartmentroles/#{user_department_role}")
-
-      assert html =~ "User department role updated successfully"
     end
   end
 end

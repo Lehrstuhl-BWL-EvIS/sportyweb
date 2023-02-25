@@ -20,7 +20,7 @@ defmodule Sportyweb.RBAC.UserRole.UserDepartmentRole do
   @doc false
   def changeset(user_department_role, attrs) do
     user_department_role
-    |> cast(attrs, [:user_id, :deparment_id, :deparmentrole_id])
-    |> validate_required([:user_id, :deparment_id, :deparmentrole_id])
+    |> cast(attrs, [:user_id, :department_id, :departmentrole_id])
+    |> validate_required([:user_id, :department_id, :departmentrole_id])
   end
 end

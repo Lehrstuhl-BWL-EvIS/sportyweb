@@ -51,7 +51,7 @@ defmodule SportywebWeb.UserClubRoleLiveTest do
     setup [:create_user_club_role]
 
     test "displays user_club_role", %{conn: conn, user: user, user_club_role: user_club_role} do
-      {:error, _} = live(conn, ~p"/userclubroles")
+      {:error, _} = live(conn, ~p"/userclubroles/#{user_club_role}")
 
       conn = conn |> log_in_user(user)
       {:ok, _show_live, html} = live(conn, ~p"/userclubroles/#{user_club_role}")

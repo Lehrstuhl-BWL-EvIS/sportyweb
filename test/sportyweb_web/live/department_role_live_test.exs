@@ -2,11 +2,21 @@ defmodule SportywebWeb.DepartmentRoleLiveTest do
   use SportywebWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Sportyweb.AccountsFixtures
   import Sportyweb.RBAC.RoleFixtures
+  import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{name: "some name"}
+  @create_attrs %{name: "some other name"}
   @update_attrs %{name: "some updated name"}
   @invalid_attrs %{name: nil}
+
+  setup do
+    user = user_fixture()
+    applicationrole = application_role_fixture()
+    user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
+
+    %{user: user}
+  end
 
   defp create_department_role(_) do
     department_role = department_role_fixture()
@@ -16,14 +26,20 @@ defmodule SportywebWeb.DepartmentRoleLiveTest do
   describe "Index" do
     setup [:create_department_role]
 
-    test "lists all departmentroles", %{conn: conn, department_role: department_role} do
+    test "lists all departmentroles", %{conn: conn, user: user, department_role: department_role} do
+      {:error, _} = live(conn, ~p"/departmentroles")
+
+      conn = conn |> log_in_user(user)
       {:ok, _index_live, html} = live(conn, ~p"/departmentroles")
 
       assert html =~ "Listing Departmentroles"
       assert html =~ department_role.name
     end
 
-    test "saves new department_role", %{conn: conn} do
+    test "saves new department_role", %{conn: conn, user: user} do
+      {:error, _} = live(conn, ~p"/departmentroles")
+
+      conn = conn |> log_in_user(user)
       {:ok, index_live, _html} = live(conn, ~p"/departmentroles")
 
       assert index_live |> element("a", "New Department role") |> render_click() =~
@@ -45,7 +61,10 @@ defmodule SportywebWeb.DepartmentRoleLiveTest do
       assert html =~ "some name"
     end
 
-    test "updates department_role in listing", %{conn: conn, department_role: department_role} do
+    test "updates department_role in listing", %{conn: conn, user: user, department_role: department_role} do
+      {:error, _} = live(conn, ~p"/departmentroles")
+
+      conn = conn |> log_in_user(user)
       {:ok, index_live, _html} = live(conn, ~p"/departmentroles")
 
       assert index_live |> element("#departmentroles-#{department_role.id} a", "Edit") |> render_click() =~
@@ -67,7 +86,10 @@ defmodule SportywebWeb.DepartmentRoleLiveTest do
       assert html =~ "some updated name"
     end
 
-    test "deletes department_role in listing", %{conn: conn, department_role: department_role} do
+    test "deletes department_role in listing", %{conn: conn, user: user, department_role: department_role} do
+      {:error, _} = live(conn, ~p"/departmentroles")
+
+      conn = conn |> log_in_user(user)
       {:ok, index_live, _html} = live(conn, ~p"/departmentroles")
 
       assert index_live |> element("#departmentroles-#{department_role.id} a", "Delete") |> render_click()
@@ -78,14 +100,20 @@ defmodule SportywebWeb.DepartmentRoleLiveTest do
   describe "Show" do
     setup [:create_department_role]
 
-    test "displays department_role", %{conn: conn, department_role: department_role} do
+    test "displays department_role", %{conn: conn, user: user, department_role: department_role} do
+      {:error, _} = live(conn, ~p"/departmentroles")
+
+      conn = conn |> log_in_user(user)
       {:ok, _show_live, html} = live(conn, ~p"/departmentroles/#{department_role}")
 
       assert html =~ "Show Department role"
       assert html =~ department_role.name
     end
 
-    test "updates department_role within modal", %{conn: conn, department_role: department_role} do
+    test "updates department_role within modal", %{conn: conn, user: user, department_role: department_role} do
+      {:error, _} = live(conn, ~p"/departmentroles")
+
+      conn = conn |> log_in_user(user)
       {:ok, show_live, _html} = live(conn, ~p"/departmentroles/#{department_role}")
 
       assert show_live |> element("a", "Edit") |> render_click() =~
