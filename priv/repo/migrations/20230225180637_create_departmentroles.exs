@@ -8,5 +8,7 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartmentroles do
 
       timestamps()
     end
+
+    create unique_index(:departmentroles, [:name])
   end
 end
