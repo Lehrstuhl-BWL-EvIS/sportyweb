@@ -1,10 +1,5 @@
 <.header>
   Listing Userclubroles
-  <:actions>
-    <.link patch={~p"/userclubroles/new"}>
-      <.button>New User club role</.button>
-    </.link>
-  </:actions>
 </.header>
 
 <.table id="userclubroles" rows={@userclubroles} row_click={&JS.navigate(~p"/userclubroles/#{&1}")}>
@@ -23,19 +18,3 @@
     </.link>
   </:action>
 </.table>
-
-<.modal
-  :if={@live_action in [:new, :edit]}
-  id="user_club_role-modal"
-  show
-  on_cancel={JS.navigate(~p"/userclubroles")}
->
-  <.live_component
-    module={SportywebWeb.UserClubRoleLive.FormComponent}
-    id={@user_club_role.id || :new}
-    title={@page_title}
-    action={@live_action}
-    user_club_role={@user_club_role}
-    navigate={~p"/userclubroles"}
-  />
-</.modal>

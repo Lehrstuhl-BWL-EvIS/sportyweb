@@ -1,18 +1,16 @@
 <.header>
   Listing Userdepartmentroles
-  <:actions>
-    <.link patch={~p"/userdepartmentroles/new"}>
-      <.button>New User department role</.button>
-    </.link>
-  </:actions>
 </.header>
 
 <.table id="userdepartmentroles" rows={@userdepartmentroles} row_click={&JS.navigate(~p"/userdepartmentroles/#{&1}")}>
+  <:col :let={userdepartmentroles} label="ID"><%= userdepartmentroles.id %></:col>
+  <:col :let={userdepartmentroles} label="User"><%= userdepartmentroles.user_id %></:col>
+  <:col :let={userdepartmentroles} label="Club"><%= userdepartmentroles.department_id %></:col>
+  <:col :let={userdepartmentroles} label="ClubRole"><%= userdepartmentroles.departmentrole_id %></:col>
   <:action :let={user_department_role}>
     <div class="sr-only">
       <.link navigate={~p"/userdepartmentroles/#{user_department_role}"}>Show</.link>
     </div>
-    <.link patch={~p"/userdepartmentroles/#{user_department_role}/edit"}>Edit</.link>
   </:action>
   <:action :let={user_department_role}>
     <.link phx-click={JS.push("delete", value: %{id: user_department_role.id})} data-confirm="Are you sure?">
@@ -20,19 +18,3 @@
     </.link>
   </:action>
 </.table>
-
-<.modal
-  :if={@live_action in [:new, :edit]}
-  id="user_department_role-modal"
-  show
-  on_cancel={JS.navigate(~p"/userdepartmentroles")}
->
-  <.live_component
-    module={SportywebWeb.UserDepartmentRoleLive.FormComponent}
-    id={@user_department_role.id || :new}
-    title={@page_title}
-    action={@live_action}
-    user_department_role={@user_department_role}
-    navigate={~p"/userdepartmentroles"}
-  />
-</.modal>
