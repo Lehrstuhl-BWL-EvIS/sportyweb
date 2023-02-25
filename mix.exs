@@ -16,7 +16,6 @@ defmodule Sportyweb.MixProject do
       source_url: "https://gitlab.com/fuhevis/sportyweb",
       homepage_url: "https://gitlab.com/fuhevis/sportyweb",
       docs: [
-        main: "Sportweb", # The main page in the docs
         extras: ["README.md", "CONTRIBUTING.md"],
         formatters: ["html"]
       ]
