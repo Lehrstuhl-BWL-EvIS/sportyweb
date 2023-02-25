@@ -23,7 +23,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+          <.input_grid>
             <div class="col-span-12 md:col-span-6">
               <.input field={{f, :name}} type="text" label="Name" />
             </div>
@@ -41,7 +41,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
             </div>
 
             <div class="col-span-12">
-              <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+              <.input_grid>
                 <.inputs_for :let={f_nested} field={f[:emails]}>
                   <div class="col-span-12 md:col-span-8">
                     <.input field={{f_nested, :address}} type="text" label="E-Mail" />
@@ -52,11 +52,11 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
                     options={Email.get_valid_types} prompt="Bitte auswählen" />
                   </div>
                 </.inputs_for>
-              </div>
+              </.input_grid>
             </div>
 
             <div class="col-span-12">
-              <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+              <.input_grid>
                 <.inputs_for :let={f_nested} field={f[:phones]}>
                   <div class="col-span-12 md:col-span-8">
                     <.input field={{f_nested, :number}} type="text" label="Telefon" />
@@ -67,13 +67,13 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
                     options={Phone.get_valid_types} prompt="Bitte auswählen" />
                   </div>
                 </.inputs_for>
-              </div>
+              </.input_grid>
             </div>
 
             <div class="col-span-12">
               <.label>Notizen (optional)</.label>
               <.inputs_for :let={f_nested} field={f[:notes]}>
-                <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+                <.input_grid>
                   <div class="col-span-11">
                     <.input field={{f_nested, :content}} type="textarea" />
                   </div>
@@ -84,14 +84,14 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
                       <Heroicons.trash class="text-white h-4 w-4" />
                     </.button>
                   </div>
-                </div>
+                </.input_grid>
               </.inputs_for>
             </div>
 
             <div class="col-span-12">
               <.button type="button" phx-click="add_note" phx-target={@myself}>Notiz hinzufügen</.button>
             </div>
-          </div>
+          </.input_grid>
 
           <:actions>
             <div>

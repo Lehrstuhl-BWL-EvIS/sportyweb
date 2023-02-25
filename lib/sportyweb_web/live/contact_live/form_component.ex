@@ -21,7 +21,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+          <.input_grid>
             <div class="col-span-12">
               <.input field={{f, :type}} type="select" label="Art"
               options={Contact.get_valid_types} prompt="Bitte auswählen" />
@@ -56,7 +56,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
             <div class="col-span-12 md:col-span-6">
               <.input field={{f, :person_birthday}} type="date" label="Geburtstag" />
             </div>
-          </div>
+          </.input_grid>
 
           <:actions>
             <div>

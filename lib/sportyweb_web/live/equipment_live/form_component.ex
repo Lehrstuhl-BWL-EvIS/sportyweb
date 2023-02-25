@@ -20,7 +20,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+          <.input_grid>
             <%= if @equipment.id do %>
               <div class="col-span-12">
                 <.input field={{f, :venue_id}} type="select" label="Standort"
@@ -55,7 +55,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
             <div class="col-span-12 md:col-span-4">
               <.input field={{f, :decommission_at}} type="date" label="Nutzung bis (optional)" />
             </div>
-          </div>
+          </.input_grid>
 
           <:actions>
             <div>
