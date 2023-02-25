@@ -200,4 +200,100 @@ defmodule Sportyweb.RBAC.Role do
   def change_application_role(%ApplicationRole{} = application_role, attrs \\ %{}) do
     ApplicationRole.changeset(application_role, attrs)
   end
+
+  alias Sportyweb.RBAC.Role.DepartmentRole
+
+  @doc """
+  Returns the list of departmentroles.
+
+  ## Examples
+
+      iex> list_departmentroles()
+      [%DepartmentRole{}, ...]
+
+  """
+  def list_departmentroles do
+    Repo.all(DepartmentRole)
+  end
+
+  @doc """
+  Gets a single department_role.
+
+  Raises `Ecto.NoResultsError` if the Department role does not exist.
+
+  ## Examples
+
+      iex> get_department_role!(123)
+      %DepartmentRole{}
+
+      iex> get_department_role!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_department_role!(id), do: Repo.get!(DepartmentRole, id)
+
+  @doc """
+  Creates a department_role.
+
+  ## Examples
+
+      iex> create_department_role(%{field: value})
+      {:ok, %DepartmentRole{}}
+
+      iex> create_department_role(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_department_role(attrs \\ %{}) do
+    %DepartmentRole{}
+    |> DepartmentRole.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a department_role.
+
+  ## Examples
+
+      iex> update_department_role(department_role, %{field: new_value})
+      {:ok, %DepartmentRole{}}
+
+      iex> update_department_role(department_role, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_department_role(%DepartmentRole{} = department_role, attrs) do
+    department_role
+    |> DepartmentRole.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a department_role.
+
+  ## Examples
+
+      iex> delete_department_role(department_role)
+      {:ok, %DepartmentRole{}}
+
+      iex> delete_department_role(department_role)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_department_role(%DepartmentRole{} = department_role) do
+    Repo.delete(department_role)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking department_role changes.
+
+  ## Examples
+
+      iex> change_department_role(department_role)
+      %Ecto.Changeset{data: %DepartmentRole{}}
+
+  """
+  def change_department_role(%DepartmentRole{} = department_role, attrs \\ %{}) do
+    DepartmentRole.changeset(department_role, attrs)
+  end
 end

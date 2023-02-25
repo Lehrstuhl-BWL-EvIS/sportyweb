@@ -1,0 +1,26 @@
+<.header>
+  Department role <%= @department_role.id %>
+  <:subtitle>This is a department_role record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/departmentroles/#{@department_role}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit department_role</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @department_role.name %></:item>
+</.list>
+
+<.back navigate={~p"/departmentroles"}>Back to departmentroles</.back>
+
+<.modal :if={@live_action == :edit} id="department_role-modal" show on_cancel={JS.patch(~p"/departmentroles/#{@department_role}")}>
+  <.live_component
+    module={SportywebWeb.DepartmentRoleLive.FormComponent}
+    id={@department_role.id}
+    title={@page_title}
+    action={@live_action}
+    department_role={@department_role}
+    navigate={~p"/departmentroles/#{@department_role}"}
+  />
+</.modal>
