@@ -2,12 +2,14 @@ defmodule Sportyweb.Asset.EquipmentFee do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Asset.Equipment
+  alias Sportyweb.Legal.Fee
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "equipment_fees" do
-
-    field :equipment_id, :binary_id
-    field :fee_id, :binary_id
+    belongs_to :equipment_id, Equipment
+    belongs_to :fee_id, Fee
 
     timestamps()
   end
@@ -15,7 +17,8 @@ defmodule Sportyweb.Asset.EquipmentFee do
   @doc false
   def changeset(equipment_fee, attrs) do
     equipment_fee
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:equipment_id, :fee_id])
+    |> validate_required([:equipment_id, :fee_id])
+    |> unique_constraint(:club_id, name: "equipment_fees_equipment_id_fee_id_index")
   end
 end

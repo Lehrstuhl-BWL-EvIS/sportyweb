@@ -2,12 +2,15 @@ defmodule Sportyweb.Organization.Group do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.Department
+  alias Sportyweb.Organization.GroupFee
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "groups" do
     belongs_to :department, Department
+    many_to_many :fees, Fee, join_through: GroupFee
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""

@@ -4,13 +4,14 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartmentFees do
   def change do
     create table(:department_fees, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :department_id, references(:departments, on_delete: :nothing, type: :binary_id)
-      add :fee_id, references(:fees, on_delete: :nothing, type: :binary_id)
+      add :department_id, references(:departments, on_delete: :delete_all, type: :binary_id), null: false, default: nil
+      add :fee_id, references(:fees, on_delete: :delete_all, type: :binary_id), null: false, default: nil
 
       timestamps()
     end
 
     create index(:department_fees, [:department_id])
-    create index(:department_fees, [:fee_id])
+    create unique_index(:department_fees, [:fee_id])
+    create unique_index(:department_fees, [:department_id, :fee_id])
   end
 end

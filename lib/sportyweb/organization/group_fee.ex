@@ -2,12 +2,14 @@ defmodule Sportyweb.Organization.GroupFee do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Organization.Group
+  alias Sportyweb.Legal.Fee
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "group_fees" do
-
-    field :group_id, :binary_id
-    field :fee_id, :binary_id
+    belongs_to :group_id, Group
+    belongs_to :fee_id, Fee
 
     timestamps()
   end
@@ -15,7 +17,8 @@ defmodule Sportyweb.Organization.GroupFee do
   @doc false
   def changeset(group_fee, attrs) do
     group_fee
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:group_id, :fee_id])
+    |> validate_required([:group_id, :fee_id])
+    |> unique_constraint(:club_id, name: "group_fees_group_id_fee_id_index")
   end
 end

@@ -2,14 +2,17 @@ defmodule Sportyweb.Organization.Club do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Sportyweb.Organization.Department
   alias Sportyweb.Asset.Venue
+  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Organization.ClubFee
+  alias Sportyweb.Organization.Department
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "clubs" do
     has_many :departments, Department, on_delete: :delete_all
     has_many :venues, Venue, on_delete: :delete_all
+    many_to_many :fees, Fee, join_through: ClubFee
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""

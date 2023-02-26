@@ -2,12 +2,15 @@ defmodule Sportyweb.Asset.Equipment do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Asset.EquipmentFee
   alias Sportyweb.Asset.Venue
+  alias Sportyweb.Legal.Fee
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "equipment" do
     belongs_to :venue, Venue
+    many_to_many :fees, Fee, join_through: EquipmentFee
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""
