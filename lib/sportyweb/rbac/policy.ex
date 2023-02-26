@@ -64,7 +64,7 @@ defmodule Sportyweb.RBAC.Policy do
   defp list_users_roles_in_club(user_id, club_id, dept_id) do
     user_id
     |> get_users_club_roles(club_id)
-    |> maybe_add_department_roles(user_id, dept_id)
+    |> maybe_add_department_roles(user_id, club_id, dept_id)
   end
 
   defp get_users_club_roles(user_id, club_id) do
@@ -74,13 +74,22 @@ defmodule Sportyweb.RBAC.Policy do
     |> Enum.map(&(RPM.to_role_atom(:club, &1)))
   end
 
-  defp maybe_add_department_roles(current_roles, _user_id, nil), do: current_roles
-  defp maybe_add_department_roles(current_roles, _user_id, _dept_id) do
-    #user_id
-    #|> UserRole.list_users_departmentroles_in_a_club(dept_id)
-    #|> Enum.map(&(&1.department.name))
-    #|> Enum.map(&(RPM.to_role_atom(:department, &1)))
-    []
+  defp maybe_add_department_roles(current_roles, user_id, club_id, nil) do
+    club_id
+    |> Organization.list_departments()
+    |> Enum.map(&(UserRole.list_users_departmentroles_in_a_department(user_id, &1.id)))
+    |> List.flatten()
+    |> Enum.map(&(&1.departmentrole.name))
+    |> Enum.uniq()
+    |> Enum.map(&(RPM.to_role_atom(:department, &1)))
+    |> Kernel.++(current_roles)
+  end
+
+  defp maybe_add_department_roles(current_roles, user_id, _club_id, dept_id) do
+    user_id
+    |> UserRole.list_users_departmentroles_in_a_department(dept_id)
+    |> Enum.map(&(&1.departmentrole.name))
+    |> Enum.map(&(RPM.to_role_atom(:department, &1)))
     |> Kernel.++(current_roles)
   end
 
