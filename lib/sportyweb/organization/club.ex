@@ -5,7 +5,9 @@ defmodule Sportyweb.Organization.Club do
   alias Sportyweb.Asset.Venue
   alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.ClubFee
+  alias Sportyweb.Organization.ClubFinancialData
   alias Sportyweb.Organization.Department
+  alias Sportyweb.Polymorphic.FinancialData
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -13,6 +15,7 @@ defmodule Sportyweb.Organization.Club do
     has_many :departments, Department, on_delete: :delete_all
     has_many :venues, Venue, on_delete: :delete_all
     many_to_many :fees, Fee, join_through: ClubFee
+    many_to_many :financial_data, FinancialData, join_through: ClubFinancialData
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""
