@@ -45,14 +45,14 @@ echo "- Generate the ExDoc project documentation"
 mix docs
 
 echo "- Generate an ERD (Entity Relationship Diagram)"
-if command -v dot &> /dev/null
+if command -v mmdc &> /dev/null
 then
-    # https://hexdocs.pm/ecto_erd/Mix.Tasks.Ecto.Gen.Erd.html
-    mix ecto.gen.erd && dot -Tpdf ecto_erd.dot -o documentation/erd.pdf
-    rm ecto_erd.dot # Remove the .dot file
+    # https://hexdocs.pm/ecto_erd/Mix.Tasks.Ecto.Gen.Erd.html#module-mermaid
+    mix ecto.gen.erd --output-path=ecto_erd.mmd && mmdc -i ecto_erd.mmd -o documentation/erd.pdf
+    rm ecto_erd.mmd # Remove the mermaid file
 else
     echo "  WARNING: Can't generate an ERD!"
-    echo "           Please install Graphviz (https://graphviz.org/)"
+    echo "           Please install mermaid-cli (https://github.com/mermaid-js/mermaid-cli)"
 fi
 
 echo "- Setup Development Environment: Done"
