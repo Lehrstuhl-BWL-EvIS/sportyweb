@@ -8,8 +8,8 @@ defmodule Sportyweb.Organization.GroupFee do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "group_fees" do
-    belongs_to :group_id, Group
-    belongs_to :fee_id, Fee
+    belongs_to :group, Group
+    belongs_to :fee, Fee
 
     timestamps()
   end

@@ -7,9 +7,9 @@ defmodule Sportyweb.Organization.ClubFee do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "club_fee" do
-    belongs_to :club_id, Club
-    belongs_to :fee_id, Fee
+  schema "club_fees" do
+    belongs_to :club, Club
+    belongs_to :fee, Fee
 
     timestamps()
   end

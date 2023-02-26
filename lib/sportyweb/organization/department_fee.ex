@@ -8,8 +8,8 @@ defmodule Sportyweb.Organization.DepartmentFee do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "department_fees" do
-    belongs_to :department_id, Department
-    belongs_to :fee_id, Fee
+    belongs_to :department, Department
+    belongs_to :fee, Fee
 
     timestamps()
   end

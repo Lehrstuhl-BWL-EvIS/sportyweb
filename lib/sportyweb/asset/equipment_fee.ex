@@ -8,8 +8,8 @@ defmodule Sportyweb.Asset.EquipmentFee do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "equipment_fees" do
-    belongs_to :equipment_id, Equipment
-    belongs_to :fee_id, Fee
+    belongs_to :equipment, Equipment
+    belongs_to :fee, Fee
 
     timestamps()
   end
