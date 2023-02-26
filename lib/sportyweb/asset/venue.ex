@@ -3,13 +3,16 @@ defmodule Sportyweb.Asset.Venue do
   import Ecto.Changeset
 
   alias Sportyweb.Asset.Equipment
+  alias Sportyweb.Asset.VenuePostalAddress
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Polymorphic.PostalAddress
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "venues" do
     belongs_to :club, Club
     has_many :equipment, Equipment, on_delete: :delete_all
+    many_to_many :postal_addresses, PostalAddress, join_through: VenuePostalAddress
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""
