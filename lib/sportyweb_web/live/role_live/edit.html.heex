@@ -3,26 +3,52 @@
   <:subtitle>im Verein <%= @club.name %></:subtitle>
 </.header>
 
-<.card>
-  <.table id="userclubroles" rows={@userclubroles}>
-    <:col :let={userclubrole} label="Zugewiesene Rollen"><%= userclubrole.clubrole.name %></:col>
-    <:action :let={userclubrole}>
-      <.button class="bg-red-700 hover:bg-red-400" phx-click={JS.push("delete", value: %{id: userclubrole.id})} data-confirm="Unwiderruflich löschen?">
-        Entfernen
-      </.button>
-    </:action>
-  </.table>
+<.card class="bg-slate-400">
+  <p class="font-bold text-zinc-800">Zugewiesene Rollen</p>
+  <.card class="mt-5">
+    <.table id="assigned_club_roles" rows={@assigned_club_roles}>
+      <:col :let={assigned_club_roles} label="Vereinsebene"><%= assigned_club_roles.clubrole.name %></:col>
+      <:action :let={assigned_club_roles}>
+        <.button class="bg-red-700 hover:bg-red-400" phx-click={JS.push("delete", value: %{club_id: assigned_club_roles.id})} data-confirm="Unwiderruflich löschen?">
+          Entfernen
+        </.button>
+      </:action>
+    </.table>
+  </.card>
+  <.card class="mt-5">
+    <.table id="assigned_department_roles" rows={@assigned_department_roles}>
+      <:col :let={assigned_department_roles} label="Abteilungsebene"><%= assigned_department_roles.name %></:col>
+      <:action :let={assigned_department_roles}>
+        <.button class="bg-red-700 hover:bg-red-400" phx-click={JS.push("delete", value: %{department_id: assigned_department_roles.id, departmentrole_id: assigned_department_roles.departmentrole_id})} data-confirm="Unwiderruflich löschen?">
+          Entfernen
+        </.button>
+      </:action>
+    </.table>
+  </.card>
 </.card>
 
-<.card class="mt-10">
-  <.table id="open_clubroles" rows={@open_clubroles}>
-    <:col :let={open_clubrole} label="Verfügbare Rollen zur Zuweisung"><%= open_clubrole.name %></:col>
-    <:action :let={open_clubrole}>
-      <.button class="bg-green-700 hover:bg-green-400" phx-click={JS.push("add", value: %{id: open_clubrole.id})} data-confirm="Wirklich hinzufügen?">
-        Hinzufügen
-      </.button>
-    </:action>
-  </.table>
+<.card class="mt-10 bg-slate-400">
+  <p class="font-bold text-zinc-800">Verfügbare Rollen zur Zuweisung</p>
+  <.card class="mt-5">
+    <.table id="available_club_roles" rows={@available_club_roles}>
+      <:col :let={available_club_roles} label="Vereinsebene"><%= available_club_roles.name %></:col>
+      <:action :let={available_club_roles}>
+        <.button class="bg-green-700 hover:bg-green-400" phx-click={JS.push("add", value: %{club_id: available_club_roles.id})} data-confirm="Wirklich hinzufügen?">
+          Hinzufügen
+        </.button>
+      </:action>
+    </.table>
+  </.card>
+  <.card class="mt-5">
+    <.table id="availabe_department_roles" rows={@availabe_department_roles}>
+      <:col :let={availabe_department_roles} label="Abteilungsebene"><%= availabe_department_roles.name %></:col>
+      <:action :let={availabe_department_roles}>
+        <.button class="bg-green-700 hover:bg-green-400" phx-click={JS.push("add", value: %{department_id: availabe_department_roles.id, departmentrole_id: availabe_department_roles.departmentrole_id})} data-confirm="Wirklich hinzufügen?">
+          Hinzufügen
+        </.button>
+      </:action>
+    </.table>
+  </.card>
 </.card>
 
 <.back navigate={~p"/clubs/#{@club.id}/roles"}>Zurück zur Nutzer & Rollen</.back>

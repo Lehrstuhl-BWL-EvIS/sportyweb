@@ -2,6 +2,8 @@ defmodule Sportyweb.RBAC.Role do
 
   defstruct [:id, :name, :roles]
 
+  defmodule SubRoleDepartment, do: defstruct [:id, :departmentrole_id, :name]
+
   @moduledoc """
   The RBAC.Role context.
   """

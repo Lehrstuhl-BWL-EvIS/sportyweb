@@ -283,6 +283,21 @@ defmodule Sportyweb.RBAC.UserRole do
   end
 
   @doc """
+  Returns list of userclubroles of the club.
+  """
+
+  def list_users_departmentroles_in_a_department(user_id, dept_id) do
+    query = from udr in UserDepartmentRole,
+      where: udr.department_id == ^dept_id,
+      where: udr.user_id == ^user_id,
+      join: d in assoc(udr, :department),
+      join: dr in assoc(udr, :departmentrole),
+      preload: [department: d, departmentrole: dr]
+
+    Repo.all(query)
+  end
+
+  @doc """
   Gets a single user_department_role.
 
   Raises `Ecto.NoResultsError` if the User department role does not exist.
@@ -297,6 +312,18 @@ defmodule Sportyweb.RBAC.UserRole do
 
   """
   def get_user_department_role!(id), do: Repo.get!(UserDepartmentRole, id)
+
+  @doc """
+  Gets a single user_department_role by its references
+  """
+  def get_user_department_role_by_references(user_id, department_id, departmentrole_id) do
+    (from udr in UserDepartmentRole,
+      where: udr.user_id == ^user_id,
+      where: udr.department_id == ^department_id,
+      where: udr.departmentrole_id == ^departmentrole_id)
+    |> Repo.all()
+    |> Enum.at(0)
+  end
 
   @doc """
   Creates a user_department_role.

@@ -18,6 +18,7 @@ alias Sportyweb.Organization.Department
 
 alias Sportyweb.RBAC.Role.ApplicationRole
 alias Sportyweb.RBAC.Role.ClubRole
+alias Sportyweb.RBAC.Role.DepartmentRole
 alias Sportyweb.RBAC.Role.RolePermissionMatrix, as: RPM
 
 ###################################
@@ -156,17 +157,10 @@ Repo.insert!(%Club{
 
 ###################################
 # Add Roles
-
-for applicationrole <- RPM.get_role_names(:application) do
-  Repo.insert!(%ApplicationRole{
-    name: applicationrole
-  })
-end
-
-for clubrole <- RPM.get_role_names(:club) do
-  Repo.insert!(%ClubRole{
-    name: clubrole
-  })
+for [type, struct] <- [[:application, %ApplicationRole{}], [:club, %ClubRole{}], [:department, %DepartmentRole{}]] do
+  for rolename <- RPM.get_role_names(type) do
+    struct |> Map.put(:name, rolename) |> Repo.insert!()
+  end
 end
 
 # Seed sportyweb admins
