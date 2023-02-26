@@ -13,10 +13,12 @@
 alias Sportyweb.Repo
 
 alias Sportyweb.Accounts
-alias Sportyweb.Asset.Venue
 alias Sportyweb.Asset.Equipment
+alias Sportyweb.Asset.Venue
+alias Sportyweb.Legal.Fee
 alias Sportyweb.Organization
 alias Sportyweb.Organization.Club
+alias Sportyweb.Organization.ClubFee
 alias Sportyweb.Organization.Department
 alias Sportyweb.Organization.Group
 alias Sportyweb.Personal
@@ -29,6 +31,10 @@ alias Sportyweb.Polymorphic.Phone
 # Helper functions
 
 defmodule Sportyweb.SeedHelper do
+  def get_random_string(length) do
+    :crypto.strong_rand_bytes(100) |> Base.encode64() |> String.slice(0, length)
+  end
+
   def get_random_email do
     %Email{
       type: Email.get_valid_types()|> Enum.map(fn type -> type[:value] end) |> Enum.random(),
@@ -370,8 +376,8 @@ Organization.list_clubs()
           Repo.insert!(%Equipment{
             venue_id: venue.id,
             name: Faker.Commerce.product_name(),
-            reference_number: :crypto.strong_rand_bytes(50) |> Base.encode64() |> String.slice(0, 5),
-            serial_number: :crypto.strong_rand_bytes(50) |> Base.encode64() |> String.slice(0, 15),
+            reference_number: Sportyweb.SeedHelper.get_random_string(5),
+            serial_number: Sportyweb.SeedHelper.get_random_string(15),
             description: (if :rand.uniform() < 0.50, do: Faker.Lorem.paragraph(), else: ""),
             purchased_at: Faker.Date.backward(Enum.random(300..2000)),
             commission_at: Faker.Date.backward(Enum.random(0..299)),
@@ -379,5 +385,92 @@ Organization.list_clubs()
           })
         end
       end
+
+      # ClubFees
+
+      fee = Repo.insert!(%Fee{
+        name: "Jahresmitgliedschaft Verein Kinder",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(10..25) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 0,
+        maximum_age_in_years: 12,
+        commission_at: ~D[2020-01-01]
+      })
+      Repo.insert!(%ClubFee{
+        club_id: club.id,
+        fee_id: fee.id
+      })
+
+      fee = Repo.insert!(%Fee{
+        name: "Jahresmitgliedschaft Verein Jugendliche",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(30..40) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 13,
+        maximum_age_in_years: 17,
+        commission_at: ~D[2020-01-01]
+      })
+      Repo.insert!(%ClubFee{
+        club_id: club.id,
+        fee_id: fee.id
+      })
+
+      fee = Repo.insert!(%Fee{
+        name: "Jahresmitgliedschaft Verein Erwachsene (Vollmitglied)",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(60..200) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 18,
+        maximum_age_in_years: 65,
+        commission_at: ~D[2020-01-01]
+      })
+      Repo.insert!(%ClubFee{
+        club_id: club.id,
+        fee_id: fee.id
+      })
+
+      fee = Repo.insert!(%Fee{
+        name: "Jahresmitgliedschaft Verein Erwachsene (Unterstützungsempfänger)",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(30..50) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 18,
+        maximum_age_in_years: 65,
+        commission_at: ~D[2020-01-01]
+      })
+      Repo.insert!(%ClubFee{
+        club_id: club.id,
+        fee_id: fee.id
+      })
+
+      fee = Repo.insert!(%Fee{
+        name: "Jahresmitgliedschaft Verein Senioren",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(40..60) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 60,
+        maximum_age_in_years: 100,
+        commission_at: ~D[2020-01-01]
+      })
+      Repo.insert!(%ClubFee{
+        club_id: club.id,
+        fee_id: fee.id
+      })
     end
   end)
