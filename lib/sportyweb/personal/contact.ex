@@ -3,11 +3,17 @@ defmodule Sportyweb.Personal.Contact do
   import Ecto.Changeset
 
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Personal.ContactFinancialData
+  alias Sportyweb.Personal.ContactPostalAddress
+  alias Sportyweb.Polymorphic.FinancialData
+  alias Sportyweb.Polymorphic.PostalAddress
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "contacts" do
     belongs_to :club, Club
+    many_to_many :postal_addresses, PostalAddress, join_through: ContactPostalAddress
+    many_to_many :financial_data, FinancialData, join_through: ContactFinancialData
 
     field :type, :string, default: ""
     field :name, :string, default: ""

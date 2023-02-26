@@ -4,13 +4,14 @@ defmodule Sportyweb.Repo.Migrations.CreateContactFinancialData do
   def change do
     create table(:contact_financial_data, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :contact_id, references(:contacts, on_delete: :nothing, type: :binary_id)
-      add :financial_data_id, references(:financial_data, on_delete: :nothing, type: :binary_id)
+      add :contact_id, references(:contacts, on_delete: :delete_all, type: :binary_id), null: false, default: nil
+      add :financial_data_id, references(:financial_data, on_delete: :delete_all, type: :binary_id), null: false, default: nil
 
       timestamps()
     end
 
     create index(:contact_financial_data, [:contact_id])
-    create index(:contact_financial_data, [:financial_data_id])
+    create unique_index(:contact_financial_data, [:financial_data_id])
+    create unique_index(:contact_financial_data, [:contact_id, :financial_data_id])
   end
 end
