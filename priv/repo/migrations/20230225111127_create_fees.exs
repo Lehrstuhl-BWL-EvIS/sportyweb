@@ -9,7 +9,6 @@ defmodule Sportyweb.Repo.Migrations.CreateFees do
       add :reference_number, :string
       add :description, :text
       add :base_fee_in_eur_cent, :integer
-      add :has_admission_fee, :boolean, default: false, null: false
       add :admission_fee_in_eur_cent, :integer
       add :is_recurring, :boolean, default: false, null: false
       add :is_group_only, :boolean, default: false, null: false

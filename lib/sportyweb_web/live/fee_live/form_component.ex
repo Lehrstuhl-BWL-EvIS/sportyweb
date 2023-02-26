@@ -24,7 +24,6 @@ defmodule SportywebWeb.FeeLive.FormComponent do
         <.input field={@form[:reference_number]} type="text" label="Reference number" />
         <.input field={@form[:description]} type="text" label="Description" />
         <.input field={@form[:base_fee_in_eur_cent]} type="number" label="Base fee in eur cent" />
-        <.input field={@form[:has_admission_fee]} type="checkbox" label="Has admission fee" />
         <.input field={@form[:admission_fee_in_eur_cent]} type="number" label="Admission fee in eur cent" />
         <.input field={@form[:is_recurring]} type="checkbox" label="Is recurring" />
         <.input field={@form[:is_group_only]} type="checkbox" label="Is group only" />

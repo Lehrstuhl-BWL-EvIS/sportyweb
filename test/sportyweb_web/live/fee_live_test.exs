@@ -4,9 +4,9 @@ defmodule SportywebWeb.FeeLiveTest do
   import Phoenix.LiveViewTest
   import Sportyweb.LegalFixtures
 
-  @create_attrs %{admission_fee_in_eur_cent: 42, base_fee_in_eur_cent: 42, commission_at: "2023-02-24", decommission_at: "2023-02-24", description: "some description", has_admission_fee: true, is_group_only: true, is_recurring: true, maximum_age_in_years: 42, minimum_age_in_years: 42, name: "some name", reference_number: "some reference_number", type: "some type"}
-  @update_attrs %{admission_fee_in_eur_cent: 43, base_fee_in_eur_cent: 43, commission_at: "2023-02-25", decommission_at: "2023-02-25", description: "some updated description", has_admission_fee: false, is_group_only: false, is_recurring: false, maximum_age_in_years: 43, minimum_age_in_years: 43, name: "some updated name", reference_number: "some updated reference_number", type: "some updated type"}
-  @invalid_attrs %{admission_fee_in_eur_cent: nil, base_fee_in_eur_cent: nil, commission_at: nil, decommission_at: nil, description: nil, has_admission_fee: false, is_group_only: false, is_recurring: false, maximum_age_in_years: nil, minimum_age_in_years: nil, name: nil, reference_number: nil, type: nil}
+  @create_attrs %{admission_fee_in_eur_cent: 42, base_fee_in_eur_cent: 42, commission_at: "2023-02-24", decommission_at: "2023-02-24", description: "some description", is_group_only: true, is_recurring: true, maximum_age_in_years: 42, minimum_age_in_years: 42, name: "some name", reference_number: "some reference_number", type: "some type"}
+  @update_attrs %{admission_fee_in_eur_cent: 43, base_fee_in_eur_cent: 43, commission_at: "2023-02-25", decommission_at: "2023-02-25", description: "some updated description", is_group_only: false, is_recurring: false, maximum_age_in_years: 43, minimum_age_in_years: 43, name: "some updated name", reference_number: "some updated reference_number", type: "some updated type"}
+  @invalid_attrs %{admission_fee_in_eur_cent: nil, base_fee_in_eur_cent: nil, commission_at: nil, decommission_at: nil, description: nil, is_group_only: false, is_recurring: false, maximum_age_in_years: nil, minimum_age_in_years: nil, name: nil, reference_number: nil, type: nil}
 
   defp create_fee(_) do
     fee = fee_fixture()

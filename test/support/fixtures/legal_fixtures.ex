@@ -16,7 +16,6 @@ defmodule Sportyweb.LegalFixtures do
         commission_at: ~D[2023-02-24],
         decommission_at: ~D[2023-02-24],
         description: "some description",
-        has_admission_fee: true,
         is_group_only: true,
         is_recurring: true,
         maximum_age_in_years: 42,
