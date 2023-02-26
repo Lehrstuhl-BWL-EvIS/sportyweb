@@ -285,6 +285,20 @@ defmodule Sportyweb.RBAC.UserRole do
   @doc """
   Returns list of userclubroles of the club.
   """
+  def list_userdepartmentroles_by_department (dept_id) do
+    query = from udr in UserDepartmentRole,
+      where: udr.department_id == ^dept_id,
+      join: u in assoc(udr, :user),
+      join: d in assoc(udr, :department),
+      join: dr in assoc(udr, :departmentrole),
+      preload: [user: u, department: d, departmentrole: dr]
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns list of userclubroles of the club.
+  """
 
   def list_users_departmentroles_in_a_department(user_id, dept_id) do
     query = from udr in UserDepartmentRole,

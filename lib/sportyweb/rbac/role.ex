@@ -1,6 +1,6 @@
 defmodule Sportyweb.RBAC.Role do
 
-  defstruct [:id, :name, :roles]
+  defstruct [:id, :name, :clubroles, :departmentroles]
 
   defmodule SubRoleDepartment, do: defstruct [:id, :departmentrole_id, :name]
 

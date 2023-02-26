@@ -35,7 +35,7 @@ defmodule SportywebWeb.RoleLive.Edit do
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
+  def handle_event("delete", %{"club_id" => id}, socket) do
     ucr = UserRole.get_user_club_role!(id)
     {:ok, _} = UserRole.delete_user_club_role(ucr)
 

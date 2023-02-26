@@ -3,7 +3,9 @@
   <:subtitle>im Verein <%= @club.name %></:subtitle>
 </.header>
 
-<.card class="bg-slate-400">
+<.back navigate={~p"/clubs/#{@club.id}/roles"}>Zurück zur Nutzer & Rollen</.back>
+
+<.card class="mt-10 bg-slate-400">
   <p class="font-bold text-zinc-800">Zugewiesene Rollen</p>
   <.card class="mt-5">
     <.table id="assigned_club_roles" rows={@assigned_club_roles}>
@@ -50,5 +52,3 @@
     </.table>
   </.card>
 </.card>
-
-<.back navigate={~p"/clubs/#{@club.id}/roles"}>Zurück zur Nutzer & Rollen</.back>
