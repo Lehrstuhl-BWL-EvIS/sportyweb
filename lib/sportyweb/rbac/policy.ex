@@ -16,7 +16,7 @@ defmodule Sportyweb.RBAC.Policy do
       {:halt,
         socket
         |> Phoenix.LiveView.put_flash(:error, "Zugriff verweigert.")
-        |> Phoenix.LiveView.redirect(to: error_redirect(action, view, params))}
+        |> Phoenix.LiveView.push_navigate(to: error_redirect(action, view, params))}
     end
   end
 
