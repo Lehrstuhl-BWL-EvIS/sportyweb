@@ -11,7 +11,8 @@ defmodule Sportyweb.RBACFixtures do
     %Sportyweb.RBAC.Role{
       id: 1,
       name: "some@name.com",
-      roles: "some role"
+      clubroles: "some role",
+      departmentroles: "some role"
     }
   end
 
@@ -19,7 +20,8 @@ defmodule Sportyweb.RBACFixtures do
     %Sportyweb.RBAC.Role{
       id: attrs.id,
       name: attrs.name,
-      roles: attrs.roles
+      clubroles: attrs.clubroles,
+      departmentroles: attrs.departmentroles
     }
   end
 end

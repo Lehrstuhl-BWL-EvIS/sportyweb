@@ -66,7 +66,7 @@ defmodule SportywebWeb.RoleLiveTest do
 
       {:ok, _, addhtml} =
         edit_live
-        |> element("#open_clubroles-#{clubrole_other.id} button", "Hinzufügen")
+        |> element("#available_club_roles-#{clubrole_other.id} button", "Hinzufügen")
         |> render_click()
         |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
@@ -90,7 +90,7 @@ defmodule SportywebWeb.RoleLiveTest do
 
       {:ok, _, removehtml} =
       edit_live
-      |> element("#userclubroles-#{ucr_admin.id} button", "Entfernen")
+      |> element("#assigned_club_roles-#{ucr_admin.id} button", "Entfernen")
       |> render_click()
       |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
