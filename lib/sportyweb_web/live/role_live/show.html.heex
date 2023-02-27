@@ -1,0 +1,27 @@
+<.header>
+   Informationen zu den verfügbaren Rollen
+</.header>
+
+<.back navigate={~p"/clubs/#{@club_id}/roles"}>Zurück zu Nutzer & Rollen</.back>
+
+<p class="font-bold text-zinc-800 mt-5">Rollen auf Vereinsebene</p>
+<p class="text-zinc-800 text-sm">erlauben Nutzern generell den Zugriff auf den allgemeinen Vereinsbereich sowie das Auflisten sich darin befindlicher die Abteilungen.</p>
+
+<.card class="mt-5">
+    <.table id="clubroles" rows={@clubroles}>
+        <:col :let={clubroles} label="Name"><%= clubroles.name %></:col>
+        <:col :let={clubroles} label="Info"> Die Rolle "<%= clubroles.name %>" <%= clubroles.info %></:col>
+    </.table>
+</.card>
+
+<p class="font-bold text-zinc-800 mt-5">Rollen auf Abteilungsebene</p>
+<p class="text-zinc-800 text-sm">erlauben Nutzern, neben dem Zugriff auf den allgemeinen Vereinsbereich und dem Auflisten sich darin befindlicher Abteilungen, den Zugriff auf die mit der Rolle in Verbindung stehende Abteilung.</p>
+
+<.card class="mt-5">
+    <.table id="departmentroles" rows={@departmentroles}>
+        <:col :let={departmentroles} label="Name"><%= departmentroles.name %></:col>
+        <:col :let={departmentroles} label="Info"> Die Rolle "<%= departmentroles.name %>" <%= departmentroles.info %></:col>
+    </.table>
+</.card>
+
+  

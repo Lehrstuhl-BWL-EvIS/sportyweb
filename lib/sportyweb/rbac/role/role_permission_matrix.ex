@@ -19,7 +19,8 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
         ClubLive:               [:edit],
         DepartmentLive:         [:index, :new, :edit, :show],
         HouseholdLive:          [:index, :new, :edit, :show],
-        RoleLive:               [:index, :new, :edit, :show]
+        RoleLive:               [:index, :new, :edit, :show],
+        Info:                   "verfügt über alle Zugriffsrechte im Kontext des zugrunde liegenden Vereins."
       },
 
       vorstand: %{
@@ -27,29 +28,36 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
         ClubLive:               [:edit],
         DepartmentLive:         [:show],
         HouseholdLive:          [:index, :show],
-        RoleLive:               [:index]
+        RoleLive:               [:index],
+        Info:                   "verfügt über die notwendigen Berechtigungen, sich die Inhalte aller Bereiche anzeigen zu lassen und die des Vereins zudem zu editieren."
       },
 
       mitarbeiter_rollen: %{
         Name:                   "Mitarbeiter- & Rollenverwaltung",
-        RoleLive:               [:index, :new, :edit, :show]
+        RoleLive:               [:index, :new, :edit, :show],
+        Info:                   "verfügt über die Berechtigungen, sich die Rollen der Nutzer eines Vereins anzeigen zu lassen sowie diese zu bearbeiten."
+
       },
 
       mitglieder_verwaltung: %{
         Name:                   "Mitgliederverwaltung",
         HouseholdLive:          [:index, :new, :edit, :show],
+        Info:                   "verfügt über die Berechtigungen, sich die Mitglieder eines Vereins anzeigen zu lassen sowie diese zu bearbeiten."
       },
 
       anlagen_geraete_verwaltung: %{
         Name:                   "Anlagen- & Geräteverwaltung",
+        Info:                   "verfügt über die Berechtigungen, sich die Anlagen und Geräte eines Vereins anzeigen zu lassen sowie diese zu bearbeiten."
       },
 
       finanz_verwaltung: %{
         Name:                   "Finanzverwaltung",
+        Info:                   "verfügt über die Berechtigungen, sich die Finanzen eines Vereins anzeigen zu lassen sowie diese zu bearbeiten."
       },
 
       pr: %{
         Name:                   "Öffentlichkeitsarbeit",
+        Info:                   "verfügt über die Berechtigungen, sich die relevanten Inhalte im Kontext der Öffentlichkeitsarbeit eines Vereins anzeigen zu lassen sowie diese zu bearbeiten."
       }
     ]
   end
@@ -58,19 +66,23 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
     [
       abteilungsleiter: %{
         Name:                   "Abteilungsleiter",
-        DepartmentLive:         [:edit]
+        DepartmentLive:         [:edit],
+        Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen sowie diese zu bearbeiten."
       },
 
       trainer: %{
         Name:                   "Trainer",
+        Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen sowie trainingsrelevante Inhalte darin zu bearbeiten."
       },
 
       wettampfverwaltung: %{
         Name:                   "Wettkampfverwaltung",
+        Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen sowie wettkampfsrelevante Inhalte darin zu bearbeiten."
       },
 
       abteilungsmitglied: %{
         Name:                   "Abteilungsmitglied",
+        Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen."
       }
     ]
   end
