@@ -48,14 +48,16 @@ defmodule Sportyweb.RBAC.Policy do
 
   defp is_allowed?(user_id, action, club_id, view, dept_id \\ nil) do
     user_roles = list_users_roles_in_club(user_id, club_id, dept_id)
-    is_associated = length(user_roles) > 0
+    is_associated_to_club = length(user_roles) > 0
+    is_associated_to_department = [] |> maybe_add_department_roles(user_id, club_id, dept_id) |> length() > 0
 
     permissions = [:club, :department] |> Enum.map(&(RPM.role_permission_matrix(&1))) |> List.flatten()
 
     user_roles
     |> Enum.reduce([], fn role, acc -> acc ++ Keyword.get_values(permissions, role) end)
     |> Enum.map(&(Map.get(&1, view)))
-    |> RPM.basic_permissions_when_associated_to_club(is_associated, view)
+    |> RPM.basic_permissions_when_associated_to_club(is_associated_to_club, view)
+    |> RPM.basic_permissions_when_associated_to_department(is_associated_to_department, view)
     |> List.flatten()
     |> Enum.uniq()
     |> Enum.member?(action)

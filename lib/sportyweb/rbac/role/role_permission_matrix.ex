@@ -58,22 +58,19 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
     [
       abteilungsleiter: %{
         Name:                   "Abteilungsleiter",
-        DepartmentLive:         [:show, :edit]
+        DepartmentLive:         [:edit]
       },
 
       trainer: %{
         Name:                   "Trainer",
-        DepartmentLive:         [:show],
       },
 
       wettampfverwaltung: %{
         Name:                   "Wettkampfverwaltung",
-        DepartmentLive:         [:show],
       },
 
       abteilungsmitglied: %{
         Name:                   "Abteilungsmitglied",
-        DepartmentLive:         [:show],
       }
     ]
   end
@@ -81,6 +78,9 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
   def basic_permissions_when_associated_to_club(currentpermissions, true, :ClubLive), do: currentpermissions ++ [:show]
   def basic_permissions_when_associated_to_club(currentpermissions, true, :DepartmentLive), do: currentpermissions ++ [:index]
   def basic_permissions_when_associated_to_club(currentpermissions, _false, _view), do: currentpermissions
+
+  def basic_permissions_when_associated_to_department(currentpermissions, true, :DepartmentLive), do: currentpermissions ++ [:show]
+  def basic_permissions_when_associated_to_department(currentpermissions, _false, _view), do: currentpermissions
 
   def get_role_names(atom) do
     atom

@@ -330,10 +330,12 @@ defmodule Sportyweb.RBAC.UserRole do
   Gets a single user_department_role by its references
   """
   def get_user_department_role_by_references(user_id, department_id, departmentrole_id) do
-    (from udr in UserDepartmentRole,
+    query = from udr in UserDepartmentRole,
       where: udr.user_id == ^user_id,
       where: udr.department_id == ^department_id,
-      where: udr.departmentrole_id == ^departmentrole_id)
+      where: udr.departmentrole_id == ^departmentrole_id
+
+    query
     |> Repo.all()
     |> Enum.at(0)
   end
