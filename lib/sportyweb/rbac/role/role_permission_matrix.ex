@@ -28,7 +28,7 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
         ClubLive:               [:edit],
         DepartmentLive:         [:show],
         HouseholdLive:          [:index, :show],
-        RoleLive:               [:index],
+        RoleLive:               [:index, :show],
         Info:                   "verfügt über die notwendigen Berechtigungen, sich die Inhalte aller Bereiche anzeigen zu lassen und die des Vereins zudem zu editieren."
       },
 

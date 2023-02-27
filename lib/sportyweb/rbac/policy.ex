@@ -11,7 +11,9 @@ defmodule Sportyweb.RBAC.Policy do
     view = get_live_view(socket.view)
 
     if is_application_admin_or_tester(socket.assigns.current_user) || permit?(socket.assigns.current_user, action, view, params) do
-      {:cont, socket}
+      {:cont,
+        socket
+        |> Phoenix.LiveView.attach_hook(:load_associated_clubs, :handle_params, &load_associated_clubs/3)}
     else
       {:halt,
         socket
@@ -93,6 +95,30 @@ defmodule Sportyweb.RBAC.Policy do
     |> Enum.map(&(&1.departmentrole.name))
     |> Enum.map(&(RPM.to_role_atom(:department, &1)))
     |> Kernel.++(current_roles)
+  end
+
+  defp load_associated_clubs(_params, _url, socket) do
+    socket = if get_live_view(socket.view) == :ClubLive
+                && socket.assigns.live_action == :index
+                && is_application_admin_or_tester(socket.assigns.current_user) == false
+    do
+      socket
+      |> Phoenix.Component.assign(:clubs, socket.assigns.clubs
+        |> Enum.reduce([], &(if user_associated_with_club?(socket.assigns.current_user, &1),
+          do: &2 ++ [&1],
+          else: &2)))
+    else
+      socket
+    end
+
+    {:cont, socket}
+  end
+
+  defp user_associated_with_club?(user, club) do
+    user.id
+    |> list_users_roles_in_club(club.id, nil)
+    |> length()
+    |> Kernel.>(0)
   end
 
   defp error_redirect(action, :ClubLive, _params) when action in [:new, :edit, :show], do: ~p"/clubs"

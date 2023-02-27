@@ -91,7 +91,7 @@ defmodule Sportyweb.RBAC.PolicyTest do
         {:ok, ucr} = UserRole.create_user_club_role(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
         case RPM.to_role_atom(:club, clubrole.name) do
           :club_admin ->                  assert [true,  true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
-          :vorstand ->                    assert [true,  false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
+          :vorstand ->                    assert [true,  false, false, true]  == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
           :mitarbeiter_rollen ->          assert [true,  true,  true,  true]  == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
           :mitglieder_verwaltung ->       assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
           :anlagen_geraete_verwaltung ->  assert [false, false, false, false] == actions |> Enum.map(&(permit?(user, &1, view, %{"club_id" => club.id}))), "Rolle: #{clubrole.name}"
