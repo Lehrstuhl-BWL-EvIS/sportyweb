@@ -21,17 +21,17 @@ defmodule Sportyweb.Accounts.UserNotifier do
   Deliver instructions to confirm account.
   """
   def deliver_confirmation_instructions(user, url) do
-    deliver(user.email, "Confirmation instructions", """
+    deliver(user.email, "Bestätigungsanweisungen", """
 
     ==============================
 
-    Hi #{user.email},
+    Hallo #{user.email},
 
-    You can confirm your account by visiting the URL below:
+    Sie können Ihr Konto bestätigen, indem Sie die folgende URL besuchen:
 
     #{url}
 
-    If you didn't create an account with us, please ignore this.
+    Wenn Sie kein Konto bei uns erstellt haben, ignorieren Sie dies bitte.
 
     ==============================
     """)
@@ -41,17 +41,17 @@ defmodule Sportyweb.Accounts.UserNotifier do
   Deliver instructions to reset a user password.
   """
   def deliver_reset_password_instructions(user, url) do
-    deliver(user.email, "Reset password instructions", """
+    deliver(user.email, "Anweisungen zum Zurücksetzen des Passworts", """
 
     ==============================
 
-    Hi #{user.email},
+    Hallo #{user.email},
 
-    You can reset your password by visiting the URL below:
+    Sie können Ihr Passwort zurücksetzen, indem Sie die folgende URL besuchen:
 
     #{url}
 
-    If you didn't request this change, please ignore this.
+    Wenn Sie diese Änderung nicht angefordert haben, ignorieren Sie dies bitte.
 
     ==============================
     """)
@@ -61,17 +61,17 @@ defmodule Sportyweb.Accounts.UserNotifier do
   Deliver instructions to update a user email.
   """
   def deliver_update_email_instructions(user, url) do
-    deliver(user.email, "Update email instructions", """
+    deliver(user.email, "E-Mail-Anweisungen aktualisieren", """
 
     ==============================
 
-    Hi #{user.email},
+    Hallo #{user.email},
 
-    You can change your email by visiting the URL below:
+    Sie können Ihre E-Mail ändern, indem Sie die folgende URL besuchen:
 
     #{url}
 
-    If you didn't request this change, please ignore this.
+    Wenn Sie diese Änderung nicht angefordert haben, ignorieren Sie dies bitte.
 
     ==============================
     """)
@@ -81,22 +81,21 @@ defmodule Sportyweb.Accounts.UserNotifier do
   Deliver information of being added to a club.
   """
   def deliver_info_of_being_added_to_club(user, club, url, pw) do
-    deliver(user.email, "You have been added to club #{club.name} on Sportyweb", """
+    deliver(user.email, "Sie wurden dem Verein #{club.name} auf Sportyweb hinzugefügt", """
 
     ==============================
 
-    Hi #{user.email},
+    Hallo #{user.email},
 
-    You have been added to club #{club.name} on Sportyweb.
-    You can log in to your account by visiting the URL below:
+    Sie können sich in Ihr Konto einloggen, indem Sie die folgende URL besuchen:
 
     #{url}
 
-    We have created an initial password for you. Please make sure to change it on your first log in.
+    Wir haben ein erstes Passwort für Sie erstellt. Bitte stellen Sie sicher, dass Sie es bei Ihrer ersten Anmeldung ändern.
 
     #{pw}
 
-    If you didn't request to having an account created with us, please ignore this.
+    Wenn Sie die Erstellung eines Kontos bei uns nicht beantragt haben, ignorieren Sie dies bitte.
 
     ==============================
     """)
