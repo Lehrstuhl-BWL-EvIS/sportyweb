@@ -61,13 +61,13 @@ defmodule SportywebWeb.UserLoginLiveTest do
     test "redirects to registration page when the Register button is clicked", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/log_in")
 
-      {:ok, _register_live, register_html} =
+      {:ok, _login_live, login_html} =
         lv
         |> element(~s|a:fl-contains("Sign up")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/register")
 
-      assert register_html =~ "Register"
+      assert login_html =~ "Register"
     end
 
     test "redirects to forgot password page when the Forgot Password button is clicked", %{
@@ -75,13 +75,13 @@ defmodule SportywebWeb.UserLoginLiveTest do
     } do
       {:ok, lv, _html} = live(conn, ~p"/users/log_in")
 
-      {:ok, _reset_live, reset_html} =
+      {:ok, conn} =
         lv
         |> element(~s{a:fl-contains('Forgot your password?')})
         |> render_click()
         |> follow_redirect(conn, ~p"/users/reset_password")
 
-      assert reset_html =~ "Forgot your password?"
+      assert conn.resp_body =~ "Forgot your password?"
     end
   end
 end

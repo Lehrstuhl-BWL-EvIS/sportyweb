@@ -20,22 +20,20 @@ defmodule SportywebWeb.UserRegistrationLive do
 
       <.card class="mt-8">
         <.simple_form
-          :let={f}
+          for={@form}
           id="registration_form"
-          for={@changeset}
           phx-submit="save"
           phx-change="validate"
           phx-trigger-action={@trigger_submit}
           action={~p"/users/log_in?_action=registered"}
           method="post"
-          as={:user}
         >
-          <.error :if={@changeset.action == :insert}>
+          <.error :if={@check_errors}>
             Oops, something went wrong! Please check the errors below.
           </.error>
 
-          <.input field={{f, :email}} type="email" label="Email" required />
-          <.input field={{f, :password}} type="password" label="Password" required />
+          <.input field={@form[:email]} type="email" label="Email" required />
+          <.input field={@form[:password]} type="password" label="Password" required />
 
           <:actions>
             <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
@@ -48,8 +46,13 @@ defmodule SportywebWeb.UserRegistrationLive do
 
   def mount(_params, _session, socket) do
     changeset = Accounts.change_user_registration(%User{})
-    socket = assign(socket, changeset: changeset, trigger_submit: false)
-    {:ok, socket, temporary_assigns: [changeset: nil]}
+
+    socket =
+      socket
+      |> assign(trigger_submit: false, check_errors: false)
+      |> assign_form(changeset)
+
+    {:ok, socket, temporary_assigns: [form: nil]}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
@@ -62,15 +65,25 @@ defmodule SportywebWeb.UserRegistrationLive do
           )
 
         changeset = Accounts.change_user_registration(user)
-        {:noreply, assign(socket, trigger_submit: true, changeset: changeset)}
+        {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
     end
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
     changeset = Accounts.change_user_registration(%User{}, user_params)
-    {:noreply, assign(socket, changeset: Map.put(changeset, :action, :validate))}
+    {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    form = to_form(changeset, as: "user")
+
+    if changeset.valid? do
+      assign(socket, form: form, check_errors: false)
+    else
+      assign(socket, form: form)
+    end
   end
 end

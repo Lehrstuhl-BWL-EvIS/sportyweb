@@ -7,14 +7,12 @@ defmodule SportywebWeb.UserConfirmationInstructionsLive do
     ~H"""
     <.header>Resend confirmation instructions</.header>
 
-    <.card class="mt-8">
-      <.simple_form :let={f} for={:user} id="resend_confirmation_form" phx-submit="send_instructions">
-        <.input field={{f, :email}} type="email" label="Email" required />
-        <:actions>
-          <.button phx-disable-with="Sending...">Resend confirmation instructions</.button>
-        </:actions>
-      </.simple_form>
-    </.card>
+    <.simple_form for={@form} id="resend_confirmation_form" phx-submit="send_instructions">
+      <.input field={@form[:email]} type="email" label="Email" required />
+      <:actions>
+        <.button phx-disable-with="Sending...">Resend confirmation instructions</.button>
+      </:actions>
+    </.simple_form>
 
     <.live_component
       module={SportywebWeb.UserRegistrationLoginLinksComponent}
@@ -24,7 +22,7 @@ defmodule SportywebWeb.UserConfirmationInstructionsLive do
   end
 
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, form: to_form(%{}, as: "user"))}
   end
 
   def handle_event("send_instructions", %{"user" => %{"email" => email}}, socket) do

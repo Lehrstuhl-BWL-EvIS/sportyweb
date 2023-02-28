@@ -39,7 +39,6 @@ defmodule SportywebWeb do
   def controller do
     quote do
       use Phoenix.Controller,
-        namespace: SportywebWeb,
         formats: [:html, :json],
         layouts: [html: SportywebWeb.Layouts]
 

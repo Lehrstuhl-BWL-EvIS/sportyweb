@@ -81,7 +81,7 @@ defmodule SportywebWeb.UserAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: "/")
+    |> redirect(to: ~p"/")
   end
 
   @doc """
@@ -173,15 +173,11 @@ defmodule SportywebWeb.UserAuth do
   end
 
   defp mount_current_user(session, socket) do
-    case session do
-      %{"user_token" => user_token} ->
-        Phoenix.Component.assign_new(socket, :current_user, fn ->
-          Accounts.get_user_by_session_token(user_token)
-        end)
-
-      %{} ->
-        Phoenix.Component.assign_new(socket, :current_user, fn -> nil end)
-    end
+    Phoenix.Component.assign_new(socket, :current_user, fn ->
+      if user_token = session["user_token"] do
+        Accounts.get_user_by_session_token(user_token)
+      end
+    end)
   end
 
   @doc """
