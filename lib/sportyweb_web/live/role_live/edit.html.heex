@@ -3,14 +3,9 @@
   <:subtitle>im Verein <%= @club.name %></:subtitle>
 </.header>
 
-<div class="mt-5">
-  <.link navigate={~p"/clubs/#{@club.id}/roles/show"} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
-    Rolleninformationen <Heroicons.arrow_right solid class="w-3 h-3 stroke-current inline" />
-  </.link>
-</div>
 <.back navigate={~p"/clubs/#{@club.id}/roles"}>Zurück zu Nutzer & Rollen</.back>
 
-<.card class="mt-10 bg-slate-400">
+<.card class="mt-5 bg-slate-400">
   <p class="font-bold text-zinc-800">Zugewiesene Rollen</p>
   <.card class="mt-5">
     <.table id="assigned_club_roles" rows={@assigned_club_roles}>

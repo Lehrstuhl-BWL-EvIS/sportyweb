@@ -7,7 +7,13 @@
   </:actions>
 </.header>
 
-<.card>
+<div class="mt-5">
+  <.link navigate={~p"/clubs/#{@club.id}/roles/show"} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
+    Rolleninformationen <Heroicons.arrow_right solid class="w-3 h-3 stroke-current inline" />
+  </.link>
+</div>
+
+<.card class="mt-5">
   <.table id="roles" rows={@roles} row_click={&JS.navigate(~p"/clubs/#{@club.id}/roles/#{&1}/edit")}>
     <:col :let={role} label="Mitarbeiter"><%= role.name %></:col>
     <:col :let={role} label="Rollen">
