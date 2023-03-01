@@ -32,7 +32,11 @@
 
 <.card>
   <%= if Enum.any?(@venue.equipment) do %>
-    <.table id="equipment" rows={@venue.equipment} row_click={&JS.navigate(~p"/equipment/#{&1}")}>
+    <.table
+      id="equipment"
+      rows={@venue.equipment}
+      row_click={&JS.navigate(~p"/equipment/#{&1}")}
+    >
       <:col :let={equipment} label="Name">
         <%= format_string_field(equipment.name) %>
       </:col>
@@ -53,5 +57,6 @@
     <p>Bisher wurde noch keine Gruppe erstellt.</p>
   <% end %>
 </.card>
+
 
 <.back navigate={~p"/clubs/#{@venue.club}/venues"} class="mt-12">Zur Standortübersicht</.back>

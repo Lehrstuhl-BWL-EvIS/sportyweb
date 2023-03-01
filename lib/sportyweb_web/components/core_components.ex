@@ -372,7 +372,7 @@ defmodule SportywebWeb.CoreComponents do
       <select
         id={@id}
         name={@name}
-        class="mt-1 block w-full py-2 px-3 border border-zinc-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-300 sm:text-sm"
+        class="mt-2 block w-full py-2 px-3 border border-zinc-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-300 sm:text-sm"
         multiple={@multiple}
         {@rest}
       >

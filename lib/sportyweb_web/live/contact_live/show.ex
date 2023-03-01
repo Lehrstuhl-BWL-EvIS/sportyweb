@@ -17,7 +17,7 @@ defmodule SportywebWeb.ContactLive.Show do
 
     {:noreply,
      socket
-     |> assign(:page_title, "Kontakt: #{contact.person_last_name}") # TODO: Changed based on type
+     |> assign(:page_title, "Kontakt: #{contact.name}")
      |> assign(:contact, contact)
      |> assign(:club, contact.club)}
   end

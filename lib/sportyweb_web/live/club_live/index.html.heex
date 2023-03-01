@@ -8,23 +8,27 @@
 </.header>
 
 <.card>
-  <.table id="clubs" rows={@clubs} row_click={&JS.navigate(~p"/clubs/#{&1}")}>
-    <:col :let={club} label="Name">
+  <.table
+    id="clubs"
+    rows={@streams.clubs}
+    row_click={fn {_id, club} -> JS.navigate(~p"/clubs/#{club}") end}
+  >
+    <:col :let={{_id, club}} label="Name">
       <%= format_string_field(club.name) %>
     </:col>
-    <:col :let={club} label="Referenznummer">
+    <:col :let={{_id, club}} label="Referenznummer">
       <%= format_string_field(club.reference_number) %>
     </:col>
-    <:col :let={club} label="Beschreibung">
+    <:col :let={{_id, club}} label="Beschreibung">
       <div class="max-w-[200px] truncate overflow-hidden">
         <%= format_string_field(club.description) %>
       </div>
     </:col>
-    <:col :let={club} label="Gründungsdatum">
+    <:col :let={{_id, club}} label="Gründungsdatum">
       <%= format_date_field_dmy(club.founded_at) %>
     </:col>
 
-    <:action :let={club}>
+    <:action :let={{_id, club}}>
       <.link navigate={~p"/clubs/#{club}"}>Anzeigen</.link>
     </:action>
   </.table>

@@ -9,8 +9,8 @@ defmodule SportywebWeb.ContactLive.Index do
   def mount(%{"club_id" => club_id}, _session, socket) do
     {:ok,
     socket
-    |> assign(:contacts, Personal.list_contacts(club_id))
-    |> assign(:club_navigation_current_item, :contacts)}
+    |> assign(:club_navigation_current_item, :contacts)
+    |> stream(:contacts, Personal.list_contacts(club_id))}
   end
 
   @impl true

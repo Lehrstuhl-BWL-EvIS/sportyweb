@@ -51,7 +51,11 @@
 
 <.card>
   <%= if Enum.any?(@department.groups) do %>
-    <.table id="groups" rows={@department.groups} row_click={&JS.navigate(~p"/groups/#{&1}")}>
+    <.table
+      id="groups"
+      rows={@department.groups}
+      row_click={&JS.navigate(~p"/groups/#{&1}")}
+    >
       <:col :let={group} label="Name">
         <%= format_string_field(group.name) %>
       </:col>

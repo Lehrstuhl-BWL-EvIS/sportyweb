@@ -13,8 +13,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
 
       <.card>
         <.simple_form
-          :let={f}
-          for={@changeset}
+          for={@form}
           id="group-form"
           phx-target={@myself}
           phx-change="validate"
@@ -23,25 +22,25 @@ defmodule SportywebWeb.GroupLive.FormComponent do
           <.input_grid>
             <%= if @group.id do %>
               <div class="col-span-12">
-                <.input field={{f, :department_id}} type="select" label="Abteilung"
+                <.input field={@form[:department_id]} type="select" label="Abteilung"
                 options={Organization.list_departments(@group.department.club_id) |> Enum.map(&{&1.name, &1.id})} />
               </div>
             <% end %>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :name}} type="text" label="Name" />
+              <.input field={@form[:name]} type="text" label="Name" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :reference_number}} type="text" label="Referenznummer (optional)" />
+              <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
             </div>
 
             <div class="col-span-12">
-              <.input field={{f, :description}} type="textarea" label="Beschreibung (optional)" />
+              <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :created_at}} type="date" label="Erstellungsdatum" />
+              <.input field={@form[:created_at]} type="date" label="Erstellungsdatum" />
             </div>
           </.input_grid>
 
@@ -73,7 +72,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign_form(changeset)}
   end
 
   @impl true
@@ -83,7 +82,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
       |> Organization.change_group(group_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("save", %{"group" => group_params}, socket) do
@@ -103,7 +102,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
@@ -116,7 +115,11 @@ defmodule SportywebWeb.GroupLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 end

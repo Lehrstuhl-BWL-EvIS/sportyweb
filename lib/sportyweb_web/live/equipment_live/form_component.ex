@@ -13,8 +13,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
 
       <.card>
         <.simple_form
-          :let={f}
-          for={@changeset}
+          for={@form}
           id="equipment-form"
           phx-target={@myself}
           phx-change="validate"
@@ -23,37 +22,37 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
           <.input_grid>
             <%= if @equipment.id do %>
               <div class="col-span-12">
-                <.input field={{f, :venue_id}} type="select" label="Standort"
+                <.input field={@form[:venue_id]} type="select" label="Standort"
                 options={Asset.list_venues(@equipment.venue.club_id) |> Enum.map(&{&1.name, &1.id})} />
               </div>
             <% end %>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :name}} type="text" label="Name" />
+              <.input field={@form[:name]} type="text" label="Name" />
             </div>
 
             <div class="col-span-12 md:col-span-3">
-              <.input field={{f, :reference_number}} type="text" label="Referenznummer (optional)" />
+              <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-3">
-              <.input field={{f, :serial_number}} type="text" label="Seriennummer (optional)" />
+              <.input field={@form[:serial_number]} type="text" label="Seriennummer (optional)" />
             </div>
 
             <div class="col-span-12">
-              <.input field={{f, :description}} type="textarea" label="Beschreibung (optional)" />
+              <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-4">
-              <.input field={{f, :purchased_at}} type="date" label="Gekauft am (optional)" />
+              <.input field={@form[:purchased_at]} type="date" label="Gekauft am (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-4">
-              <.input field={{f, :commission_at}} type="date" label="Nutzung ab (optional)" />
+              <.input field={@form[:commission_at]} type="date" label="Nutzung ab (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-4">
-              <.input field={{f, :decommission_at}} type="date" label="Nutzung bis (optional)" />
+              <.input field={@form[:decommission_at]} type="date" label="Nutzung bis (optional)" />
             </div>
           </.input_grid>
 
@@ -85,7 +84,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign_form(changeset)}
   end
 
   @impl true
@@ -95,7 +94,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
       |> Asset.change_equipment(equipment_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("save", %{"equipment" => equipment_params}, socket) do
@@ -115,7 +114,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
@@ -128,7 +127,11 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 end

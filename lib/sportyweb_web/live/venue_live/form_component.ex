@@ -13,8 +13,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
 
       <.card>
         <.simple_form
-          :let={f}
-          for={@changeset}
+          for={@form}
           id="venue-form"
           phx-target={@myself}
           phx-change="validate"
@@ -22,15 +21,15 @@ defmodule SportywebWeb.VenueLive.FormComponent do
         >
           <.input_grid>
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :name}} type="text" label="Name" />
+              <.input field={@form[:name]} type="text" label="Name" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :reference_number}} type="text" label="Referenznummer (optional)" />
+              <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
             </div>
 
             <div class="col-span-12">
-              <.input field={{f, :description}} type="textarea" label="Beschreibung (optional)" />
+              <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
             </div>
           </.input_grid>
 
@@ -62,7 +61,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign_form(changeset)}
   end
 
   @impl true
@@ -72,7 +71,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
       |> Asset.change_venue(venue_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("save", %{"venue" => venue_params}, socket) do
@@ -92,7 +91,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
@@ -105,7 +104,11 @@ defmodule SportywebWeb.VenueLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 end

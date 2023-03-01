@@ -7,12 +7,14 @@ defmodule SportywebWeb.UserConfirmationInstructionsLive do
     ~H"""
     <.header>Resend confirmation instructions</.header>
 
-    <.simple_form for={@form} id="resend_confirmation_form" phx-submit="send_instructions">
-      <.input field={@form[:email]} type="email" label="Email" required />
-      <:actions>
-        <.button phx-disable-with="Sending...">Resend confirmation instructions</.button>
-      </:actions>
-    </.simple_form>
+    <.card class="mt-8">
+      <.simple_form for={@form} id="resend_confirmation_form" phx-submit="send_instructions">
+        <.input field={@form[:email]} type="email" label="Email" required />
+        <:actions>
+          <.button phx-disable-with="Sending...">Resend confirmation instructions</.button>
+        </:actions>
+      </.simple_form>
+    </.card>
 
     <.live_component
       module={SportywebWeb.UserRegistrationLoginLinksComponent}

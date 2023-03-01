@@ -5,7 +5,7 @@ defmodule SportywebWeb.ClubLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :clubs, Organization.list_clubs())}
+    {:ok, stream(socket, :clubs, Organization.list_clubs())}
   end
 
   @impl true

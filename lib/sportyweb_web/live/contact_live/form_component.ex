@@ -14,8 +14,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
 
       <.card>
         <.simple_form
-          :let={f}
-          for={@changeset}
+          for={@form}
           id="contact-form"
           phx-target={@myself}
           phx-change="validate"
@@ -23,38 +22,38 @@ defmodule SportywebWeb.ContactLive.FormComponent do
         >
           <.input_grid>
             <div class="col-span-12">
-              <.input field={{f, :type}} type="select" label="Art"
+              <.input field={@form[:type]} type="select" label="Art"
               options={Contact.get_valid_types} prompt="Bitte auswählen" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :organization_name}} type="text" label="Organisationsname" />
+              <.input field={@form[:organization_name]} type="text" label="Organisationsname" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :organization_type}} type="select" label="Organisationstyp"
+              <.input field={@form[:organization_type]} type="select" label="Organisationstyp"
               options={Contact.get_valid_organization_types} prompt="Bitte auswählen" />
             </div>
 
             <div class="col-span-12 md:col-span-4">
-              <.input field={{f, :person_last_name}} type="text" label="Nachname" />
+              <.input field={@form[:person_last_name]} type="text" label="Nachname" />
             </div>
 
             <div class="col-span-12 md:col-span-4">
-              <.input field={{f, :person_first_name_1}} type="text" label="Vorname" />
+              <.input field={@form[:person_first_name_1]} type="text" label="Vorname" />
             </div>
 
             <div class="col-span-12 md:col-span-4">
-              <.input field={{f, :person_first_name_2}} type="text" label="2. Vorname (optional)" />
+              <.input field={@form[:person_first_name_2]} type="text" label="2. Vorname (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :person_gender}} type="select" label="Geschlecht"
+              <.input field={@form[:person_gender]} type="select" label="Geschlecht"
               options={Contact.get_valid_genders} prompt="Bitte auswählen" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :person_birthday}} type="date" label="Geburtstag" />
+              <.input field={@form[:person_birthday]} type="date" label="Geburtstag" />
             </div>
           </.input_grid>
 
@@ -86,7 +85,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign_form(changeset)}
   end
 
   @impl true
@@ -96,7 +95,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
       |> Personal.change_contact(contact_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("save", %{"contact" => contact_params}, socket) do
@@ -116,7 +115,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
@@ -129,7 +128,11 @@ defmodule SportywebWeb.ContactLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 end

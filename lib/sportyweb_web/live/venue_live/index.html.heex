@@ -8,27 +8,31 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@venues) do %>
-    <.table id="venues" rows={@venues} row_click={&JS.navigate(~p"/venues/#{&1}")}>
-      <:col :let={venue} label="Name">
+  <%= if Enum.any?(@streams.venues) do %>
+    <.table
+      id="venues"
+      rows={@streams.venues}
+      row_click={fn {_id, venue} -> JS.navigate(~p"/venues/#{venue}") end}
+    >
+      <:col :let={{_id, venue}} label="Name">
         <%= format_string_field(venue.name) %>
         <%= if venue.is_main do %>
           <Heroicons.check_badge class="ml-1 inline-block w-[20px] text-green-800" />
         <% end %>
       </:col>
-      <:col :let={venue} label="Referenznummer">
+      <:col :let={{_id, venue}} label="Referenznummer">
         <%= format_string_field(venue.reference_number) %>
       </:col>
-      <:col :let={venue} label="Beschreibung">
+      <:col :let={{_id, venue}} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
           <%= format_string_field(venue.description) %>
         </div>
       </:col>
-      <:col :let={venue} label="Equipment">
+      <:col :let={{_id, venue}} label="Equipment">
         <%= Enum.count(venue.equipment) %>
       </:col>
 
-      <:action :let={venue}>
+      <:action :let={{_id, venue}}>
         <.link navigate={~p"/venues/#{venue}"}>Anzeigen</.link>
       </:action>
     </.table>

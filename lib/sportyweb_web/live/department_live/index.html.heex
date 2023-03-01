@@ -8,27 +8,31 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@departments) do %>
-    <.table id="departments" rows={@departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
-      <:col :let={department} label="Name">
+  <%= if Enum.any?(@streams.departments) do %>
+    <.table
+      id="departments"
+      rows={@streams.departments}
+      row_click={fn {_id, department} -> JS.navigate(~p"/departments/#{department}") end}
+    >
+      <:col :let={{_id, department}} label="Name">
         <%= format_string_field(department.name) %>
       </:col>
-      <:col :let={department} label="Referenznummer">
+      <:col :let={{_id, department}} label="Referenznummer">
         <%= format_string_field(department.reference_number) %>
       </:col>
-      <:col :let={department} label="Beschreibung">
+      <:col :let={{_id, department}} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
           <%= format_string_field(department.description) %>
         </div>
       </:col>
-      <:col :let={department} label="Erstellungsdatum">
+      <:col :let={{_id, department}} label="Erstellungsdatum">
         <%= format_date_field_dmy(department.created_at) %>
       </:col>
-      <:col :let={department} label="Gruppen">
+      <:col :let={{_id, department}} label="Gruppen">
         <%= Enum.count(department.groups) %>
       </:col>
 
-      <:action :let={department}>
+      <:action :let={{_id, department}}>
         <.link navigate={~p"/departments/#{department}"}>Anzeigen</.link>
       </:action>
     </.table>
