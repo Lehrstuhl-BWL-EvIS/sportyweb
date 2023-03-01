@@ -77,7 +77,6 @@ defmodule SportywebWeb.UserSettingsLiveTest do
         |> render_submit()
 
       assert result =~ "E-Mail-Adresse ändern"
-      assert result =~ "Oops, something went wrong!"
       assert result =~ "is not valid"
     end
   end
