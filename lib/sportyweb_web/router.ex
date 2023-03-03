@@ -133,12 +133,13 @@ defmodule SportywebWeb.Router do
 
       # Fees (Polymorphic)
 
-      live "/fees", FeeLive.Index, :index
-      live "/fees/new", FeeLive.Index, :new
-      live "/fees/:id/edit", FeeLive.Index, :edit
+      live "/fees", FeeLive.Index, :index_root
+      live "/clubs/:club_id/fees", FeeLive.Index, :index
+
+      live "/clubs/:club_id/fees/new", FeeLive.NewEdit, :new
+      live "/fees/:id/edit", FeeLive.NewEdit, :edit
 
       live "/fees/:id", FeeLive.Show, :show
-      live "/fees/:id/show/edit", FeeLive.Show, :edit
     end
   end
 

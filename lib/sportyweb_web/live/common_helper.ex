@@ -1,4 +1,12 @@
 defmodule SportywebWeb.CommonHelper do
+  def format_boolean_field(field) do
+    if field do
+      "Ja"
+    else
+      "Nein"
+    end
+  end
+
   def format_string_field(field) do
     if field && String.trim(field) != "" do
       field
@@ -10,6 +18,17 @@ defmodule SportywebWeb.CommonHelper do
   def format_date_field_dmy(date) do
     if date do
       Calendar.strftime(date, "%d.%m.%Y")
+    else
+      "-"
+    end
+  end
+
+  def format_eur_cent_field(field) do
+    if field do
+      field
+      |> div(100) # Convert Cent to EUR
+      |> Integer.to_string
+      |> String.replace(".", ",") # Use a comma as delimiter
     else
       "-"
     end

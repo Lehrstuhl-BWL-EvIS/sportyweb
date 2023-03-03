@@ -2,11 +2,19 @@ defmodule SportywebWeb.FeeLive.Index do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Legal
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Organization
+
+  @impl true
+  def mount(%{"club_id" => club_id}, _session, socket) do
+    {:ok,
+     socket
+     |> assign(:club_navigation_current_item, :finances)
+     |> stream(:fees, Legal.list_fees(club_id))}
+  end
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :fees, Legal.list_fees())}
+    {:ok, socket}
   end
 
   @impl true
@@ -14,34 +22,16 @@ defmodule SportywebWeb.FeeLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :index_root, _params) do
     socket
-    |> assign(:page_title, "Edit Fee")
-    |> assign(:fee, Legal.get_fee!(id))
+    |> redirect(to: "/clubs")
   end
 
-  defp apply_action(socket, :new, _params) do
+  defp apply_action(socket, :index, %{"club_id" => club_id}) do
+    club = Organization.get_club!(club_id)
+
     socket
-    |> assign(:page_title, "New Fee")
-    |> assign(:fee, %Fee{})
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Fees")
-    |> assign(:fee, nil)
-  end
-
-  @impl true
-  def handle_info({SportywebWeb.FeeLive.FormComponent, {:saved, fee}}, socket) do
-    {:noreply, stream_insert(socket, :fees, fee)}
-  end
-
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    fee = Legal.get_fee!(id)
-    {:ok, _} = Legal.delete_fee(fee)
-
-    {:noreply, stream_delete(socket, :fees, fee)}
+    |> assign(:page_title, "Allgemeine Gebühren")
+    |> assign(:club, club)
   end
 end

@@ -7,12 +7,13 @@ defmodule Sportyweb.LegalTest do
     alias Sportyweb.Legal.Fee
 
     import Sportyweb.LegalFixtures
+    import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{admission_fee_in_eur_cent: nil, base_fee_in_eur_cent: nil, commission_at: nil, decommission_at: nil, description: nil, is_group_only: nil, is_recurring: nil, maximum_age_in_years: nil, minimum_age_in_years: nil, name: nil, reference_number: nil, type: nil}
+    @invalid_attrs %{admission_fee_in_eur_cent: nil, base_fee_in_eur_cent: nil, commission_at: nil, decommission_at: nil, description: nil, is_general: nil, is_group_only: nil, is_recurring: nil, maximum_age_in_years: nil, minimum_age_in_years: nil, name: nil, reference_number: nil, type: nil}
 
     test "list_fees/0 returns all fees" do
       fee = fee_fixture()
-      assert Legal.list_fees() == [fee]
+      assert Legal.list_fees(fee.club_id) == [fee]
     end
 
     test "get_fee!/1 returns the fee with given id" do
@@ -21,7 +22,8 @@ defmodule Sportyweb.LegalTest do
     end
 
     test "create_fee/1 with valid data creates a fee" do
-      valid_attrs = %{admission_fee_in_eur_cent: 42, base_fee_in_eur_cent: 42, commission_at: ~D[2023-02-24], decommission_at: ~D[2023-02-24], description: "some description", is_group_only: true, is_recurring: true, maximum_age_in_years: 42, minimum_age_in_years: 42, name: "some name", reference_number: "some reference_number", type: "some type"}
+      club = club_fixture()
+      valid_attrs = %{club_id: club.id, admission_fee_in_eur_cent: 42, base_fee_in_eur_cent: 42, commission_at: ~D[2023-02-24], decommission_at: ~D[2023-02-24], description: "some description", is_general: true, is_group_only: true, is_recurring: true, maximum_age_in_years: 42, minimum_age_in_years: 42, name: "some name", reference_number: "some reference_number", type: "club"}
 
       assert {:ok, %Fee{} = fee} = Legal.create_fee(valid_attrs)
       assert fee.admission_fee_in_eur_cent == 42
@@ -29,13 +31,14 @@ defmodule Sportyweb.LegalTest do
       assert fee.commission_at == ~D[2023-02-24]
       assert fee.decommission_at == ~D[2023-02-24]
       assert fee.description == "some description"
+      assert fee.is_general == true
       assert fee.is_group_only == true
       assert fee.is_recurring == true
       assert fee.maximum_age_in_years == 42
       assert fee.minimum_age_in_years == 42
       assert fee.name == "some name"
       assert fee.reference_number == "some reference_number"
-      assert fee.type == "some type"
+      assert fee.type == "club"
     end
 
     test "create_fee/1 with invalid data returns error changeset" do
@@ -44,7 +47,7 @@ defmodule Sportyweb.LegalTest do
 
     test "update_fee/2 with valid data updates the fee" do
       fee = fee_fixture()
-      update_attrs = %{admission_fee_in_eur_cent: 43, base_fee_in_eur_cent: 43, commission_at: ~D[2023-02-25], decommission_at: ~D[2023-02-25], description: "some updated description", is_group_only: false, is_recurring: false, maximum_age_in_years: 43, minimum_age_in_years: 43, name: "some updated name", reference_number: "some updated reference_number", type: "some updated type"}
+      update_attrs = %{admission_fee_in_eur_cent: 43, base_fee_in_eur_cent: 43, commission_at: ~D[2023-02-25], decommission_at: ~D[2023-02-25], description: "some updated description", is_general: false, is_group_only: false, is_recurring: false, maximum_age_in_years: 43, minimum_age_in_years: 43, name: "some updated name", reference_number: "some updated reference_number", type: "department"}
 
       assert {:ok, %Fee{} = fee} = Legal.update_fee(fee, update_attrs)
       assert fee.admission_fee_in_eur_cent == 43
@@ -52,13 +55,14 @@ defmodule Sportyweb.LegalTest do
       assert fee.commission_at == ~D[2023-02-25]
       assert fee.decommission_at == ~D[2023-02-25]
       assert fee.description == "some updated description"
+      assert fee.is_general == false
       assert fee.is_group_only == false
       assert fee.is_recurring == false
       assert fee.maximum_age_in_years == 43
       assert fee.minimum_age_in_years == 43
       assert fee.name == "some updated name"
       assert fee.reference_number == "some updated reference_number"
-      assert fee.type == "some updated type"
+      assert fee.type == "department"
     end
 
     test "update_fee/2 with invalid data returns error changeset" do

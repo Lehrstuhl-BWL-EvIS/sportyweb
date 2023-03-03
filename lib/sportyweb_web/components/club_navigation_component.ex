@@ -57,7 +57,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
           <span class="truncate">Standorte & Equipment</span>
         </.link>
 
-        <.link navigate={~p"/clubs/#{@club}"}
+        <.link navigate={~p"/clubs/#{@club}/fees"}
         class={[@default_link_classes, (if @club_navigation_current_item == :finances, do: @current_link_classes)]}>
           <Heroicons.banknotes class={@default_icon_classes} />
           <span class="truncate">Gebühren</span>

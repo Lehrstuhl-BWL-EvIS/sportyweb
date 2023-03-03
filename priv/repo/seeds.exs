@@ -389,6 +389,8 @@ Organization.list_clubs()
       # ClubFees
 
       fee = Repo.insert!(%Fee{
+        club_id: club.id,
+        type: "club",
         name: "Jahresmitgliedschaft Verein Kinder",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
         description: "",
@@ -406,6 +408,8 @@ Organization.list_clubs()
       })
 
       fee = Repo.insert!(%Fee{
+        club_id: club.id,
+        type: "club",
         name: "Jahresmitgliedschaft Verein Jugendliche",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
         description: "",
@@ -423,6 +427,8 @@ Organization.list_clubs()
       })
 
       fee = Repo.insert!(%Fee{
+        club_id: club.id,
+        type: "club",
         name: "Jahresmitgliedschaft Verein Erwachsene (Vollmitglied)",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
         description: "",
@@ -440,6 +446,8 @@ Organization.list_clubs()
       })
 
       fee = Repo.insert!(%Fee{
+        club_id: club.id,
+        type: "club",
         name: "Jahresmitgliedschaft Verein Erwachsene (Unterstützungsempfänger)",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
         description: "",
@@ -457,6 +465,8 @@ Organization.list_clubs()
       })
 
       fee = Repo.insert!(%Fee{
+        club_id: club.id,
+        type: "club",
         name: "Jahresmitgliedschaft Verein Senioren",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
         description: "",

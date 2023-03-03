@@ -1,37 +1,48 @@
 <.header>
-  Fee <%= @fee.id %>
-  <:subtitle>This is a fee record from your database.</:subtitle>
+  <%= @page_title %>
   <:actions>
-    <.link patch={~p"/fees/#{@fee}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit fee</.button>
+    <.link navigate={~p"/fees/#{@fee}/edit"}>
+      <.button>Gebühr bearbeiten</.button>
     </.link>
   </:actions>
 </.header>
 
-<.list>
-  <:item title="Type"><%= @fee.type %></:item>
-  <:item title="Name"><%= @fee.name %></:item>
-  <:item title="Reference number"><%= @fee.reference_number %></:item>
-  <:item title="Description"><%= @fee.description %></:item>
-  <:item title="Base fee in eur cent"><%= @fee.base_fee_in_eur_cent %></:item>
-  <:item title="Admission fee in eur cent"><%= @fee.admission_fee_in_eur_cent %></:item>
-  <:item title="Is recurring"><%= @fee.is_recurring %></:item>
-  <:item title="Is group only"><%= @fee.is_group_only %></:item>
-  <:item title="Minimum age in years"><%= @fee.minimum_age_in_years %></:item>
-  <:item title="Maximum age in years"><%= @fee.maximum_age_in_years %></:item>
-  <:item title="Commission at"><%= @fee.commission_at %></:item>
-  <:item title="Decommission at"><%= @fee.decommission_at %></:item>
-</.list>
+<.card>
+  <.list>
+    <:item title="Für" :if={@fee.is_general}>
+      <%= get_key_for_value(Fee.get_valid_types(), @fee.type) %>
+    </:item>
+    <:item title="Referenznummer">
+      <%= format_string_field(@fee.reference_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@fee.description) %>
+    </:item>
+    <:item title="Grundgebühr">
+      <%= format_eur_cent_field(@fee.base_fee_in_eur_cent) %> &euro;
+    </:item>
+    <:item title="Aufnahmegebühr">
+      <%= format_eur_cent_field(@fee.admission_fee_in_eur_cent) %> &euro;
+    </:item>
+    <:item title="Wiederholend?">
+      <%= format_boolean_field(@fee.is_recurring) %>
+    </:item>
+    <:item title="Nur für Gruppen?">
+      <%= format_boolean_field(@fee.is_group_only) %>
+    </:item>
+    <:item title="Minimales Alter">
+      <%= @fee.minimum_age_in_years %>
+    </:item>
+    <:item title="Maximales Alter">
+      <%= @fee.maximum_age_in_years %>
+    </:item>
+    <:item title="Verwendung ab">
+      <%= format_date_field_dmy(@fee.commission_at) %>
+    </:item>
+    <:item title="Verwendung bis">
+      <%= format_date_field_dmy(@fee.decommission_at) %>
+    </:item>
+  </.list>
+</.card>
 
-<.back navigate={~p"/fees"}>Back to fees</.back>
-
-<.modal :if={@live_action == :edit} id="fee-modal" show on_cancel={JS.patch(~p"/fees/#{@fee}")}>
-  <.live_component
-    module={SportywebWeb.FeeLive.FormComponent}
-    id={@fee.id}
-    title={@page_title}
-    action={@live_action}
-    fee={@fee}
-    patch={~p"/fees/#{@fee}"}
-  />
-</.modal>
+<.back navigate={~p"/clubs/#{@fee.club}/fees"} class="mt-12">Zur Gebührenübersicht</.back>

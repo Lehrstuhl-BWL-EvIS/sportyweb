@@ -9,16 +9,30 @@ defmodule Sportyweb.Legal do
   alias Sportyweb.Legal.Fee
 
   @doc """
-  Returns the list of fees.
+  Returns a clubs list of fees.
 
   ## Examples
 
-      iex> list_fees()
+      iex> list_fees(1)
       [%Fee{}, ...]
 
   """
-  def list_fees do
-    Repo.all(Fee)
+  def list_fees(club_id) do
+    query = from(f in Fee, where: f.club_id == ^club_id, order_by: f.name)
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns a clubs list of fees. Preloads associations.
+
+  ## Examples
+
+      iex> list_fees(1, [:club])
+      [%Fee{}, ...]
+
+  """
+  def list_fees(club_id, preloads) do
+    Repo.preload(list_fees(club_id), preloads)
   end
 
   @doc """
@@ -36,6 +50,26 @@ defmodule Sportyweb.Legal do
 
   """
   def get_fee!(id), do: Repo.get!(Fee, id)
+
+  @doc """
+  Gets a single fee. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Fee does not exist.
+
+  ## Examples
+
+      iex> get_fee!(123, [:club])
+      %Department{}
+
+      iex> get_fee!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_fee!(id, preloads) do
+    Fee
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a fee.
