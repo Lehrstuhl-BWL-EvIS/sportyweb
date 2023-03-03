@@ -16,6 +16,5 @@ defmodule SportywebWeb.ClubLive.Index do
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Alle Vereine")
-    |> assign(:club, nil)
   end
 end

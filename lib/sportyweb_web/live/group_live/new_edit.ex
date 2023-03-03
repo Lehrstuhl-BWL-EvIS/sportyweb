@@ -23,8 +23,8 @@ defmodule SportywebWeb.GroupLive.NewEdit do
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
-    socket
-    |> assign(:club_navigation_current_item, :structure)}
+     socket
+     |> assign(:club_navigation_current_item, :structure)}
   end
 
   @impl true

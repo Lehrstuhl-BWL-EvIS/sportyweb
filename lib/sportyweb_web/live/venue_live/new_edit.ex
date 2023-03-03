@@ -24,8 +24,8 @@ defmodule SportywebWeb.VenueLive.NewEdit do
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
-    socket
-    |> assign(:club_navigation_current_item, :assets)}
+     socket
+     |> assign(:club_navigation_current_item, :assets)}
   end
 
   @impl true
@@ -57,9 +57,9 @@ defmodule SportywebWeb.VenueLive.NewEdit do
 
     if venue.is_main do
       {:noreply,
-      socket
-      |> put_flash(:error, "Hauptsitz kann nicht gelöscht werden!")
-      |> push_navigate(to: "/venues/#{venue.id}")}
+       socket
+       |> put_flash(:error, "Hauptsitz kann nicht gelöscht werden!")
+       |> push_navigate(to: "/venues/#{venue.id}")}
     else
       {:ok, _} = Asset.delete_venue(venue)
 

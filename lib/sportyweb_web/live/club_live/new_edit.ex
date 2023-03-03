@@ -23,8 +23,8 @@ defmodule SportywebWeb.ClubLive.NewEdit do
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
-    socket
-    |> assign(:club_navigation_current_item, :dashboard)}
+     socket
+     |> assign(:club_navigation_current_item, :dashboard)}
   end
 
   @impl true
@@ -50,8 +50,8 @@ defmodule SportywebWeb.ClubLive.NewEdit do
     {:ok, _} = Organization.delete_club(club)
 
     {:noreply,
-    socket
-    |> put_flash(:info, "Verein erfolgreich gelöscht")
-    |> push_navigate(to: "/clubs")}
+     socket
+     |> put_flash(:info, "Verein erfolgreich gelöscht")
+     |> push_navigate(to: "/clubs")}
   end
 end

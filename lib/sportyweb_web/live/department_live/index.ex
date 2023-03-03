@@ -31,7 +31,6 @@ defmodule SportywebWeb.DepartmentLive.Index do
 
     socket
     |> assign(:page_title, "Abteilungen & Gruppen")
-    |> assign(:department, nil)
     |> assign(:club, club)
   end
 end
