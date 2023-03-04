@@ -71,6 +71,19 @@ defmodule SportywebWeb.DepartmentLiveTest do
       assert html =~ "some name"
     end
 
+    test "cancels save new department", %{conn: conn, user: user} do
+      club = club_fixture()
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, _html} = live(conn, ~p"/clubs/#{club}/departments/new")
+
+      {:ok, _, _html} =
+        new_live
+        |> element("#department-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{club}/departments")
+    end
+
     test "updates department", %{conn: conn, user: user, department: department} do
       {:error, _} = live(conn, ~p"/departments/#{department}/edit")
 
@@ -91,6 +104,35 @@ defmodule SportywebWeb.DepartmentLiveTest do
 
       assert html =~ "Abteilung erfolgreich aktualisiert"
       assert html =~ "some updated name"
+    end
+
+    test "cancels updates department", %{conn: conn, user: user, department: department} do
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, _html} = live(conn, ~p"/departments/#{department}/edit")
+
+      {:ok, _, _html} =
+        edit_live
+        |> element("#department-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/departments/#{department}")
+    end
+
+    test "deletes department", %{conn: conn, user: user, department: department} do
+      {:error, _} = live(conn, ~p"/departments/#{department}/edit")
+
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/departments/#{department}/edit")
+      assert html =~ "some name"
+
+      {:ok, _, html} =
+        edit_live
+        |> element("#department-form button", "Löschen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{department.club_id}/departments")
+
+      assert html =~ "Abteilung erfolgreich gelöscht"
+      assert html =~ "Abteilungen"
+      refute html =~ "some name"
     end
   end
 

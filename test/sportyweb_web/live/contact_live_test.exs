@@ -72,6 +72,19 @@ defmodule SportywebWeb.ContactLiveTest do
       assert html =~ "some person_last_name, some person_first_name_1 some person_first_name_2"
     end
 
+    test "cancels save new contact", %{conn: conn, user: user} do
+      club = club_fixture()
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, _html} = live(conn, ~p"/clubs/#{club}/contacts/new")
+
+      {:ok, _, _html} =
+        new_live
+        |> element("#contact-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{club}/contacts")
+    end
+
     test "updates contact", %{conn: conn, user: user, contact: contact} do
       {:error, _} = live(conn, ~p"/contacts/#{contact}/edit")
 
@@ -92,6 +105,35 @@ defmodule SportywebWeb.ContactLiveTest do
 
       assert html =~ "Kontakt erfolgreich aktualisiert"
       assert html =~ "some updated organization_name"
+    end
+
+    test "cancels updates contact", %{conn: conn, user: user, contact: contact} do
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, _html} = live(conn, ~p"/contacts/#{contact}/edit")
+
+      {:ok, _, _html} =
+        edit_live
+        |> element("#contact-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/contacts/#{contact}")
+    end
+
+    test "deletes contact", %{conn: conn, user: user, contact: contact} do
+      {:error, _} = live(conn, ~p"/contacts/#{contact}/edit")
+
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/contacts/#{contact}/edit")
+      assert html =~ "some person_last_name"
+
+      {:ok, _, html} =
+        edit_live
+        |> element("#contact-form button", "Löschen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{contact.club_id}/contacts")
+
+      assert html =~ "Kontakt erfolgreich gelöscht"
+      assert html =~ "Kontakte"
+      refute html =~ "some person_last_name"
     end
   end
 

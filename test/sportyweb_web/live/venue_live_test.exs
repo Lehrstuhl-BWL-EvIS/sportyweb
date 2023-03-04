@@ -72,6 +72,19 @@ defmodule SportywebWeb.VenueLiveTest do
       assert html =~ "some name"
     end
 
+    test "cancels save new venue", %{conn: conn, user: user} do
+      club = club_fixture()
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, _html} = live(conn, ~p"/clubs/#{club}/venues/new")
+
+      {:ok, _, _html} =
+        new_live
+        |> element("#venue-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{club}/venues")
+    end
+
     test "updates venue", %{conn: conn, user: user, venue: venue} do
       {:error, _} = live(conn, ~p"/venues/#{venue}/edit")
 
@@ -92,6 +105,35 @@ defmodule SportywebWeb.VenueLiveTest do
 
       assert html =~ "Standort erfolgreich aktualisiert"
       assert html =~ "some updated name"
+    end
+
+    test "cancels updates venue", %{conn: conn, user: user, venue: venue} do
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, _html} = live(conn, ~p"/venues/#{venue}/edit")
+
+      {:ok, _, _html} =
+        edit_live
+        |> element("#venue-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/venues/#{venue}")
+    end
+
+    test "deletes venue", %{conn: conn, user: user, venue: venue} do
+      {:error, _} = live(conn, ~p"/venues/#{venue}/edit")
+
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/venues/#{venue}/edit")
+      assert html =~ "some name"
+
+      {:ok, _, html} =
+        edit_live
+        |> element("#venue-form button", "Löschen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{venue.club_id}/venues")
+
+      assert html =~ "Standort erfolgreich gelöscht"
+      assert html =~ "Standorte"
+      refute html =~ "some name"
     end
   end
 

@@ -73,6 +73,19 @@ defmodule SportywebWeb.GroupLiveTest do
       assert html =~ "some name"
     end
 
+    test "cancels save new group", %{conn: conn, user: user} do
+      department = department_fixture()
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, _html} = live(conn, ~p"/departments/#{department}/groups/new")
+
+      {:ok, _, _html} =
+        new_live
+        |> element("#group-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/departments/#{department}")
+    end
+
     test "updates group", %{conn: conn, user: user, group: group} do
       {:error, _} = live(conn, ~p"/groups/#{group}/edit")
 
@@ -93,6 +106,35 @@ defmodule SportywebWeb.GroupLiveTest do
 
       assert html =~ "Gruppe erfolgreich aktualisiert"
       assert html =~ "some updated name"
+    end
+
+    test "cancels updates group", %{conn: conn, user: user, group: group} do
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, _html} = live(conn, ~p"/groups/#{group}/edit")
+
+      {:ok, _, _html} =
+        edit_live
+        |> element("#group-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/groups/#{group}")
+    end
+
+    test "deletes group", %{conn: conn, user: user, group: group} do
+      {:error, _} = live(conn, ~p"/groups/#{group}/edit")
+
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/groups/#{group}/edit")
+      assert html =~ "some group name"
+
+      {:ok, _, html} =
+        edit_live
+        |> element("#group-form button", "Löschen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/departments/#{group.department_id}")
+
+      assert html =~ "Gruppe erfolgreich gelöscht"
+      assert html =~ "Gruppen"
+      refute html =~ "some group name"
     end
   end
 

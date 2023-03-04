@@ -72,6 +72,19 @@ defmodule SportywebWeb.FeeLiveTest do
       assert html =~ "some name"
     end
 
+    test "cancels save new fee", %{conn: conn, user: user} do
+      club = club_fixture()
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, _html} = live(conn, ~p"/clubs/#{club}/fees/new")
+
+      {:ok, _, _html} =
+        new_live
+        |> element("#fee-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{club}/fees")
+    end
+
     test "updates fee", %{conn: conn, user: user, fee: fee} do
       {:error, _} = live(conn, ~p"/fees/#{fee}/edit")
 
@@ -92,6 +105,35 @@ defmodule SportywebWeb.FeeLiveTest do
 
       assert html =~ "Gebühr erfolgreich aktualisiert"
       assert html =~ "some updated name"
+    end
+
+    test "cancels updates fee", %{conn: conn, user: user, fee: fee} do
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, _html} = live(conn, ~p"/fees/#{fee}/edit")
+
+      {:ok, _, _html} =
+        edit_live
+        |> element("#fee-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/fees/#{fee}")
+    end
+
+    test "deletes fee", %{conn: conn, user: user, fee: fee} do
+      {:error, _} = live(conn, ~p"/fees/#{fee}/edit")
+
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/fees/#{fee}/edit")
+      assert html =~ "some name"
+
+      {:ok, _, html} =
+        edit_live
+        |> element("#fee-form button", "Löschen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{fee.club_id}/fees")
+
+      assert html =~ "Gebühr erfolgreich gelöscht"
+      assert html =~ "Gebühren"
+      refute html =~ "some name"
     end
   end
 

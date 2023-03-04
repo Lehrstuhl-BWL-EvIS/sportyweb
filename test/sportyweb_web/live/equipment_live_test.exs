@@ -73,6 +73,19 @@ defmodule SportywebWeb.EquipmentLiveTest do
       assert html =~ "some name"
     end
 
+    test "cancels save new equipment", %{conn: conn, user: user} do
+      venue = venue_fixture()
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, _html} = live(conn, ~p"/venues/#{venue}/equipment/new")
+
+      {:ok, _, _html} =
+        new_live
+        |> element("#equipment-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/venues/#{venue}")
+    end
+
     test "updates equipment", %{conn: conn, user: user, equipment: equipment} do
       {:error, _} = live(conn, ~p"/equipment/#{equipment}/edit")
 
@@ -93,6 +106,35 @@ defmodule SportywebWeb.EquipmentLiveTest do
 
       assert html =~ "Equipment erfolgreich aktualisiert"
       assert html =~ "some updated name"
+    end
+
+    test "cancels updates equipment", %{conn: conn, user: user, equipment: equipment} do
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, _html} = live(conn, ~p"/equipment/#{equipment}/edit")
+
+      {:ok, _, _html} =
+        edit_live
+        |> element("#equipment-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/equipment/#{equipment}")
+    end
+
+    test "deletes equipment", %{conn: conn, user: user, equipment: equipment} do
+      {:error, _} = live(conn, ~p"/equipment/#{equipment}/edit")
+
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/equipment/#{equipment}/edit")
+      assert html =~ "some serial_number"
+
+      {:ok, _, html} =
+        edit_live
+        |> element("#equipment-form button", "Löschen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/venues/#{equipment.venue_id}")
+
+      assert html =~ "Equipment erfolgreich gelöscht"
+      assert html =~ "Equipment"
+      refute html =~ "some serial_number"
     end
   end
 

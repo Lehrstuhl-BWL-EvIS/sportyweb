@@ -57,7 +57,7 @@ defmodule Sportyweb.OrganizationFixtures do
       attrs
       |> Enum.into(%{
         department_id: department.id,
-        name: "some name",
+        name: "some group name",
         reference_number: "some reference_number",
         description: "some description",
         created_at: ~D[2022-11-05]
