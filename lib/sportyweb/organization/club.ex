@@ -12,6 +12,7 @@ defmodule Sportyweb.Organization.Club do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "clubs" do
+    has_many :all_fees, Fee, on_delete: :delete_all
     has_many :departments, Department, on_delete: :delete_all
     has_many :venues, Venue, on_delete: :delete_all
     many_to_many :fees, Fee, join_through: ClubFee

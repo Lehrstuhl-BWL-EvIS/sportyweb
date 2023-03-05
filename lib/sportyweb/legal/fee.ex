@@ -2,12 +2,14 @@ defmodule Sportyweb.Legal.Fee do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization.Club
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "fees" do
     belongs_to :club, Club
+    has_many :contracts, Contract, on_delete: :delete_all
 
     field :is_general, :boolean, default: false
     field :type, :string, default: ""
