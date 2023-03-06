@@ -59,7 +59,7 @@ defmodule Sportyweb.Legal do
   ## Examples
 
       iex> get_fee!(123, [:club])
-      %Department{}
+      %Fee{}
 
       iex> get_fee!(456, [:club])
       ** (Ecto.NoResultsError)

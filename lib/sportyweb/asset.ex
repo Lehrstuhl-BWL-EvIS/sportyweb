@@ -66,7 +66,7 @@ defmodule Sportyweb.Asset do
   ## Examples
 
       iex> get_venue!(123, [:club])
-      %Department{}
+      %Venue{}
 
       iex> get_venue!(456, [:club])
       ** (Ecto.NoResultsError)

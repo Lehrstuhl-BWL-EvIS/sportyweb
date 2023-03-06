@@ -59,7 +59,7 @@ defmodule Sportyweb.Personal do
   ## Examples
 
       iex> get_contact!(123, [:club])
-      %Department{}
+      %Contact{}
 
       iex> get_contact!(456, [:club])
       ** (Ecto.NoResultsError)
