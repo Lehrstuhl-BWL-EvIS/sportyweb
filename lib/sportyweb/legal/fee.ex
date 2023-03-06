@@ -9,7 +9,7 @@ defmodule Sportyweb.Legal.Fee do
   @foreign_key_type :binary_id
   schema "fees" do
     belongs_to :club, Club
-    has_many :contracts, Contract, on_delete: :delete_all
+    has_many :contracts, Contract
 
     field :is_general, :boolean, default: false
     field :type, :string, default: ""

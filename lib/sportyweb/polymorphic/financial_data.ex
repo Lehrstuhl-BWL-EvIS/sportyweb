@@ -7,7 +7,7 @@ defmodule Sportyweb.Polymorphic.FinancialData do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "financial_data" do
-    belongs_to :postal_address, PostalAddress, foreign_key: :invoice_recipient_postal_address_id, define_field: false
+    belongs_to :postal_address, PostalAddress, foreign_key: :invoice_recipient_postal_address_id, references: :id, define_field: false
 
     field :type, :string, default: ""
     field :direct_debit_account_holder, :string, default: ""

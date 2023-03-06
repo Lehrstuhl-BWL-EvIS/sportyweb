@@ -11,7 +11,7 @@ defmodule Sportyweb.Asset.Venue do
   @foreign_key_type :binary_id
   schema "venues" do
     belongs_to :club, Club
-    has_many :equipment, Equipment, on_delete: :delete_all
+    has_many :equipment, Equipment
     many_to_many :postal_addresses, PostalAddress, join_through: VenuePostalAddress
 
     field :name, :string, default: ""

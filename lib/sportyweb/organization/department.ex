@@ -17,7 +17,7 @@ defmodule Sportyweb.Organization.Department do
   @foreign_key_type :binary_id
   schema "departments" do
     belongs_to :club, Club
-    has_many :groups, Group, on_delete: :delete_all
+    has_many :groups, Group
     many_to_many :emails, Email, join_through: DepartmentEmail
     many_to_many :fees, Fee, join_through: DepartmentFee
     many_to_many :notes, Note, join_through: DepartmentNote
