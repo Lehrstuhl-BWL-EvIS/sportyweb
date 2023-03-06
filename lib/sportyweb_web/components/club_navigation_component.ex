@@ -48,7 +48,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
         <.link navigate={~p"/clubs/#{@club}/contacts"}
         class={[@default_link_classes, (if @club_navigation_current_item == :contacts, do: @current_link_classes)]}>
           <Heroicons.user_group class={@default_icon_classes} />
-          <span class="truncate">Mitglieder & Kontakte</span>
+          <span class="truncate">Kontakte & Mitglieder</span>
         </.link>
 
         <.link navigate={~p"/clubs/#{@club}/venues"}

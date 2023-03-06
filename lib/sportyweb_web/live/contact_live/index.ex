@@ -32,7 +32,7 @@ defmodule SportywebWeb.ContactLive.Index do
     club = Organization.get_club!(club_id)
 
     socket
-    |> assign(:page_title, "Mitglieder & Kontakte")
+    |> assign(:page_title, "Kontakte & Mitglieder")
     |> assign(:club, club)
   end
 end
