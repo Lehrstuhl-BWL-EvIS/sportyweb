@@ -4,8 +4,8 @@ defmodule Sportyweb.Repo.Migrations.CreateClubFee do
   def change do
     create table(:club_fees, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false, default: nil
-      add :fee_id, references(:fees, on_delete: :delete_all, type: :binary_id), null: false, default: nil
+      add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
+      add :fee_id, references(:fees, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end

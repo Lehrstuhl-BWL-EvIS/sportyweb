@@ -4,9 +4,9 @@ defmodule Sportyweb.Repo.Migrations.CreatePhones do
   def change do
     create table(:phones, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :type, :string, null: false, default: ""
-      add :number, :string, null: false, default: ""
-      add :is_main, :boolean, null: false, default: false
+      add :type, :string, null: false
+      add :number, :string, null: false
+      add :is_main, :boolean, null: false
 
       timestamps()
     end

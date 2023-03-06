@@ -4,8 +4,8 @@ defmodule Sportyweb.Repo.Migrations.CreateContactPostalAddresses do
   def change do
     create table(:contact_postal_addresses, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :contact_id, references(:contacts, on_delete: :delete_all, type: :binary_id), null: false, default: nil
-      add :postal_address_id, references(:postal_addresses, on_delete: :delete_all, type: :binary_id), null: false, default: nil
+      add :contact_id, references(:contacts, on_delete: :delete_all, type: :binary_id), null: false
+      add :postal_address_id, references(:postal_addresses, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end

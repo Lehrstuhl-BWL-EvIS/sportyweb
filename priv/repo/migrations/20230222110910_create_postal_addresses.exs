@@ -4,13 +4,13 @@ defmodule Sportyweb.Repo.Migrations.CreatePostalAddresses do
   def change do
     create table(:postal_addresses, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :street, :string, null: false, default: ""
-      add :street_number, :string, null: false, default: ""
-      add :street_additional_information, :string, null: false, default: ""
-      add :zipcode, :string, null: false, default: ""
-      add :city, :string, null: false, default: ""
-      add :country, :string, null: false, default: ""
-      add :is_main, :boolean, null: false, default: false
+      add :street, :string, null: false
+      add :street_number, :string, null: false
+      add :street_additional_information, :string, null: false
+      add :zipcode, :string, null: false
+      add :city, :string, null: false
+      add :country, :string, null: false
+      add :is_main, :boolean, null: false
 
       timestamps()
     end

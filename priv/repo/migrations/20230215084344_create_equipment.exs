@@ -4,14 +4,14 @@ defmodule Sportyweb.Repo.Migrations.CreateEquipment do
   def change do
     create table(:equipment, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :name, :string, null: false, default: ""
-      add :reference_number, :string, null: false, default: ""
-      add :serial_number, :string, null: false, default: ""
-      add :description, :text, null: false, default: ""
-      add :purchased_at, :date, null: true, default: nil
-      add :commission_at, :date, null: true, default: nil
-      add :decommission_at, :date, null: true, default: nil
-      add :venue_id, references(:venues, on_delete: :delete_all, type: :binary_id), null: false, default: nil
+      add :name, :string, null: false
+      add :reference_number, :string, null: false
+      add :serial_number, :string, null: false
+      add :description, :text, null: false
+      add :purchased_at, :date, null: true
+      add :commission_at, :date, null: true
+      add :decommission_at, :date, null: true
+      add :venue_id, references(:venues, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end
