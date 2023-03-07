@@ -30,11 +30,11 @@
     <:item title="Nur für Gruppen?">
       <%= format_boolean_field(@fee.is_group_only) %>
     </:item>
-    <:item title="Minimales Alter">
-      <%= @fee.minimum_age_in_years %>
+    <:item title="Mindestalter">
+      <%= format_integer_field(@fee.minimum_age_in_years) %>
     </:item>
-    <:item title="Maximales Alter">
-      <%= @fee.maximum_age_in_years %>
+    <:item title="Höchstalter">
+      <%= format_integer_field(@fee.maximum_age_in_years) %>
     </:item>
     <:item title="Verwendung ab">
       <%= format_date_field_dmy(@fee.commission_at) %>

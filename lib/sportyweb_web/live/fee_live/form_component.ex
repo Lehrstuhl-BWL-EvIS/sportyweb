@@ -60,11 +60,11 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:minimum_age_in_years]} type="number" label="Minimales Alter" />
+                <.input field={@form[:minimum_age_in_years]} type="number" label="Mindestalter" />
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:maximum_age_in_years]} type="number" label="Maximales Alter" />
+                <.input field={@form[:maximum_age_in_years]} type="number" label="Höchstalter" />
               </div>
             </.input_grid>
 
