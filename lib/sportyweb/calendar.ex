@@ -9,7 +9,7 @@ defmodule Sportyweb.Calendar do
   alias Sportyweb.Calendar.Event
 
   @doc """
-  Returns the list of events.
+  Returns a clubs list of events.
 
   ## Examples
 
@@ -17,8 +17,22 @@ defmodule Sportyweb.Calendar do
       [%Event{}, ...]
 
   """
-  def list_events do
-    Repo.all(Event)
+  def list_events(club_id) do
+    query = from(e in Event, where: e.club_id == ^club_id)
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns a clubs list of events. Preloads associations.
+
+  ## Examples
+
+      iex> list_events(1, [:club])
+      [%Event{}, ...]
+
+  """
+  def list_events(club_id, preloads) do
+    Repo.preload(list_events(club_id), preloads)
   end
 
   @doc """
@@ -36,6 +50,26 @@ defmodule Sportyweb.Calendar do
 
   """
   def get_event!(id), do: Repo.get!(Event, id)
+
+  @doc """
+  Gets a single event. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Event does not exist.
+
+  ## Examples
+
+      iex> get_event!(123, [:club])
+      %Event{}
+
+      iex> get_event!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_event!(id, preloads) do
+    Event
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a event.

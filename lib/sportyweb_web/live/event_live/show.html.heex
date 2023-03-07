@@ -1,35 +1,36 @@
 <.header>
-  Event <%= @event.id %>
-  <:subtitle>This is a event record from your database.</:subtitle>
+  <%= @page_title %>
   <:actions>
-    <.link patch={~p"/events/#{@event}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit event</.button>
+    <.link navigate={~p"/events/#{@event}/edit"}>
+      <.button>Veranstaltung bearbeiten</.button>
     </.link>
   </:actions>
 </.header>
 
-<.list>
-  <:item title="Name"><%= @event.name %></:item>
-  <:item title="Reference number"><%= @event.reference_number %></:item>
-  <:item title="Status"><%= @event.status %></:item>
-  <:item title="Description"><%= @event.description %></:item>
-  <:item title="Minimum participants"><%= @event.minimum_participants %></:item>
-  <:item title="Maximum participants"><%= @event.maximum_participants %></:item>
-  <:item title="Minimum age in years"><%= @event.minimum_age_in_years %></:item>
-  <:item title="Maximum age in years"><%= @event.maximum_age_in_years %></:item>
-  <:item title="Location type"><%= @event.location_type %></:item>
-  <:item title="Location description"><%= @event.location_description %></:item>
-</.list>
+<.card>
+  <.list>
+    <:item title="Referenznummer">
+      <%= format_string_field(@event.reference_number) %>
+    </:item>
+    <:item title="Status">
+      <%= get_key_for_value(Event.get_valid_statuses(), @event.status) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@event.description) %>
+    </:item>
+    <:item title="Minimale Anzahl an Teilnehmern">
+      <%= format_integer_field(@event.minimum_participants) %>
+    </:item>
+    <:item title="Maximale Anzahl an Teilnehmern">
+      <%= format_integer_field(@event.maximum_participants) %>
+    </:item>
+    <:item title="Mindestalter">
+      <%= format_integer_field(@event.minimum_age_in_years) %>
+    </:item>
+    <:item title="Höchstalter">
+      <%= format_integer_field(@event.maximum_age_in_years) %>
+    </:item>
+  </.list>
+</.card>
 
-<.back navigate={~p"/events"}>Back to events</.back>
-
-<.modal :if={@live_action == :edit} id="event-modal" show on_cancel={JS.patch(~p"/events/#{@event}")}>
-  <.live_component
-    module={SportywebWeb.EventLive.FormComponent}
-    id={@event.id}
-    title={@page_title}
-    action={@live_action}
-    event={@event}
-    patch={~p"/events/#{@event}"}
-  />
-</.modal>
+<.back navigate={~p"/clubs/#{@event.club}/events"} class="mt-12">Zum Kalender</.back>

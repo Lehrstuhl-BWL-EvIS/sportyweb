@@ -7,12 +7,13 @@ defmodule Sportyweb.CalendarTest do
     alias Sportyweb.Calendar.Event
 
     import Sportyweb.CalendarFixtures
+    import Sportyweb.OrganizationFixtures
 
     @invalid_attrs %{description: nil, location_description: nil, location_type: nil, maximum_age_in_years: nil, maximum_participants: nil, minimum_age_in_years: nil, minimum_participants: nil, name: nil, reference_number: nil, status: nil}
 
     test "list_events/0 returns all events" do
       event = event_fixture()
-      assert Calendar.list_events() == [event]
+      assert Calendar.list_events(event.club_id) == [event]
     end
 
     test "get_event!/1 returns the event with given id" do
@@ -21,19 +22,20 @@ defmodule Sportyweb.CalendarTest do
     end
 
     test "create_event/1 with valid data creates a event" do
-      valid_attrs = %{description: "some description", location_description: "some location_description", location_type: "some location_type", maximum_age_in_years: 42, maximum_participants: 42, minimum_age_in_years: 42, minimum_participants: 42, name: "some name", reference_number: "some reference_number", status: "some status"}
+      club = club_fixture()
+      valid_attrs = %{club_id: club.id, description: "some description", location_description: "some location_description", location_type: "postal_address", maximum_age_in_years: 42, maximum_participants: 42, minimum_age_in_years: 42, minimum_participants: 42, name: "some name", reference_number: "some reference_number", status: "draft"}
 
       assert {:ok, %Event{} = event} = Calendar.create_event(valid_attrs)
       assert event.description == "some description"
       assert event.location_description == "some location_description"
-      assert event.location_type == "some location_type"
+      assert event.location_type == "postal_address"
       assert event.maximum_age_in_years == 42
       assert event.maximum_participants == 42
       assert event.minimum_age_in_years == 42
       assert event.minimum_participants == 42
       assert event.name == "some name"
       assert event.reference_number == "some reference_number"
-      assert event.status == "some status"
+      assert event.status == "draft"
     end
 
     test "create_event/1 with invalid data returns error changeset" do
@@ -42,19 +44,19 @@ defmodule Sportyweb.CalendarTest do
 
     test "update_event/2 with valid data updates the event" do
       event = event_fixture()
-      update_attrs = %{description: "some updated description", location_description: "some updated location_description", location_type: "some updated location_type", maximum_age_in_years: 43, maximum_participants: 43, minimum_age_in_years: 43, minimum_participants: 43, name: "some updated name", reference_number: "some updated reference_number", status: "some updated status"}
+      update_attrs = %{description: "some updated description", location_description: "some updated location_description", location_type: "venue", maximum_age_in_years: 43, maximum_participants: 43, minimum_age_in_years: 43, minimum_participants: 43, name: "some updated name", reference_number: "some updated reference_number", status: "cancelled"}
 
       assert {:ok, %Event{} = event} = Calendar.update_event(event, update_attrs)
       assert event.description == "some updated description"
       assert event.location_description == "some updated location_description"
-      assert event.location_type == "some updated location_type"
+      assert event.location_type == "venue"
       assert event.maximum_age_in_years == 43
       assert event.maximum_participants == 43
       assert event.minimum_age_in_years == 43
       assert event.minimum_participants == 43
       assert event.name == "some updated name"
       assert event.reference_number == "some updated reference_number"
-      assert event.status == "some updated status"
+      assert event.status == "cancelled"
     end
 
     test "update_event/2 with invalid data returns error changeset" do

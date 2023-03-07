@@ -3,10 +3,19 @@ defmodule SportywebWeb.EventLive.Index do
 
   alias Sportyweb.Calendar
   alias Sportyweb.Calendar.Event
+  alias Sportyweb.Organization
+
+  @impl true
+  def mount(%{"club_id" => club_id}, _session, socket) do
+    {:ok,
+    socket
+    |> assign(:club_navigation_current_item, :calendar)
+    |> stream(:events, Calendar.list_events(club_id))}
+  end
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, stream(socket, :events, Calendar.list_events())}
+    {:ok, socket}
   end
 
   @impl true
@@ -14,34 +23,16 @@ defmodule SportywebWeb.EventLive.Index do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :edit, %{"id" => id}) do
+  defp apply_action(socket, :index_root, _params) do
     socket
-    |> assign(:page_title, "Edit Event")
-    |> assign(:event, Calendar.get_event!(id))
+    |> redirect(to: "/clubs")
   end
 
-  defp apply_action(socket, :new, _params) do
+  defp apply_action(socket, :index, %{"club_id" => club_id}) do
+    club = Organization.get_club!(club_id)
+
     socket
-    |> assign(:page_title, "New Event")
-    |> assign(:event, %Event{})
-  end
-
-  defp apply_action(socket, :index, _params) do
-    socket
-    |> assign(:page_title, "Listing Events")
-    |> assign(:event, nil)
-  end
-
-  @impl true
-  def handle_info({SportywebWeb.EventLive.FormComponent, {:saved, event}}, socket) do
-    {:noreply, stream_insert(socket, :events, event)}
-  end
-
-  @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    event = Calendar.get_event!(id)
-    {:ok, _} = Calendar.delete_event(event)
-
-    {:noreply, stream_delete(socket, :events, event)}
+    |> assign(:page_title, "Kalender")
+    |> assign(:club, club)
   end
 end

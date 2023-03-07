@@ -3,6 +3,7 @@ defmodule Sportyweb.Organization.Club do
   import Ecto.Changeset
 
   alias Sportyweb.Asset.Venue
+  alias Sportyweb.Calendar.Event
   alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.ClubFee
   alias Sportyweb.Organization.ClubFinancialData
@@ -13,6 +14,7 @@ defmodule Sportyweb.Organization.Club do
   @foreign_key_type :binary_id
   schema "clubs" do
     has_many :all_fees, Fee
+    has_many :events, Event
     has_many :departments, Department
     has_many :venues, Venue
     many_to_many :fees, Fee, join_through: ClubFee

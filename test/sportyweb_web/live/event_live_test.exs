@@ -2,11 +2,17 @@ defmodule SportywebWeb.EventLiveTest do
   use SportywebWeb.ConnCase
 
   import Phoenix.LiveViewTest
+  import Sportyweb.AccountsFixtures
   import Sportyweb.CalendarFixtures
+  import Sportyweb.OrganizationFixtures
 
-  @create_attrs %{description: "some description", location_description: "some location_description", location_type: "some location_type", maximum_age_in_years: 42, maximum_participants: 42, minimum_age_in_years: 42, minimum_participants: 42, name: "some name", reference_number: "some reference_number", status: "some status"}
-  @update_attrs %{description: "some updated description", location_description: "some updated location_description", location_type: "some updated location_type", maximum_age_in_years: 43, maximum_participants: 43, minimum_age_in_years: 43, minimum_participants: 43, name: "some updated name", reference_number: "some updated reference_number", status: "some updated status"}
-  @invalid_attrs %{description: nil, location_description: nil, location_type: nil, maximum_age_in_years: nil, maximum_participants: nil, minimum_age_in_years: nil, minimum_participants: nil, name: nil, reference_number: nil, status: nil}
+  @create_attrs %{description: "some description", location_description: "some location_description", location_type: "no_info", maximum_age_in_years: 42, maximum_participants: 42, minimum_age_in_years: 42, minimum_participants: 42, name: "some name", reference_number: "some reference_number", status: "draft"}
+  @update_attrs %{description: "some updated description", location_description: "some updated location_description", location_type: "venue", maximum_age_in_years: 43, maximum_participants: 43, minimum_age_in_years: 43, minimum_participants: 43, name: "some updated name", reference_number: "some updated reference_number", status: "public"}
+  @invalid_attrs %{description: nil, location_description: nil, location_type: "no_info", maximum_age_in_years: nil, maximum_participants: nil, minimum_age_in_years: nil, minimum_participants: nil, name: nil, reference_number: nil, status: "draft"}
+
+  setup do
+    %{user: user_fixture()}
+  end
 
   defp create_event(_) do
     event = event_fixture()
@@ -16,98 +22,132 @@ defmodule SportywebWeb.EventLiveTest do
   describe "Index" do
     setup [:create_event]
 
-    test "lists all events", %{conn: conn, event: event} do
-      {:ok, _index_live, html} = live(conn, ~p"/events")
+    test "lists all events - default redirect", %{conn: conn, user: user} do
+      {:error, _} = live(conn, ~p"/events")
 
-      assert html =~ "Listing Events"
-      assert html =~ event.description
+      conn = conn |> log_in_user(user)
+      {:ok, conn} =
+        conn
+        |> live(~p"/events")
+        |> follow_redirect(conn, ~p"/clubs")
+
+      assert conn.resp_body =~ "Vereinsübersicht"
     end
 
-    test "saves new event", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/events")
+    test "lists all events", %{conn: conn, user: user, event: event} do
+      {:error, _} = live(conn, ~p"/clubs/#{event.club_id}/events")
 
-      assert index_live |> element("a", "New Event") |> render_click() =~
-               "New Event"
+      conn = conn |> log_in_user(user)
+      {:ok, _index_live, html} = live(conn, ~p"/clubs/#{event.club_id}/events")
 
-      assert_patch(index_live, ~p"/events/new")
+      assert html =~ "Kalender"
+      assert html =~ event.name
+    end
+  end
 
-      assert index_live
+  describe "New/Edit" do
+    setup [:create_event]
+
+    test "saves new event", %{conn: conn, user: user} do
+      club = club_fixture()
+
+      {:error, _} = live(conn, ~p"/clubs/#{club}/events/new")
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, html} = live(conn, ~p"/clubs/#{club}/events/new")
+
+      assert html =~ "Veranstaltung erstellen"
+
+      assert new_live
+              |> form("#event-form", event: @invalid_attrs)
+              |> render_change() =~ "can&#39;t be blank"
+
+      {:ok, _, html} =
+        new_live
+        |> form("#event-form", event: @create_attrs)
+        |> render_submit()
+        |> follow_redirect(conn, ~p"/clubs/#{club}/events")
+
+      assert html =~ "Veranstaltung erfolgreich erstellt"
+      assert html =~ "some name"
+    end
+
+    test "cancels save new event", %{conn: conn, user: user} do
+      club = club_fixture()
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, _html} = live(conn, ~p"/clubs/#{club}/events/new")
+
+      {:ok, _, _html} =
+        new_live
+        |> element("#event-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{club}/events")
+    end
+
+    test "updates event", %{conn: conn, user: user, event: event} do
+      {:error, _} = live(conn, ~p"/events/#{event}/edit")
+
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/events/#{event}/edit")
+
+      assert html =~ "Veranstaltung bearbeiten"
+
+      assert edit_live
              |> form("#event-form", event: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
-      assert index_live
-             |> form("#event-form", event: @create_attrs)
-             |> render_submit()
+      {:ok, _, html} =
+        edit_live
+        |> form("#event-form", event: @update_attrs)
+        |> render_submit()
+        |> follow_redirect(conn, ~p"/events/#{event}")
 
-      assert_patch(index_live, ~p"/events")
-
-      html = render(index_live)
-      assert html =~ "Event created successfully"
-      assert html =~ "some description"
+      assert html =~ "Veranstaltung erfolgreich aktualisiert"
+      assert html =~ "some updated name"
     end
 
-    test "updates event in listing", %{conn: conn, event: event} do
-      {:ok, index_live, _html} = live(conn, ~p"/events")
+    test "cancels updates event", %{conn: conn, user: user, event: event} do
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, _html} = live(conn, ~p"/events/#{event}/edit")
 
-      assert index_live |> element("#events-#{event.id} a", "Edit") |> render_click() =~
-               "Edit Event"
-
-      assert_patch(index_live, ~p"/events/#{event}/edit")
-
-      assert index_live
-             |> form("#event-form", event: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert index_live
-             |> form("#event-form", event: @update_attrs)
-             |> render_submit()
-
-      assert_patch(index_live, ~p"/events")
-
-      html = render(index_live)
-      assert html =~ "Event updated successfully"
-      assert html =~ "some updated description"
+      {:ok, _, _html} =
+        edit_live
+        |> element("#event-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/events/#{event}")
     end
 
-    test "deletes event in listing", %{conn: conn, event: event} do
-      {:ok, index_live, _html} = live(conn, ~p"/events")
+    test "deletes event", %{conn: conn, user: user, event: event} do
+      {:error, _} = live(conn, ~p"/events/#{event}/edit")
 
-      assert index_live |> element("#events-#{event.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#events-#{event.id}")
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/events/#{event}/edit")
+      assert html =~ "some name"
+
+      {:ok, _, html} =
+        edit_live
+        |> element("#event-form button", "Löschen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{event.club_id}/events")
+
+      assert html =~ "Veranstaltung erfolgreich gelöscht"
+      assert html =~ "Kalender"
+      refute html =~ "some name"
     end
   end
 
   describe "Show" do
     setup [:create_event]
 
-    test "displays event", %{conn: conn, event: event} do
+    test "displays event", %{conn: conn, user: user, event: event} do
+      {:error, _} = live(conn, ~p"/events/#{event}")
+
+      conn = conn |> log_in_user(user)
       {:ok, _show_live, html} = live(conn, ~p"/events/#{event}")
 
-      assert html =~ "Show Event"
-      assert html =~ event.description
-    end
-
-    test "updates event within modal", %{conn: conn, event: event} do
-      {:ok, show_live, _html} = live(conn, ~p"/events/#{event}")
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Event"
-
-      assert_patch(show_live, ~p"/events/#{event}/show/edit")
-
-      assert show_live
-             |> form("#event-form", event: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert show_live
-             |> form("#event-form", event: @update_attrs)
-             |> render_submit()
-
-      assert_patch(show_live, ~p"/events/#{event}")
-
-      html = render(show_live)
-      assert html =~ "Event updated successfully"
-      assert html =~ "some updated description"
+      assert html =~ "Veranstaltung:"
+      assert html =~ event.name
     end
   end
 end

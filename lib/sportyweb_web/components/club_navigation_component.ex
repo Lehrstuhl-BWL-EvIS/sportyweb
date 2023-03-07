@@ -33,7 +33,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
           <span class="truncate">Dashboard</span>
         </.link>
 
-        <.link navigate={~p"/clubs/#{@club}"}
+        <.link navigate={~p"/clubs/#{@club}/events"}
         class={[@default_link_classes, (if @club_navigation_current_item == :calendar, do: @current_link_classes)]}>
           <Heroicons.calendar class={@default_icon_classes} />
           <span class="truncate">Kalender</span>
