@@ -7,6 +7,14 @@ defmodule SportywebWeb.CommonHelper do
     end
   end
 
+  def format_integer_field(field) do
+    if field do
+      field
+    else
+      "-"
+    end
+  end
+
   def format_string_field(field) do
     if field && String.trim(field) != "" do
       field
