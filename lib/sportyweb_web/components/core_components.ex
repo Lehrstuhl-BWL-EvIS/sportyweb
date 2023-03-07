@@ -268,6 +268,46 @@ defmodule SportywebWeb.CoreComponents do
   end
 
   @doc """
+  Renders a container for input_grid components and other elements.
+  Adds horizontal separator lines.
+
+  ## Examples
+
+      <.input_grids>
+        <.input_grid>
+          <div class="col-span-12">
+            <.input ... />
+          </div>
+
+          <div class="col-span-12 md:col-span-6">
+            <.input ... />
+          </div>
+
+          <div class="col-span-12 md:col-span-6">
+            <.input ... />
+          </div>
+        </.input_grid>
+
+        <.input_grid class="pt-6">
+          <div class="col-span-12">
+            <.input ... />
+          </div>
+        </.input_grid>
+      <.input_grids>
+  """
+  attr :class, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def input_grids(assigns) do
+    ~H"""
+    <div class={["divide-y divide-zinc-200 space-y-8", @class]}>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  @doc """
   Renders a (per default) 12 column grid container for input fields.
 
   ## Examples
