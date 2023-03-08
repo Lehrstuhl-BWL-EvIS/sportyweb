@@ -3,7 +3,6 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
 
   alias Sportyweb.Organization
   alias Sportyweb.Polymorphic.Email
-  alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
 
   @impl true
@@ -22,7 +21,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <div class="divide-y divide-zinc-200 space-y-8">
+          <.input_grids>
             <.input_grid>
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:name]} type="text" label="Name" />
@@ -90,7 +89,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
                 <.button type="button" phx-click="add_note" phx-target={@myself}>Notiz hinzufügen</.button>
               </div>
             </.input_grid>
-          </div>
+          </.input_grids>
 
           <:actions>
             <div>

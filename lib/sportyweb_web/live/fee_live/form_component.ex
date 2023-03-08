@@ -19,7 +19,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <div class="divide-y divide-zinc-200 space-y-8">
+          <.input_grids>
             <.input_grid>
               <div class="hidden">
                 <.input field={@form[:type]} type="hidden" readonly />
@@ -77,7 +77,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                 <.input field={@form[:decommission_at]} type="date" label="Verwendung bis (optional)" />
               </div>
             </.input_grid>
-          </div>
+          </.input_grids>
 
           <:actions>
             <div>
