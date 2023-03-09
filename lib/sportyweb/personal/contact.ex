@@ -3,17 +3,26 @@ defmodule Sportyweb.Personal.Contact do
   import Ecto.Changeset
 
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Personal.ContactEmail
   alias Sportyweb.Personal.ContactFinancialData
+  alias Sportyweb.Personal.ContactNote
+  alias Sportyweb.Personal.ContactPhone
   alias Sportyweb.Personal.ContactPostalAddress
+  alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.FinancialData
+  alias Sportyweb.Polymorphic.Note
+  alias Sportyweb.Polymorphic.Phone
   alias Sportyweb.Polymorphic.PostalAddress
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "contacts" do
     belongs_to :club, Club
-    many_to_many :postal_addresses, PostalAddress, join_through: ContactPostalAddress
+    many_to_many :emails, Email, join_through: ContactEmail
     many_to_many :financial_data, FinancialData, join_through: ContactFinancialData
+    many_to_many :notes, Note, join_through: ContactNote
+    many_to_many :phones, Phone, join_through: ContactPhone
+    many_to_many :postal_addresses, PostalAddress, join_through: ContactPostalAddress
 
     field :type, :string, default: ""
     field :name, :string, default: ""
@@ -78,21 +87,31 @@ defmodule Sportyweb.Personal.Contact do
       :person_first_name_2,
       :person_gender,
       :person_birthday
-      ], empty_values: ["", nil])
+      ],
+      empty_values: ["", nil]
+    )
+    |> cast_assoc(:emails, required: false)
+    |> cast_assoc(:financial_data, required: false)
+    |> cast_assoc(:notes, required: false)
+    |> cast_assoc(:phones, required: false)
+    |> cast_assoc(:postal_addresses, required: false)
     |> validate_required([:type])
     |> validate_inclusion(
       :type,
-      get_valid_types() |> Enum.map(fn type -> type[:value] end))
+      get_valid_types() |> Enum.map(fn type -> type[:value] end)
+    )
     |> validate_length(:organization_name, max: 250)
     |> validate_inclusion(
       :organization_type,
-      get_valid_organization_types() |> Enum.map(fn organization_type -> organization_type[:value] end))
+      get_valid_organization_types() |> Enum.map(fn organization_type -> organization_type[:value] end)
+    )
     |> validate_length(:person_last_name, max: 250)
     |> validate_length(:person_first_name_1, max: 250)
     |> validate_length(:person_first_name_2, max: 250)
     |> validate_inclusion(
       :person_gender,
-      get_valid_genders() |> Enum.map(fn gender -> gender[:value] end))
+      get_valid_genders() |> Enum.map(fn gender -> gender[:value] end)
+    )
     |> set_name()
   end
 
