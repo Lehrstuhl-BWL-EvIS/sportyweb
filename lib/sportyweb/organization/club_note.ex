@@ -2,12 +2,14 @@ defmodule Sportyweb.Organization.ClubNote do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Organization.Club
+  alias Sportyweb.Polymorphic.Note
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "club_notes" do
-
-    field :club_id, :binary_id
-    field :note_id, :binary_id
+    belongs_to :club, Club
+    belongs_to :note, Note
 
     timestamps()
   end
@@ -15,7 +17,8 @@ defmodule Sportyweb.Organization.ClubNote do
   @doc false
   def changeset(club_note, attrs) do
     club_note
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:club_id, :note_id])
+    |> validate_required([:club_id, :note_id])
+    |> unique_constraint(:note_id, name: "club_notes_note_id_index")
   end
 end
