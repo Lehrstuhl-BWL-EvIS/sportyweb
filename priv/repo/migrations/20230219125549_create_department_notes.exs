@@ -12,6 +12,5 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartmentNotes do
 
     create index(:department_notes, [:department_id])
     create unique_index(:department_notes, [:note_id])
-    create unique_index(:department_notes, [:department_id, :note_id])
   end
 end

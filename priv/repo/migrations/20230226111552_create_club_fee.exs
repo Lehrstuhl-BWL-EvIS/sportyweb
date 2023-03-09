@@ -12,6 +12,5 @@ defmodule Sportyweb.Repo.Migrations.CreateClubFee do
 
     create index(:club_fees, [:club_id])
     create unique_index(:club_fees, [:fee_id])
-    create unique_index(:club_fees, [:club_id, :fee_id])
   end
 end

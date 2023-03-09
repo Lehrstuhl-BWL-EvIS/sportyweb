@@ -19,6 +19,6 @@ defmodule Sportyweb.Organization.DepartmentFee do
     department_fee
     |> cast(attrs, [:department_id, :fee_id])
     |> validate_required([:department_id, :fee_id])
-    |> unique_constraint(:club_id, name: "department_fees_department_id_fee_id_index")
+    |> unique_constraint(:club_id, name: "department_fees_fee_id_index")
   end
 end

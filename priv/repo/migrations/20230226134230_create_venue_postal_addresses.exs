@@ -12,6 +12,5 @@ defmodule Sportyweb.Repo.Migrations.CreateVenuePostalAddresses do
 
     create index(:venue_postal_addresses, [:venue_id])
     create unique_index(:venue_postal_addresses, [:postal_address_id])
-    create unique_index(:venue_postal_addresses, [:venue_id, :postal_address_id])
   end
 end

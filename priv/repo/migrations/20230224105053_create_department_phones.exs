@@ -12,6 +12,5 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartmentPhones do
 
     create index(:department_phones, [:department_id])
     create unique_index(:department_phones, [:phone_id])
-    create unique_index(:department_phones, [:department_id, :phone_id])
   end
 end

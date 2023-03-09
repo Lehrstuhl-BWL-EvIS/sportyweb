@@ -12,6 +12,5 @@ defmodule Sportyweb.Repo.Migrations.CreateContactPostalAddresses do
 
     create index(:contact_postal_addresses, [:contact_id])
     create unique_index(:contact_postal_addresses, [:postal_address_id])
-    create unique_index(:contact_postal_addresses, [:contact_id, :postal_address_id])
   end
 end

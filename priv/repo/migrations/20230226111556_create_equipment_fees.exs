@@ -12,6 +12,5 @@ defmodule Sportyweb.Repo.Migrations.CreateEquipmentFees do
 
     create index(:equipment_fees, [:equipment_id])
     create unique_index(:equipment_fees, [:fee_id])
-    create unique_index(:equipment_fees, [:equipment_id, :fee_id])
   end
 end

@@ -19,6 +19,6 @@ defmodule Sportyweb.Organization.DepartmentNote do
     department_note
     |> cast(attrs, [:department_id, :note_id])
     |> validate_required([:department_id, :note_id])
-    |> unique_constraint(:department_id, name: "department_notes_department_id_note_id_index")
+    |> unique_constraint(:department_id, name: "department_notes_note_id_index")
   end
 end

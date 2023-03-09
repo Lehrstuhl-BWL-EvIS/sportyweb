@@ -12,6 +12,5 @@ defmodule Sportyweb.Repo.Migrations.CreateContactFinancialData do
 
     create index(:contact_financial_data, [:contact_id])
     create unique_index(:contact_financial_data, [:financial_data_id])
-    create unique_index(:contact_financial_data, [:contact_id, :financial_data_id])
   end
 end

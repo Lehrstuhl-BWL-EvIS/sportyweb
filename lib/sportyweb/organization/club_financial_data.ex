@@ -19,6 +19,6 @@ defmodule Sportyweb.Organization.ClubFinancialData do
     club_financial_data
     |> cast(attrs, [:club_id, :financial_data_id])
     |> validate_required([:club_id, :financial_data_id])
-    |> unique_constraint(:club_id, name: "club_financial_data_club_id_financial_data_id_index")
+    |> unique_constraint(:club_id, name: "club_financial_data_financial_data_id_index")
   end
 end

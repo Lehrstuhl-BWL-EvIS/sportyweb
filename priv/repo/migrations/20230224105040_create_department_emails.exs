@@ -12,6 +12,5 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartmentEmails do
 
     create index(:department_emails, [:department_id])
     create unique_index(:department_emails, [:email_id])
-    create unique_index(:department_emails, [:department_id, :email_id])
   end
 end

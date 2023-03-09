@@ -291,9 +291,9 @@ TODO: Erklärung notwendige Anpassungen/Erweiterungen (Teil 2)
 - timestamps()
 - null: false
 - Defaults
-- on_delete
+- on_delete (speziell bei Join-Tabellen)
 - constraints
-- Index (unique)
+- Index (unique) (speziell bei Join-Tabellen)
 - [Migration](https://hexdocs.pm/ecto_sql/Ecto.Migration.html)
 
 

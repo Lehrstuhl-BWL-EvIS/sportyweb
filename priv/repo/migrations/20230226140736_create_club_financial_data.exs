@@ -12,6 +12,5 @@ defmodule Sportyweb.Repo.Migrations.CreateClubFinancialData do
 
     create index(:club_financial_data, [:club_id])
     create unique_index(:club_financial_data, [:financial_data_id])
-    create unique_index(:club_financial_data, [:club_id, :financial_data_id])
   end
 end

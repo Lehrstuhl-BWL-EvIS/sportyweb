@@ -19,6 +19,6 @@ defmodule Sportyweb.Asset.VenuePostalAddress do
     venue_postal_address
     |> cast(attrs, [:venue_id, :postal_address_id])
     |> validate_required([:venue_id, :postal_address_id])
-    |> unique_constraint(:department_id, name: "venue_postal_addresses_venue_id_postal_address_id_index")
+    |> unique_constraint(:department_id, name: "venue_postal_addresses_postal_address_id_index")
   end
 end

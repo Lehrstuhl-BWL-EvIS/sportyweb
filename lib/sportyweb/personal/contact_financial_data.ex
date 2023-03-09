@@ -19,6 +19,6 @@ defmodule Sportyweb.Personal.ContactFinancialData do
     contact_financial_data
     |> cast(attrs, [:contact_id, :financial_data_id])
     |> validate_required([:contact_id, :financial_data_id])
-    |> unique_constraint(:contact_id, name: "contact_financial_data_contact_id_financial_data_id_index")
+    |> unique_constraint(:contact_id, name: "contact_financial_data_financial_data_id_index")
   end
 end
