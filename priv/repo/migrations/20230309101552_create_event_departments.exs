@@ -4,13 +4,13 @@ defmodule Sportyweb.Repo.Migrations.CreateEventDepartments do
   def change do
     create table(:event_departments, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :event_id, references(:events, on_delete: :nothing, type: :binary_id)
-      add :department_id, references(:departments, on_delete: :nothing, type: :binary_id)
+      add :event_id, references(:events, on_delete: :delete_all, type: :binary_id), null: false
+      add :department_id, references(:departments, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end
 
     create index(:event_departments, [:event_id])
-    create index(:event_departments, [:department_id])
+    create unique_index(:event_departments, [:department_id])
   end
 end

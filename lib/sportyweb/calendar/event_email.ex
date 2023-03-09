@@ -2,12 +2,14 @@ defmodule Sportyweb.Calendar.EventEmail do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Calendar.Event
+  alias Sportyweb.Polymorphic.Email
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "event_emails" do
-
-    field :event_id, :binary_id
-    field :email_id, :binary_id
+    belongs_to :event, Event
+    belongs_to :email, Email
 
     timestamps()
   end
@@ -15,7 +17,8 @@ defmodule Sportyweb.Calendar.EventEmail do
   @doc false
   def changeset(event_email, attrs) do
     event_email
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:event_id, :email_id])
+    |> validate_required([:event_id, :email_id])
+    |> unique_constraint(:email_id, name: "event_emails_email_id_index")
   end
 end

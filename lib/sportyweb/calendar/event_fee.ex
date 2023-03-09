@@ -2,12 +2,14 @@ defmodule Sportyweb.Calendar.EventFee do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Calendar.Event
+  alias Sportyweb.Legal.Fee
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "event_fees" do
-
-    field :event_id, :binary_id
-    field :fee_id, :binary_id
+    belongs_to :event, Event
+    belongs_to :fee, Fee
 
     timestamps()
   end
@@ -15,7 +17,8 @@ defmodule Sportyweb.Calendar.EventFee do
   @doc false
   def changeset(event_fee, attrs) do
     event_fee
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:event_id, :fee_id])
+    |> validate_required([:event_id, :fee_id])
+    |> unique_constraint(:fee_id, name: "event_fees_fee_id_index")
   end
 end
