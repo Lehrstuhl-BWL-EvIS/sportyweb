@@ -3,13 +3,16 @@ defmodule Sportyweb.Legal.Fee do
   import Ecto.Changeset
 
   alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.FeeNote
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Polymorphic.Note
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "fees" do
     belongs_to :club, Club
     has_many :contracts, Contract
+    many_to_many :notes, Note, join_through: FeeNote
 
     field :is_general, :boolean, default: false
     field :type, :string, default: ""
@@ -58,17 +61,22 @@ defmodule Sportyweb.Legal.Fee do
       :minimum_age_in_years,
       :maximum_age_in_years,
       :commission_at,
-      :decommission_at], empty_values: ["", nil])
+      :decommission_at],
+      empty_values: ["", nil]
+    )
+    |> cast_assoc(:notes, required: false)
     |> validate_required([
       :club_id,
       :type,
       :name,
       :base_fee_in_eur_cent,
       :admission_fee_in_eur_cent,
-      :commission_at])
+      :commission_at]
+    )
     |> validate_inclusion(
       :type,
-      get_valid_types() |> Enum.map(fn type -> type[:value] end))
+      get_valid_types() |> Enum.map(fn type -> type[:value] end)
+    )
     |> validate_number(:minimum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
     |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125) # TODO: max >= min
   end

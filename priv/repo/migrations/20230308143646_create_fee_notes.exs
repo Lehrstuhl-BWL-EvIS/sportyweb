@@ -4,13 +4,13 @@ defmodule Sportyweb.Repo.Migrations.CreateFeeNotes do
   def change do
     create table(:fee_notes, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :fee_id, references(:fees, on_delete: :nothing, type: :binary_id)
-      add :note_id, references(:notes, on_delete: :nothing, type: :binary_id)
+      add :fee_id, references(:fees, on_delete: :delete_all, type: :binary_id), null: false
+      add :note_id, references(:notes, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end
 
     create index(:fee_notes, [:fee_id])
-    create index(:fee_notes, [:note_id])
+    create unique_index(:fee_notes, [:note_id])
   end
 end
