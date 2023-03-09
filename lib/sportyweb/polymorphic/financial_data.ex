@@ -7,7 +7,7 @@ defmodule Sportyweb.Polymorphic.FinancialData do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "financial_data" do
-    belongs_to :postal_address, PostalAddress, foreign_key: :invoice_recipient_postal_address_id, references: :id, define_field: false
+    belongs_to :postal_address, PostalAddress, foreign_key: :invoice_recipient_postal_address_id, references: :id, define_field: true
 
     field :type, :string, default: ""
     field :direct_debit_account_holder, :string, default: ""
@@ -38,10 +38,13 @@ defmodule Sportyweb.Polymorphic.FinancialData do
       :invoice_recipient,
       :invoice_recipient_postal_address_id,
       :invoice_additional_information,
-      :is_main], empty_values: ["", nil])
+      :is_main],
+      empty_values: ["", nil]
+    )
     |> validate_required([:type])
     |> validate_inclusion(
       :type,
-      get_valid_types() |> Enum.map(fn type -> type[:value] end))
+      get_valid_types() |> Enum.map(fn type -> type[:value] end)
+    )
   end
 end

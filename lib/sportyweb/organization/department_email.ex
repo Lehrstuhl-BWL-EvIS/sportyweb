@@ -19,6 +19,6 @@ defmodule Sportyweb.Organization.DepartmentEmail do
     department_email
     |> cast(attrs, [:department_id, :email_id])
     |> validate_required([:department_id, :email_id])
-    |> unique_constraint(:department_id, name: "department_emails_email_id_index")
+    |> unique_constraint(:email_id, name: "department_emails_email_id_index")
   end
 end

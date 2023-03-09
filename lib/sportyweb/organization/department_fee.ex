@@ -2,8 +2,8 @@ defmodule Sportyweb.Organization.DepartmentFee do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Sportyweb.Organization.Department
   alias Sportyweb.Legal.Fee
+  alias Sportyweb.Organization.Department
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -19,6 +19,6 @@ defmodule Sportyweb.Organization.DepartmentFee do
     department_fee
     |> cast(attrs, [:department_id, :fee_id])
     |> validate_required([:department_id, :fee_id])
-    |> unique_constraint(:club_id, name: "department_fees_fee_id_index")
+    |> unique_constraint(:fee_id, name: "department_fees_fee_id_index")
   end
 end

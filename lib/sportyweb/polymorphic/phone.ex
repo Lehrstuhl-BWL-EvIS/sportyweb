@@ -32,7 +32,8 @@ defmodule Sportyweb.Polymorphic.Phone do
     |> validate_required([:type])
     |> validate_inclusion(
       :type,
-      get_valid_types() |> Enum.map(fn type -> type[:value] end))
+      get_valid_types() |> Enum.map(fn type -> type[:value] end)
+    )
     |> update_change(:number, &String.trim/1)
     |> validate_format(:number, ~r/^$|^[0-9\s\/\(\)\+\-]/) # Empty or contains valid chars
     |> validate_length(:number, max: 250)

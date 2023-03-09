@@ -19,6 +19,6 @@ defmodule Sportyweb.Organization.DepartmentPhone do
     department_phone
     |> cast(attrs, [:department_id, :phone_id])
     |> validate_required([:department_id, :phone_id])
-    |> unique_constraint(:department_id, name: "department_phones_phone_id_index")
+    |> unique_constraint(:phone_id, name: "department_phones_phone_id_index")
   end
 end

@@ -28,7 +28,8 @@ defmodule Sportyweb.Polymorphic.Email do
     |> validate_required([:type])
     |> validate_inclusion(
       :type,
-      get_valid_types() |> Enum.map(fn type -> type[:value] end))
+      get_valid_types() |> Enum.map(fn type -> type[:value] end)
+    )
     |> update_change(:address, &String.trim/1)
     |> update_change(:address, &String.downcase/1)
     |> validate_format(:address, ~r/^$|@/) # Empty or contains "@"

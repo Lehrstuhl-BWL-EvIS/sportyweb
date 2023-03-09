@@ -30,12 +30,15 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
       :zipcode,
       :city,
       :country,
-      :is_main], empty_values: ["", nil])
+      :is_main],
+      empty_values: ["", nil]
+    )
     |> validate_required([
       :street,
       :street_number,
       :zipcode,
       :city,
-      :country])
+      :country]
+    )
   end
 end

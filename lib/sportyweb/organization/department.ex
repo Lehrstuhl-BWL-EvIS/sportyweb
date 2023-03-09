@@ -40,10 +40,12 @@ defmodule Sportyweb.Organization.Department do
       :reference_number,
       :description,
       :created_at
-      ], empty_values: ["", nil])
+      ],
+      empty_values: ["", nil]
+    )
     |> cast_assoc(:emails, required: false)
-    |> cast_assoc(:phones, required: false)
     |> cast_assoc(:notes, required: false)
+    |> cast_assoc(:phones, required: false)
     |> validate_required([:club_id, :name, :created_at])
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
@@ -51,6 +53,7 @@ defmodule Sportyweb.Organization.Department do
     |> unique_constraint(
       :name,
       name: "departments_club_id_name_index",
-      message: "Name bereits vergeben!")
+      message: "Name bereits vergeben!"
+    )
   end
 end
