@@ -19,6 +19,6 @@ defmodule Sportyweb.Asset.EquipmentFee do
     equipment_fee
     |> cast(attrs, [:equipment_id, :fee_id])
     |> validate_required([:equipment_id, :fee_id])
-    |> unique_constraint(:club_id, name: "equipment_fees_fee_id_index")
+    |> unique_constraint(:fee_id, name: "equipment_fees_fee_id_index")
   end
 end

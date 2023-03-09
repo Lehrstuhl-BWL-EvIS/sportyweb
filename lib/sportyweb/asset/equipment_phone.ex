@@ -2,12 +2,14 @@ defmodule Sportyweb.Asset.EquipmentPhone do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Asset.Equipment
+  alias Sportyweb.Polymorphic.Phone
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "equipment_phones" do
-
-    field :equipment_id, :binary_id
-    field :phone_id, :binary_id
+    belongs_to :equipment, Equipment
+    belongs_to :phone, Phone
 
     timestamps()
   end
@@ -15,7 +17,8 @@ defmodule Sportyweb.Asset.EquipmentPhone do
   @doc false
   def changeset(equipment_phone, attrs) do
     equipment_phone
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:equipment_id, :phone_id])
+    |> validate_required([:equipment_id, :phone_id])
+    |> unique_constraint(:phone_id, name: "equipment_phones_phone_id_index")
   end
 end
