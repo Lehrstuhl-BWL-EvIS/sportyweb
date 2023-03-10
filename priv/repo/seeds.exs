@@ -386,10 +386,11 @@ Organization.list_clubs()
         end
       end
 
-      # ClubFees
+      # General Fees - Club
 
-      fee = Repo.insert!(%Fee{
+      Repo.insert!(%Fee{
         club_id: club.id,
+        is_general: true,
         type: "club",
         name: "Jahresmitgliedschaft Verein Kinder",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
@@ -402,13 +403,10 @@ Organization.list_clubs()
         maximum_age_in_years: 12,
         commission_at: ~D[2020-01-01]
       })
-      Repo.insert!(%ClubFee{
-        club_id: club.id,
-        fee_id: fee.id
-      })
 
-      fee = Repo.insert!(%Fee{
+      Repo.insert!(%Fee{
         club_id: club.id,
+        is_general: true,
         type: "club",
         name: "Jahresmitgliedschaft Verein Jugendliche",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
@@ -421,13 +419,10 @@ Organization.list_clubs()
         maximum_age_in_years: 17,
         commission_at: ~D[2020-01-01]
       })
-      Repo.insert!(%ClubFee{
-        club_id: club.id,
-        fee_id: fee.id
-      })
 
-      fee = Repo.insert!(%Fee{
+      Repo.insert!(%Fee{
         club_id: club.id,
+        is_general: true,
         type: "club",
         name: "Jahresmitgliedschaft Verein Erwachsene (Vollmitglied)",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
@@ -440,13 +435,10 @@ Organization.list_clubs()
         maximum_age_in_years: 65,
         commission_at: ~D[2020-01-01]
       })
-      Repo.insert!(%ClubFee{
-        club_id: club.id,
-        fee_id: fee.id
-      })
 
-      fee = Repo.insert!(%Fee{
+      Repo.insert!(%Fee{
         club_id: club.id,
+        is_general: true,
         type: "club",
         name: "Jahresmitgliedschaft Verein Erwachsene (Unterstützungsempfänger)",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
@@ -459,13 +451,10 @@ Organization.list_clubs()
         maximum_age_in_years: 65,
         commission_at: ~D[2020-01-01]
       })
-      Repo.insert!(%ClubFee{
-        club_id: club.id,
-        fee_id: fee.id
-      })
 
-      fee = Repo.insert!(%Fee{
+      Repo.insert!(%Fee{
         club_id: club.id,
+        is_general: true,
         type: "club",
         name: "Jahresmitgliedschaft Verein Senioren",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
@@ -478,9 +467,142 @@ Organization.list_clubs()
         maximum_age_in_years: 100,
         commission_at: ~D[2020-01-01]
       })
-      Repo.insert!(%ClubFee{
+
+      # General Fees - Department
+
+      Repo.insert!(%Fee{
         club_id: club.id,
-        fee_id: fee.id
+        is_general: true,
+        type: "department",
+        name: "Allgemeine Mitgliedschaftsgebühr Abteilung Kinder",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(5..15) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 0,
+        maximum_age_in_years: 12,
+        commission_at: ~D[2020-01-01]
+      })
+
+      Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: true,
+        type: "department",
+        name: "Allgemeine Mitgliedschaftsgebühr Abteilung Erwachsene",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(15..25) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 18,
+        maximum_age_in_years: 65,
+        commission_at: ~D[2020-01-01]
+      })
+
+      # General Fees - Group
+
+      Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: true,
+        type: "group",
+        name: "Allgemeine Mitgliedschaftsgebühr Gruppe Kinder",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(5..15) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 0,
+        maximum_age_in_years: 12,
+        commission_at: ~D[2020-01-01]
+      })
+
+      Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: true,
+        type: "group",
+        name: "Allgemeine Mitgliedschaftsgebühr Gruppe Erwachsene",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(15..25) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 18,
+        maximum_age_in_years: 65,
+        commission_at: ~D[2020-01-01]
+      })
+
+      # General Fees - Event
+
+      Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: true,
+        type: "event",
+        name: "Allgemeine Teilnahmegebühr Einführungskurs Fußball Kinder",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(20..25) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 0,
+        maximum_age_in_years: 12,
+        commission_at: ~D[2020-01-01]
+      })
+
+      Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: true,
+        type: "event",
+        name: "Allgemeine Teilnahmegebühr Einführungskurs Fußball Erwachsene",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(25..40) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 18,
+        maximum_age_in_years: 65,
+        commission_at: ~D[2020-01-01]
+      })
+
+      # General Fees - Equipment
+
+      Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: true,
+        type: "equipment",
+        name: "Allgemeine Ausleihgebühr Fußbälle",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: 300,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 0,
+        maximum_age_in_years: 12,
+        commission_at: ~D[2020-01-01]
+      })
+
+      Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: true,
+        type: "equipment",
+        name: "Allgemeine Ausleihgebühr Fußballschuhe Kinder",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: 200,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 18,
+        maximum_age_in_years: 65,
+        commission_at: ~D[2020-01-01]
       })
     end
-  end)
+  end
+)
