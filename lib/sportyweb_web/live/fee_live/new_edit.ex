@@ -37,21 +37,21 @@ defmodule SportywebWeb.FeeLive.NewEdit do
     fee = Legal.get_fee!(id, [:club])
 
     socket
-    |> assign(:page_title, "Gebühr bearbeiten")
+    |> assign(:page_title, "Gebühr bearbeiten (#{get_key_for_value(Fee.get_valid_types, fee.type)})")
     |> assign(:fee, fee)
     |> assign(:club, fee.club)
   end
 
-  defp apply_action(socket, :new, %{"club_id" => club_id}) do
+  defp apply_action(socket, :new, %{"club_id" => club_id, "type" => type}) do
     club = Organization.get_club!(club_id)
 
     socket
-    |> assign(:page_title, "Gebühr erstellen")
+    |> assign(:page_title, "Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types, type)})")
     |> assign(:fee, %Fee{
       club_id: club.id,
       club: club,
       is_general: true,
-      type: "club"}) # TODO: Change type based on button
+      type: type})
     |> assign(:club, club)
   end
 

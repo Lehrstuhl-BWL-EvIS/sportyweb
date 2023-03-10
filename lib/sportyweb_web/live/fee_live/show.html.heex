@@ -10,7 +10,7 @@
 <.card>
   <.list>
     <:item title="Für" :if={@fee.is_general}>
-      <%= get_key_for_value(Fee.get_valid_types(), @fee.type) %>
+      <%= get_key_for_value(Fee.get_valid_types, @fee.type) %>
     </:item>
     <:item title="Referenznummer">
       <%= format_string_field(@fee.reference_number) %>

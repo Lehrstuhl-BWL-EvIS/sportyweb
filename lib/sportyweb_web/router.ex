@@ -146,7 +146,7 @@ defmodule SportywebWeb.Router do
       live "/fees", FeeLive.Index, :index_root
       live "/clubs/:club_id/fees", FeeLive.Index, :index
 
-      live "/clubs/:club_id/fees/new", FeeLive.NewEdit, :new
+      live "/clubs/:club_id/fees/new/:type", FeeLive.NewEdit, :new
       live "/fees/:id/edit", FeeLive.NewEdit, :edit
 
       live "/fees/:id", FeeLive.Show, :show

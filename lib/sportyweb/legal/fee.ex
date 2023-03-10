@@ -39,7 +39,7 @@ defmodule Sportyweb.Legal.Fee do
       [key: "Verein", value: "club"],
       [key: "Abteilung", value: "department"],
       [key: "Gruppe", value: "group"],
-      [key: "Event", value: "event"],
+      [key: "Veranstaltung", value: "event"],
       [key: "Equipment", value: "equipment"]
     ]
   end

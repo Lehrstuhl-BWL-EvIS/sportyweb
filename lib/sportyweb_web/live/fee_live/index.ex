@@ -2,14 +2,14 @@ defmodule SportywebWeb.FeeLive.Index do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Legal
+  alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization
 
   @impl true
-  def mount(%{"club_id" => club_id}, _session, socket) do
+  def mount(%{"club_id" => _club_id}, _session, socket) do
     {:ok,
      socket
-     |> assign(:club_navigation_current_item, :finances)
-     |> stream(:fees, Legal.list_fees(club_id))}
+     |> assign(:club_navigation_current_item, :finances)}
   end
 
   @impl true

@@ -9,30 +9,30 @@ defmodule Sportyweb.Legal do
   alias Sportyweb.Legal.Fee
 
   @doc """
-  Returns a clubs list of fees.
+  Returns a clubs list of fees based on the given type.
 
   ## Examples
 
-      iex> list_fees(1)
+      iex> list_fees(1, "club")
       [%Fee{}, ...]
 
   """
-  def list_fees(club_id) do
-    query = from(f in Fee, where: f.club_id == ^club_id, order_by: f.name)
+  def list_fees(club_id, type) do
+    query = from(f in Fee, where: f.club_id == ^club_id, where: f.type == ^type, order_by: f.name)
     Repo.all(query)
   end
 
   @doc """
-  Returns a clubs list of fees. Preloads associations.
+  Returns a clubs list of fees based on the given type. Preloads associations.
 
   ## Examples
 
-      iex> list_fees(1, [:club])
+      iex> list_fees(1, "club", [:club])
       [%Fee{}, ...]
 
   """
-  def list_fees(club_id, preloads) do
-    Repo.preload(list_fees(club_id), preloads)
+  def list_fees(club_id, type, preloads) do
+    Repo.preload(list_fees(club_id, type), preloads)
   end
 
   @doc """
