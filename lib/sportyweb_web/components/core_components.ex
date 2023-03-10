@@ -526,7 +526,7 @@ defmodule SportywebWeb.CoreComponents do
     assigns = assign(assigns, :default_header_classes, "font-bold leading-8 tracking-[0.015em] text-zinc-800")
 
     ~H"""
-    <header class={["flex flex-wrap items-center justify-between gap-x-8 gap-y-2 mb-3 min-h-[40px]", @class]}>
+    <header class={["flex flex-wrap items-center justify-between gap-x-8 gap-y-2 mb-3 min-h-[40px] px-4 sm:px-0", @class]}>
       <div class="flex-grow">
         <%= case @level do %>
           <% "1" -> %> <h1 class={["text-3xl", @default_header_classes]}><%= render_slot(@inner_block) %></h1>
