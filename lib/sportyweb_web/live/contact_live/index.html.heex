@@ -18,7 +18,7 @@
         <%= format_string_field(contact.name) %>
       </:col>
       <:col :let={{_id, contact}} label="Art">
-        <%= get_key_for_value(Contact.get_valid_types(), contact.type) %>
+        <%= get_key_for_value(Contact.get_valid_types, contact.type) %>
       </:col>
 
       <:action :let={{_id, contact}}>

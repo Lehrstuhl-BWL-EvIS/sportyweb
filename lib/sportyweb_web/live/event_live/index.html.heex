@@ -21,7 +21,7 @@
         <%= format_string_field(event.reference_number) %>
       </:col>
       <:col :let={{_id, event}} label="Status">
-        <%= get_key_for_value(Event.get_valid_statuses(), event.status) %>
+        <%= get_key_for_value(Event.get_valid_statuses, event.status) %>
       </:col>
       <:col :let={{_id, event}} label="Description">
         <div class="max-w-[200px] truncate overflow-hidden">
