@@ -1,0 +1,50 @@
+<.header>
+  <%= @page_title %>
+  <:actions>
+    <.link navigate={~p"/clubs/#{@club}/venues/new"}>
+      <.button>Standort erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@streams.venues) do %>
+    <.table
+      id="venues"
+      rows={@streams.venues}
+      row_click={fn {_id, venue} -> JS.navigate(~p"/venues/#{venue}") end}
+    >
+      <:col :let={{_id, venue}} label="Name">
+        <%= format_string_field(venue.name) %>
+        <%= if venue.is_main do %>
+          <Heroicons.check_badge class="ml-1 inline-block w-[20px] text-green-800" />
+        <% end %>
+      </:col>
+      <:col :let={{_id, venue}} label="Ref.nr.">
+        <%= format_string_field(venue.reference_number) %>
+      </:col>
+      <:col :let={{_id, venue}} label="Beschreibung">
+        <div class="max-w-[200px] truncate overflow-hidden">
+          <%= format_string_field(venue.description) %>
+        </div>
+      </:col>
+      <:col :let={{_id, venue}} label="Equipment">
+        <%= Enum.count(venue.equipment) %>
+      </:col>
+
+      <:action :let={{_id, venue}}>
+        <.link navigate={~p"/venues/#{venue}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Bisher wurde noch kein Standort erstellt.<br>
+      Equipment kann erst angelegt werden, wenn mindestens ein Standort existiert.
+    </p>
+  <% end %>
+</.card>
+
+<div class="mt-4 flex align-middle">
+  <Heroicons.check_badge class="mr-1 inline-block w-[20px] text-green-800" />
+  Hauptsitz
+</div>

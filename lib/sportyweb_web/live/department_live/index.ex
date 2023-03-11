@@ -7,8 +7,8 @@ defmodule SportywebWeb.DepartmentLive.Index do
   def mount(%{"club_id" => club_id}, _session, socket) do
     {:ok,
     socket
-    |> assign(:departments, list_departments(club_id))
-    |> assign(:club_navigation_current_item, :dashboard)}
+    |> assign(:club_navigation_current_item, :structure)
+    |> stream(:departments, Organization.list_departments(club_id, [:groups]))}
   end
 
   @impl true
@@ -30,12 +30,7 @@ defmodule SportywebWeb.DepartmentLive.Index do
     club = Organization.get_club!(club_id)
 
     socket
-    |> assign(:page_title, "Alle Abteilungen")
-    |> assign(:department, nil)
+    |> assign(:page_title, "Abteilungen & Gruppen")
     |> assign(:club, club)
-  end
-
-  defp list_departments(club_id) do
-    Organization.list_departments(club_id)
   end
 end

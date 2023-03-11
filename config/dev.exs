@@ -58,8 +58,7 @@ config :sportyweb, SportywebWeb.Endpoint,
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/sportyweb_web/(live|views)/.*(ex)$",
-      ~r"lib/sportyweb_web/templates/.*(eex)$"
+      ~r"lib/sportyweb_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]
 

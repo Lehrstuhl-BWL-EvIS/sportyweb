@@ -291,9 +291,9 @@ TODO: Erklärung notwendige Anpassungen/Erweiterungen (Teil 2)
 - timestamps()
 - null: false
 - Defaults
-- on_delete
+- on_delete (speziell bei Join-Tabellen)
 - constraints
-- Index (unique)
+- Index (unique) (speziell bei Join-Tabellen)
 - [Migration](https://hexdocs.pm/ecto_sql/Ecto.Migration.html)
 
 
@@ -305,6 +305,7 @@ TODO:
 
 - Relationen: field --> has_one, has_many, belongs_to (on_delete)
 - Relationen auf der jeweiligen Gegenseite
+- Default Values!
 - cast
     - Reihenfolge
     - empty_values: []
@@ -312,7 +313,7 @@ TODO:
     - Link
     - unique (Erklärung)
     - Constraints
-
+- https://hexdocs.pm/ecto/polymorphic-associations-with-many-to-many.html#polymorphism-with-many_to_many
 
 &nbsp;
 
@@ -347,7 +348,8 @@ TODO:
 - assigns
     - Club auf Socket, Navigation Sidebar
     - Breadcrumbs
-
+- https://hexdocs.pm/phoenix_live_view/Phoenix.LiveComponent.html#module-targeting-component-events
+- https://hexdocs.pm/phoenix_live_view/Phoenix.LiveComponent.html#c:handle_event/3
 
 &nbsp;
 
@@ -357,13 +359,14 @@ TODO:
 
 - Rad nicht neu erfinden, an Vorarbeiten orientieren
 - CoreComponents, z.B. Cards
+- SportywebWeb.CommonHelper-Funktionen
 - Umbau index --> new_edit
 - Formulare
     - Einheitlichkeit
     - Kompaktheit (Spalten)
     - Anmerkungen / Erklärungen Felder
+    - 12-column-grid
 - Übersetzungen, Einheitlichkeit
-
 
 &nbsp;
 

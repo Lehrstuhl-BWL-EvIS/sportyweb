@@ -9,12 +9,75 @@
 
 <.card>
   <.list>
-    <:item title="Verein"><%= @department.club.name %></:item>
-    <:item title="ID"><%= @department.id %></:item>
-    <:item title="Name"><%= @department.name %></:item>
-    <:item title="Art"><%= @department.type %></:item>
-    <:item title="Erstellungsdatum"><%= Calendar.strftime(@department.created_at, "%d.%m.%Y") %></:item>
+    <:item title="Referenznummer">
+      <%= format_string_field(@department.reference_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@department.description) %>
+    </:item>
+    <:item title="Erstellungsdatum">
+      <%= format_date_field_dmy(@department.created_at) %>
+    </:item>
+    <:item title="E-Mail">
+      <%= format_struct_list(@department.emails, :address) %>
+    </:item>
+    <:item title="Telefon">
+      <%= format_struct_list(@department.phones, :number) %>
+    </:item>
+    <:item title="Notizen">
+      <%= if Enum.any?(@department.notes) do %>
+        <div class="divide-y divide-zinc-100">
+          <%= for note <- @department.notes do %>
+            <div class="py-4 first:pt-0 last:pb-0">
+              <%= format_string_field(note.content) %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        -
+      <% end %>
+    </:item>
   </.list>
 </.card>
 
-<.back navigate={~p"/clubs/#{@department.club}"}>Zurück zum Dashboard</.back>
+<.header level="2" class="mt-12">
+  Gruppen
+  <:actions>
+    <.link navigate={~p"/departments/#{@department}/groups/new"}>
+      <.button>Gruppe erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@department.groups) do %>
+    <.table
+      id="groups"
+      rows={@department.groups}
+      row_click={&JS.navigate(~p"/groups/#{&1}")}
+    >
+      <:col :let={group} label="Name">
+        <%= format_string_field(group.name) %>
+      </:col>
+      <:col :let={group} label="Ref.nr.">
+        <%= format_string_field(group.reference_number) %>
+      </:col>
+      <:col :let={group} label="Beschreibung">
+        <div class="max-w-[200px] truncate overflow-hidden">
+          <%= format_string_field(group.description) %>
+        </div>
+      </:col>
+      <:col :let={group} label="Erstellungsdatum">
+        <%= format_date_field_dmy(group.created_at) %>
+      </:col>
+
+      <:action :let={group}>
+        <.link navigate={~p"/groups/#{group}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>Bisher wurde noch keine Gruppe erstellt.</p>
+  <% end %>
+</.card>
+
+<.back navigate={~p"/clubs/#{@department.club}/departments"} class="mt-12">Zur Abteilungsübersicht</.back>

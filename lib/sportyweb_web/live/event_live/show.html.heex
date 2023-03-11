@@ -1,0 +1,36 @@
+<.header>
+  <%= @page_title %>
+  <:actions>
+    <.link navigate={~p"/events/#{@event}/edit"}>
+      <.button>Veranstaltung bearbeiten</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <.list>
+    <:item title="Referenznummer">
+      <%= format_string_field(@event.reference_number) %>
+    </:item>
+    <:item title="Status">
+      <%= get_key_for_value(Event.get_valid_statuses, @event.status) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@event.description) %>
+    </:item>
+    <:item title="Minimale Anzahl an Teilnehmern">
+      <%= format_integer_field(@event.minimum_participants) %>
+    </:item>
+    <:item title="Maximale Anzahl an Teilnehmern">
+      <%= format_integer_field(@event.maximum_participants) %>
+    </:item>
+    <:item title="Mindestalter">
+      <%= format_integer_field(@event.minimum_age_in_years) %>
+    </:item>
+    <:item title="Höchstalter">
+      <%= format_integer_field(@event.maximum_age_in_years) %>
+    </:item>
+  </.list>
+</.card>
+
+<.back navigate={~p"/clubs/#{@event.club}/events"} class="mt-12">Zum Kalender</.back>

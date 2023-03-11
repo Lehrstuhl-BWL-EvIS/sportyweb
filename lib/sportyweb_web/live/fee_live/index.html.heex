@@ -1,0 +1,64 @@
+<.header>
+  <%= @page_title %>
+</.header>
+
+<.card class="flex flex-wrap sm:flex-nowrap justify-between space-x-6">
+  <div>
+    <Heroicons.light_bulb class="text-amber-500 mt-2 mb-4 h-12 w-12" />
+  </div>
+  <div>
+    <p class="mb-3">
+      Hier gelistete Gebühren gelten allgemein.
+      Beispielsweise kann eine hier einmal definierte Abteilungsgebühr (oder Gruppengebühr, etc.) in jeder Abteilung (oder Gruppe, etc.) beim Hinzufügen neuer Mitglieder ausgewählt werden.
+    </p>
+    <p>
+      Spezifische Gebühren, welche nur in einer bestimmten Abteilung (oder Gruppe, etc.) verfügbar sein sollen, müssen direkt in der entsprechenden Abteilung (oder Gruppe, etc.) erstellt werden.
+    </p>
+  </div>
+</.card>
+
+<%= for type <- Fee.get_valid_types do %>
+  <.header level="2" class="mt-12">
+    <%= type[:key] %>
+    <:actions>
+      <.link navigate={~p"/clubs/#{@club}/fees/new/#{type[:value]}"}>
+        <.button>Gebühr erstellen</.button>
+      </.link>
+    </:actions>
+  </.header>
+
+  <.card>
+    <% assigns = assign(assigns, :fees, Legal.list_general_fees(@club.id, type[:value])) %>
+    <%= if Enum.any?(@fees) do %>
+      <.table
+        id="fees"
+        rows={@fees}
+        row_click={&JS.navigate(~p"/fees/#{&1}")}
+      >
+        <:col :let={fee} label="Name">
+          <%= format_string_field(fee.name) %>
+        </:col>
+        <:col :let={fee} label="Ref.nr.">
+          <%= format_string_field(fee.reference_number) %>
+        </:col>
+        <:col :let={fee} label="Grundgeb.">
+          <%= format_eur_cent_field(fee.base_fee_in_eur_cent) %> &euro;
+        </:col>
+        <:col :let={fee} label="Aufnahmegeb.">
+          <%= format_eur_cent_field(fee.admission_fee_in_eur_cent) %> &euro;
+        </:col>
+        <:col :let={fee} label="Alter">
+          <%= fee.minimum_age_in_years %>&nbsp;-&nbsp;<%= fee.maximum_age_in_years %>
+        </:col>
+
+        <:action :let={fee}>
+          <.link navigate={~p"/fees/#{fee}"}>Anzeigen</.link>
+        </:action>
+      </.table>
+    <% else %>
+      <p>
+        Bisher wurde noch keine Gebühr erstellt.
+      </p>
+    <% end %>
+  </.card>
+<% end %>
