@@ -51,10 +51,10 @@ defmodule SportywebWeb.FeeLiveTest do
     test "saves new fee", %{conn: conn, user: user} do
       club = club_fixture()
 
-      {:error, _} = live(conn, ~p"/clubs/#{club}/fees/new")
+      {:error, _} = live(conn, ~p"/clubs/#{club}/fees/new/club")
 
       conn = conn |> log_in_user(user)
-      {:ok, new_live, html} = live(conn, ~p"/clubs/#{club}/fees/new")
+      {:ok, new_live, html} = live(conn, ~p"/clubs/#{club}/fees/new/club")
 
       assert html =~ "Gebühr erstellen"
 
@@ -76,7 +76,7 @@ defmodule SportywebWeb.FeeLiveTest do
       club = club_fixture()
 
       conn = conn |> log_in_user(user)
-      {:ok, new_live, _html} = live(conn, ~p"/clubs/#{club}/fees/new")
+      {:ok, new_live, _html} = live(conn, ~p"/clubs/#{club}/fees/new/club")
 
       {:ok, _, _html} =
         new_live

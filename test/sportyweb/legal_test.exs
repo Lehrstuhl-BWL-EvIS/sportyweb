@@ -13,7 +13,7 @@ defmodule Sportyweb.LegalTest do
 
     test "list_fees/0 returns all fees" do
       fee = fee_fixture()
-      assert Legal.list_fees(fee.club_id) == [fee]
+      assert Legal.list_general_fees(fee.club_id, "club") == [fee]
     end
 
     test "get_fee!/1 returns the fee with given id" do

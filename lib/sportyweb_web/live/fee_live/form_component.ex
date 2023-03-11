@@ -23,6 +23,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
             <.input_grid>
               <div class="hidden">
                 <.input field={@form[:type]} type="hidden" readonly />
+                <.input field={@form[:is_general]} type="checkbox" />
               </div>
 
               <div class="col-span-12 md:col-span-6">

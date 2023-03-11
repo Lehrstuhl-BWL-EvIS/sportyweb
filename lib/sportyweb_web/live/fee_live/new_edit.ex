@@ -51,7 +51,8 @@ defmodule SportywebWeb.FeeLive.NewEdit do
       club_id: club.id,
       club: club,
       is_general: true,
-      type: type})
+      type: type}
+    )
     |> assign(:club, club)
   end
 
