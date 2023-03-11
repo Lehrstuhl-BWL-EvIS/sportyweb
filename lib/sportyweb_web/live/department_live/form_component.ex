@@ -81,23 +81,27 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
                 <.label>Notizen (optional)</.label>
                 <.inputs_for :let={f_nested} field={@form[:notes]}>
                   <.input_grid>
-                    <div class="col-span-11">
+                    <div class="col-span-12">
                       <.input field={f_nested[:content]} type="textarea" />
                     </div>
 
+                    <!--
                     <div class="col-span-1">
                       <.input field={f_nested[:delete]} type="checkbox" />
                       <.button type="button" class="bg-rose-700 hover:bg-rose-800">
                         <Heroicons.trash class="text-white h-4 w-4" />
                       </.button>
                     </div>
+                    -->
                   </.input_grid>
                 </.inputs_for>
               </div>
 
+              <!--
               <div class="col-span-12">
                 <.button type="button" phx-click="add_note" phx-target={@myself}>Notiz hinzufügen</.button>
               </div>
+              -->
             </.input_grid>
           </.input_grids>
 
