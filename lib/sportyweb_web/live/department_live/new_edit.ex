@@ -54,7 +54,8 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
       club: club,
       emails: [%Email{}],
       phones: [%Phone{}],
-      notes: [%Note{}]})
+      notes: [%Note{}]}
+    )
     |> assign(:club, club)
   end
 

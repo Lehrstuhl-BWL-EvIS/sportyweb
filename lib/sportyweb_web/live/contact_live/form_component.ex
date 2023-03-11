@@ -22,8 +22,13 @@ defmodule SportywebWeb.ContactLive.FormComponent do
         >
           <.input_grid>
             <div class="col-span-12">
-              <.input field={@form[:type]} type="select" label="Art"
-              options={Contact.get_valid_types} prompt="Bitte auswählen" />
+              <.input
+                field={@form[:type]}
+                type="select"
+                label="Art"
+                options={Contact.get_valid_types}
+                prompt="Bitte auswählen"
+              />
             </div>
 
             <div class="col-span-12 md:col-span-6">
@@ -31,8 +36,13 @@ defmodule SportywebWeb.ContactLive.FormComponent do
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:organization_type]} type="select" label="Organisationstyp"
-              options={Contact.get_valid_organization_types} prompt="Bitte auswählen" />
+              <.input
+                field={@form[:organization_type]}
+                type="select"
+                label="Organisationstyp"
+                options={Contact.get_valid_organization_types}
+                prompt="Bitte auswählen"
+              />
             </div>
 
             <div class="col-span-12 md:col-span-4">
@@ -48,8 +58,13 @@ defmodule SportywebWeb.ContactLive.FormComponent do
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:person_gender]} type="select" label="Geschlecht"
-              options={Contact.get_valid_genders} prompt="Bitte auswählen" />
+              <.input
+                field={@form[:person_gender]}
+                type="select"
+                label="Geschlecht"
+                options={Contact.get_valid_genders}
+                prompt="Bitte auswählen"
+              />
             </div>
 
             <div class="col-span-12 md:col-span-6">

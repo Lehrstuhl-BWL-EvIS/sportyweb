@@ -31,8 +31,12 @@ defmodule SportywebWeb.EventLive.FormComponent do
               </div>
 
               <div class="col-span-12 md:col-span-3">
-                <.input field={@form[:status]} type="select" label="Status"
-                options={Event.get_valid_statuses} />
+                <.input
+                  field={@form[:status]}
+                  type="select"
+                  label="Status"
+                  options={Event.get_valid_statuses}
+                />
               </div>
 
               <div class="col-span-12">
@@ -62,8 +66,12 @@ defmodule SportywebWeb.EventLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12">
-                <.input field={@form[:location_type]} type="select" label="Art des Veranstaltungsorts"
-                options={Event.get_valid_location_types} />
+                <.input
+                  field={@form[:location_type]}
+                  type="select"
+                  label="Art des Veranstaltungsorts"
+                  options={Event.get_valid_location_types}
+                />
               </div>
 
               <div class="col-span-12">

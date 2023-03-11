@@ -22,8 +22,12 @@ defmodule SportywebWeb.GroupLive.FormComponent do
           <.input_grid>
             <%= if @group.id do %>
               <div class="col-span-12">
-                <.input field={@form[:department_id]} type="select" label="Abteilung"
-                options={Organization.list_departments(@group.department.club_id) |> Enum.map(&{&1.name, &1.id})} />
+                <.input
+                  field={@form[:department_id]}
+                  type="select"
+                  label="Abteilung"
+                  options={Organization.list_departments(@group.department.club_id) |> Enum.map(&{&1.name, &1.id})}
+                />
               </div>
             <% end %>
 

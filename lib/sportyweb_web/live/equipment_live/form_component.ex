@@ -22,8 +22,12 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
           <.input_grid>
             <%= if @equipment.id do %>
               <div class="col-span-12">
-                <.input field={@form[:venue_id]} type="select" label="Standort"
-                options={Asset.list_venues(@equipment.venue.club_id) |> Enum.map(&{&1.name, &1.id})} />
+                <.input
+                  field={@form[:venue_id]}
+                  type="select"
+                  label="Standort"
+                  options={Asset.list_venues(@equipment.venue.club_id) |> Enum.map(&{&1.name, &1.id})}
+                />
               </div>
             <% end %>
 

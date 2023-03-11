@@ -48,8 +48,13 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
                   </div>
 
                   <div class="col-span-12 md:col-span-4">
-                    <.input field={f_nested[:type]} type="select" label="Art"
-                    options={Email.get_valid_types} prompt="Bitte auswählen" />
+                    <.input
+                      field={f_nested[:type]}
+                      type="select"
+                      label="Art"
+                      options={Email.get_valid_types}
+                      prompt="Bitte auswählen"
+                    />
                   </div>
                 </.inputs_for>
 
@@ -59,8 +64,13 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
                   </div>
 
                   <div class="col-span-12 md:col-span-4">
-                    <.input field={f_nested[:type]} type="select" label="Art"
-                    options={Phone.get_valid_types} prompt="Bitte auswählen" />
+                    <.input
+                      field={f_nested[:type]}
+                      type="select"
+                      label="Art"
+                      options={Phone.get_valid_types}
+                      prompt="Bitte auswählen"
+                    />
                   </div>
                 </.inputs_for>
               </.input_grid>
