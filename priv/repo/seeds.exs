@@ -18,7 +18,6 @@ alias Sportyweb.Asset.Venue
 alias Sportyweb.Legal.Fee
 alias Sportyweb.Organization
 alias Sportyweb.Organization.Club
-alias Sportyweb.Organization.ClubFee
 alias Sportyweb.Organization.Department
 alias Sportyweb.Organization.Group
 alias Sportyweb.Personal
