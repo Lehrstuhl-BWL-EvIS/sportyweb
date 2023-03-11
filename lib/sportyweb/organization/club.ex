@@ -6,7 +6,6 @@ defmodule Sportyweb.Organization.Club do
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.ClubEmail
-  alias Sportyweb.Organization.ClubFee
   alias Sportyweb.Organization.ClubFinancialData
   alias Sportyweb.Organization.ClubNote
   alias Sportyweb.Organization.ClubPhone
@@ -24,7 +23,6 @@ defmodule Sportyweb.Organization.Club do
     has_many :events, Event
     has_many :venues, Venue
     many_to_many :emails, Email, join_through: ClubEmail
-    many_to_many :fees, Fee, join_through: ClubFee
     many_to_many :financial_data, FinancialData, join_through: ClubFinancialData
     many_to_many :notes, Note, join_through: ClubNote
     many_to_many :phones, Phone, join_through: ClubPhone
