@@ -3,6 +3,7 @@
 
 # macOS
 .DS_Store
+.nova/
 
 # The directory Mix will write compiled artifacts to.
 /_build/
