@@ -89,7 +89,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
                     <div class="col-span-1">
                       <.input field={f_nested[:delete]} type="checkbox" />
                       <.button type="button" class="bg-rose-700 hover:bg-rose-800">
-                        <Heroicons.trash class="text-white h-4 w-4" />
+                        <.icon name="hero-trash" class="w-4 h-4 text-white" />
                       </.button>
                     </div>
                     -->

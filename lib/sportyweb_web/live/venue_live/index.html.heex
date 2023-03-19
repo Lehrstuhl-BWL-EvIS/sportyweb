@@ -17,7 +17,7 @@
       <:col :let={{_id, venue}} label="Name">
         <%= format_string_field(venue.name) %>
         <%= if venue.is_main do %>
-          <Heroicons.check_badge class="ml-1 inline-block w-[20px] text-green-800" />
+          <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-800" />
         <% end %>
       </:col>
       <:col :let={{_id, venue}} label="Ref.nr.">
@@ -45,6 +45,6 @@
 </.card>
 
 <div class="mt-4 flex align-middle">
-  <Heroicons.check_badge class="mr-1 inline-block w-[20px] text-green-800" />
+  <.icon name="hero-check-badge" class="mr-1 inline-block w-[20px] text-green-800" />
   Hauptsitz
 </div>

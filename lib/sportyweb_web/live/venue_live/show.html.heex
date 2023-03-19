@@ -16,7 +16,7 @@
       <%= format_string_field(@venue.description) %>
     </:item>
     <:item title="Hauptsitz" :if={@venue.is_main}>
-      <Heroicons.check_badge class="inline-block w-[20px] text-green-800" />
+      <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>
   </.list>
 </.card>

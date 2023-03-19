@@ -29,43 +29,43 @@ defmodule SportywebWeb.ClubNavigationComponent do
       <div class="space-y-1">
         <.link navigate={~p"/clubs/#{@club}"}
           class={[@default_link_classes, (if @club_navigation_current_item == :dashboard, do: @current_link_classes)]}>
-          <Heroicons.rocket_launch class={@default_icon_classes} />
+          <.icon name="hero-rocket-launch" class={@default_icon_classes} />
           <span class="truncate">Dashboard</span>
         </.link>
 
         <.link navigate={~p"/clubs/#{@club}/events"}
           class={[@default_link_classes, (if @club_navigation_current_item == :calendar, do: @current_link_classes)]}>
-          <Heroicons.calendar class={@default_icon_classes} />
+          <.icon name="hero-calendar" class={@default_icon_classes} />
           <span class="truncate">Kalender</span>
         </.link>
 
         <.link navigate={~p"/clubs/#{@club}/departments"}
           class={[@default_link_classes, (if @club_navigation_current_item == :structure, do: @current_link_classes)]}>
-          <Heroicons.squares_plus class={@default_icon_classes} />
+          <.icon name="hero-squares-plus" class={@default_icon_classes} />
           <span class="truncate">Abteilungen & Gruppen</span>
         </.link>
 
         <.link navigate={~p"/clubs/#{@club}/contacts"}
           class={[@default_link_classes, (if @club_navigation_current_item == :contacts, do: @current_link_classes)]}>
-          <Heroicons.user_group class={@default_icon_classes} />
+          <.icon name="hero-user-group" class={@default_icon_classes} />
           <span class="truncate">Kontakte & Mitglieder</span>
         </.link>
 
         <.link navigate={~p"/clubs/#{@club}/venues"}
           class={[@default_link_classes, (if @club_navigation_current_item == :assets, do: @current_link_classes)]}>
-          <Heroicons.building_office_2 class={@default_icon_classes} />
+          <.icon name="hero-building-office-2" class={@default_icon_classes} />
           <span class="truncate">Standorte & Equipment</span>
         </.link>
 
         <.link navigate={~p"/clubs/#{@club}/fees"}
           class={[@default_link_classes, (if @club_navigation_current_item == :finances, do: @current_link_classes)]}>
-          <Heroicons.banknotes class={@default_icon_classes} />
+          <.icon name="hero-banknotes" class={@default_icon_classes} />
           <span class="truncate">Gebühren</span>
         </.link>
 
         <.link navigate={~p"/clubs/#{@club}"}
           class={[@default_link_classes, (if @club_navigation_current_item == :authentication, do: @current_link_classes)]}>
-          <Heroicons.lock_closed class={@default_icon_classes} />
+          <.icon name="hero-lock-closed" class={@default_icon_classes} />
           <span class="truncate">Nutzer & Rollen</span>
         </.link>
       </div>
