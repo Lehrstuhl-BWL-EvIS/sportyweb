@@ -50,6 +50,16 @@ if Mix.env() in [:dev] do
     email: "andrew.utley@studium.fernuni-hagen.de",
     password: "MGI3MTNlMzczZjR"
   })
+
+  Accounts.register_user(%{
+    email: "TesterSportywebAdmin@test.de",
+    password: "testtest"
+  })
+
+  Accounts.register_user(%{
+    email: "timing_attack_dummy@sportyweb.de",
+    password: "zczZjRMGI3MTNlM"
+  })
 end
 
 ###################################
@@ -153,6 +163,30 @@ Repo.insert!(%Club{
   reference_number: "",
   website_url: "",
   founded_at: ~D[2020-04-01]
+})
+
+###################################
+# Add Club Test
+
+testclub = Repo.insert!(%Club{
+  name: "TestVerein",
+  reference_number: "",
+  website_url: "",
+  founded_at: ~D[2023-03-01]
+})
+
+Repo.insert!(%Department{
+  club: testclub,
+  name: "TestAbteilung1",
+  type: "Hauptabteilung",
+  created_at: ~D[2023-03-01]
+})
+
+Repo.insert!(%Department{
+  club: testclub,
+  name: "TestAbteilung2",
+  type: "Hauptabteilung",
+  created_at: ~D[2023-03-01]
 })
 
 ###################################
