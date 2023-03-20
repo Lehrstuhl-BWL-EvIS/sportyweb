@@ -40,7 +40,7 @@ defmodule SportywebWeb.RoleLive.New do
   defp maybe_create_user(email, socket) do
     case Accounts.get_user_by_email(email) do
       %User{} = user -> user
-      _ -> Accounts.register_user_for_club(email, socket.assigns.club, url(~p"/users/log_in/"))
+      _ -> Accounts.register_user_for_club(email, socket.assigns.club, &url(~p"/users/reset_password/#{&1}"))
     end
   end
 end

@@ -83,11 +83,12 @@ defmodule Sportyweb.Accounts do
   @doc """
   Have a user registered in order to be added to a club.
   """
-  def register_user_for_club(email, club, info_url_fun, len \\ User.min_password_length) do
+  def register_user_for_club(email, club, info_url_fun) do
+    len = User.min_password_length
     temp_password = len |> :crypto.strong_rand_bytes() |> Base.encode64 |> binary_part(0, len)
     {:ok, %User{} = user} = register_user(%{email: email, password: temp_password})
 
-    UserNotifier.deliver_info_of_being_added_to_club(user, club, info_url_fun, temp_password)
+    deliver_user_initial_password_instructions(user, club, info_url_fun)
 
     user
   end
@@ -318,6 +319,17 @@ defmodule Sportyweb.Accounts do
     Repo.insert!(user_token)
     UserNotifier.deliver_reset_password_instructions(user, reset_password_url_fun.(encoded_token))
   end
+
+  ## Initial password for user registered by another user
+
+  def deliver_user_initial_password_instructions(%User{} = user, club, reset_password_url_fun)
+    when is_function(reset_password_url_fun, 1) do
+    {encoded_token, user_token} = UserToken.build_email_token(user, "reset_password")
+    Repo.insert!(user_token)
+    UserNotifier.deliver_info_of_being_added_to_club(user, club, reset_password_url_fun.(encoded_token))
+  end
+
+
 
   @doc """
   Gets the user by reset password token.

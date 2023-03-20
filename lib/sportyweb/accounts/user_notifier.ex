@@ -80,20 +80,16 @@ defmodule Sportyweb.Accounts.UserNotifier do
   @doc """
   Deliver information of being added to a club.
   """
-  def deliver_info_of_being_added_to_club(user, club, url, pw) do
+  def deliver_info_of_being_added_to_club(user, club, url) do
     deliver(user.email, "Sie wurden dem Verein #{club.name} auf Sportyweb hinzugefügt", """
 
     ==============================
 
     Hallo #{user.email},
 
-    Sie können sich in Ihr Konto einloggen, indem Sie die folgende URL besuchen:
+    Sie können Ihr Passwort festlegen, indem Sie die folgende URL besuchen:
 
     #{url}
-
-    Wir haben ein erstes Passwort für Sie erstellt. Bitte stellen Sie sicher, dass Sie es bei Ihrer ersten Anmeldung ändern.
-
-    #{pw}
 
     Wenn Sie die Erstellung eines Kontos bei uns nicht beantragt haben, ignorieren Sie dies bitte.
 
