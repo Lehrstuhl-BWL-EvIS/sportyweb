@@ -6,15 +6,14 @@ defmodule SportywebWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-md">
       <.header class="text-center">
-        Register for an account
+        Ein Konto erstellen
         <:subtitle>
-          Already registered?
+          Sie haben bereits ein Konto?
           <.link navigate={~p"/users/log_in"} class="font-semibold text-brand hover:underline">
-            Sign in
+            Jetzt anmelden.
           </.link>
-          to your account now.
         </:subtitle>
       </.header>
 
@@ -34,11 +33,11 @@ defmodule SportywebWeb.UserRegistrationLive do
             Oops, something went wrong! Please check the errors below.
           </.error>
 
-          <.input field={{f, :email}} type="email" label="Email" required />
-          <.input field={{f, :password}} type="password" label="Password" required />
+          <.input field={{f, :email}} type="email" label="E-Mail-Adresse" required />
+          <.input field={{f, :password}} type="password" label="Passwort" required />
 
           <:actions>
-            <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
+            <.button phx-disable-with="Creating account..." class="w-full">Konto erstellen</.button>
           </:actions>
         </.simple_form>
       </.card>

@@ -5,37 +5,39 @@ defmodule SportywebWeb.UserResetPasswordLive do
 
   def render(assigns) do
     ~H"""
-    <.header>Reset Password</.header>
+    <div class="mx-auto max-w-sm">
+      <.header>Passwort ändern</.header>
 
-    <.card class="mt-8">
-      <.simple_form
-        :let={f}
-        for={@changeset}
-        id="reset_password_form"
-        phx-submit="reset_password"
-        phx-change="validate"
-      >
-        <.error :if={@changeset.action == :insert}>
-          Oops, something went wrong! Please check the errors below.
-        </.error>
+      <.card class="mt-8">
+        <.simple_form
+          :let={f}
+          for={@changeset}
+          id="reset_password_form"
+          phx-submit="reset_password"
+          phx-change="validate"
+        >
+          <.error :if={@changeset.action == :insert}>
+            Oops, something went wrong! Please check the errors below.
+          </.error>
 
-        <.input field={{f, :password}} type="password" label="New password" required />
-        <.input
-          field={{f, :password_confirmation}}
-          type="password"
-          label="Confirm new password"
-          required
-        />
-        <:actions>
-          <.button phx-disable-with="Resetting...">Reset Password</.button>
-        </:actions>
-      </.simple_form>
-    </.card>
+          <.input field={{f, :password}} type="password" label="Neues Passwort" required />
+          <.input
+            field={{f, :password_confirmation}}
+            type="password"
+            label="Neues Passwort bestätigen"
+            required
+          />
+          <:actions>
+            <.button phx-disable-with="Resetting...">Passwort ändern</.button>
+          </:actions>
+        </.simple_form>
+      </.card>
 
-    <.live_component
-      module={SportywebWeb.UserRegistrationLoginLinksComponent}
-      id="user-registration-login-links"
-    />
+      <.live_component
+        module={SportywebWeb.UserRegistrationLoginLinksComponent}
+        id="user-registration-login-links"
+      />
+    </div>
     """
   end
 
@@ -61,7 +63,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Password reset successfully.")
+         |> put_flash(:info, "Password erfolreich geändert.")
          |> redirect(to: ~p"/users/log_in")}
 
       {:error, changeset} ->
@@ -79,7 +81,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
       assign(socket, user: user, token: token)
     else
       socket
-      |> put_flash(:error, "Reset password link is invalid or it has expired.")
+      |> put_flash(:error, "Der Link zum Ändern des Passworts ist falsch oder abgelaufen.")
       |> redirect(to: ~p"/")
     end
   end

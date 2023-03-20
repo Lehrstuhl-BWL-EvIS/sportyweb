@@ -12,7 +12,7 @@ defmodule Sportyweb.Accounts.User do
     timestamps()
   end
 
-  @min_password_length 12
+  @min_password_length 8
   def min_password_length, do: @min_password_length
   @doc """
   A user changeset for registration.
@@ -55,10 +55,8 @@ defmodule Sportyweb.Accounts.User do
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: @min_password_length, max: 72)
-    # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
-    # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
-    # |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
+    |> validate_length(:password, min: @min_password_length, message: "Muss mindestens 8-Zeichen lang sein.")
+    |> validate_length(:password, max: 64, message: "Darf höchstens 64-Zeichen lang sein.")
     |> maybe_hash_password(opts)
   end
 
@@ -115,7 +113,7 @@ defmodule Sportyweb.Accounts.User do
   def password_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:password])
-    |> validate_confirmation(:password, message: "does not match password")
+    |> validate_confirmation(:password, message: "Passwörter stimmen nicht überein.")
     |> validate_password(opts)
   end
 
@@ -150,7 +148,7 @@ defmodule Sportyweb.Accounts.User do
     if valid_password?(changeset.data, password) do
       changeset
     else
-      add_error(changeset, :current_password, "is not valid")
+      add_error(changeset, :current_password, "Die Eingabe ist nicht valide.")
     end
   end
 end
