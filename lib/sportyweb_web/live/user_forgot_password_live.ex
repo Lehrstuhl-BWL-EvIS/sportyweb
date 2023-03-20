@@ -7,16 +7,16 @@ defmodule SportywebWeb.UserForgotPasswordLive do
     ~H"""
     <div class="mx-auto max-w-sm">
       <.header class="text-center">
-        Forgot your password?
-        <:subtitle>We'll send a password reset link to your inbox</:subtitle>
+        Passwort vergessen?
+        <:subtitle>Wir senden Ihnen einen Link um es zurückzusetzen.</:subtitle>
       </.header>
 
       <.card class="mt-8">
         <.simple_form :let={f} id="reset_password_form" for={:user} phx-submit="send_email">
-          <.input field={{f, :email}} type="email" placeholder="Email" required />
+          <.input field={{f, :email}} type="email" placeholder="E-Mail-Adresse" required />
           <:actions>
             <.button phx-disable-with="Sending..." class="w-full">
-              Send password reset instructions
+              Link zum Zurücksetzen anfordern
             </.button>
           </:actions>
         </.simple_form>
@@ -36,18 +36,18 @@ defmodule SportywebWeb.UserForgotPasswordLive do
 
   def handle_event("send_email", %{"user" => %{"email" => email}}, socket) do
     if user = Accounts.get_user_by_email(email) do
-      Accounts.deliver_user_reset_password_instructions(
-        user,
-        &url(~p"/users/reset_password/#{&1}")
-      )
+      Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de")
+      Accounts.deliver_user_reset_password_instructions(user, &url(~p"/users/reset_password/#{&1}"))
+    else
+      dummy = Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de")
+      Accounts.deliver_user_reset_password_instructions(dummy, &url(~p"/users/reset_password/#{&1}"))
     end
 
     info =
-      "If your email is in our system, you will receive instructions to reset your password shortly."
+      "Wenn sich Ihre E-Mail-Adresse in unserem System befindet, senden wir Ihnen in Kürze die Anweisungen zu, um Ihr Passwort zurückzusetzen."
 
     {:noreply,
      socket
-     |> put_flash(:info, info)
-     |> redirect(to: ~p"/")}
+     |> put_flash(:info, info)}
   end
 end
