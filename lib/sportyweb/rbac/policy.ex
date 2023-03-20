@@ -10,7 +10,8 @@ defmodule Sportyweb.RBAC.Policy do
     action = socket.assigns.live_action
     view = get_live_view(socket.view)
 
-    if is_application_admin_or_tester(socket.assigns.current_user) || permit?(socket.assigns.current_user, action, view, params) do
+    if is_application_admin_or_tester(socket.assigns.current_user)
+       || permit?(socket.assigns.current_user, action, view, params) do
       {:cont,
         socket
         |> Phoenix.LiveView.attach_hook(:load_associated_clubs, :handle_params, &load_associated_clubs/3)}
@@ -123,7 +124,7 @@ defmodule Sportyweb.RBAC.Policy do
 
   defp error_redirect(action, :ClubLive, _params) when action in [:new, :edit, :show], do: ~p"/clubs"
   defp error_redirect(_action, :ClubLive, %{"id" => club_id}), do: ~p"/clubs/#{club_id}"
-  defp error_redirect(_action, :DepartmentLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}"
+  defp error_redirect(_action, :DepartmentLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}/departments"
   defp error_redirect(_action, :DepartmentLive, %{"id" => dept_id}), do: ~p"/clubs/#{dept_id |> Organization.get_department!() |> Map.get(:club_id)}"
   defp error_redirect(_action, :RoleLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}"
   defp error_redirect(_action, _view, _params), do: ~p"/clubs"
