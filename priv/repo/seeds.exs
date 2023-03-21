@@ -359,15 +359,19 @@ testclub = Repo.insert!(%Club{
 Repo.insert!(%Department{
   club: testclub,
   name: "TestAbteilung1",
-  type: "Hauptabteilung",
-  created_at: ~D[2023-03-01]
+  created_at: ~D[2023-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [%Note{}],
 })
 
 Repo.insert!(%Department{
   club: testclub,
   name: "TestAbteilung2",
-  type: "Hauptabteilung",
-  created_at: ~D[2023-03-01]
+  created_at: ~D[2023-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [%Note{}],
 })
 
 ###################################
