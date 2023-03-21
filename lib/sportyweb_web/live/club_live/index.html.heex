@@ -8,16 +8,28 @@
 </.header>
 
 <.card>
-  <.table id="clubs" rows={@clubs} row_click={&JS.navigate(~p"/clubs/#{&1}")}>
-    <:col :let={club} label="Name"><%= club.name %></:col>
-    <:col :let={club} label="Referenznummer"><%= club.reference_number %></:col>
-    <:col :let={club} label="URL"><%= club.website_url %></:col>
-    <:col :let={club} label="Gründungsdatum"><%= Calendar.strftime(club.founded_at, "%d.%m.%Y") %></:col>
-    <:action :let={club}>
-      <div class="sr-only">
-        <.link navigate={~p"/clubs/#{club}"}>Anzeigen</.link>
+  <.table
+    id="clubs"
+    rows={@streams.clubs}
+    row_click={fn {_id, club} -> JS.navigate(~p"/clubs/#{club}") end}
+  >
+    <:col :let={{_id, club}} label="Name">
+      <%= format_string_field(club.name) %>
+    </:col>
+    <:col :let={{_id, club}} label="Ref.nr.">
+      <%= format_string_field(club.reference_number) %>
+    </:col>
+    <:col :let={{_id, club}} label="Beschreibung">
+      <div class="max-w-[200px] truncate overflow-hidden">
+        <%= format_string_field(club.description) %>
       </div>
-      <.link navigate={~p"/clubs/#{club}/edit"}>Bearbeiten</.link>
+    </:col>
+    <:col :let={{_id, club}} label="Gründungsdatum">
+      <%= format_date_field_dmy(club.founded_at) %>
+    </:col>
+
+    <:action :let={{_id, club}}>
+      <.link navigate={~p"/clubs/#{club}"}>Anzeigen</.link>
     </:action>
   </.table>
 </.card>

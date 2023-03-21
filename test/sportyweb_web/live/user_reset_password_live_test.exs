@@ -108,7 +108,7 @@ defmodule SportywebWeb.UserResetPasswordLiveTest do
 
       {:ok, _register_live, register_html} =
         lv
-        |> element(~s|a:fl-contains("Sign up")|)
+        |> element(~s|main a:fl-contains("Sign up")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/register")
 

@@ -1,0 +1,36 @@
+<.header>
+  <%= @page_title %>
+  <:actions>
+    <.link navigate={~p"/equipment/#{@equipment}/edit"}>
+      <.button>Equipment bearbeiten</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <.list>
+    <:item title="Standort">
+      <%= format_string_field(@equipment.venue.name) %>
+    </:item>
+    <:item title="Referenznummer">
+      <%= format_string_field(@equipment.reference_number) %>
+    </:item>
+    <:item title="Seriennummer">
+      <%= format_string_field(@equipment.serial_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@equipment.description) %>
+    </:item>
+    <:item title="Gekauft am">
+      <%= format_date_field_dmy(@equipment.purchased_at) %>
+    </:item>
+    <:item title="Nutzung ab">
+      <%= format_date_field_dmy(@equipment.commission_at) %>
+    </:item>
+    <:item title="Nutzung bis">
+      <%= format_date_field_dmy(@equipment.decommission_at) %>
+    </:item>
+  </.list>
+</.card>
+
+<.back navigate={~p"/venues/#{@equipment.venue}"} class="mt-12">Zum Standort</.back>

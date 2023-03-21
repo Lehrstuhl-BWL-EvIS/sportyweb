@@ -1,24 +1,45 @@
 <.header>
-  <%= @club.name %>: Abteilungen
+  <%= @page_title %>
   <:actions>
-    <.link navigate={~p"/clubs/#{@club.id}/departments/new"}>
+    <.link navigate={~p"/clubs/#{@club}/departments/new"}>
       <.button>Abteilung erstellen</.button>
     </.link>
   </:actions>
 </.header>
 
 <.card>
-  <.table id="departments" rows={@departments} row_click={&JS.navigate(~p"/departments/#{&1}")}>
-    <:col :let={department} label="Name"><%= department.name %></:col>
-    <:col :let={department} label="Art"><%= department.type %></:col>
-    <:col :let={department} label="Erstellungsdatum"><%= Calendar.strftime(department.created_at, "%d.%m.%Y") %></:col>
-    <:action :let={department}>
-      <div class="sr-only">
-        <.link navigate={~p"/departments/#{department}"}>Anzeigen</.link>
-      </div>
-      <.link navigate={~p"/departments/#{department}/edit"}>Bearbeiten</.link>
-    </:action>
-  </.table>
-</.card>
+  <%= if Enum.any?(@streams.departments) do %>
+    <.table
+      id="departments"
+      rows={@streams.departments}
+      row_click={fn {_id, department} -> JS.navigate(~p"/departments/#{department}") end}
+    >
+      <:col :let={{_id, department}} label="Name">
+        <%= format_string_field(department.name) %>
+      </:col>
+      <:col :let={{_id, department}} label="Ref.nr.">
+        <%= format_string_field(department.reference_number) %>
+      </:col>
+      <:col :let={{_id, department}} label="Beschreibung">
+        <div class="max-w-[200px] truncate overflow-hidden">
+          <%= format_string_field(department.description) %>
+        </div>
+      </:col>
+      <:col :let={{_id, department}} label="Erstellungsdatum">
+        <%= format_date_field_dmy(department.created_at) %>
+      </:col>
+      <:col :let={{_id, department}} label="Gruppen">
+        <%= Enum.count(department.groups) %>
+      </:col>
 
-<.back navigate={~p"/clubs/#{@club}"}>Zurück zum Dashboard</.back>
+      <:action :let={{_id, department}}>
+        <.link navigate={~p"/departments/#{department}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Bisher wurde noch keine Abteilung erstellt.<br>
+      Gruppen können erst angelegt werden, wenn mindestens eine Abteilung existiert.
+    </p>
+  <% end %>
+</.card>

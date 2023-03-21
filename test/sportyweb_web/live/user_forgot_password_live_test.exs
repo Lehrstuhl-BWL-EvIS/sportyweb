@@ -9,11 +9,11 @@ defmodule SportywebWeb.UserForgotPasswordLiveTest do
 
   describe "Forgot password page" do
     test "renders email page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/users/reset_password")
+      {:ok, lv, html} = live(conn, ~p"/users/reset_password")
 
       assert html =~ "Forgot your password?"
-      assert html =~ "Sign up</a>"
-      assert html =~ "Sign in</a>"
+      assert has_element?(lv, ~s|a[href="#{~p"/users/register"}"]|, "Sign up")
+      assert has_element?(lv, ~s|a[href="#{~p"/users/log_in"}"]|, "Sign in")
     end
 
     test "redirects if already logged in", %{conn: conn} do

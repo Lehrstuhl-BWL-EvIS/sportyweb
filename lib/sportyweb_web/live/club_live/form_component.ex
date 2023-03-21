@@ -13,33 +13,41 @@ defmodule SportywebWeb.ClubLive.FormComponent do
 
       <.card>
         <.simple_form
-          :let={f}
-          for={@changeset}
+          for={@form}
           id="club-form"
           phx-target={@myself}
           phx-change="validate"
           phx-submit="save"
         >
-          <div class="grid grid-cols-12 gap-x-4 gap-y-6">
+          <.input_grid>
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :name}} type="text" label="Name" />
+              <.input field={@form[:name]} type="text" label="Name" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :reference_number}} type="text" label="Referenznummer" />
+              <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+            </div>
+
+            <div class="col-span-12">
+              <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :website_url}} type="text" label="URL" />
+              <.input field={@form[:website_url]} type="text" label="URL (optional)" />
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={{f, :founded_at}} type="date" label="Gründungsdatum" />
+              <.input field={@form[:founded_at]} type="date" label="Gründungsdatum" />
             </div>
-          </div>
+          </.input_grid>
 
           <:actions>
-            <.button phx-disable-with="Speichern...">Speichern</.button>
+            <div>
+              <.button phx-disable-with="Speichern...">Speichern</.button>
+              <.link navigate={@navigate} class="mx-2 py-1 px-1 text-sm font-semibold hover:underline">
+                Abbrechen
+              </.link>
+            </div>
             <.button
               :if={@club.id}
               class="bg-rose-700 hover:bg-rose-800"
@@ -61,7 +69,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:changeset, changeset)}
+     |> assign_form(changeset)}
   end
 
   @impl true
@@ -71,7 +79,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
       |> Organization.change_club(club_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    {:noreply, assign_form(socket, changeset)}
   end
 
   def handle_event("save", %{"club" => club_params}, socket) do
@@ -87,7 +95,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :changeset, changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
   end
 
@@ -100,7 +108,11 @@ defmodule SportywebWeb.ClubLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 end

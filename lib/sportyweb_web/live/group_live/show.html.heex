@@ -1,0 +1,27 @@
+<.header>
+  <%= @page_title %>
+  <:actions>
+    <.link navigate={~p"/groups/#{@group}/edit"}>
+      <.button>Gruppe bearbeiten</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <.list>
+    <:item title="Abteilung">
+      <%= format_string_field(@group.department.name) %>
+    </:item>
+    <:item title="Referenznummer">
+      <%= format_string_field(@group.reference_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@group.description) %>
+    </:item>
+    <:item title="Erstellungsdatum">
+      <%= format_date_field_dmy(@group.created_at) %>
+    </:item>
+  </.list>
+</.card>
+
+<.back navigate={~p"/departments/#{@group.department}"} class="mt-12">Zur Abteilung</.back>

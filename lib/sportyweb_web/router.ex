@@ -77,7 +77,7 @@ defmodule SportywebWeb.Router do
     live_session :rbac,
       on_mount: [{SportywebWeb.UserAuth, :ensure_authenticated}, {Sportyweb.RBAC.Policy, :permissions}] do
 
-      # Clubs
+      # Clubs (Root element)
 
       live "/clubs", ClubLive.Index, :index
 
@@ -86,7 +86,17 @@ defmodule SportywebWeb.Router do
 
       live "/clubs/:id", ClubLive.Show, :show
 
-      # Departments (each belongs to a club)
+      # Events (Each belongs to a club)
+
+      live "/events", EventLive.Index, :index_root
+      live "/clubs/:club_id/events", EventLive.Index, :index
+
+      live "/clubs/:club_id/events/new", EventLive.NewEdit, :new
+      live "/events/:id/edit", EventLive.NewEdit, :edit
+
+      live "/events/:id", EventLive.Show, :show
+
+      # Departments (Each belongs to a club)
 
       live "/departments", DepartmentLive.Index, :index_root
       live "/clubs/:club_id/departments", DepartmentLive.Index, :index
@@ -96,14 +106,55 @@ defmodule SportywebWeb.Router do
 
       live "/departments/:id", DepartmentLive.Show, :show
 
-      # Households
+      # Groups (Each belongs to a department)
 
-      live "/households", HouseholdLive.Index, :index
-      live "/households/new", HouseholdLive.Index, :new
-      live "/households/:id/edit", HouseholdLive.Index, :edit
+      live "/groups", GroupLive.Index, :index_root
+      live "/departments/:department_id/groups", GroupLive.Index, :index
 
-      live "/households/:id", HouseholdLive.Show, :show
-      live "/households/:id/show/edit", HouseholdLive.Show, :edit
+      live "/departments/:department_id/groups/new", GroupLive.NewEdit, :new
+      live "/groups/:id/edit", GroupLive.NewEdit, :edit
+
+      live "/groups/:id", GroupLive.Show, :show
+
+      # Contacts (Each belongs to a club)
+
+      live "/contacts", ContactLive.Index, :index_root
+      live "/clubs/:club_id/contacts", ContactLive.Index, :index
+
+      live "/clubs/:club_id/contacts/new", ContactLive.NewEdit, :new
+      live "/contacts/:id/edit", ContactLive.NewEdit, :edit
+
+      live "/contacts/:id", ContactLive.Show, :show
+
+      # Venues (Each belongs to a club)
+
+      live "/venues", VenueLive.Index, :index_root
+      live "/clubs/:club_id/venues", VenueLive.Index, :index
+
+      live "/clubs/:club_id/venues/new", VenueLive.NewEdit, :new
+      live "/venues/:id/edit", VenueLive.NewEdit, :edit
+
+      live "/venues/:id", VenueLive.Show, :show
+
+      # Equipment (Each belongs to a venue)
+
+      live "/equipment", EquipmentLive.Index, :index_root
+      live "/venues/:venue_id/equipment", EquipmentLive.Index, :index
+
+      live "/venues/:venue_id/equipment/new", EquipmentLive.NewEdit, :new
+      live "/equipment/:id/edit", EquipmentLive.NewEdit, :edit
+
+      live "/equipment/:id", EquipmentLive.Show, :show
+
+      # Fees (Polymorphic)
+
+      live "/fees", FeeLive.Index, :index_root
+      live "/clubs/:club_id/fees", FeeLive.Index, :index
+
+      live "/clubs/:club_id/fees/new/:type", FeeLive.NewEdit, :new
+      live "/fees/:id/edit", FeeLive.NewEdit, :edit
+
+      live "/fees/:id", FeeLive.Show, :show
 
       # Roles
 

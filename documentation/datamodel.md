@@ -19,6 +19,19 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ---
 
+
+```mermaid
+erDiagram
+	Club ||--o{ Department : organizes
+	Department ||--o{ Group : organizes
+	Club ||--o{ Category : tbd
+	Category ||--o{ GroupCategory : tbd
+	Group ||--o{ GroupCategory : tbd
+    Club ||--o{ Venue : runs
+    Venue ||--o{ Equipment : holds
+```
+
+
 ```mermaid
 erDiagram
 	Mitglied ||--|| Verein : ist_Mitglied_in

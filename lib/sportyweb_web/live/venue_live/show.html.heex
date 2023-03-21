@@ -1,0 +1,62 @@
+<.header>
+  <%= @page_title %>
+  <:actions>
+    <.link navigate={~p"/venues/#{@venue}/edit"}>
+      <.button>Standort bearbeiten</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <.list>
+    <:item title="Referenznummer">
+      <%= format_string_field(@venue.reference_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@venue.description) %>
+    </:item>
+    <:item title="Hauptsitz" :if={@venue.is_main}>
+      <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
+    </:item>
+  </.list>
+</.card>
+
+<.header level="2" class="mt-12">
+  Equipment
+  <:actions>
+    <.link navigate={~p"/venues/#{@venue}/equipment/new"}>
+      <.button>Equipment erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@venue.equipment) do %>
+    <.table
+      id="equipment"
+      rows={@venue.equipment}
+      row_click={&JS.navigate(~p"/equipment/#{&1}")}
+    >
+      <:col :let={equipment} label="Name">
+        <%= format_string_field(equipment.name) %>
+      </:col>
+      <:col :let={equipment} label="Ref.nr.">
+        <%= format_string_field(equipment.reference_number) %>
+      </:col>
+      <:col :let={equipment} label="Beschreibung">
+        <div class="max-w-[200px] truncate overflow-hidden">
+          <%= format_string_field(equipment.description) %>
+        </div>
+      </:col>
+
+      <:action :let={equipment}>
+        <.link navigate={~p"/equipment/#{equipment}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>Bisher wurde noch keine Gruppe erstellt.</p>
+  <% end %>
+</.card>
+
+
+<.back navigate={~p"/clubs/#{@venue.club}/venues"} class="mt-12">Zur Standortübersicht</.back>

@@ -1,5 +1,9 @@
+# Nova Editor
+.nova
+
 # macOS
 .DS_Store
+.nova/
 
 # The directory Mix will write compiled artifacts to.
 /_build/
@@ -22,6 +26,9 @@ erl_crash.dump
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
 
+# Temporary files, for example, from tests.
+/tmp/
+
 # Ignore package tarball (built via "mix hex.build").
 sportyweb-*.tar
 
@@ -35,6 +42,7 @@ sportyweb-*.tar
 npm-debug.log
 /assets/node_modules/
 
-# Don't commit the ERD file, recreate it with each setup-dev-env.sh run
-documentation/erd.pdf
-
+# Don't commit the SQL structure and ERD files,
+# recreate both with each setup-dev-env.sh run
+/priv/repo/structure.sql
+/documentation/erd.pdf

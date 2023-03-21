@@ -39,7 +39,6 @@ defmodule SportywebWeb do
   def controller do
     quote do
       use Phoenix.Controller,
-        namespace: SportywebWeb,
         formats: [:html, :json],
         layouts: [html: SportywebWeb.Layouts]
 
@@ -54,6 +53,8 @@ defmodule SportywebWeb do
     quote do
       use Phoenix.LiveView,
         layout: {SportywebWeb.Layouts, :app}
+
+      import SportywebWeb.CommonHelper
 
       unquote(html_helpers())
     end

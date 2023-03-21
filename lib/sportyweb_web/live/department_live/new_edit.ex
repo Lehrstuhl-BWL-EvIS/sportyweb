@@ -3,6 +3,9 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
 
   alias Sportyweb.Organization
   alias Sportyweb.Organization.Department
+  alias Sportyweb.Polymorphic.Email
+  alias Sportyweb.Polymorphic.Note
+  alias Sportyweb.Polymorphic.Phone
 
   @impl true
   def render(assigns) do
@@ -23,8 +26,8 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
-    socket
-    |> assign(:club_navigation_current_item, :dashboard)}
+     socket
+     |> assign(:club_navigation_current_item, :structure)}
   end
 
   @impl true
@@ -33,7 +36,7 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    department = Organization.get_department!(id, [:club])
+    department = Organization.get_department!(id, [:club, :emails, :phones, :notes])
 
     socket
     |> assign(:page_title, "Abteilung bearbeiten")
@@ -46,7 +49,13 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
 
     socket
     |> assign(:page_title, "Abteilung erstellen")
-    |> assign(:department, %Department{club: club})
+    |> assign(:department, %Department{
+      club_id: club.id,
+      club: club,
+      emails: [%Email{}],
+      phones: [%Phone{}],
+      notes: [%Note{}]}
+    )
     |> assign(:club, club)
   end
 
@@ -58,6 +67,6 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
     {:noreply,
      socket
      |> put_flash(:info, "Abteilung erfolgreich gelöscht")
-     |> push_navigate(to: "/clubs/#{department.club_id}")}
+     |> push_navigate(to: "/clubs/#{department.club_id}/departments")}
   end
 end

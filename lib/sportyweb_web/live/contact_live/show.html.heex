@@ -1,0 +1,30 @@
+<.header>
+  <%= @page_title %>
+  <:actions>
+    <.link navigate={~p"/contacts/#{@contact}/edit"}>
+      <.button>Kontakt bearbeiten</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <.list>
+    <:item title="Art">
+      <%= get_key_for_value(Contact.get_valid_types, @contact.type) %>
+    </:item>
+    <:item title="Name">
+      <%= format_string_field(@contact.name) %>
+    </:item>
+    <:item title="Organisationstyp" :if={Sportyweb.Personal.Contact.is_organization?(@contact)}>
+      <%= get_key_for_value(Contact.get_valid_organization_types, @contact.organization_type) %>
+    </:item>
+    <:item title="Geschlecht" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
+      <%= get_key_for_value(Contact.get_valid_genders, @contact.person_gender) %>
+    </:item>
+    <:item title="Geburtstag" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
+      <%= format_date_field_dmy(@contact.person_birthday) %>
+    </:item>
+  </.list>
+</.card>
+
+<.back navigate={~p"/clubs/#{@contact.club}/contacts"} class="mt-12">Zur Kontaktübersicht</.back>

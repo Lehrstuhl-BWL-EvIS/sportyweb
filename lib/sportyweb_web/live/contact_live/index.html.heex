@@ -1,0 +1,33 @@
+<.header>
+  <%= @page_title %>
+  <:actions>
+    <.link navigate={~p"/clubs/#{@club}/contacts/new"}>
+      <.button>Kontakt erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@streams.contacts) do %>
+    <.table
+      id="contacts"
+      rows={@streams.contacts}
+      row_click={fn {_id, contact} -> JS.navigate(~p"/contacts/#{contact}") end}
+    >
+      <:col :let={{_id, contact}} label="Name">
+        <%= format_string_field(contact.name) %>
+      </:col>
+      <:col :let={{_id, contact}} label="Art">
+        <%= get_key_for_value(Contact.get_valid_types, contact.type) %>
+      </:col>
+
+      <:action :let={{_id, contact}}>
+        <.link navigate={~p"/contacts/#{contact}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Bisher wurde noch kein Kontakt erstellt.
+    </p>
+  <% end %>
+</.card>

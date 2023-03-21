@@ -12,8 +12,8 @@ defmodule SportywebWeb.UserForgotPasswordLive do
       </.header>
 
       <.card class="mt-8">
-        <.simple_form :let={f} id="reset_password_form" for={:user} phx-submit="send_email">
-          <.input field={{f, :email}} type="email" placeholder="E-Mail-Adresse" required />
+        <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
+          <.input field={@form[:email]} type="email" placeholder="E-Mail-Adresse" required />
           <:actions>
             <.button phx-disable-with="Sending..." class="w-full">
               Link zum Zurücksetzen anfordern
@@ -31,7 +31,7 @@ defmodule SportywebWeb.UserForgotPasswordLive do
   end
 
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, form: to_form(%{}, as: "user"))}
   end
 
   def handle_event("send_email", %{"user" => %{"email" => email}}, socket) do
