@@ -1,11 +1,19 @@
 <.header>
-   Informationen zu den verfügbaren Rollen
+   Allgemeine Informationen zu den verfügbaren Rollen
 </.header>
 
 <.back navigate={~p"/clubs/#{@club_id}/roles"}>Zurück zu Nutzer & Rollen</.back>
 
-<p class="font-bold text-zinc-800 mt-5">Rollen auf Vereinsebene</p>
-<p class="text-zinc-800 text-sm">erlauben Nutzern generell den Zugriff auf den allgemeinen Vereinsbereich sowie das Auflisten sich darin befindlicher die Abteilungen.</p>
+
+<.card class="flex flex-wrap sm:flex-nowrap justify-between space-x-6 mt-5">
+   <div>
+        <.icon name="hero-information-circle" class="bg-blue-500 w-12 h-12 mt-6" />
+   </div>
+   <div>
+        <p class="font-bold text-zinc-800 text-xl mt-5">Rollen auf Vereinsebene</p>
+        <p class="text-zinc-800 text-md">erlauben Nutzern generell den Zugriff auf den allgemeinen Vereinsbereich sowie das Auflisten sich darin befindlicher die Abteilungen.</p>
+   </div>
+</.card>
 
 <.card class="mt-5">
     <.table id="clubroles" rows={@clubroles}>
@@ -14,8 +22,15 @@
     </.table>
 </.card>
 
-<p class="font-bold text-zinc-800 mt-5">Rollen auf Abteilungsebene</p>
-<p class="text-zinc-800 text-sm">erlauben Nutzern, neben dem Zugriff auf den allgemeinen Vereinsbereich und dem Auflisten sich darin befindlicher Abteilungen, den Zugriff auf die mit der Rolle in Verbindung stehende Abteilung.</p>
+<.card class="flex flex-wrap sm:flex-nowrap justify-between space-x-6 mt-5">
+    <div>
+        <.icon name="hero-information-circle" class="bg-blue-500 w-12 h-12 mt-6" />
+    </div>
+    <div>
+        <p class="font-bold text-zinc-800 text-xl mt-5">Rollen auf Abteilungsebene</p>
+        <p class="text-zinc-800 text-md">erlauben Nutzern, neben dem Zugriff auf den allgemeinen Vereinsbereich und dem Auflisten sich darin befindlicher Abteilungen, den Zugriff auf die mit der Rolle in Verbindung stehende Abteilung.</p>
+    </div>
+</.card>
 
 <.card class="mt-5">
     <.table id="departmentroles" rows={@departmentroles}>

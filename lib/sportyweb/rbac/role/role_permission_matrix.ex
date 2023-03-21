@@ -21,8 +21,13 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
         Info:                   "verfügt über alle Zugriffsrechte im Kontext des zugrunde liegenden Vereins.",
         ClubLive:               [:edit],
         RoleLive:               [:index, :new, :edit, :show],
+        EventLive:              [:index, :new, :edit, :show],
         DepartmentLive:         [:index, :new, :edit, :show],
-        HouseholdLive:          [:index, :new, :edit, :show],
+        GroupLive:              [:index, :new, :edit, :show],
+        ContactLive:            [:index, :new, :edit, :show],
+        VenueLive:              [:index, :new, :edit, :show],
+        EquipmentLive:          [:index, :new, :edit, :show],
+        FeeLive:                [:index, :new, :edit, :show],
       },
 
       vorstand: %{
@@ -63,7 +68,7 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
       },
 
       jugendleitung: %{
-        Name:                   "Jugendleitung“",
+        Name:                   "Jugendleitung",
         Info:                   "verfügt über die Berechtigungen, sich die Mitglieder eines Vereins anzeigen zu lassen sowie diese zu bearbeiten."
       },
 
@@ -86,26 +91,32 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
         Name:                   "Abteilungsleiter",
         Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen sowie diese zu bearbeiten.",
         DepartmentLive:         [:edit],
+        GroupLive:              [:index, :new, :edit, :show],
+        VenueLive:              [:index, :new, :edit, :show],
       },
 
       trainer: %{
         Name:                   "Trainer",
-        Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen sowie trainingsrelevante Inhalte darin zu bearbeiten."
+        Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen sowie trainingsrelevante Inhalte darin zu bearbeiten.",
+        VenueLive:              [:index, :new, :edit, :show],
       },
 
       wettampfverwaltung: %{
         Name:                   "Wettkampfverwaltung",
-        Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen sowie wettkampfsrelevante Inhalte darin zu bearbeiten."
+        Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen sowie wettkampfsrelevante Inhalte darin zu bearbeiten.",
+        VenueLive:              [:index, :new, :edit, :show],
       },
 
       abteilungsmitglied: %{
         Name:                   "Abteilungsmitglied",
-        Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen."
+        Info:                   "verfügt über die Berechtigungen, sich eine Abteilung eines Vereins anzeigen zu lassen.",
+        VenueLive:              [:index, :new, :edit, :show],
       },
 
       sponsor: %{
         Name:                   "Sponsor",
-        Info:                   "verfügt über die Berechtigungen, sich den Sponsorenbereich einer Abteilung eines Vereins anzeigen zu lassen."
+        Info:                   "verfügt über die Berechtigungen, sich den Sponsorenbereich einer Abteilung eines Vereins anzeigen zu lassen.",
+        VenueLive:              [:index, :new, :edit, :show],
       }
     ]
   end

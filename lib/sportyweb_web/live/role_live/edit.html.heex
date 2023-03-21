@@ -2,53 +2,90 @@
   Rollen von <%= @user.email %>
   <:subtitle>im Verein <%= @club.name %></:subtitle>
 </.header>
-
 <.back navigate={~p"/clubs/#{@club.id}/roles"}>Zurück zu Nutzer & Rollen</.back>
 
-<.card class="mt-5 bg-slate-400">
-  <p class="font-bold text-zinc-800">Zugewiesene Rollen</p>
-  <.card class="mt-5">
+<.header level="2" class="mt-12">
+  Zugewiesene Rollen
+</.header>
+<.card class="mt-5">
+  <%= if Enum.any?(@assigned_club_roles) do %>
     <.table id="assigned_club_roles" rows={@assigned_club_roles}>
-      <:col :let={assigned_club_roles} label="Vereinsebene"><%= assigned_club_roles.clubrole.name %></:col>
+      <:col :let={assigned_club_roles} label="im Verein"><%= assigned_club_roles.clubrole.name %></:col>
       <:action :let={assigned_club_roles}>
-        <.button class="bg-red-700 hover:bg-red-400" phx-click={JS.push("delete", value: %{club_id: assigned_club_roles.id})} data-confirm="Unwiderruflich löschen?">
+        <.button class="bg-red-700 hover:bg-red-400" phx-click={JS.push("delete", value: %{club_id: assigned_club_roles.id})}>
           Entfernen
         </.button>
       </:action>
     </.table>
-  </.card>
-  <.card class="mt-5">
-    <.table id="assigned_department_roles" rows={@assigned_department_roles}>
-      <:col :let={assigned_department_roles} label="Abteilungsebene"><%= assigned_department_roles.name %></:col>
-      <:action :let={assigned_department_roles}>
-        <.button class="bg-red-700 hover:bg-red-400" phx-click={JS.push("delete", value: %{department_id: assigned_department_roles.id, departmentrole_id: assigned_department_roles.departmentrole_id})} data-confirm="Unwiderruflich löschen?">
-          Entfernen
-        </.button>
-      </:action>
-    </.table>
-  </.card>
+  <% else %>
+    <p>
+      Es wurden noch keine Vereinsrollen zugewiesen.
+    </p>
+  <% end %>
 </.card>
 
-<.card class="mt-10 bg-slate-400">
-  <p class="font-bold text-zinc-800">Verfügbare Rollen zur Zuweisung</p>
-  <.card class="mt-5">
-    <.table id="available_club_roles" rows={@available_club_roles}>
-      <:col :let={available_club_roles} label="Vereinsebene"><%= available_club_roles.name %></:col>
-      <:action :let={available_club_roles}>
-        <.button class="bg-green-700 hover:bg-green-400" phx-click={JS.push("add", value: %{club_id: available_club_roles.id})} data-confirm="Wirklich hinzufügen?">
-          Hinzufügen
+<.card class="mt-5">
+  <%= if Enum.any?(@assigned_department_roles) do %>
+    <.table id="assigned_department_roles" rows={@assigned_department_roles}>
+      <:col :let={assigned_department_roles} label="in den Abteilungen"><%= assigned_department_roles.name %></:col>
+      <:action :let={assigned_department_roles}>
+        <.button class="bg-red-700 hover:bg-red-400" phx-click={JS.push("delete", value: %{department_id: assigned_department_roles.id, departmentrole_id: assigned_department_roles.departmentrole_id})}>
+          Entfernen
         </.button>
       </:action>
     </.table>
-  </.card>
-  <.card class="mt-5">
-    <.table id="availabe_department_roles" rows={@availabe_department_roles}>
-      <:col :let={availabe_department_roles} label="Abteilungsebene"><%= availabe_department_roles.name %></:col>
-      <:action :let={availabe_department_roles}>
-        <.button class="bg-green-700 hover:bg-green-400" phx-click={JS.push("add", value: %{department_id: availabe_department_roles.id, departmentrole_id: availabe_department_roles.departmentrole_id})} data-confirm="Wirklich hinzufügen?">
-          Hinzufügen
-        </.button>
-      </:action>
-    </.table>
-  </.card>
+  <% else %>
+    <p>
+      Es wurden noch keine Abteilungsrollen zugewiesen.
+    </p>
+  <% end %>
 </.card>
+
+<.header level="2" class="mt-12">
+  Vereinsrollen
+</.header>
+<.card class="mt-5">
+  <%= if Enum.any?(@available_club_roles) do %>
+    <.table id="available_club_roles" rows={@available_club_roles}>
+      <:col :let={available_club_roles} label="Verein"><%= available_club_roles.name %></:col>
+      <:action :let={available_club_roles}>
+        <.button class="bg-green-700 hover:bg-green-400" phx-click={JS.push("add", value: %{club_id: available_club_roles.id})}>
+          Hinzufügen
+        </.button>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      <%= @user.email %> sind bereits alle Vereinsrollen zugewiesen.
+    </p>
+  <% end %>
+</.card>
+
+<%= for department <- Organization.list_departments(@club.id) do %>
+  <.header level="2" class="mt-12">
+    Rollen in der Abteilung <%= department.name %>
+  </.header>
+  <.card>
+    <% assigns = assign(assigns, :adr, Enum.reduce(@availabe_department_roles, [], fn x, acc -> if x.id == department.id, do: acc ++ [x], else: acc end)) %>
+    <%= if Enum.any?(@adr) do %>
+      <.table
+        id="adr"
+        rows={@adr}
+      >
+        <:col :let={adr} label="Name">
+          <%= adr.name %>
+        </:col>
+        <:action :let={adr}>
+          <.button class="bg-green-700 hover:bg-green-400" phx-click={JS.push("add", value: %{department_id: adr.id, departmentrole_id: adr.departmentrole_id})}>
+            Hinzufügen
+          </.button>
+        </:action>
+      </.table>
+    <% else %>
+      <p>
+        <%= @user.email %> sind bereits alle Rollen dieser Abteilung zugewiesen.
+      </p>
+    <% end %>
+  </.card>
+<% end %>
+

@@ -57,13 +57,11 @@ defmodule Sportyweb.RBAC.UserRole do
     Repo.all(query)
   end
 
-  def list_users_clubroles_in_a_club_depr(userclubrole) do
+  def list_users_club_associations(user_id) do
     query = from ucr in UserClubRole,
-      where: ucr.club_id == ^userclubrole.club_id,
-      where: ucr.user_id == ^userclubrole.user_id,
-      join: u in assoc(ucr, :user),
-      join: cr in assoc(ucr, :clubrole),
-      preload: [user: u, clubrole: cr]
+      where: ucr.user_id == ^user_id,
+      join: c in assoc(ucr, :club),
+      preload: [club: c]
 
     Repo.all(query)
   end

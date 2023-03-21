@@ -2,6 +2,10 @@ defmodule Sportyweb.RBAC.Policy do
   use SportywebWeb, :verified_routes
 
   alias Sportyweb.Organization
+  alias Sportyweb.Asset
+  alias Sportyweb.Calendar
+  alias Sportyweb.Legal
+  alias Sportyweb.Personal
 
   alias Sportyweb.RBAC.UserRole
   alias Sportyweb.RBAC.Role.RolePermissionMatrix, as: RPM
@@ -11,11 +15,9 @@ defmodule Sportyweb.RBAC.Policy do
     view = get_live_view(socket.view)
 
     if is_application_admin_or_tester(socket.assigns.current_user)
-       || permit?(socket.assigns.current_user, action, view, params) do
-      {:cont,
-        socket
-        #|> Phoenix.LiveView.attach_hook(:load_associated_clubs, :handle_params, &load_associated_clubs/3)
-      }
+       || permit?(socket.assigns.current_user, action, view, params)
+    do
+      {:cont, socket |> add_streams(view, action)}
     else
       {:halt,
         socket
@@ -35,15 +37,37 @@ defmodule Sportyweb.RBAC.Policy do
 
   def permit?(_user, :index, :ClubLive, _params), do: true
   def permit?(_user, :new, :ClubLive, _params), do: false
-  def permit?(user, action, :ClubLive = view, %{"id" => club_id}), do: is_allowed?(user.id, action, club_id, view)
+
+  def permit?(user, action, view, params)
+    when view in [
+      :ClubLive,
+      :RoleLive,
+      :VenueLive,
+      :EventLive,
+      :ContactLive,
+      :FeeLive
+    ]
+  do
+    club_id = if Map.has_key?(params, "club_id"), do: params["club_id"], else: params["id"] |>  get_associated_id(view)
+    is_allowed?(user.id, action, club_id, view)
+  end
 
   def permit?(user, action, :DepartmentLive = view, params) do
-    club_id = if Map.has_key?(params, "club_id"), do: params["club_id"], else: params["id"] |> Organization.get_department!() |> Map.get(:club_id)
+    club_id = if Map.has_key?(params, "club_id"), do: params["club_id"], else: params["id"] |> get_associated_id(view)
     dept_id = if Map.has_key?(params, "id"), do: params["id"], else: nil
     is_allowed?(user.id, action, club_id, view, dept_id)
   end
 
-  def permit?(user, action, :RoleLive = view, %{"club_id" => club_id}), do: is_allowed?(user.id, action, club_id, view)
+  def permit?(user, action, :GroupLive = view, params) do
+    dept_id = if Map.has_key?(params, "department_id"), do: params["department_id"], else: params["id"] |>  get_associated_id(view)
+    club_id = dept_id |> Organization.get_department!() |> Map.get(:club_id)
+    is_allowed?(user.id, action, club_id, view, dept_id)
+  end
+
+  def permit?(user, action, :EquipmentLive = view, params) do
+    venue_id = if Map.has_key?(params, "venue_id"), do: params["venue_id"], else: params["id"] |>  get_associated_id(view)
+    permit?(user, action, :VenueLive, %{"id" => venue_id})
+  end
 
   def permit?(_user, _action, _view, _params), do: false
 
@@ -99,21 +123,17 @@ defmodule Sportyweb.RBAC.Policy do
     |> Kernel.++(current_roles)
   end
 
-  defp load_associated_clubs(_params, _url, socket) do
-    socket = if get_live_view(socket.view) == :ClubLive
-                && socket.assigns.live_action == :index
-                && is_application_admin_or_tester(socket.assigns.current_user) == false
-    do
-      socket
-      |> Phoenix.Component.assign(:clubs, socket.assigns.clubs
-        |> Enum.reduce([], &(if user_associated_with_club?(socket.assigns.current_user, &1),
-          do: &2 ++ [&1],
-          else: &2)))
-    else
-      socket
-    end
+  defp add_streams(socket, :ClubLive, :index), do: Phoenix.LiveView.stream(socket, :clubs, load_associated_clubs(socket.assigns.current_user))
+  defp add_streams(socket, _view, _action), do: socket
 
-    {:cont, socket}
+  defp load_associated_clubs(user) do
+      case is_application_admin_or_tester(user) do
+        true -> Organization.list_clubs()
+        _ -> Organization.list_clubs()
+            |> Enum.reduce([], &(if user_associated_with_club?(user, &1),
+              do: &2 ++ [&1],
+              else: &2))
+      end
   end
 
   defp user_associated_with_club?(user, club) do
@@ -123,10 +143,49 @@ defmodule Sportyweb.RBAC.Policy do
     |> Kernel.>(0)
   end
 
-  defp error_redirect(action, :ClubLive, _params) when action in [:new, :edit, :show], do: ~p"/clubs"
-  defp error_redirect(_action, :ClubLive, %{"id" => club_id}), do: ~p"/clubs/#{club_id}"
-  defp error_redirect(_action, :DepartmentLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}/departments"
-  defp error_redirect(_action, :DepartmentLive, %{"id" => dept_id}), do: ~p"/clubs/#{dept_id |> Organization.get_department!() |> Map.get(:club_id)}"
-  defp error_redirect(_action, :RoleLive, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}"
+  defp error_redirect(action, :ClubLive, _params) when action in [:new, :show], do: ~p"/clubs"
+
+  defp error_redirect(:index, _view, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}"
+  defp error_redirect(:index, _view, %{"department_id" => department_id}), do: ~p"/departments/#{department_id}"
+  defp error_redirect(:index, _view, %{"venue_id" => venue_id}), do: ~p"/venues/#{venue_id}"
+
+  defp error_redirect(:new, view, %{"club_id" => club_id}), do: ~p"/clubs/#{club_id}/#{get_related_path(view)}"
+  defp error_redirect(:new, view, %{"department_id" => department_id}), do: ~p"/departments/#{department_id}/#{get_related_path(view)}"
+  defp error_redirect(:new, view, %{"venue_id" => venue_id}), do: ~p"/venues/#{venue_id}/#{get_related_path(view)}"
+
+  defp error_redirect(:edit, view, %{"id" => id}), do: ~p"/#{get_related_path(view)}/#{id}"
+
+  defp error_redirect(:show, :GroupLive = view, %{"id" => id}), do: ~p"/departments/#{get_associated_id(id, view)}/#{get_related_path(view)}"
+  defp error_redirect(:show, :EquipmentLive = view, %{"id" => id}), do: ~p"/venues/#{get_associated_id(id, view)}/#{get_related_path(view)}"
+  defp error_redirect(:show, view, %{"id" => id}), do: ~p"/clubs/#{get_associated_id(id, view)}/#{get_related_path(view)}"
+
   defp error_redirect(_action, _view, _params), do: ~p"/clubs"
+
+  defp get_related_path(view) do
+    case view do
+      :ClubLive -> "clubs"
+      :RoleLive -> "roles"
+      :DepartmentLive -> "departments"
+      :GroupLive -> "groups"
+      :EventLive -> "events"
+      :ContactLive -> "contacts"
+      :VenueLive -> "venues"
+      :EquipmentLive -> "equipment"
+      :FeeLive -> "fees"
+    end
+  end
+
+  defp get_associated_id(id, view) do
+    case view do
+      :ClubLive -> id
+      :RoleLive -> id
+      :DepartmentLive -> id |> Organization.get_department!() |> Map.get(:club_id)
+      :GroupLive -> id |> Organization.get_group!() |> Map.get(:department_id)
+      :EventLive -> id |> Calendar.get_event!() |> Map.get(:club_id)
+      :ContactLive -> id |> Personal.get_contact!() |> Map.get(:club_id)
+      :VenueLive  -> id |> Asset.get_venue!() |> Map.get(:club_id)
+      :EquipmentLive -> id |> Asset.get_equipment!() |> Map.get(:venue_id)
+      :FeeLive -> id |> Legal.get_fee!() |> Map.get(:club_id)
+    end
+  end
 end
