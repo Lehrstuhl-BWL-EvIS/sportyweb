@@ -20,13 +20,13 @@ defmodule SportywebWeb.RoleLive.New do
 
     socket
     |> assign(club: Organization.get_club!(club_id))
-    |> assign(changeset: changeset)
+    |> assign_form(changeset)
   end
 
   @impl true
   def handle_event("validate", %{"user" => user_params}, socket) do
     changeset = Accounts.change_user_registration(%User{}, user_params)
-    {:noreply, assign(socket, changeset: Map.put(changeset, :action, :validate))}
+    {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 
   def handle_event("add", %{"user" => %{"email" => email}}, socket) do
@@ -42,5 +42,9 @@ defmodule SportywebWeb.RoleLive.New do
       %User{} = user -> user
       _ -> Accounts.register_user_for_club(email, socket.assigns.club, &url(~p"/users/reset_password/#{&1}"))
     end
+  end
+
+  defp assign_form(socket, %{} = source) do
+    assign(socket, :form, to_form(source, as: "user"))
   end
 end

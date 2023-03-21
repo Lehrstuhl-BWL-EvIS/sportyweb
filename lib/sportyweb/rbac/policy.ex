@@ -14,7 +14,8 @@ defmodule Sportyweb.RBAC.Policy do
        || permit?(socket.assigns.current_user, action, view, params) do
       {:cont,
         socket
-        |> Phoenix.LiveView.attach_hook(:load_associated_clubs, :handle_params, &load_associated_clubs/3)}
+        #|> Phoenix.LiveView.attach_hook(:load_associated_clubs, :handle_params, &load_associated_clubs/3)
+      }
     else
       {:halt,
         socket

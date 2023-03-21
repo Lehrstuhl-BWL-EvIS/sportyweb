@@ -28,7 +28,7 @@ defmodule SportywebWeb.UserRegistrationLive do
           method="post"
         >
           <.error :if={@check_errors}>
-            Oops, something went wrong! Please check the errors below.
+              Bitte überprüfen Sie ihre Eingaben.
           </.error>
 
           <.input field={@form[:email]} type="email" label="E-Mail-Adresse" required />

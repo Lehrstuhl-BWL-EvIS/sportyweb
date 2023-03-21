@@ -16,7 +16,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
           phx-change="validate"
         >
           <.error :if={@form.errors != []}>
-            Oops, something went wrong! Please check the errors below.
+            Bitte überprüfen Sie ihre Eingaben.
           </.error>
 
           <.input field={@form[:password]} type="password" label="Neues Passwort" required />
