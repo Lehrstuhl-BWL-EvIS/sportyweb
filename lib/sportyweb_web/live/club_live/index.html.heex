@@ -2,34 +2,39 @@
   Vereinsübersicht
   <:actions>
     <.link navigate={~p"/clubs/new"}>
-      <.button>Verein erstellen</.button>
+      <.button hidden={!@button_config.new}>Verein erstellen</.button>
     </.link>
   </:actions>
 </.header>
 
 <.card>
-  <.table
-    id="clubs"
-    rows={@streams.clubs}
-    row_click={fn {_id, club} -> JS.navigate(~p"/clubs/#{club}") end}
-  >
-    <:col :let={{_id, club}} label="Name">
-      <%= format_string_field(club.name) %>
-    </:col>
-    <:col :let={{_id, club}} label="Ref.nr.">
-      <%= format_string_field(club.reference_number) %>
-    </:col>
-    <:col :let={{_id, club}} label="Beschreibung">
-      <div class="max-w-[200px] truncate overflow-hidden">
-        <%= format_string_field(club.description) %>
-      </div>
-    </:col>
-    <:col :let={{_id, club}} label="Gründungsdatum">
-      <%= format_date_field_dmy(club.founded_at) %>
-    </:col>
+  <%= if Enum.any?(@streams.clubs) do %>
+    <.table
+      id="clubs"
+      rows={@streams.clubs}
+      row_click={fn {_id, club} -> JS.navigate(~p"/clubs/#{club}") end}
+    >
+      <:col :let={{_id, club}} label="Name">
+        <%= format_string_field(club.name) %>
+      </:col>
+      <:col :let={{_id, club}} label="Ref.nr.">
+        <%= format_string_field(club.reference_number) %>
+      </:col>
+      <:col :let={{_id, club}} label="Beschreibung">
+        <div class="max-w-[200px] truncate overflow-hidden">
+          <%= format_string_field(club.description) %>
+        </div>
+      </:col>
+      <:col :let={{_id, club}} label="Gründungsdatum">
+        <%= format_date_field_dmy(club.founded_at) %>
+      </:col>
 
-    <:action :let={{_id, club}}>
-      <.link navigate={~p"/clubs/#{club}"}>Anzeigen</.link>
-    </:action>
-  </.table>
+      <:action :let={{_id, club}}>
+        <.link navigate={~p"/clubs/#{club}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>Wie es aussieht wurden Sie noch keinem Verein hinzugefügt.</p>
+    <p>Bitten Sie den Administrator Ihres Vereins dies zu tun.</p>
+  <% end %>
 </.card>
