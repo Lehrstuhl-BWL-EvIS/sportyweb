@@ -35,7 +35,7 @@ defmodule SportywebWeb.UserRegistrationLive do
           <.input field={@form[:password]} type="password" label="Passwort" required />
 
           <:actions>
-            <.button phx-disable-with="Creating account..." class="w-full">Konto erstellen</.button>
+            <.button phx-disable-with="Account wird erstellt..." class="w-full">Konto erstellen</.button>
           </:actions>
         </.simple_form>
       </.card>

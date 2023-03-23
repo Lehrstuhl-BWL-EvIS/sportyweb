@@ -67,7 +67,7 @@ defmodule SportywebWeb.UserRegistrationLiveTest do
         )
         |> render_submit()
 
-      assert result =~ "has already been taken"
+      assert result =~ "Diese E-Mail-Adresse ist bereits vergeben."
     end
   end
 
