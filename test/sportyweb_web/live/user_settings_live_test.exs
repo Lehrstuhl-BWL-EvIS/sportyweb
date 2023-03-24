@@ -77,7 +77,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
         |> render_submit()
 
       assert result =~ "E-Mail-Adresse ändern"
-      assert result =~ "is not valid"
+      assert result =~ "Die Eingabe ist nicht valide."
     end
   end
 
@@ -126,14 +126,14 @@ defmodule SportywebWeb.UserSettingsLiveTest do
         |> render_change(%{
           "current_password" => "invalid",
           "user" => %{
-            "password" => "too short",
+            "password" => "too sh",
             "password_confirmation" => "does not match"
           }
         })
 
       assert result =~ "Passwort ändern"
-      assert result =~ "should be at least 12 character(s)"
-      assert result =~ "does not match password"
+      assert result =~ "Muss mindestens 8-Zeichen lang sein."
+      assert result =~ "Passwörter stimmen nicht überein."
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn} do
@@ -144,16 +144,16 @@ defmodule SportywebWeb.UserSettingsLiveTest do
         |> form("#password_form", %{
           "current_password" => "invalid",
           "user" => %{
-            "password" => "too short",
+            "password" => "too sh",
             "password_confirmation" => "does not match"
           }
         })
         |> render_submit()
 
       assert result =~ "Passwort ändern"
-      assert result =~ "should be at least 12 character(s)"
-      assert result =~ "does not match password"
-      assert result =~ "is not valid"
+      assert result =~ "Muss mindestens 8-Zeichen lang sein."
+      assert result =~ "Passwörter stimmen nicht überein."
+      assert result =~ "Die Eingabe ist nicht valide."
     end
   end
 

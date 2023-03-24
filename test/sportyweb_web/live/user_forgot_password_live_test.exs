@@ -11,9 +11,9 @@ defmodule SportywebWeb.UserForgotPasswordLiveTest do
     test "renders email page", %{conn: conn} do
       {:ok, lv, html} = live(conn, ~p"/users/reset_password")
 
-      assert html =~ "Forgot your password?"
-      assert has_element?(lv, ~s|a[href="#{~p"/users/register"}"]|, "Sign up")
-      assert has_element?(lv, ~s|a[href="#{~p"/users/log_in"}"]|, "Sign in")
+      assert html =~ "Passwort vergessen?"
+      assert has_element?(lv, ~s|a[href="#{~p"/users/register"}"]|, "Registrieren")
+      assert has_element?(lv, ~s|a[href="#{~p"/users/log_in"}"]|, "Anmelden")
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -41,7 +41,7 @@ defmodule SportywebWeb.UserForgotPasswordLiveTest do
         |> render_submit()
         |> follow_redirect(conn, "/")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
 
       assert Repo.get_by!(Accounts.UserToken, user_id: user.id).context ==
                "reset_password"
@@ -50,14 +50,16 @@ defmodule SportywebWeb.UserForgotPasswordLiveTest do
     test "does not send reset password token if email is invalid", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/reset_password")
 
+      user_fixture(%{email: "timing_attack_dummy@sportyweb.de"})
+
       {:ok, conn} =
         lv
         |> form("#reset_password_form", user: %{"email" => "unknown@example.com"})
         |> render_submit()
         |> follow_redirect(conn, "/")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
-      assert Repo.all(Accounts.UserToken) == []
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
+      assert Accounts.UserToken |> Repo.all() |> Enum.count() == 1
     end
   end
 end

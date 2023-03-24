@@ -50,7 +50,7 @@ defmodule SportywebWeb.RoleLiveTest do
       assert html =~ clubrole_admin.name
 
       {:ok, _, newhtml} = index_live
-             |> element("#roles-#{club_admin.id} a", "Bearbeiten")
+             |> element("#roles a", "Bearbeiten")
              |> render_click()
              |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
@@ -59,7 +59,7 @@ defmodule SportywebWeb.RoleLiveTest do
   end
 
   describe "Edit" do
-    test "add clubrole to user in club", %{conn: conn, user: user, club_admin: club_admin, club: club, clubrole_other: clubrole_other} do
+    test "add clubrole to user in club", %{conn: conn, user: user, club_admin: club_admin, club: club} do
       {:error, _} = live(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
       conn = conn |> log_in_user(user)
@@ -69,12 +69,13 @@ defmodule SportywebWeb.RoleLiveTest do
       assert html =~ "im Verein #{club.name}"
       assert html =~ "Zugewiesene Rollen"
       assert html =~ "Entfernen"
-      assert html =~ "Verfügbare Rollen zur Zuweisung"
+      assert html =~ "Vereinsrollen"
+      assert html =~ "Rollen in der Abteilung"
       assert html =~ "Hinzufügen"
 
       {:ok, _, addhtml} =
         edit_live
-        |> element("#available_club_roles-#{clubrole_other.id} button", "Hinzufügen")
+        |> element("#available_club_roles button", "Hinzufügen")
         |> render_click()
         |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
@@ -82,7 +83,7 @@ defmodule SportywebWeb.RoleLiveTest do
         assert addhtml =~ "Die Rolle wurde dem Nutzer erfolgreich hinzugefügt."
     end
 
-    test "add departmentrole to user in club", %{conn: conn, user: user, club_admin: club_admin, club: club, department: department} do
+    test "add departmentrole to user in club", %{conn: conn, user: user, club_admin: club_admin, club: club} do
       {:error, _} = live(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
       conn = conn |> log_in_user(user)
@@ -90,12 +91,11 @@ defmodule SportywebWeb.RoleLiveTest do
 
       assert html =~ "Rollen von #{club_admin.email}"
       assert html =~ "im Verein #{club.name}"
-      assert html =~ "Vereinsebene"
-      assert html =~ "Abteilungsebene"
+      assert html =~ "Zugewiesene Rollen"
 
       {:ok, _, addhtml} =
         edit_live
-        |> element("#availabe_department_roles-#{department.id} button", "Hinzufügen")
+        |> element("#adr button", "Hinzufügen")
         |> render_click()
         |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
@@ -103,7 +103,7 @@ defmodule SportywebWeb.RoleLiveTest do
         assert addhtml =~ "Die Rolle wurde dem Nutzer erfolgreich hinzugefügt."
     end
 
-    test "remove clubrole from user in club", %{conn: conn, user: user, club_admin: club_admin, club: club, ucr_admin: ucr_admin} do
+    test "remove clubrole from user in club", %{conn: conn, user: user, club_admin: club_admin, club: club} do
       {:error, _} = live(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
       conn = conn |> log_in_user(user)
@@ -113,12 +113,13 @@ defmodule SportywebWeb.RoleLiveTest do
       assert html =~ "im Verein #{club.name}"
       assert html =~ "Zugewiesene Rollen"
       assert html =~ "Entfernen"
-      assert html =~ "Verfügbare Rollen zur Zuweisung"
+      assert html =~ "Vereinsrollen"
+      assert html =~ "Rollen in der Abteilung"
       assert html =~ "Hinzufügen"
 
       {:ok, _, removehtml} =
       edit_live
-      |> element("#assigned_club_roles-#{ucr_admin.id} button", "Entfernen")
+      |> element("#assigned_club_roles button", "Entfernen")
       |> render_click()
       |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
@@ -126,7 +127,7 @@ defmodule SportywebWeb.RoleLiveTest do
       assert removehtml =~ "Die Rolle wurde erfolgreich vom Nutzer entfernt."
     end
 
-    test "remove departmentrole from user in club", %{conn: conn, user: user, club_admin: club_admin, club: club, department: department} do
+    test "remove departmentrole from user in club", %{conn: conn, user: user, club_admin: club_admin, club: club} do
       {:error, _} = live(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
       conn = conn |> log_in_user(user)
@@ -134,12 +135,12 @@ defmodule SportywebWeb.RoleLiveTest do
 
       assert html =~ "Rollen von #{club_admin.email}"
       assert html =~ "im Verein #{club.name}"
-      assert html =~ "Vereinsebene"
-      assert html =~ "Abteilungsebene"
+      assert html =~ "im Verein"
+      assert html =~ "in den Abteilungen"
 
       {:ok, _, addhtml} =
         edit_live
-        |> element("#assigned_department_roles-#{department.id} button", "Entfernen")
+        |> element("#assigned_department_roles button", "Entfernen")
         |> render_click()
         |> follow_redirect(conn, ~p"/clubs/#{club.id}/roles/#{club_admin.id}/edit")
 
@@ -172,7 +173,8 @@ defmodule SportywebWeb.RoleLiveTest do
       assert newhtml =~ "im Verein #{club.name}"
       assert newhtml =~ "Zugewiesene Rollen"
       refute newhtml =~ "Entfernen"
-      assert newhtml =~ "Verfügbare Rollen zur Zuweisung"
+      assert newhtml =~ "Vereinsrollen"
+      assert newhtml =~ "Rollen in der Abteilung"
       assert newhtml =~ "Hinzufügen"
     end
   end

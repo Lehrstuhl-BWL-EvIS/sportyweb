@@ -4,13 +4,19 @@ defmodule SportywebWeb.EquipmentLiveTest do
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
   import Sportyweb.AssetFixtures
+  import Sportyweb.RBAC.RoleFixtures
+  import Sportyweb.RBAC.UserRoleFixtures
 
   @create_attrs %{commission_at: ~D[2022-11-10], decommission_at: ~D[2022-11-15], description: "some description", name: "some name", purchased_at: ~D[2022-11-05], reference_number: "some reference_number", serial_number: "some serial_number"}
   @update_attrs %{commission_at: ~D[2022-11-11], decommission_at: ~D[2022-11-16], description: "some updated description", name: "some updated name", purchased_at: ~D[2022-11-06], reference_number: "some updated reference_number", serial_number: "some updated serial_number"}
   @invalid_attrs %{commission_at: nil, decommission_at: nil, description: nil, name: nil, purchased_at: nil, reference_number: nil, serial_number: nil}
 
   setup do
-    %{user: user_fixture()}
+    user = user_fixture()
+    applicationrole = application_role_fixture()
+    user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
+
+    %{user: user}
   end
 
   defp create_equipment(_) do

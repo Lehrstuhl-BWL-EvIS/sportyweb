@@ -21,14 +21,14 @@ defmodule SportywebWeb.UserResetPasswordLiveTest do
     test "renders reset password with valid token", %{conn: conn, token: token} do
       {:ok, _lv, html} = live(conn, ~p"/users/reset_password/#{token}")
 
-      assert html =~ "Reset Password"
+      assert html =~ "Passwort ändern"
     end
 
     test "does not render reset password with invalid token", %{conn: conn} do
       {:error, {:redirect, to}} = live(conn, ~p"/users/reset_password/invalid")
 
       assert to == %{
-               flash: %{"error" => "Reset password link is invalid or it has expired."},
+               flash: %{"error" => "Der Link zum Ändern des Passworts ist falsch oder abgelaufen."},
                to: ~p"/"
              }
     end
@@ -40,11 +40,11 @@ defmodule SportywebWeb.UserResetPasswordLiveTest do
         lv
         |> element("#reset_password_form")
         |> render_change(
-          user: %{"password" => "secret12", "confirmation_password" => "secret123456"}
+          user: %{"password" => "secret", "confirmation_password" => "secret123456"}
         )
 
-      assert result =~ "should be at least 12 character"
-      assert result =~ "does not match password"
+      assert result =~ "Muss mindestens 8-Zeichen lang sein."
+      assert result =~ "Passwörter stimmen nicht überein."
     end
   end
 
@@ -64,7 +64,7 @@ defmodule SportywebWeb.UserResetPasswordLiveTest do
         |> follow_redirect(conn, ~p"/users/log_in")
 
       refute get_session(conn, :user_token)
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Password reset successfully"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Password erfolreich geändert."
       assert Accounts.get_user_by_email_and_password(user.email, "new valid password")
     end
 
@@ -75,15 +75,15 @@ defmodule SportywebWeb.UserResetPasswordLiveTest do
         lv
         |> form("#reset_password_form",
           user: %{
-            "password" => "too short",
+            "password" => "too sh",
             "password_confirmation" => "does not match"
           }
         )
         |> render_submit()
 
-      assert result =~ "Reset Password"
-      assert result =~ "should be at least 12 character(s)"
-      assert result =~ "does not match password"
+      assert result =~ "Passwort ändern"
+      assert result =~ "Muss mindestens 8-Zeichen lang sein."
+      assert result =~ "Passwörter stimmen nicht überein."
     end
   end
 
@@ -93,11 +93,11 @@ defmodule SportywebWeb.UserResetPasswordLiveTest do
 
       {:ok, _log_in_live, log_in_html} =
         lv
-        |> element(~s|main a:fl-contains("Sign in")|)
+        |> element(~s|main a:fl-contains("Anmelden")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log_in")
 
-      assert log_in_html =~ "Sign in"
+      assert log_in_html =~ "Anmelden"
     end
 
     test "redirects to password reset page when the Register button is clicked", %{
@@ -108,11 +108,11 @@ defmodule SportywebWeb.UserResetPasswordLiveTest do
 
       {:ok, _register_live, register_html} =
         lv
-        |> element(~s|main a:fl-contains("Sign up")|)
+        |> element(~s|main a:fl-contains("Registrieren")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/register")
 
-      assert register_html =~ "Register"
+      assert register_html =~ "Ein Konto erstellen"
     end
   end
 end

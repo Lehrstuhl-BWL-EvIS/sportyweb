@@ -13,8 +13,8 @@ defmodule Sportyweb.RBACTest do
     club = club_fixture()
     department = department_fixture(%{club_id: club.id})
 
-    clubrole = club_role_fixture(%{name: "Vereins Administration"})
-    clubrole2 = club_role_fixture(%{name: "Vorstand"})
+    clubrole = club_role_fixture(%{name: "Vereinsadministration"})
+    clubrole2 = club_role_fixture(%{name: "Geschäftsführung"})
     user_club_role_fixture(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole.id})
     user_club_role_fixture(%{user_id: user.id, club_id: club.id, clubrole_id: clubrole2.id})
 

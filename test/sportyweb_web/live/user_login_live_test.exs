@@ -8,9 +8,9 @@ defmodule SportywebWeb.UserLoginLiveTest do
     test "renders log in page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/log_in")
 
-      assert html =~ "Sign up"
-      assert html =~ "Sign in"
-      assert html =~ "Forgot your password?"
+      assert html =~ "Dann erstellen Sie jetzt eins"
+      assert html =~ "Anmelden"
+      assert html =~ "Passwort vergessen?"
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -51,7 +51,7 @@ defmodule SportywebWeb.UserLoginLiveTest do
 
       conn = submit_form(form, conn)
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid email or password"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Ungültige E-Mail oder ungültiges Passwort."
 
       assert redirected_to(conn) == "/users/log_in"
     end
@@ -63,11 +63,11 @@ defmodule SportywebWeb.UserLoginLiveTest do
 
       {:ok, _login_live, login_html} =
         lv
-        |> element(~s|main a:fl-contains("Sign up")|)
+        |> element(~s|main a:fl-contains("Dann erstellen")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/register")
 
-      assert login_html =~ "Register"
+      assert login_html =~ "Ein Konto"
     end
 
     test "redirects to forgot password page when the Forgot Password button is clicked", %{
@@ -77,11 +77,11 @@ defmodule SportywebWeb.UserLoginLiveTest do
 
       {:ok, conn} =
         lv
-        |> element(~s|main a:fl-contains("Forgot your password?")|)
+        |> element(~s|main a:fl-contains("Passwort vergessen?")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/reset_password")
 
-      assert conn.resp_body =~ "Forgot your password?"
+      assert conn.resp_body =~ "Wir senden Ihnen einen Link um es"
     end
   end
 end

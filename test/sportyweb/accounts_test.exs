@@ -22,7 +22,7 @@ defmodule Sportyweb.AccountsTest do
       refute Accounts.get_user_by_email_and_password("unknown@example.com", "hello world!")
     end
 
-    test "does not return the user if the password is not valid" do
+    test "does not return the user if the password Die Eingabe ist nicht valide." do
       user = user_fixture()
       refute Accounts.get_user_by_email_and_password(user.email, "invalid")
     end
@@ -59,11 +59,11 @@ defmodule Sportyweb.AccountsTest do
     end
 
     test "validates email and password when given" do
-      {:error, changeset} = Accounts.register_user(%{email: "not valid", password: "not valid"})
+      {:error, changeset} = Accounts.register_user(%{email: "not valid", password: "not va"})
 
       assert %{
                email: ["Muss das @-Zeichen enthalten und keine Leerzeichen."],
-               password: ["should be at least 12 character(s)"]
+               password: ["Muss mindestens 8-Zeichen lang sein."]
              } = errors_on(changeset)
     end
 
@@ -71,17 +71,17 @@ defmodule Sportyweb.AccountsTest do
       too_long = String.duplicate("db", 100)
       {:error, changeset} = Accounts.register_user(%{email: too_long, password: too_long})
       assert "should be at most 160 character(s)" in errors_on(changeset).email
-      assert "should be at most 72 character(s)" in errors_on(changeset).password
+      assert "Darf höchstens 64-Zeichen lang sein." in errors_on(changeset).password
     end
 
     test "validates email uniqueness" do
       %{email: email} = user_fixture()
       {:error, changeset} = Accounts.register_user(%{email: email})
-      assert "Diese E-Mail-Adresse ist bereits vergeben." in errors_on(changeset).email
+      assert "has already been taken" in errors_on(changeset).email
 
       # Now try with the upper cased email too, to check that email case is ignored.
       {:error, changeset} = Accounts.register_user(%{email: String.upcase(email)})
-      assert "Diese E-Mail-Adresse ist bereits vergeben." in errors_on(changeset).email
+      assert "has already been taken" in errors_on(changeset).email
     end
 
     test "registers users with a hashed password" do
@@ -156,14 +156,14 @@ defmodule Sportyweb.AccountsTest do
 
       {:error, changeset} = Accounts.apply_user_email(user, password, %{email: email})
 
-      assert "Diese E-Mail-Adresse ist bereits vergeben." in errors_on(changeset).email
+      assert "has already been taken" in errors_on(changeset).email
     end
 
     test "validates current password", %{user: user} do
       {:error, changeset} =
         Accounts.apply_user_email(user, "invalid", %{email: unique_user_email()})
 
-      assert %{current_password: ["is not valid"]} = errors_on(changeset)
+      assert %{current_password: ["Die Eingabe ist nicht valide."]} = errors_on(changeset)
     end
 
     test "applies the email without persisting it", %{user: user} do
@@ -262,13 +262,13 @@ defmodule Sportyweb.AccountsTest do
     test "validates password", %{user: user} do
       {:error, changeset} =
         Accounts.update_user_password(user, valid_user_password(), %{
-          password: "not valid",
+          password: "not va",
           password_confirmation: "another"
         })
 
       assert %{
-               password: ["should be at least 12 character(s)"],
-               password_confirmation: ["does not match password"]
+               password: ["Muss mindestens 8-Zeichen lang sein."],
+               password_confirmation: ["Passwörter stimmen nicht überein."]
              } = errors_on(changeset)
     end
 
@@ -278,14 +278,14 @@ defmodule Sportyweb.AccountsTest do
       {:error, changeset} =
         Accounts.update_user_password(user, valid_user_password(), %{password: too_long})
 
-      assert "should be at most 72 character(s)" in errors_on(changeset).password
+      assert "Darf höchstens 64-Zeichen lang sein." in errors_on(changeset).password
     end
 
     test "validates current password", %{user: user} do
       {:error, changeset} =
         Accounts.update_user_password(user, "invalid", %{password: valid_user_password()})
 
-      assert %{current_password: ["is not valid"]} = errors_on(changeset)
+      assert %{current_password: ["Die Eingabe ist nicht valide."]} = errors_on(changeset)
     end
 
     test "updates the password", %{user: user} do
@@ -476,15 +476,15 @@ defmodule Sportyweb.AccountsTest do
         })
 
       assert %{
-               password: ["should be at least 12 character(s)"],
-               password_confirmation: ["does not match password"]
+               #password: ["Muss mindestens 8-Zeichen lang sein."],
+               password_confirmation: ["Passwörter stimmen nicht überein."]
              } = errors_on(changeset)
     end
 
     test "validates maximum values for password for security", %{user: user} do
       too_long = String.duplicate("db", 100)
       {:error, changeset} = Accounts.reset_user_password(user, %{password: too_long})
-      assert "should be at most 72 character(s)" in errors_on(changeset).password
+      assert "Darf höchstens 64-Zeichen lang sein." in errors_on(changeset).password
     end
 
     test "updates the password", %{user: user} do

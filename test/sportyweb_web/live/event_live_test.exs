@@ -5,13 +5,19 @@ defmodule SportywebWeb.EventLiveTest do
   import Sportyweb.AccountsFixtures
   import Sportyweb.CalendarFixtures
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.RBAC.RoleFixtures
+  import Sportyweb.RBAC.UserRoleFixtures
 
   @create_attrs %{description: "some description", location_description: "some location_description", location_type: "no_info", maximum_age_in_years: 42, maximum_participants: 42, minimum_age_in_years: 42, minimum_participants: 42, name: "some name", reference_number: "some reference_number", status: "draft"}
   @update_attrs %{description: "some updated description", location_description: "some updated location_description", location_type: "venue", maximum_age_in_years: 43, maximum_participants: 43, minimum_age_in_years: 43, minimum_participants: 43, name: "some updated name", reference_number: "some updated reference_number", status: "public"}
   @invalid_attrs %{description: nil, location_description: nil, location_type: "no_info", maximum_age_in_years: nil, maximum_participants: nil, minimum_age_in_years: nil, minimum_participants: nil, name: nil, reference_number: nil, status: "draft"}
 
   setup do
-    %{user: user_fixture()}
+    user = user_fixture()
+    applicationrole = application_role_fixture()
+    user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
+
+    %{user: user}
   end
 
   defp create_event(_) do

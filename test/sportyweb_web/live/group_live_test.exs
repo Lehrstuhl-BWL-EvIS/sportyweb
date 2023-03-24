@@ -4,13 +4,19 @@ defmodule SportywebWeb.GroupLiveTest do
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.RBAC.RoleFixtures
+  import Sportyweb.RBAC.UserRoleFixtures
 
   @create_attrs %{name: "some name", reference_number: "some reference_number", description: "some description", created_at: ~D[2022-11-05]}
   @update_attrs %{name: "some updated name", reference_number: "some updated reference_number", description: "some updated description", created_at: ~D[2022-11-06]}
   @invalid_attrs %{name: nil, reference_number: nil, description: nil, created_at: nil}
 
   setup do
-    %{user: user_fixture()}
+    user = user_fixture()
+    applicationrole = application_role_fixture()
+    user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
+
+    %{user: user}
   end
 
   defp create_group(_) do

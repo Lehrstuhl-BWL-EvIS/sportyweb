@@ -5,13 +5,19 @@ defmodule SportywebWeb.VenueLiveTest do
   import Sportyweb.AccountsFixtures
   import Sportyweb.AssetFixtures
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.RBAC.RoleFixtures
+  import Sportyweb.RBAC.UserRoleFixtures
 
   @create_attrs %{description: "some description", name: "some name", reference_number: "some reference_number"}
   @update_attrs %{description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
   @invalid_attrs %{description: nil, name: nil, reference_number: nil}
 
   setup do
-    %{user: user_fixture()}
+    user = user_fixture()
+    applicationrole = application_role_fixture()
+    user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
+
+    %{user: user}
   end
 
   defp create_venue(_) do

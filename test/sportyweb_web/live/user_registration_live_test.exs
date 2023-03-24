@@ -8,8 +8,8 @@ defmodule SportywebWeb.UserRegistrationLiveTest do
     test "renders registration page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
-      assert html =~ "Sign in"
-      assert html =~ "Create an account"
+      assert html =~ "Jetzt anmelden"
+      assert html =~ "Konto erstellen"
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -28,11 +28,11 @@ defmodule SportywebWeb.UserRegistrationLiveTest do
       result =
         lv
         |> element("#registration_form")
-        |> render_change(user: %{"email" => "with spaces", "password" => "too short"})
+        |> render_change(user: %{"email" => "with spaces", "password" => "too sh"})
 
-      assert result =~ "Register"
+      assert result =~ "Konto erstellen"
       assert result =~ "Muss das @-Zeichen enthalten und keine Leerzeichen."
-      assert result =~ "should be at least 12 character"
+      assert result =~ "Muss mindestens 8-Zeichen lang sein."
     end
   end
 
@@ -77,11 +77,11 @@ defmodule SportywebWeb.UserRegistrationLiveTest do
 
       {:ok, _login_live, login_html} =
         lv
-        |> element(~s|main a:fl-contains("Sign in")|)
+        |> element(~s|main a:fl-contains("Jetzt anmelden")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log_in")
 
-      assert login_html =~ "Sign in"
+      assert login_html =~ "Anmelden"
     end
   end
 end
