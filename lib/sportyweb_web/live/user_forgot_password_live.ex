@@ -48,6 +48,7 @@ defmodule SportywebWeb.UserForgotPasswordLive do
 
     {:noreply,
      socket
-     |> put_flash(:info, info)}
+     |> put_flash(:info, info)
+     |> redirect(to: ~p"/")}
   end
 end
