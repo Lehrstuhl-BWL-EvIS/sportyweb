@@ -178,4 +178,21 @@ defmodule SportywebWeb.RoleLiveTest do
       assert newhtml =~ "Hinzufügen"
     end
   end
+
+  describe "Show" do
+    test "show role informations", %{conn: conn, user: user, club: club} do
+      {:error, _} = live(conn, ~p"/clubs/#{club.id}/roles/show")
+
+      conn = conn |> log_in_user(user)
+      {:ok, _index_live, html} = live(conn, ~p"/clubs/#{club.id}/roles/show")
+
+      assert html =~ "Allgemeine Informationen zu Rollen"
+      assert html =~ "Rollen auf Vereinsebene"
+      assert html =~ "Rollen auf Abteilungsebene"
+
+      assert html =~ "Vereinsadministration"
+      assert html =~ "Die Rolle"
+      assert html =~ "verfügt"
+    end
+  end
 end
