@@ -18,7 +18,7 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
     [
       verein_admin: %{
         Name:                   "Vereinsadministration",
-        Info:                   "verfügt den vollen lesenden und schreibenden Zugriff auf alle Ressourcen und Operationen im jeweiligen Verein.",
+        Info:                   "verfügt über die vollen lesenden und schreibenden Zugriffe auf alle Ressourcen und Operationen im jeweiligen Verein.",
         ClubLive:               [:edit],
         RoleLive:               [:index, :new, :edit, :show],
         EventLive:              [:index, :new, :edit, :show],
@@ -32,7 +32,7 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
 
       verein_lead: %{
         Name:                   "Geschäftsführung",
-        Info:                   "verfügt über vollen lesenden und schreibenden Zugriff auf alle Ressourcen und Operationen, die im Kontext der Vereinsführung stehen. Dabei wird primär auf die Themenbereiche Vereinsverwaltung, Finanzen, Kommunikation und Sponsoring abgestellt. Für alle anderen Inhalte sind lediglich Leserechte gewährt.",
+        Info:                   "verfügt über die vollen lesenden und schreibenden Zugriffe auf alle Ressourcen und Operationen, die im Kontext der Vereinsführung stehen. Dabei wird primär auf die Themenbereiche Vereinsverwaltung, Finanzen, Kommunikation und Sponsoring abgestellt. Für alle anderen Inhalte sind lediglich Leserechte gewährt.",
         ClubLive:               [:edit],
         RoleLive:               [:index, :new, :edit, :show],
         EventLive:              [:index, :show],
@@ -99,7 +99,7 @@ defmodule Sportyweb.RBAC.Role.RolePermissionMatrix do
     [
       abteilungsleiter: %{
         Name:                   "Abteilungsleiter",
-        Info:                   "verfügt über -	die notwendigen lesenden und schreibenden Zugriffe auf alle Ressourcen und Operationen innerhalb einer Abteilung.",
+        Info:                   "verfügt über die notwendigen lesenden und schreibenden Zugriffe auf alle Ressourcen und Operationen innerhalb einer Abteilung.",
         DepartmentLive:         [:edit],
         GroupLive:              [:index, :new, :edit, :show],
       },
