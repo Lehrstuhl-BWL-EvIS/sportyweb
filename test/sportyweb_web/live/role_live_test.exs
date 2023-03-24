@@ -15,10 +15,10 @@ defmodule SportywebWeb.RoleLiveTest do
     club_admin = user_fixture()
 
     club = club_fixture()
-    clubrole_admin = club_role_fixture(%{name: "Vereins Administration"})
+    clubrole_admin = club_role_fixture(%{name: "Vereinsadministration"})
     ucr_admin = user_club_role_fixture(%{user_id: club_admin.id, club_id: club.id, clubrole_id: clubrole_admin.id})
 
-    clubrole_other = club_role_fixture(%{name: "Vorstand"})
+    clubrole_other = club_role_fixture(%{name: "Geschäftsführung"})
 
     department = department_fixture(%{club_id: club.id})
     department_role = department_role_fixture(%{name: "Abteilungleiter"})
