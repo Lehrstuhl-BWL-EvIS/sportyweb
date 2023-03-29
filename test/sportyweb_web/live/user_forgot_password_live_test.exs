@@ -61,5 +61,45 @@ defmodule SportywebWeb.UserForgotPasswordLiveTest do
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
       assert Accounts.UserToken |> Repo.all() |> Enum.count() == 1
     end
+
+    test "clear dummy tokens", %{conn: conn} do
+
+      valid_user = user_fixture()
+      user_fixture(%{email: "timing_attack_dummy@sportyweb.de"})
+
+      # set token for valid_user
+      {:ok, lv, _html} = live(conn, ~p"/users/reset_password")
+
+      {:ok, conn} =
+        lv
+        |> form("#reset_password_form", user: %{"email" => valid_user.email})
+        |> render_submit()
+        |> follow_redirect(conn, "/")
+
+
+      # generate and delete dummy tokens only
+      Enum.map(1..250, fn _x ->
+
+        # Uncomment to see token counts per run
+        # count = Accounts.UserToken |> Repo.all() |> Enum.count()
+        # IO.inspect("run #{x}, count: #{count}")
+
+        {:ok, lv, _html} = live(conn, ~p"/users/reset_password")
+
+        {:ok, conn} =
+          lv
+          |> form("#reset_password_form", user: %{"email" => "unknown@example.com"})
+          |> render_submit()
+          |> follow_redirect(conn, "/")
+
+        assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
+        assert Accounts.UserToken |> Repo.all() |> Enum.count() > 0
+
+        end
+      )
+
+      assert Accounts.UserToken |> Repo.all() |> Enum.count() < 200
+
+    end
   end
 end

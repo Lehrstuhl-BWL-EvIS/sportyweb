@@ -388,4 +388,16 @@ defmodule Sportyweb.Accounts do
     Repo.all(User)
   end
 
+  def delete_dummy_tokens(dummy) do
+    query = dummy |> UserToken.user_and_contexts_query(:all)
+    count = query |> Repo.all() |> Enum.count
+
+    if count > :rand.uniform(200) do
+      Repo.delete_all(query)
+      :deleted
+    else
+      :counting
+    end
+  end
+
 end

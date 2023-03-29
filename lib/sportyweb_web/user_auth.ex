@@ -224,4 +224,15 @@ defmodule SportywebWeb.UserAuth do
   defp maybe_store_return_to(conn), do: conn
 
   defp signed_in_path(_conn), do: ~p"/"
+
+  @doc """
+  Clean timing attack dummy tokens.
+  """
+  def clean_dummy_tokens(conn, _opts) do
+    if user = Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de") do
+      Accounts.delete_dummy_tokens(user) #breaks functionality if timing_attack_dummy@sportyweb.de is not seeded/ inserted in database.
+    end
+
+    conn
+  end
 end
