@@ -51,7 +51,7 @@ defmodule SportywebWeb.UserSessionControllerTest do
         })
 
       assert redirected_to(conn) == "/foo/bar"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Welcome back!"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Willkommen zurück!"
     end
 
     test "login following registration", %{conn: conn, user: user} do
@@ -66,7 +66,7 @@ defmodule SportywebWeb.UserSessionControllerTest do
         })
 
       assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Account created successfully"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Konto erfolgreich erstellt"
     end
 
     test "login following password update", %{conn: conn, user: user} do
@@ -81,7 +81,7 @@ defmodule SportywebWeb.UserSessionControllerTest do
         })
 
       assert redirected_to(conn) == ~p"/users/settings"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Password updated successfully"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Passwort erfolgreich aktualisiert"
     end
 
     test "redirects to login page with invalid credentials", %{conn: conn} do

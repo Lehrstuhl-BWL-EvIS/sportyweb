@@ -148,7 +148,7 @@ defmodule Sportyweb.Accounts.User do
     if valid_password?(changeset.data, password) do
       changeset
     else
-      add_error(changeset, :current_password, "Die Eingabe ist nicht valide.")
+      add_error(changeset, :current_password, "Die Eingabe ist falsch.")
     end
   end
 end

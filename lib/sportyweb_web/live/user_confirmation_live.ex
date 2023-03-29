@@ -6,13 +6,13 @@ defmodule SportywebWeb.UserConfirmationLive do
   def render(%{live_action: :edit} = assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      <.header class="text-center">Confirm Account</.header>
+      <.header class="text-center">Kontobestätigung</.header>
 
       <.card class="mt-8">
         <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
           <.input field={@form[:token]} type="hidden" />
           <:actions>
-            <.button phx-disable-with="Confirming..." class="w-full">Confirm my account</.button>
+            <.button phx-disable-with="Bestätige..." class="w-full">Mein Konto bestätigen</.button>
           </:actions>
         </.simple_form>
       </.card>
@@ -37,7 +37,7 @@ defmodule SportywebWeb.UserConfirmationLive do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, "User confirmed successfully.")
+         |> put_flash(:info, "Nutzer erfolgreich bestätigt.")
          |> redirect(to: ~p"/")}
 
       :error ->
@@ -52,7 +52,7 @@ defmodule SportywebWeb.UserConfirmationLive do
           %{} ->
             {:noreply,
              socket
-             |> put_flash(:error, "User confirmation link is invalid or it has expired.")
+             |> put_flash(:error, "Der Link zur Kontobestätigung ist falsch oder abgelaufen.")
              |> redirect(to: ~p"/")}
         end
     end

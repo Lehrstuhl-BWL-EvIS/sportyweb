@@ -22,7 +22,7 @@ defmodule Sportyweb.AccountsTest do
       refute Accounts.get_user_by_email_and_password("unknown@example.com", "hello world!")
     end
 
-    test "does not return the user if the password Die Eingabe ist nicht valide." do
+    test "does not return the user if the password is not valid" do
       user = user_fixture()
       refute Accounts.get_user_by_email_and_password(user.email, "invalid")
     end
@@ -163,7 +163,7 @@ defmodule Sportyweb.AccountsTest do
       {:error, changeset} =
         Accounts.apply_user_email(user, "invalid", %{email: unique_user_email()})
 
-      assert %{current_password: ["Die Eingabe ist nicht valide."]} = errors_on(changeset)
+      assert %{current_password: ["Die Eingabe ist falsch."]} = errors_on(changeset)
     end
 
     test "applies the email without persisting it", %{user: user} do
@@ -285,7 +285,7 @@ defmodule Sportyweb.AccountsTest do
       {:error, changeset} =
         Accounts.update_user_password(user, "invalid", %{password: valid_user_password()})
 
-      assert %{current_password: ["Die Eingabe ist nicht valide."]} = errors_on(changeset)
+      assert %{current_password: ["Die Eingabe ist falsch."]} = errors_on(changeset)
     end
 
     test "updates the password", %{user: user} do

@@ -5,17 +5,17 @@ defmodule SportywebWeb.UserSessionController do
   alias SportywebWeb.UserAuth
 
   def create(conn, %{"_action" => "registered"} = params) do
-    create(conn, params, "Account created successfully!")
+    create(conn, params, "Konto erfolgreich erstellt!")
   end
 
   def create(conn, %{"_action" => "password_updated"} = params) do
     conn
     |> put_session(:user_return_to, ~p"/users/settings")
-    |> create(params, "Password updated successfully!")
+    |> create(params, "Passwort erfolgreich aktualisiert!")
   end
 
   def create(conn, params) do
-    create(conn, params, "Welcome back!")
+    create(conn, params, "Willkommen zurück!")
   end
 
   defp create(conn, %{"user" => user_params}, info) do

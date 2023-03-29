@@ -14,7 +14,7 @@ defmodule SportywebWeb.UserConfirmationInstructionsLiveTest do
   describe "Resend confirmation" do
     test "renders the resend confirmation page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/confirm")
-      assert html =~ "Resend confirmation instructions"
+      assert html =~ "Bestätigungsanweisungen erneut senden"
     end
 
     test "sends a new confirmation token", %{conn: conn, user: user} do
@@ -27,7 +27,7 @@ defmodule SportywebWeb.UserConfirmationInstructionsLiveTest do
         |> follow_redirect(conn, ~p"/")
 
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
-               "If your email is in our system"
+               "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
 
       assert Repo.get_by!(Accounts.UserToken, user_id: user.id).context == "confirm"
     end
@@ -44,13 +44,15 @@ defmodule SportywebWeb.UserConfirmationInstructionsLiveTest do
         |> follow_redirect(conn, ~p"/")
 
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
-               "If your email is in our system"
+               "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
 
       refute Repo.get_by(Accounts.UserToken, user_id: user.id)
     end
 
     test "does not send confirmation token if email is invalid", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/confirm")
+
+      user_fixture(%{email: "timing_attack_dummy@sportyweb.de"})
 
       {:ok, conn} =
         lv
@@ -59,9 +61,9 @@ defmodule SportywebWeb.UserConfirmationInstructionsLiveTest do
         |> follow_redirect(conn, ~p"/")
 
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
-               "If your email is in our system"
+               "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
 
-      assert Repo.all(Accounts.UserToken) == []
+      assert Accounts.UserToken |> Repo.all() |> Enum.count() == 1
     end
   end
 end

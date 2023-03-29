@@ -27,7 +27,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
             required
           />
           <:actions>
-            <.button phx-disable-with="Resetting..." class="w-full">Passwort ändern</.button>
+            <.button phx-disable-with="Passwort ändern..." class="w-full">Passwort ändern</.button>
           </:actions>
         </.simple_form>
       </.card>

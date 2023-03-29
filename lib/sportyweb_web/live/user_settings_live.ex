@@ -5,7 +5,16 @@ defmodule SportywebWeb.UserSettingsLive do
 
   def render(assigns) do
     ~H"""
-    <div class="grid grid-cols-2 gap-x-4 gap-y-12">
+    <.header>Nutzereinstellungen</.header>
+    <.card>
+      <%= if @current_user.confirmed_at == nil do %>
+        <p class="text-red-500">Bitte bestätigen Sie ihren Account.</p>
+      <% else %>
+        <p class="text-green-500">Sie haben ihr Konto erfolgreich bestätigt.</p>
+      <% end %>
+    </.card>
+
+    <div class="mt-10 grid grid-cols-2 gap-x-4 gap-y-12">
       <div class="col-span-2 md:col-span-1">
         <.header>E-Mail-Adresse ändern</.header>
 
@@ -27,7 +36,7 @@ defmodule SportywebWeb.UserSettingsLive do
               required
             />
             <:actions>
-              <.button phx-disable-with="Ändere...">E-Mail-Adresse ändern</.button>
+              <.button phx-disable-with="E-Mail-Adresse ändern...">E-Mail-Adresse ändern</.button>
             </:actions>
           </.simple_form>
         </.card>
@@ -63,7 +72,7 @@ defmodule SportywebWeb.UserSettingsLive do
               required
             />
             <:actions>
-              <.button phx-disable-with="Ändere...">Passwort ändern</.button>
+              <.button phx-disable-with="Passwort ändern...">Passwort ändern</.button>
             </:actions>
           </.simple_form>
         </.card>
@@ -76,10 +85,10 @@ defmodule SportywebWeb.UserSettingsLive do
     socket =
       case Accounts.update_user_email(socket.assigns.current_user, token) do
         :ok ->
-          put_flash(socket, :info, "Email changed successfully.")
+          put_flash(socket, :info, "E-Mail-Adresse erfolgreich geändert.")
 
         :error ->
-          put_flash(socket, :error, "Email change link is invalid or it has expired.")
+          put_flash(socket, :error, "Der Link zur Änderung der E-Mail-Adresse ist falsch oder abgelaufen.")
       end
 
     {:ok, push_navigate(socket, to: ~p"/users/settings")}
@@ -126,7 +135,7 @@ defmodule SportywebWeb.UserSettingsLive do
           &url(~p"/users/settings/confirm_email/#{&1}")
         )
 
-        info = "A link to confirm your email change has been sent to the new address."
+        info = "Ein Link zur Bestätigung Ihrer neuen E-Mail-Adresse wurde an die neue Adresse gesendet."
         {:noreply, socket |> put_flash(:info, info) |> assign(email_form_current_password: nil)}
 
       {:error, changeset} ->

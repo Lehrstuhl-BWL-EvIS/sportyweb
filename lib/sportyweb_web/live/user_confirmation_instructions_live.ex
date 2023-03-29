@@ -5,13 +5,13 @@ defmodule SportywebWeb.UserConfirmationInstructionsLive do
 
   def render(assigns) do
     ~H"""
-    <.header>Resend confirmation instructions</.header>
+    <.header>Bestätigungsanweisungen erneut senden</.header>
 
     <.card class="mt-8">
       <.simple_form for={@form} id="resend_confirmation_form" phx-submit="send_instructions">
-        <.input field={@form[:email]} type="email" label="Email" required />
+        <.input field={@form[:email]} type="email" label="E-Mail-Adresse" required />
         <:actions>
-          <.button phx-disable-with="Sending...">Resend confirmation instructions</.button>
+          <.button phx-disable-with="Übermittle...">Bestätigungsanweisungen erneut senden</.button>
         </:actions>
       </.simple_form>
     </.card>
@@ -29,14 +29,15 @@ defmodule SportywebWeb.UserConfirmationInstructionsLive do
 
   def handle_event("send_instructions", %{"user" => %{"email" => email}}, socket) do
     if user = Accounts.get_user_by_email(email) do
-      Accounts.deliver_user_confirmation_instructions(
-        user,
-        &url(~p"/users/confirm/#{&1}")
-      )
+      Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de")
+      Accounts.deliver_user_confirmation_instructions(user, &url(~p"/users/reset_password/#{&1}"))
+    else
+      dummy = Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de")
+      Accounts.deliver_user_confirmation_instructions(dummy, &url(~p"/users/reset_password/#{&1}"))
     end
 
     info =
-      "If your email is in our system and it has not been confirmed yet, you will receive an email with instructions shortly."
+      "Wenn sich Ihre E-Mail-Adresse in unserem System befindet und noch nicht bestätigt wurde, werden Sie in Kürze eine E-Mail mit Anweisungen erhalten."
 
     {:noreply,
      socket

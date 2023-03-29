@@ -26,7 +26,7 @@ defmodule SportywebWeb.UserLoginLive do
             </.link>
           </:actions>
           <:actions>
-            <.button phx-disable-with="Signing in..." class="w-full">
+            <.button phx-disable-with="Anmeldevorgang..." class="w-full">
               Anmelden <span aria-hidden="true">→</span>
             </.button>
           </:actions>

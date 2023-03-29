@@ -15,7 +15,7 @@ defmodule SportywebWeb.UserForgotPasswordLive do
         <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
           <.input field={@form[:email]} type="email" placeholder="E-Mail-Adresse" required />
           <:actions>
-            <.button phx-disable-with="Sending..." class="w-full">
+            <.button phx-disable-with="Sende..." class="w-full">
               Link zum Zurücksetzen anfordern
             </.button>
           </:actions>

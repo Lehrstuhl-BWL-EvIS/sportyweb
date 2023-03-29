@@ -128,7 +128,7 @@ defmodule SportywebWeb.CoreComponents do
   ## Examples
 
       <.flash kind={:info} flash={@flash} />
-      <.flash kind={:info} phx-mounted={show("#flash")}>Welcome Back!</.flash>
+      <.flash kind={:info} phx-mounted={show("#flash")}>Willkommen zurück!</.flash>
   """
   attr :id, :string, default: "flash", doc: "the optional id of flash container"
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"

@@ -14,7 +14,7 @@ defmodule SportywebWeb.UserConfirmationLiveTest do
   describe "Confirm user" do
     test "renders confirmation page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/users/confirm/some-token")
-      assert html =~ "Confirm Account"
+      assert html =~ "Kontobestätigung"
     end
 
     test "confirms the given token once", %{conn: conn, user: user} do
@@ -34,7 +34,7 @@ defmodule SportywebWeb.UserConfirmationLiveTest do
       assert {:ok, conn} = result
 
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
-               "User confirmed successfully"
+               "Nutzer erfolgreich bestätigt"
 
       assert Accounts.get_user!(user.id).confirmed_at
       refute get_session(conn, :user_token)
@@ -52,7 +52,7 @@ defmodule SportywebWeb.UserConfirmationLiveTest do
       assert {:ok, conn} = result
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~
-               "User confirmation link is invalid or it has expired"
+               "Der Link zur Kontobestätigung ist falsch oder abgelaufen"
 
       # when logged in
       {:ok, lv, _html} =
@@ -80,7 +80,7 @@ defmodule SportywebWeb.UserConfirmationLiveTest do
         |> follow_redirect(conn, ~p"/")
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~
-               "User confirmation link is invalid or it has expired"
+               "Der Link zur Kontobestätigung ist falsch oder abgelaufen"
 
       refute Accounts.get_user!(user.id).confirmed_at
     end

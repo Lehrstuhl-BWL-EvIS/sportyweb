@@ -21,7 +21,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log_in"
-      assert %{"error" => "You must log in to access this page."} = flash
+      assert %{"error" => "Sie müssen angemeldet sein, um auf diese Seite zugreifen zu können."} = flash
     end
   end
 
@@ -45,7 +45,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
         })
         |> render_submit()
 
-      assert result =~ "A link to confirm your email"
+      assert result =~ "Ein Link zur Bestätigung Ihrer neuen E-Mail-Adresse"
       assert Accounts.get_user_by_email(user.email)
     end
 
@@ -77,7 +77,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
         |> render_submit()
 
       assert result =~ "E-Mail-Adresse ändern"
-      assert result =~ "Die Eingabe ist nicht valide."
+      assert result =~ "Die Eingabe ist falsch."
     end
   end
 
@@ -112,7 +112,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
       assert get_session(new_password_conn, :user_token) != get_session(conn, :user_token)
 
       assert Phoenix.Flash.get(new_password_conn.assigns.flash, :info) =~
-               "Password updated successfully"
+               "Passwort erfolgreich aktualisiert"
 
       assert Accounts.get_user_by_email_and_password(user.email, new_password)
     end
@@ -153,7 +153,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
       assert result =~ "Passwort ändern"
       assert result =~ "Muss mindestens 8-Zeichen lang sein."
       assert result =~ "Passwörter stimmen nicht überein."
-      assert result =~ "Die Eingabe ist nicht valide."
+      assert result =~ "Die Eingabe ist falsch."
     end
   end
 
@@ -176,7 +176,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/settings"
       assert %{"info" => message} = flash
-      assert message == "Email changed successfully."
+      assert message == "E-Mail-Adresse erfolgreich geändert."
       refute Accounts.get_user_by_email(user.email)
       assert Accounts.get_user_by_email(email)
 
@@ -185,7 +185,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/settings"
       assert %{"error" => message} = flash
-      assert message == "Email change link is invalid or it has expired."
+      assert message == "Der Link zur Änderung der E-Mail-Adresse ist falsch oder abgelaufen."
     end
 
     test "does not update email with invalid token", %{conn: conn, user: user} do
@@ -193,7 +193,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/settings"
       assert %{"error" => message} = flash
-      assert message == "Email change link is invalid or it has expired."
+      assert message == "Der Link zur Änderung der E-Mail-Adresse ist falsch oder abgelaufen."
       assert Accounts.get_user_by_email(user.email)
     end
 
@@ -203,7 +203,7 @@ defmodule SportywebWeb.UserSettingsLiveTest do
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log_in"
       assert %{"error" => message} = flash
-      assert message == "You must log in to access this page."
+      assert message == "Sie müssen angemeldet sein, um auf diese Seite zugreifen zu können."
     end
   end
 end
