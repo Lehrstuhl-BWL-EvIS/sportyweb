@@ -1,9 +1,9 @@
 <.header>
-    Mitarbeiter zu <%= @club.name %> hinzufügen
-    <:subtitle>Verwalter: <%= @current_user.email %></:subtitle>
+  Mitarbeiter zu <%= @club.name %> hinzufügen
+  <:subtitle>Verwalter: <%= @current_user.email %></:subtitle>
 </.header>
 
-<.card class="mt-8">
+<.card class="mt-8 max-w-mx">
   <.simple_form
     for={@form}
     id="add_user_form"
@@ -11,15 +11,17 @@
     phx-change="validate"
     as={:user}
   >
-  <.error :if={@form.errors != []}>
-    Bitte überprüfen Sie ihre Eingaben.
-  </.error>
+    <.error :if={@form.errors[:email] != nil}>
+      Bitte überprüfen Sie ihre Eingaben.
+    </.error>
     <.input field={@form[:email]} type="email" label="Bitte geben Sie die Email des hinzuzufügenden Nutzers ein" required />
     <:actions>
-      <.button phx-disable-with="Nutzer wird hinzugefügt..." class="w-full">Hinzufügen</.button>
+      <div>
+        <.button phx-disable-with="Nutzer wird hinzugefügt...">Hinzufügen</.button>
+        <.link navigate={~p"/clubs/#{@club.id}/roles"} class="mx-2 py-1 px-1 text-sm font-semibold hover:underline">
+          Abbrechen
+        </.link>
+      </div>
     </:actions>
   </.simple_form>
-</.card>
-
-<.back navigate={~p"/clubs/#{@club.id}/roles"}>Zurück zur Nutzer & Rollen</.back>
-  
+</.card>  
