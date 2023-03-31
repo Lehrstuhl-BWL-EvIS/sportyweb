@@ -1,8 +1,12 @@
 <.header>
   Rollen von <%= @user.email %>
   <:subtitle>im Verein <%= @club.name %></:subtitle>
+  <:actions>
+    <.link navigate={~p"/clubs/#{@club.id}/roles"}>
+      <.button>Fertig</.button>
+    </.link>
+  </:actions>
 </.header>
-<.back navigate={~p"/clubs/#{@club.id}/roles"}>Zurück zu Nutzer & Rollen</.back>
 
 <.header level="2" class="mt-12">
   Zugewiesene Rollen
