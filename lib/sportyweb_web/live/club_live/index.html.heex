@@ -7,6 +7,12 @@
   </:actions>
 </.header>
 
+<%= if @current_user.confirmed_at == nil do %>
+  <.card class="mb-5">
+    <p class="text-red-500">Bitte bestätigen Sie ihren Account.</p>
+  </.card>
+<% end %>
+
 <.card>
   <%= if Enum.any?(@streams.clubs) do %>
     <.table
