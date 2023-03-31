@@ -15,7 +15,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
           phx-submit="reset_password"
           phx-change="validate"
         >
-          <.error :if={@form.errors != []}>
+          <.error :if={@form.errors[:password] != nil}>
             Bitte überprüfen Sie ihre Eingaben.
           </.error>
 
@@ -62,7 +62,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
       {:ok, _} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Password erfolreich geändert.")
+         |> put_flash(:info, "Passwort erfolreich geändert.")
          |> redirect(to: ~p"/users/log_in")}
 
       {:error, changeset} ->
