@@ -1,5 +1,44 @@
 # CHANGELOG
 
+## 0.3.0 (2023-04-02)
+
+- Authentication - main topics:
+    - setup with phx.gen.auth and Argon2, see docs for details (https://hexdocs.pm/phoenix/mix_phx_gen_auth.html)
+    - added password considerations
+    - added timing attack considerations
+    - translations
+- Authorization - main topics:
+    - scope for self-serivces of authenticated users
+    - scope for club related services according to access control policies
+- Access Control - main topics:
+    - added role-based access control
+    - added schemas and tables:
+        - ApplicationRole
+        - ClubRole
+        - DepartmentRole
+        - corresponding User join schemas and tables
+    - added context modules:
+        - RBAC
+        - Role
+        - UserRole
+    - further additions:
+        - Policy
+        - RolePermissionMatrix
+- RoleLive - LiveView for role administration:
+    - list associated users and their roles (only ClubRole and DepartmentRole)
+    - display generic role information
+    - add and remove roles from registered users
+    - allow permitted registered users to register other users
+- Testing:
+    - added some tests for implementation logic of the above
+    - added some tests for application logic of the above
+- Miscellaneous:
+    - adjustments to seed file
+    - restricted loading for clubs
+    - added ButtonConfig struct to assigns to support hide/show of buttons based on permissions
+    - updated all relevant LiveView tests to address access control needs
+
+
 ## 0.2.0 (2023-03-11)
 
 - Added responsive, multi-column forms
