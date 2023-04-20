@@ -8,7 +8,10 @@ defmodule SportywebWeb.UserSettingsLive do
     <.header>Nutzereinstellungen</.header>
     <.card>
       <%= if @current_user.confirmed_at == nil do %>
-        <p class="text-red-500">Bitte bestätigen Sie ihren Account.</p>
+        <p class="text-red-500">Bitte bestätigen Sie ihr Konto.</p>
+        <.button class="mt-4" phx-click={JS.push("send_instructions")}>
+          Bestätigungslink anfordern
+        </.button>
       <% else %>
         <p class="text-green-500">Sie haben ihr Konto erfolgreich bestätigt.</p>
       <% end %>
@@ -109,6 +112,13 @@ defmodule SportywebWeb.UserSettingsLive do
       |> assign(:trigger_submit, false)
 
     {:ok, socket}
+  end
+
+  def handle_event("send_instructions", _, socket) do
+      Accounts.deliver_user_confirmation_instructions(socket.assigns.current_user, &url(~p"/users/confirm/#{&1}"))
+      info = "Ein Link zur Bestätigung Ihrer E-Mail-Adresse wurde an die bekannte Adresse gesendet."
+
+      {:noreply, socket |> put_flash(:info, info)}
   end
 
   def handle_event("validate_email", params, socket) do
