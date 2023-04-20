@@ -28,12 +28,14 @@ defmodule SportywebWeb.UserConfirmationInstructionsLive do
   end
 
   def handle_event("send_instructions", %{"user" => %{"email" => email}}, socket) do
-    if user = Accounts.get_user_by_email(email) do
+    user = Accounts.get_user_by_email(email)
+    confirmation = if user, do: user.confirmed_at, else: nil
+    if user && confirmation == nil do
       Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de")
-      Accounts.deliver_user_confirmation_instructions(user, &url(~p"/users/reset_password/#{&1}"))
+      Accounts.deliver_user_confirmation_instructions(user, &url(~p"/users/confirm/#{&1}"))
     else
       dummy = Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de")
-      Accounts.deliver_user_confirmation_instructions(dummy, &url(~p"/users/reset_password/#{&1}"))
+      Accounts.deliver_user_confirmation_instructions(dummy, &url(~p"/users/confirm/#{&1}"))
     end
 
     info =
