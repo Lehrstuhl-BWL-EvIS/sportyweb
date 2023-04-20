@@ -13,6 +13,7 @@
 alias Sportyweb.Repo
 
 alias Sportyweb.Accounts
+alias Sportyweb.Accounts.User
 alias Sportyweb.Asset.Equipment
 alias Sportyweb.Asset.Venue
 alias Sportyweb.Legal.Fee
@@ -99,6 +100,10 @@ if Mix.env() in [:dev] do
     email: "timing_attack_dummy@sportyweb.de",
     password: "zczZjRMGI3MTNlM"
   })
+
+  User
+  |> Repo.all()
+  |> Enum.map(&(Repo.update!(User.confirm_changeset(&1))))
 end
 
 ###################################
@@ -388,7 +393,7 @@ ar = ApplicationRole
 |> Enum.filter(&(String.contains?(&1.name, "Sportyweb")))
 |> Enum.at(0)
 
-for user <- Repo.all(Accounts.User) do
+for user <- Repo.all(User) do
   Sportyweb.RBAC.UserRole.create_user_application_role(%{user_id: user.id, applicationrole_id: ar.id})
 end
 
