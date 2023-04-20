@@ -33,6 +33,7 @@ defmodule SportywebWeb.UserConfirmationInstructionsLiveTest do
     end
 
     test "does not send confirmation token if user is confirmed", %{conn: conn, user: user} do
+      user_fixture(%{email: "timing_attack_dummy@sportyweb.de"})
       Repo.update!(Accounts.User.confirm_changeset(user))
 
       {:ok, lv, _html} = live(conn, ~p"/users/confirm")
