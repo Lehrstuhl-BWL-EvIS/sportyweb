@@ -18,6 +18,7 @@ defmodule SportywebWeb.VenueLive.Show do
      socket
      |> assign(:page_title, "Standort: #{venue.name}")
      |> assign(:venue, venue)
-     |> assign(:club, venue.club)}
+     |> assign(:club, venue.club)
+     |> stream(:equipment, venue.equipment)}
   end
 end

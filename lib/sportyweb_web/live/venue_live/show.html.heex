@@ -31,25 +31,25 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@venue.equipment) do %>
+  <%= if Enum.any?(@streams.equipment) do %>
     <.table
       id="equipment"
-      rows={@venue.equipment}
-      row_click={&JS.navigate(~p"/equipment/#{&1}")}
+      rows={@streams.equipment}
+      row_click={fn {_id, equipment} -> JS.navigate(~p"/equipment/#{equipment}") end}
     >
-      <:col :let={equipment} label="Name">
+      <:col :let={{_id, equipment}} label="Name">
         <%= format_string_field(equipment.name) %>
       </:col>
-      <:col :let={equipment} label="Ref.nr.">
+      <:col :let={{_id, equipment}} label="Ref.nr.">
         <%= format_string_field(equipment.reference_number) %>
       </:col>
-      <:col :let={equipment} label="Beschreibung">
+      <:col :let={{_id, equipment}} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
           <%= format_string_field(equipment.description) %>
         </div>
       </:col>
 
-      <:action :let={equipment}>
+      <:action :let={{_id, equipment}}>
         <.link navigate={~p"/equipment/#{equipment}"}>Anzeigen</.link>
       </:action>
     </.table>
