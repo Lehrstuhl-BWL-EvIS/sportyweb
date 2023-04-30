@@ -41,11 +41,13 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:base_fee_in_eur_cent]} type="number" label="Grundgebühr in EUR" />
+                <.input field={@form[:base_fee_in_eur]} type="text" label="Grundgebühr in EUR" />
+                <.input field={@form[:base_fee_in_eur_cent]} type="hidden" readonly />
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:admission_fee_in_eur_cent]} type="number" label="Aufnahmegebühr in EUR (optional)" />
+                <.input field={@form[:admission_fee_in_eur]} type="text" label="Aufnahmegebühr in EUR (optional)" />
+                <.input field={@form[:admission_fee_in_eur_cent]} type="hidden" readonly />
               </div>
             </.input_grid>
 

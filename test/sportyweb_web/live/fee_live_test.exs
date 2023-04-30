@@ -8,9 +8,9 @@ defmodule SportywebWeb.FeeLiveTest do
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{admission_fee_in_eur_cent: 42, base_fee_in_eur_cent: 42, commission_at: "2023-02-24", decommission_at: "2023-02-24", description: "some description", is_group_only: true, is_recurring: true, maximum_age_in_years: 42, minimum_age_in_years: 42, name: "some name", reference_number: "some reference_number"}
-  @update_attrs %{admission_fee_in_eur_cent: 43, base_fee_in_eur_cent: 43, commission_at: "2023-02-25", decommission_at: "2023-02-25", description: "some updated description", is_group_only: false, is_recurring: false, maximum_age_in_years: 43, minimum_age_in_years: 43, name: "some updated name", reference_number: "some updated reference_number"}
-  @invalid_attrs %{admission_fee_in_eur_cent: nil, base_fee_in_eur_cent: nil, commission_at: nil, decommission_at: nil, description: nil, is_group_only: false, is_recurring: false, maximum_age_in_years: nil, minimum_age_in_years: nil, name: nil, reference_number: nil}
+  @create_attrs %{admission_fee_in_eur: 15, admission_fee_in_eur_cent: 1500, base_fee_in_eur: 42, base_fee_in_eur_cent: 4200, commission_at: "2023-02-24", decommission_at: "2023-02-24", description: "some description", is_group_only: true, is_recurring: true, maximum_age_in_years: 42, minimum_age_in_years: 42, name: "some name", reference_number: "some reference_number"}
+  @update_attrs %{admission_fee_in_eur: 16, admission_fee_in_eur_cent: 1600, base_fee_in_eur: 43, base_fee_in_eur_cent: 4300, commission_at: "2023-02-25", decommission_at: "2023-02-25", description: "some updated description", is_group_only: false, is_recurring: false, maximum_age_in_years: 43, minimum_age_in_years: 43, name: "some updated name", reference_number: "some updated reference_number"}
+  @invalid_attrs %{admission_fee_in_eur: nil, admission_fee_in_eur_cent: nil, base_fee_in_eur: nil, base_fee_in_eur_cent: nil, commission_at: nil, decommission_at: nil, description: nil, is_group_only: false, is_recurring: false, maximum_age_in_years: nil, minimum_age_in_years: nil, name: nil, reference_number: nil}
 
   setup do
     user = user_fixture()

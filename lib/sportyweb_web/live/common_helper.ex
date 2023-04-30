@@ -34,7 +34,7 @@ defmodule SportywebWeb.CommonHelper do
   def format_eur_cent_field(field) do
     if field do
       field
-      |> div(100) # Convert Cent to EUR
+      |> Sportyweb.Legal.Fee.convert_eur_cent_to_eur
       |> Integer.to_string
       |> String.replace(".", ",") # Use a comma as delimiter
     else

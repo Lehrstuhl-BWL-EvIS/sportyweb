@@ -37,7 +37,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
     fee = Legal.get_fee!(id, [:club])
 
     socket
-    |> assign(:page_title, "Gebühr bearbeiten (#{get_key_for_value(Fee.get_valid_types, fee.type)})")
+    |> assign(:page_title, "Allgemeine Gebühr bearbeiten (#{get_key_for_value(Fee.get_valid_types, fee.type)})")
     |> assign(:fee, fee)
     |> assign(:club, fee.club)
   end
@@ -46,7 +46,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
     club = Organization.get_club!(club_id)
 
     socket
-    |> assign(:page_title, "Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types, type)})")
+    |> assign(:page_title, "Allgemeine Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types, type)})")
     |> assign(:fee, %Fee{
       club_id: club.id,
       club: club,
@@ -63,7 +63,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
 
     {:noreply,
      socket
-     |> put_flash(:info, "Gebühr erfolgreich gelöscht")
+     |> put_flash(:info, "Allgemeine Gebühr erfolgreich gelöscht")
      |> push_navigate(to: "/clubs/#{fee.club_id}/fees")}
   end
 end
