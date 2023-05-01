@@ -4,6 +4,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization
+  alias Sportyweb.Polymorphic.Note
 
   @impl true
   def render(assigns) do
@@ -34,10 +35,16 @@ defmodule SportywebWeb.FeeLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    fee = Legal.get_fee!(id, [:club])
+    fee = Legal.get_fee!(id, [:club, :notes])
+    fee_title = if fee.is_general, do: "Allgemeine", else: "Spezifische"
+    club_navigation_current_item = case fee.type do
+      "department" -> :structure
+      _ -> :finances
+    end
 
     socket
-    |> assign(:page_title, "Allgemeine Gebühr bearbeiten (#{get_key_for_value(Fee.get_valid_types, fee.type)})")
+    |> assign(:club_navigation_current_item, club_navigation_current_item)
+    |> assign(:page_title, "#{fee_title} Gebühr bearbeiten (#{get_key_for_value(Fee.get_valid_types, fee.type)})")
     |> assign(:fee, fee)
     |> assign(:club, fee.club)
   end
@@ -51,7 +58,8 @@ defmodule SportywebWeb.FeeLive.NewEdit do
       club_id: club.id,
       club: club,
       is_general: true,
-      type: type}
+      type: type,
+      notes: [%Note{}]}
     )
     |> assign(:club, club)
   end

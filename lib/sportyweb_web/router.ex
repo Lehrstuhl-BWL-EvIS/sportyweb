@@ -107,6 +107,8 @@ defmodule SportywebWeb.Router do
 
       live "/departments/:id", DepartmentLive.Show, :show
 
+      live "/departments/:id/fees/new", DepartmentLive.FeeNew, :new
+
       # Groups (Each belongs to a department)
 
       live "/groups", GroupLive.Index, :index_root

@@ -42,12 +42,18 @@ defmodule SportywebWeb.FeeLive.FormComponent do
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:base_fee_in_eur]} type="text" label="Grundgebühr in EUR" />
-                <.input field={@form[:base_fee_in_eur_cent]} type="hidden" readonly />
+
+                <div class="hidden">
+                  <.input field={@form[:base_fee_in_eur_cent]} type="hidden" readonly />
+                </div>
               </div>
 
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:admission_fee_in_eur]} type="text" label="Aufnahmegebühr in EUR (optional)" />
-                <.input field={@form[:admission_fee_in_eur_cent]} type="hidden" readonly />
+
+                <div class="hidden">
+                  <.input field={@form[:admission_fee_in_eur_cent]} type="hidden" readonly />
+                </div>
               </div>
             </.input_grid>
 
@@ -78,6 +84,17 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:decommission_at]} type="date" label="Verwendung bis (optional)" />
+              </div>
+            </.input_grid>
+
+            <.input_grid class="pt-6">
+              <div class="col-span-12">
+                <.label>Notizen (optional)</.label>
+                <.inputs_for :let={f_nested} field={@form[:notes]}>
+                  <div class="col-span-12">
+                    <.input field={f_nested[:content]} type="textarea" />
+                  </div>
+                </.inputs_for>
               </div>
             </.input_grid>
           </.input_grids>
@@ -146,7 +163,13 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
   defp save_fee(socket, :new, fee_params) do
     case Legal.create_fee(fee_params) do
-      {:ok, _fee} ->
+      {:ok, fee} ->
+        # Create association if required
+        if is_list(socket.assigns.fee.departments) do
+          department = Enum.at(socket.assigns.fee.departments, 0)
+          Legal.create_department_fee(department, fee)
+        end
+
         {:noreply,
          socket
          |> put_flash(:info, "Gebühr erfolgreich erstellt")

@@ -5,6 +5,8 @@ defmodule Sportyweb.Legal.Fee do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.FeeNote
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Organization.Department
+  alias Sportyweb.Organization.DepartmentFee
   alias Sportyweb.Polymorphic.Note
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -12,6 +14,7 @@ defmodule Sportyweb.Legal.Fee do
   schema "fees" do
     belongs_to :club, Club
     has_many :contracts, Contract
+    many_to_many :departments, Department, join_through: DepartmentFee
     many_to_many :notes, Note, join_through: FeeNote
 
     field :is_general, :boolean, default: false
