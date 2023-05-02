@@ -4,9 +4,11 @@ defmodule Sportyweb.Asset.Venue do
 
   alias Sportyweb.Asset.Equipment
   alias Sportyweb.Asset.VenueEmail
+  alias Sportyweb.Asset.VenueFee
   alias Sportyweb.Asset.VenueNote
   alias Sportyweb.Asset.VenuePhone
   alias Sportyweb.Asset.VenuePostalAddress
+  alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.Club
   alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.Note
@@ -19,6 +21,7 @@ defmodule Sportyweb.Asset.Venue do
     belongs_to :club, Club
     has_many :equipment, Equipment
     many_to_many :emails, Email, join_through: VenueEmail
+    many_to_many :fees, Fee, join_through: VenueFee
     many_to_many :notes, Note, join_through: VenueNote
     many_to_many :phones, Phone, join_through: VenuePhone
     many_to_many :postal_addresses, PostalAddress, join_through: VenuePostalAddress
