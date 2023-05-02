@@ -19,7 +19,7 @@ defmodule SportywebWeb.DepartmentLive.Show do
      |> assign(:page_title, "Abteilung: #{department.name}")
      |> assign(:department, department)
      |> assign(:club, department.club)
-     |> stream(:groups, department.groups)
-     |> stream(:fees, department.fees)}
+     |> assign(:fees, department.fees)
+     |> stream(:groups, department.groups)}
   end
 end
