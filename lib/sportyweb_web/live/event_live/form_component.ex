@@ -122,10 +122,6 @@ defmodule SportywebWeb.EventLive.FormComponent do
   end
 
   def handle_event("save", %{"event" => event_params}, socket) do
-    event_params = Enum.into(event_params, %{
-      "club_id" => socket.assigns.event.club.id
-    })
-
     save_event(socket, socket.assigns.action, event_params)
   end
 
@@ -143,6 +139,10 @@ defmodule SportywebWeb.EventLive.FormComponent do
   end
 
   defp save_event(socket, :new, event_params) do
+    event_params = Enum.into(event_params, %{
+      "club_id" => socket.assigns.event.club.id
+    })
+
     case Calendar.create_event(event_params) do
       {:ok, _event} ->
         {:noreply,

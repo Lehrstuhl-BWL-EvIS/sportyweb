@@ -145,10 +145,6 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   end
 
   def handle_event("save", %{"fee" => fee_params}, socket) do
-    fee_params = Enum.into(fee_params, %{
-      "club_id" => socket.assigns.fee.club.id
-    })
-
     save_fee(socket, socket.assigns.action, fee_params)
   end
 
@@ -166,6 +162,10 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   end
 
   defp save_fee(socket, :new, fee_params) do
+    fee_params = Enum.into(fee_params, %{
+      "club_id" => socket.assigns.fee.club.id
+    })
+
     case Legal.create_fee(fee_params) do
       {:ok, fee} ->
         case create_association(socket, fee) do
@@ -194,7 +194,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
     if fee.is_general do
       {:ok, fee}
     else
-      # Specific (= not general) fees (should) always have an association
+      # Specific (= non-general) fees (should) always have an association
       # with a certain entity via a polymorphic many_to_many relationship.
       # The concrete data type of this entity is, due to the polymorphic
       # many_to_many relationship, not predefinined.

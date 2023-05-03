@@ -147,10 +147,6 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
   end
 
   def handle_event("save", %{"department" => department_params}, socket) do
-    department_params = Enum.into(department_params, %{
-      "club_id" => socket.assigns.department.club.id
-    })
-
     save_department(socket, socket.assigns.action, department_params)
   end
 
@@ -185,6 +181,10 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
   end
 
   defp save_department(socket, :new, department_params) do
+    department_params = Enum.into(department_params, %{
+      "club_id" => socket.assigns.department.club.id
+    })
+
     case Organization.create_department(department_params) do
       {:ok, _department} ->
         {:noreply,

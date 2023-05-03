@@ -75,10 +75,6 @@ defmodule SportywebWeb.VenueLive.FormComponent do
   end
 
   def handle_event("save", %{"venue" => venue_params}, socket) do
-    venue_params = Enum.into(venue_params, %{
-      "club_id" => socket.assigns.venue.club.id
-    })
-
     save_venue(socket, socket.assigns.action, venue_params)
   end
 
@@ -96,6 +92,10 @@ defmodule SportywebWeb.VenueLive.FormComponent do
   end
 
   defp save_venue(socket, :new, venue_params) do
+    venue_params = Enum.into(venue_params, %{
+      "club_id" => socket.assigns.venue.club.id
+    })
+
     case Asset.create_venue(venue_params) do
       {:ok, _venue} ->
         {:noreply,

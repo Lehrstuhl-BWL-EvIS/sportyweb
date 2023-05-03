@@ -114,10 +114,6 @@ defmodule SportywebWeb.ContactLive.FormComponent do
   end
 
   def handle_event("save", %{"contact" => contact_params}, socket) do
-    contact_params = Enum.into(contact_params, %{
-      "club_id" => socket.assigns.contact.club.id
-    })
-
     save_contact(socket, socket.assigns.action, contact_params)
   end
 
@@ -135,6 +131,10 @@ defmodule SportywebWeb.ContactLive.FormComponent do
   end
 
   defp save_contact(socket, :new, contact_params) do
+    contact_params = Enum.into(contact_params, %{
+      "club_id" => socket.assigns.contact.club.id
+    })
+
     case Personal.create_contact(contact_params) do
       {:ok, _contact} ->
         {:noreply,

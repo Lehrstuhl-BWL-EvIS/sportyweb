@@ -90,10 +90,6 @@ defmodule SportywebWeb.GroupLive.FormComponent do
   end
 
   def handle_event("save", %{"group" => group_params}, socket) do
-    group_params = Enum.into(group_params, %{
-      "department_id" => socket.assigns.group.department.id
-    })
-
     save_group(socket, socket.assigns.action, group_params)
   end
 
@@ -111,6 +107,10 @@ defmodule SportywebWeb.GroupLive.FormComponent do
   end
 
   defp save_group(socket, :new, group_params) do
+    group_params = Enum.into(group_params, %{
+      "department_id" => socket.assigns.group.department.id
+    })
+
     case Organization.create_group(group_params) do
       {:ok, _group} ->
         {:noreply,

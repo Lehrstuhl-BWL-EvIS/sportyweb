@@ -102,10 +102,6 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
   end
 
   def handle_event("save", %{"equipment" => equipment_params}, socket) do
-    equipment_params = Enum.into(equipment_params, %{
-      "venue_id" => socket.assigns.equipment.venue.id
-    })
-
     save_equipment(socket, socket.assigns.action, equipment_params)
   end
 
@@ -123,6 +119,10 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
   end
 
   defp save_equipment(socket, :new, equipment_params) do
+    equipment_params = Enum.into(equipment_params, %{
+      "venue_id" => socket.assigns.equipment.venue.id
+    })
+
     case Asset.create_equipment(equipment_params) do
       {:ok, _equipment} ->
         {:noreply,
