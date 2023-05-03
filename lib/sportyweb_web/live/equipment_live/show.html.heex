@@ -32,3 +32,24 @@
     </:item>
   </.list>
 </.card>
+
+<.header level="2" class="mt-12">
+  Gebühren
+  <:actions>
+    <.link navigate={~p"/equipment/#{@equipment}/fees/new"}>
+      <.button>Equipmentspezifische Gebühr erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@fees) do %>
+    <.live_component
+      id="index-fees-table"
+      module={SportywebWeb.FeeLive.IndexFeesTableComponent}
+      fees={@fees}
+    />
+  <% else %>
+    <p>Bisher wurde noch keine equipmentspezifische Gebühr erstellt.</p>
+  <% end %>
+</.card>

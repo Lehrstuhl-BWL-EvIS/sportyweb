@@ -7,7 +7,6 @@ defmodule Sportyweb.Legal do
   alias Sportyweb.Repo
 
   alias Sportyweb.Legal.Fee
-  alias Sportyweb.Organization.DepartmentFee
 
   @doc """
   Returns a clubs list of general fees based on the given type.
@@ -88,13 +87,6 @@ defmodule Sportyweb.Legal do
     %Fee{}
     |> Fee.changeset(attrs)
     |> Repo.insert()
-  end
-
-  def create_department_fee(department, fee) do
-    Repo.insert!(%DepartmentFee{
-      department_id: department.id,
-      fee_id: fee.id
-    })
   end
 
   @doc """

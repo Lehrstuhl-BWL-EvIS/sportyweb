@@ -13,12 +13,13 @@ defmodule SportywebWeb.EventLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    event = Calendar.get_event!(id, [:club])
+    event = Calendar.get_event!(id, [:club, :fees])
 
     {:noreply,
      socket
      |> assign(:page_title, "Veranstaltung: #{event.name}")
      |> assign(:event, event)
-     |> assign(:club, event.club)}
+     |> assign(:club, event.club)
+     |> assign(:fees, event.fees)}
   end
 end

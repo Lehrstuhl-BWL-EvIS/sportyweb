@@ -97,6 +97,8 @@ defmodule SportywebWeb.Router do
 
       live "/events/:id", EventLive.Show, :show
 
+      live "/events/:id/fees/new", EventLive.FeeNew, :new
+
       # Departments (Each belongs to a club)
 
       live "/departments", DepartmentLive.Index, :index_root
@@ -119,6 +121,8 @@ defmodule SportywebWeb.Router do
 
       live "/groups/:id", GroupLive.Show, :show
 
+      live "/groups/:id/fees/new", GroupLive.FeeNew, :new
+
       # Contacts (Each belongs to a club)
 
       live "/contacts", ContactLive.Index, :index_root
@@ -139,6 +143,8 @@ defmodule SportywebWeb.Router do
 
       live "/venues/:id", VenueLive.Show, :show
 
+      live "/venues/:id/fees/new", VenueLive.FeeNew, :new
+
       # Equipment (Each belongs to a venue)
 
       live "/equipment", EquipmentLive.Index, :index_root
@@ -148,6 +154,8 @@ defmodule SportywebWeb.Router do
       live "/equipment/:id/edit", EquipmentLive.NewEdit, :edit
 
       live "/equipment/:id", EquipmentLive.Show, :show
+
+      live "/equipment/:id/fees/new", EquipmentLive.FeeNew, :new
 
       # Fees (Polymorphic)
 

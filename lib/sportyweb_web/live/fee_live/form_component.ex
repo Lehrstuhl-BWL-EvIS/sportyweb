@@ -1,7 +1,11 @@
 defmodule SportywebWeb.FeeLive.FormComponent do
+  alias Sportyweb.Organization
   use SportywebWeb, :live_component
 
+  alias Sportyweb.Asset
+  alias Sportyweb.Calendar
   alias Sportyweb.Legal
+  alias Sportyweb.Organization
 
   @impl true
   def render(assigns) do
@@ -164,16 +168,18 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   defp save_fee(socket, :new, fee_params) do
     case Legal.create_fee(fee_params) do
       {:ok, fee} ->
-        # Create association if required
-        if is_list(socket.assigns.fee.departments) do
-          department = Enum.at(socket.assigns.fee.departments, 0)
-          Legal.create_department_fee(department, fee)
-        end
+        case create_association(socket, fee) do
+          {:ok, _} ->
+            {:noreply,
+             socket
+             |> put_flash(:info, "Gebühr erfolgreich erstellt")
+             |> push_navigate(to: socket.assigns.navigate)}
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "Gebühr erfolgreich erstellt")
-         |> push_navigate(to: socket.assigns.navigate)}
+          {:error, _} ->
+            {:noreply,
+             socket
+             |> put_flash(:error, "Gebühr konnte nicht erstellt werden")}
+        end
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}
@@ -182,5 +188,46 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp create_association(socket, fee) do
+    if fee.is_general do
+      {:ok, fee}
+    else
+      # Specific (= not general) fees (should) always have an association
+      # with a certain entity via a polymorphic many_to_many relationship.
+      # The concrete data type of this entity is, due to the polymorphic
+      # many_to_many relationship, not predefinined.
+      # The following code checks all possible "association lists" of the
+      # fee if they contain the entity to which the current fee should be
+      # "connected". After that has been determined, the many_to_many
+      # relationship will be created.
+      cond do
+        is_list(socket.assigns.fee.departments) ->
+          department = Enum.at(socket.assigns.fee.departments, 0)
+          Organization.create_department_fee(department, fee)
+          {:ok, fee}
+        is_list(socket.assigns.fee.equipment) ->
+          equipment = Enum.at(socket.assigns.fee.equipment, 0)
+          Asset.create_equipment_fee(equipment, fee)
+          {:ok, fee}
+        is_list(socket.assigns.fee.events) ->
+          event = Enum.at(socket.assigns.fee.events, 0)
+          Calendar.create_event_fee(event, fee)
+          {:ok, fee}
+        is_list(socket.assigns.fee.groups) ->
+          group = Enum.at(socket.assigns.fee.groups, 0)
+          Organization.create_group_fee(group, fee)
+          {:ok, fee}
+        is_list(socket.assigns.fee.venues) ->
+          venue = Enum.at(socket.assigns.fee.venues, 0)
+          Asset.create_venue_fee(venue, fee)
+          {:ok, fee}
+        true ->
+          # Immediately delete the fee if no association could be created.
+          # Otherwise the fee would be "free floating" and could not be accessed via the UI.
+          {:error, _} = Legal.delete_fee(fee)
+      end
+    end
   end
 end

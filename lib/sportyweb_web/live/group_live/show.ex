@@ -12,13 +12,14 @@ defmodule SportywebWeb.GroupLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    group = Organization.get_group!(id, [department: :club])
+    group = Organization.get_group!(id, [:fees, department: :club])
 
     {:noreply,
      socket
      |> assign(:page_title, "Gruppe: #{group.name}")
      |> assign(:group, group)
      |> assign(:department, group.department)
-     |> assign(:club, group.department.club)}
+     |> assign(:club, group.department.club)
+     |> assign(:fees, group.fees)}
   end
 end

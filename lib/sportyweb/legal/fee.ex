@@ -2,11 +2,19 @@ defmodule Sportyweb.Legal.Fee do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Asset.Equipment
+  alias Sportyweb.Asset.EquipmentFee
+  alias Sportyweb.Asset.Venue
+  alias Sportyweb.Asset.VenueFee
+  alias Sportyweb.Calendar.Event
+  alias Sportyweb.Calendar.EventFee
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.FeeNote
   alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.Department
   alias Sportyweb.Organization.DepartmentFee
+  alias Sportyweb.Organization.Group
+  alias Sportyweb.Organization.GroupFee
   alias Sportyweb.Polymorphic.Note
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -15,7 +23,11 @@ defmodule Sportyweb.Legal.Fee do
     belongs_to :club, Club
     has_many :contracts, Contract
     many_to_many :departments, Department, join_through: DepartmentFee
+    many_to_many :equipment, Equipment, join_through: EquipmentFee
+    many_to_many :events, Event, join_through: EventFee
+    many_to_many :groups, Group, join_through: GroupFee
     many_to_many :notes, Note, join_through: FeeNote
+    many_to_many :venues, Venue, join_through: VenueFee
 
     field :is_general, :boolean, default: false
     field :type, :string, default: ""
@@ -45,6 +57,7 @@ defmodule Sportyweb.Legal.Fee do
       [key: "Abteilung", value: "department"],
       [key: "Gruppe", value: "group"],
       [key: "Veranstaltung", value: "event"],
+      [key: "Standort", value: "venue"],
       [key: "Equipment", value: "equipment"]
     ]
   end

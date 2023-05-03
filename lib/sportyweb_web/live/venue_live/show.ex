@@ -12,13 +12,14 @@ defmodule SportywebWeb.VenueLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    venue = Asset.get_venue!(id)
+    venue = Asset.get_venue!(id, [:club, :equipment, :fees])
 
     {:noreply,
      socket
      |> assign(:page_title, "Standort: #{venue.name}")
      |> assign(:venue, venue)
      |> assign(:club, venue.club)
+     |> assign(:fees, venue.fees)
      |> stream(:equipment, venue.equipment)}
   end
 end

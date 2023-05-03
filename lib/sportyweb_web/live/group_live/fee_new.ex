@@ -1,4 +1,4 @@
-defmodule SportywebWeb.DepartmentLive.FeeNew do
+defmodule SportywebWeb.GroupLive.FeeNew do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Legal.Fee
@@ -15,7 +15,7 @@ defmodule SportywebWeb.DepartmentLive.FeeNew do
         title={@page_title}
         action={@live_action}
         fee={@fee}
-        navigate={if @fee.id, do: ~p"/fees/#{@fee}", else: ~p"/departments/#{@department}"}
+        navigate={if @fee.id, do: ~p"/fees/#{@fee}", else: ~p"/groups/#{@group}"}
       />
     </div>
     """
@@ -36,20 +36,20 @@ defmodule SportywebWeb.DepartmentLive.FeeNew do
   # There is no "edit" action in this LiveView because that gets handled in the default SportywebWeb.FeeLive.NewEdit
 
   defp apply_action(socket, :new, %{"id" => id}) do
-    department = Organization.get_department!(id, [:club])
-    type = "department"
+    group = Organization.get_group!(id, [department: :club])
+    type = "group"
 
     socket
     |> assign(:page_title, "Spezifische Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types, type)})")
     |> assign(:fee, %Fee{
-      club_id: department.club.id,
-      club: department.club,
+      club_id: group.department.club.id,
+      club: group.department.club,
       is_general: false,
       type: type,
-      departments: [department],
+      groups: [group],
       notes: [%Note{}]}
     )
-    |> assign(:department, department)
-    |> assign(:club, department.club)
+    |> assign(:group, group)
+    |> assign(:club, group.department.club)
   end
 end

@@ -6,8 +6,10 @@ defmodule Sportyweb.Asset do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
-  alias Sportyweb.Asset.Equipment
+  alias Sportyweb.Asset.EquipmentFee
   alias Sportyweb.Asset.Venue
+  alias Sportyweb.Asset.VenueFee
+  alias Sportyweb.Legal.Fee
 
   @doc """
   Returns a clubs list of venues.
@@ -143,6 +145,25 @@ defmodule Sportyweb.Asset do
     Venue.changeset(venue, attrs)
   end
 
+  @doc """
+  Creates a venue_fee (many_to_many).
+
+  ## Examples
+
+      iex> create_venue_fee(venue, fee)
+      {:ok, %VenueFee{}}
+
+      iex> create_venue_fee(venue, fee)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_venue_fee(%Venue{} = venue, %Fee{} = fee) do
+    Repo.insert(%VenueFee{
+      venue_id: venue.id,
+      fee_id: fee.id
+    })
+  end
+
   alias Sportyweb.Asset.Equipment
 
   @doc """
@@ -258,5 +279,24 @@ defmodule Sportyweb.Asset do
   """
   def change_equipment(%Equipment{} = equipment, attrs \\ %{}) do
     Equipment.changeset(equipment, attrs)
+  end
+
+  @doc """
+  Creates a equipment_fee (many_to_many).
+
+  ## Examples
+
+      iex> create_equipment_fee(equipment, fee)
+      {:ok, %EquipmentFee{}}
+
+      iex> create_equipment_fee(equipment, fee)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_equipment_fee(%Equipment{} = equipment, %Fee{} = fee) do
+    Repo.insert(%EquipmentFee{
+      equipment_id: equipment.id,
+      fee_id: fee.id
+    })
   end
 end

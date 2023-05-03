@@ -1,4 +1,4 @@
-defmodule Sportyweb.Organization.VenueFee do
+defmodule Sportyweb.Asset.VenueFee do
   use Ecto.Schema
   import Ecto.Changeset
 

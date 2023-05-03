@@ -7,6 +7,8 @@ defmodule Sportyweb.Calendar do
   alias Sportyweb.Repo
 
   alias Sportyweb.Calendar.Event
+  alias Sportyweb.Calendar.EventFee
+  alias Sportyweb.Legal.Fee
 
   @doc """
   Returns a clubs list of events.
@@ -134,5 +136,24 @@ defmodule Sportyweb.Calendar do
   """
   def change_event(%Event{} = event, attrs \\ %{}) do
     Event.changeset(event, attrs)
+  end
+
+  @doc """
+  Creates a event_fee (many_to_many).
+
+  ## Examples
+
+      iex> create_event_fee(event, fee)
+      {:ok, %EventFee{}}
+
+      iex> create_event_fee(event, fee)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_event_fee(%Event{} = event, %Fee{} = fee) do
+    Repo.insert(%EventFee{
+      event_id: event.id,
+      fee_id: fee.id
+    })
   end
 end

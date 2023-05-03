@@ -15,6 +15,10 @@ defmodule SportywebWeb.FeeLive.Show do
     fee_title = if fee.is_general, do: "Allgemeine", else: "Spezifische"
     club_navigation_current_item = case fee.type do
       "department" -> :structure
+      "group" -> :structure
+      "event" -> :calendar
+      "venue" -> :assets
+      "equipment" -> :assets
       _ -> :finances
     end
 

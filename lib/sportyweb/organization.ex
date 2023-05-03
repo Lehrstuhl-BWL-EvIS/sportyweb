@@ -6,7 +6,10 @@ defmodule Sportyweb.Organization do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
+  alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Organization.DepartmentFee
+  alias Sportyweb.Organization.GroupFee
 
   @doc """
   Returns the list of clubs.
@@ -253,6 +256,25 @@ defmodule Sportyweb.Organization do
     Department.changeset(department, attrs)
   end
 
+  @doc """
+  Creates a department_fee (many_to_many).
+
+  ## Examples
+
+      iex> create_department_fee(department, fee)
+      {:ok, %DepartmentFee{}}
+
+      iex> create_department_fee(department, fee)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_department_fee(%Department{} = department, %Fee{} = fee) do
+    Repo.insert(%DepartmentFee{
+      department_id: department.id,
+      fee_id: fee.id
+    })
+  end
+
   alias Sportyweb.Organization.Group
 
   @doc """
@@ -368,5 +390,24 @@ defmodule Sportyweb.Organization do
   """
   def change_group(%Group{} = group, attrs \\ %{}) do
     Group.changeset(group, attrs)
+  end
+
+  @doc """
+  Creates a group_fee (many_to_many).
+
+  ## Examples
+
+      iex> create_group_fee(group, fee)
+      {:ok, %GroupFee{}}
+
+      iex> create_group_fee(group, fee)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_group_fee(%Group{} = group, %Fee{} = fee) do
+    Repo.insert(%GroupFee{
+      group_id: group.id,
+      fee_id: fee.id
+    })
   end
 end
