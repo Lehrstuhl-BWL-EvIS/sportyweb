@@ -16,6 +16,7 @@ alias Sportyweb.Accounts
 alias Sportyweb.Accounts.User
 alias Sportyweb.Asset.Equipment
 alias Sportyweb.Asset.Venue
+alias Sportyweb.Calendar.Event
 alias Sportyweb.Legal.Fee
 alias Sportyweb.Organization
 alias Sportyweb.Organization.Club
@@ -406,6 +407,22 @@ Organization.list_clubs()
 |> Enum.each(fn {club, index} ->
     # No data for the "empty club"!
     if club.id != club_4.id do
+
+      for i <- 0..Enum.random(10..30) do
+        Repo.insert!(%Event{
+          club_id: club.id,
+          name: "Verans.: #{Faker.Lorem.characters(Enum.random(5..15))}",
+          reference_number: Sportyweb.SeedHelper.get_random_string(5),
+          status: "public",
+          description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
+          minimum_participants: 0,
+          maximum_participants: Enum.random(3..40),
+          minimum_age_in_years: 0,
+          maximum_age_in_years: Enum.random(5..100),
+          location_type: "free_form",
+          location_description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
+        })
+      end
 
       # Contacts
 
