@@ -118,11 +118,6 @@ defmodule Sportyweb.Legal.Fee do
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
     )
     |> update_change(:name, &String.trim/1)
-    |> unique_constraint(
-      :name,
-      name: "fees_club_id_type_name_index",
-      message: "Name bereits vergeben!"
-    )
     |> update_base_fee(fee, attrs)
     |> update_admission_fee(fee, attrs)
     |> validate_number(:base_fee_in_eur_cent, greater_than_or_equal_to: 0, less_than_or_equal_to: 1_000_000)

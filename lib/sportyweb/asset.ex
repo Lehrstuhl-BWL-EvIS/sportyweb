@@ -6,6 +6,7 @@ defmodule Sportyweb.Asset do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
+  alias Sportyweb.Asset.Equipment
   alias Sportyweb.Asset.EquipmentFee
   alias Sportyweb.Asset.Venue
   alias Sportyweb.Asset.VenueFee
