@@ -5,10 +5,12 @@ defmodule Sportyweb.Legal.Contract do
   alias Sportyweb.Legal.ContractPause
   alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Personal.Contact
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "contracts" do
+    belongs_to :contact, Contact
     belongs_to :club, Club
     belongs_to :fee, Fee
     has_many :contract_pauses, ContractPause
@@ -25,6 +27,7 @@ defmodule Sportyweb.Legal.Contract do
   def changeset(contract, attrs) do
     contract
     |> cast(attrs, [
+      :contact_id,
       :club_id,
       :fee_id,
       :signing_date,
@@ -33,6 +36,12 @@ defmodule Sportyweb.Legal.Contract do
       :end_date],
       empty_values: ["", nil]
     )
-    |> validate_required([:club_id, :fee_id, :signing_date, :start_date])
+    |> validate_required([
+      :contact_id,
+      :club_id,
+      :fee_id,
+      :signing_date,
+      :start_date]
+    )
   end
 end
