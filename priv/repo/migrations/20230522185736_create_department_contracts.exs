@@ -1,0 +1,16 @@
+defmodule Sportyweb.Repo.Migrations.CreateDepartmentContracts do
+  use Ecto.Migration
+
+  def change do
+    create table(:department_contracts, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :department_id, references(:departments, on_delete: :nothing, type: :binary_id)
+      add :contract_id, references(:contracts, on_delete: :nothing, type: :binary_id)
+
+      timestamps()
+    end
+
+    create index(:department_contracts, [:department_id])
+    create index(:department_contracts, [:contract_id])
+  end
+end
