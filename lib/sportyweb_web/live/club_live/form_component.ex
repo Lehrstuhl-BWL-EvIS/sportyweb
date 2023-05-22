@@ -37,7 +37,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:founded_at]} type="date" label="Gründungsdatum" />
+              <.input field={@form[:foundation_date]} type="date" label="Gründungsdatum" />
             </div>
           </.input_grid>
 

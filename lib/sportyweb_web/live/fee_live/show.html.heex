@@ -37,10 +37,10 @@
       <%= format_integer_field(@fee.maximum_age_in_years) %>
     </:item>
     <:item title="Verwendung ab">
-      <%= format_date_field_dmy(@fee.commission_at) %>
+      <%= format_date_field_dmy(@fee.commission_date) %>
     </:item>
     <:item title="Verwendung bis">
-      <%= format_date_field_dmy(@fee.decommission_at) %>
+      <%= format_date_field_dmy(@fee.decommission_date) %>
     </:item>
   </.list>
 </.card>

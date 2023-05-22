@@ -115,13 +115,13 @@ club_1 = Repo.insert!(%Club{
   reference_number: "FCB",
   description: "One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin.",
   website_url: "https://fcbayern.com/",
-  founded_at: ~D[1900-02-27]
+  foundation_date: ~D[1900-02-27]
 })
 
 department = Repo.insert!(%Department{
   club: club_1,
   name: "Fußball Herren",
-  created_at: ~D[1900-03-01],
+  creation_date: ~D[1900-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [Sportyweb.SeedHelper.get_random_note(), Sportyweb.SeedHelper.get_random_note()]
@@ -130,37 +130,37 @@ department = Repo.insert!(%Department{
 Repo.insert!(%Group{
   department: department,
   name: "1. Herrenmannschaft",
-  created_at: ~D[1900-03-01]
+  creation_date: ~D[1900-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "2. Herrenmannschaft",
-  created_at: ~D[1901-03-01]
+  creation_date: ~D[1901-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "A-Jugend",
-  created_at: ~D[1902-03-01]
+  creation_date: ~D[1902-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "B-Jugend",
-  created_at: ~D[1903-03-01]
+  creation_date: ~D[1903-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "Kinder",
-  created_at: ~D[1904-03-01]
+  creation_date: ~D[1904-03-01]
 })
 
 department = Repo.insert!(%Department{
   club: club_1,
   name: "Fußball Damen",
-  created_at: ~D[1905-03-01],
+  creation_date: ~D[1905-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [%Note{}]
@@ -169,37 +169,37 @@ department = Repo.insert!(%Department{
 Repo.insert!(%Group{
   department: department,
   name: "1. Damenmannschaft",
-  created_at: ~D[1905-03-01]
+  creation_date: ~D[1905-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "2. Damenmannschaft",
-  created_at: ~D[1906-03-01]
+  creation_date: ~D[1906-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "A-Jugend",
-  created_at: ~D[1907-03-01]
+  creation_date: ~D[1907-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "B-Jugend",
-  created_at: ~D[1908-03-01]
+  creation_date: ~D[1908-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "Kinder",
-  created_at: ~D[1909-03-01]
+  creation_date: ~D[1909-03-01]
 })
 
 Repo.insert!(%Department{
   club: club_1,
   name: "Basketball",
-  created_at: ~D[1910-03-01],
+  creation_date: ~D[1910-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [%Note{}]
@@ -208,7 +208,7 @@ Repo.insert!(%Department{
 Repo.insert!(%Department{
   club: club_1,
   name: "Handball",
-  created_at: ~D[1915-03-01],
+  creation_date: ~D[1915-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [%Note{}]
@@ -217,7 +217,7 @@ Repo.insert!(%Department{
 Repo.insert!(%Department{
   club: club_1,
   name: "Schach",
-  created_at: ~D[1920-03-01],
+  creation_date: ~D[1920-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [%Note{}]
@@ -231,13 +231,13 @@ club_2 = Repo.insert!(%Club{
   reference_number: "Effzeh",
   description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
   website_url: "https://fc.de/",
-  founded_at: ~D[1948-02-13]
+  foundation_date: ~D[1948-02-13]
 })
 
 department = Repo.insert!(%Department{
   club: club_2,
   name: "Fußball Herren",
-  created_at: ~D[1948-03-01],
+  creation_date: ~D[1948-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [Sportyweb.SeedHelper.get_random_note()]
@@ -246,37 +246,37 @@ department = Repo.insert!(%Department{
 Repo.insert!(%Group{
   department: department,
   name: "1. Herrenmannschaft",
-  created_at: ~D[1948-03-01]
+  creation_date: ~D[1948-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "2. Herrenmannschaft",
-  created_at: ~D[1949-03-01]
+  creation_date: ~D[1949-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "A-Jugend",
-  created_at: ~D[1950-03-01]
+  creation_date: ~D[1950-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "B-Jugend",
-  created_at: ~D[1951-03-01]
+  creation_date: ~D[1951-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "Kinder",
-  created_at: ~D[1952-03-01]
+  creation_date: ~D[1952-03-01]
 })
 
 department = Repo.insert!(%Department{
   club: club_2,
   name: "Fußball Damen",
-  created_at: ~D[1950-03-01],
+  creation_date: ~D[1950-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [%Note{}]
@@ -285,37 +285,37 @@ department = Repo.insert!(%Department{
 Repo.insert!(%Group{
   department: department,
   name: "1. Damenmannschaft",
-  created_at: ~D[1950-03-01]
+  creation_date: ~D[1950-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "2. Damenmannschaft",
-  created_at: ~D[1951-03-01]
+  creation_date: ~D[1951-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "A-Jugend",
-  created_at: ~D[1952-03-01]
+  creation_date: ~D[1952-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "B-Jugend",
-  created_at: ~D[1953-03-01]
+  creation_date: ~D[1953-03-01]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "Kinder",
-  created_at: ~D[1954-03-01]
+  creation_date: ~D[1954-03-01]
 })
 
 Repo.insert!(%Department{
   club: club_2,
   name: "Handball",
-  created_at: ~D[1955-03-01],
+  creation_date: ~D[1955-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [%Note{}]
@@ -324,7 +324,7 @@ Repo.insert!(%Department{
 Repo.insert!(%Department{
   club: club_2,
   name: "Tischtennis",
-  created_at: ~D[1960-03-01],
+  creation_date: ~D[1960-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [%Note{}]
@@ -338,7 +338,7 @@ club_3 = Repo.insert!(%Club{
   reference_number: "-",
   description: "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.",
   website_url: "https://www.fcstpauli.com/",
-  founded_at: ~D[1910-05-15]
+  foundation_date: ~D[1910-05-15]
 })
 
 ###################################
@@ -349,7 +349,7 @@ club_4 = Repo.insert!(%Club{
   reference_number: "",
   description: "",
   website_url: "",
-  founded_at: ~D[2020-04-01]
+  foundation_date: ~D[2020-04-01]
 })
 
 ###################################
@@ -359,13 +359,13 @@ testclub = Repo.insert!(%Club{
   name: "TestVerein",
   reference_number: "",
   website_url: "",
-  founded_at: ~D[2023-03-01]
+  foundation_date: ~D[2023-03-01]
 })
 
 Repo.insert!(%Department{
   club: testclub,
   name: "TestAbteilung1",
-  created_at: ~D[2023-03-01],
+  creation_date: ~D[2023-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [%Note{}],
@@ -374,7 +374,7 @@ Repo.insert!(%Department{
 Repo.insert!(%Department{
   club: testclub,
   name: "TestAbteilung2",
-  created_at: ~D[2023-03-01],
+  creation_date: ~D[2023-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
   notes: [%Note{}],
@@ -440,7 +440,7 @@ Organization.list_clubs()
         is_group_only: false,
         minimum_age_in_years: 0,
         maximum_age_in_years: 100,
-        commission_at: ~D[2023-01-01],
+        commission_date: ~D[2023-01-01],
         events: [event]
       })
     end
@@ -488,7 +488,7 @@ Organization.list_clubs()
         is_group_only: false,
         minimum_age_in_years: 0,
         maximum_age_in_years: 100,
-        commission_at: ~D[2023-01-01],
+        commission_date: ~D[2023-01-01],
         venues: [venue]
       })
 
@@ -501,9 +501,9 @@ Organization.list_clubs()
           reference_number: Sportyweb.SeedHelper.get_random_string(5),
           serial_number: Sportyweb.SeedHelper.get_random_string(15),
           description: (if :rand.uniform() < 0.50, do: Faker.Lorem.paragraph(), else: ""),
-          purchased_at: Faker.Date.backward(Enum.random(300..2000)),
-          commission_at: Faker.Date.backward(Enum.random(0..299)),
-          decommission_at: (if :rand.uniform() < 0.65, do: Faker.Date.forward(Enum.random(100..2000)), else: nil)
+          purchase_date: Faker.Date.backward(Enum.random(300..2000)),
+          commission_date: Faker.Date.backward(Enum.random(0..299)),
+          decommission_date: (if :rand.uniform() < 0.65, do: Faker.Date.forward(Enum.random(100..2000)), else: nil)
         })
 
         # Fees: Specific - Equipment
@@ -521,7 +521,7 @@ Organization.list_clubs()
           is_group_only: false,
           minimum_age_in_years: 0,
           maximum_age_in_years: 100,
-          commission_at: ~D[2023-01-01],
+          commission_date: ~D[2023-01-01],
           equipment: [equipment]
         })
       end
@@ -542,7 +542,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 12,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     Repo.insert!(%Fee{
@@ -558,7 +558,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 13,
       maximum_age_in_years: 17,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     Repo.insert!(%Fee{
@@ -574,7 +574,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 65,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     Repo.insert!(%Fee{
@@ -590,7 +590,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 65,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     Repo.insert!(%Fee{
@@ -606,7 +606,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 66,
       maximum_age_in_years: 100,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     # Fees: General - Departments
@@ -624,7 +624,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 17,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     Repo.insert!(%Fee{
@@ -640,7 +640,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 100,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     # Fees: General - Groups
@@ -658,7 +658,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 17,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     Repo.insert!(%Fee{
@@ -674,7 +674,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 100,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     # Fees: General - Events
@@ -692,7 +692,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 12,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     Repo.insert!(%Fee{
@@ -708,7 +708,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 65,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     # Fees: General - Equipment
@@ -726,7 +726,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 100,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     Repo.insert!(%Fee{
@@ -742,7 +742,7 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 100,
-      commission_at: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01]
     })
 
     # Fees: Specific - Departments
@@ -763,7 +763,7 @@ Organization.list_clubs()
         is_group_only: false,
         minimum_age_in_years: 0,
         maximum_age_in_years: 17,
-        commission_at: ~D[2023-01-01],
+        commission_date: ~D[2023-01-01],
         departments: [department]
       })
 
@@ -780,7 +780,7 @@ Organization.list_clubs()
         is_group_only: false,
         minimum_age_in_years: 18,
         maximum_age_in_years: 100,
-        commission_at: ~D[2023-01-01],
+        commission_date: ~D[2023-01-01],
         departments: [department]
       })
 
@@ -802,7 +802,7 @@ Organization.list_clubs()
           is_group_only: false,
           minimum_age_in_years: 0,
           maximum_age_in_years: 17,
-          commission_at: ~D[2023-01-01],
+          commission_date: ~D[2023-01-01],
           groups: [group]
         })
 
@@ -819,7 +819,7 @@ Organization.list_clubs()
           is_group_only: false,
           minimum_age_in_years: 18,
           maximum_age_in_years: 100,
-          commission_at: ~D[2023-01-01],
+          commission_date: ~D[2023-01-01],
           groups: [group]
         })
       end)

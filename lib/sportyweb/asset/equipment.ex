@@ -25,9 +25,9 @@ defmodule Sportyweb.Asset.Equipment do
     field :reference_number, :string, default: ""
     field :serial_number, :string, default: ""
     field :description, :string, default: ""
-    field :purchased_at, :date, default: nil
-    field :commission_at, :date, default: nil
-    field :decommission_at, :date, default: nil
+    field :purchase_date, :date, default: nil
+    field :commission_date, :date, default: nil
+    field :decommission_date, :date, default: nil
 
     timestamps()
   end
@@ -41,9 +41,9 @@ defmodule Sportyweb.Asset.Equipment do
       :reference_number,
       :serial_number,
       :description,
-      :purchased_at,
-      :commission_at,
-      :decommission_at
+      :purchase_date,
+      :commission_date,
+      :decommission_date
       ],
       empty_values: ["", nil]
     )

@@ -78,7 +78,7 @@ defmodule Sportyweb.AssetTest do
 
     import Sportyweb.AssetFixtures
 
-    @invalid_attrs %{commission_at: nil, decommission_at: nil, description: nil, name: nil, purchased_at: nil, reference_number: nil, serial_number: nil}
+    @invalid_attrs %{commission_date: nil, decommission_date: nil, description: nil, name: nil, purchase_date: nil, reference_number: nil, serial_number: nil}
 
     test "list_equipment/0 returns all equipment" do
       equipment = equipment_fixture()
@@ -92,14 +92,14 @@ defmodule Sportyweb.AssetTest do
 
     test "create_equipment/1 with valid data creates a equipment" do
       venue = venue_fixture()
-      valid_attrs = %{venue_id: venue.id, commission_at: ~D[2023-02-14], decommission_at: ~D[2023-02-14], description: "some description", name: "some name", purchased_at: ~D[2023-02-14], reference_number: "some reference_number", serial_number: "some serial_number"}
+      valid_attrs = %{venue_id: venue.id, commission_date: ~D[2023-02-14], decommission_date: ~D[2023-02-14], description: "some description", name: "some name", purchase_date: ~D[2023-02-14], reference_number: "some reference_number", serial_number: "some serial_number"}
 
       assert {:ok, %Equipment{} = equipment} = Asset.create_equipment(valid_attrs)
-      assert equipment.commission_at == ~D[2023-02-14]
-      assert equipment.decommission_at == ~D[2023-02-14]
+      assert equipment.commission_date == ~D[2023-02-14]
+      assert equipment.decommission_date == ~D[2023-02-14]
       assert equipment.description == "some description"
       assert equipment.name == "some name"
-      assert equipment.purchased_at == ~D[2023-02-14]
+      assert equipment.purchase_date == ~D[2023-02-14]
       assert equipment.reference_number == "some reference_number"
       assert equipment.serial_number == "some serial_number"
     end
@@ -110,14 +110,14 @@ defmodule Sportyweb.AssetTest do
 
     test "update_equipment/2 with valid data updates the equipment" do
       equipment = equipment_fixture()
-      update_attrs = %{commission_at: ~D[2023-02-15], decommission_at: ~D[2023-02-15], description: "some updated description", name: "some updated name", purchased_at: ~D[2023-02-15], reference_number: "some updated reference_number", serial_number: "some updated serial_number"}
+      update_attrs = %{commission_date: ~D[2023-02-15], decommission_date: ~D[2023-02-15], description: "some updated description", name: "some updated name", purchase_date: ~D[2023-02-15], reference_number: "some updated reference_number", serial_number: "some updated serial_number"}
 
       assert {:ok, %Equipment{} = equipment} = Asset.update_equipment(equipment, update_attrs)
-      assert equipment.commission_at == ~D[2023-02-15]
-      assert equipment.decommission_at == ~D[2023-02-15]
+      assert equipment.commission_date == ~D[2023-02-15]
+      assert equipment.decommission_date == ~D[2023-02-15]
       assert equipment.description == "some updated description"
       assert equipment.name == "some updated name"
-      assert equipment.purchased_at == ~D[2023-02-15]
+      assert equipment.purchase_date == ~D[2023-02-15]
       assert equipment.reference_number == "some updated reference_number"
       assert equipment.serial_number == "some updated serial_number"
     end

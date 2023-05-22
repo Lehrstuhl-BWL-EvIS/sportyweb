@@ -44,7 +44,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
             </div>
 
             <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:created_at]} type="date" label="Erstellungsdatum" />
+              <.input field={@form[:creation_date]} type="date" label="Erstellungsdatum" />
             </div>
           </.input_grid>
 

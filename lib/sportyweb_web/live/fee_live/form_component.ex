@@ -83,11 +83,11 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:commission_at]} type="date" label="Verwendung ab" />
+                <.input field={@form[:commission_date]} type="date" label="Verwendung ab" />
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:decommission_at]} type="date" label="Verwendung bis (optional)" />
+                <.input field={@form[:decommission_date]} type="date" label="Verwendung bis (optional)" />
               </div>
             </.input_grid>
 

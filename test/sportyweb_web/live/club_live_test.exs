@@ -7,9 +7,9 @@ defmodule SportywebWeb.ClubLiveTest do
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{name: "some name", reference_number: "some reference_number", description: "some description", website_url: "https://www.website_url.com", founded_at: ~D[2022-11-05]}
-  @update_attrs %{name: "some updated name", reference_number: "some updated reference_number", description: "some updated description", website_url: "https://www.updated_website_url.com", founded_at: ~D[2022-11-06]}
-  @invalid_attrs %{name: nil, reference_number: nil, description: nil, website_url: nil, founded_at: nil}
+  @create_attrs %{name: "some name", reference_number: "some reference_number", description: "some description", website_url: "https://www.website_url.com", foundation_date: ~D[2022-11-05]}
+  @update_attrs %{name: "some updated name", reference_number: "some updated reference_number", description: "some updated description", website_url: "https://www.updated_website_url.com", foundation_date: ~D[2022-11-06]}
+  @invalid_attrs %{name: nil, reference_number: nil, description: nil, website_url: nil, foundation_date: nil}
 
   setup do
     user = user_fixture()

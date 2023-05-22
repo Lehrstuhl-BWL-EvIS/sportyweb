@@ -9,8 +9,8 @@ defmodule Sportyweb.Legal.ContractPause do
   schema "contract_pauses" do
     belongs_to :contract, Contract
 
-    field :starts_at, :date, default: nil
-    field :ends_at, :date, default: nil
+    field :start_date, :date, default: nil
+    field :end_date, :date, default: nil
 
     timestamps()
   end
@@ -18,7 +18,7 @@ defmodule Sportyweb.Legal.ContractPause do
   @doc false
   def changeset(contract_pause, attrs) do
     contract_pause
-    |> cast(attrs, [:contract_id, :starts_at, :ends_at], empty_values: ["", nil])
-    |> validate_required([:contract_id, :starts_at, :ends_at])
+    |> cast(attrs, [:contract_id, :start_date, :end_date], empty_values: ["", nil])
+    |> validate_required([:contract_id, :start_date, :end_date])
   end
 end

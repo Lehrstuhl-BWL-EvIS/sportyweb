@@ -29,8 +29,8 @@ defmodule Sportyweb.LegalFixtures do
         is_recurring: true,
         minimum_age_in_years: 18,
         maximum_age_in_years: 50,
-        commission_at: ~D[2023-02-24],
-        decommission_at: ~D[2023-02-24],
+        commission_date: ~D[2023-02-24],
+        decommission_date: ~D[2023-02-24],
       })
       |> Sportyweb.Legal.create_fee()
 

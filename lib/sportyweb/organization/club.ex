@@ -31,7 +31,7 @@ defmodule Sportyweb.Organization.Club do
     field :reference_number, :string, default: ""
     field :description, :string, default: ""
     field :website_url, :string, default: ""
-    field :founded_at, :date, default: nil
+    field :foundation_date, :date, default: nil
 
     timestamps()
   end
@@ -44,7 +44,7 @@ defmodule Sportyweb.Organization.Club do
       :reference_number,
       :description,
       :website_url,
-      :founded_at
+      :foundation_date
       ],
       empty_values: ["", nil]
     )
@@ -52,7 +52,7 @@ defmodule Sportyweb.Organization.Club do
     |> cast_assoc(:financial_data, required: false)
     |> cast_assoc(:notes, required: false)
     |> cast_assoc(:phones, required: false)
-    |> validate_required([:name, :founded_at])
+    |> validate_required([:name, :foundation_date])
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
     |> validate_length(:description, max: 20_000)

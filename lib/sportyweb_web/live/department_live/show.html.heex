@@ -16,7 +16,7 @@
       <%= format_string_field(@department.description) %>
     </:item>
     <:item title="Erstellungsdatum">
-      <%= format_date_field_dmy(@department.created_at) %>
+      <%= format_date_field_dmy(@department.creation_date) %>
     </:item>
     <:item title="E-Mail">
       <%= format_struct_list(@department.emails, :address) %>
@@ -68,7 +68,7 @@
         </div>
       </:col>
       <:col :let={{_id, group}} label="Erstellungsdatum">
-        <%= format_date_field_dmy(group.created_at) %>
+        <%= format_date_field_dmy(group.creation_date) %>
       </:col>
 
       <:action :let={{_id, group}}>

@@ -42,8 +42,8 @@ defmodule Sportyweb.Legal.Fee do
     field :is_group_only, :boolean, default: false
     field :minimum_age_in_years, :integer, default: nil
     field :maximum_age_in_years, :integer, default: nil
-    field :commission_at, :date, default: nil
-    field :decommission_at, :date, default: nil
+    field :commission_date, :date, default: nil
+    field :decommission_date, :date, default: nil
 
     timestamps()
   end
@@ -98,8 +98,8 @@ defmodule Sportyweb.Legal.Fee do
       :is_group_only,
       :minimum_age_in_years,
       :maximum_age_in_years,
-      :commission_at,
-      :decommission_at],
+      :commission_date,
+      :decommission_date],
       empty_values: ["", nil]
     )
     |> cast_assoc(:notes, required: false)
@@ -111,7 +111,7 @@ defmodule Sportyweb.Legal.Fee do
       :base_fee_in_eur_cent,
       :admission_fee_in_eur,
       :admission_fee_in_eur_cent,
-      :commission_at]
+      :commission_date]
     )
     |> validate_inclusion(
       :type,

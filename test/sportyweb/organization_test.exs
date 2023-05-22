@@ -8,7 +8,7 @@ defmodule Sportyweb.OrganizationTest do
 
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{name: nil, reference_number: nil, description: nil, website_url: nil, founded_at: nil}
+    @invalid_attrs %{name: nil, reference_number: nil, description: nil, website_url: nil, foundation_date: nil}
 
     test "list_clubs/0 returns all clubs" do
       club = club_fixture()
@@ -29,10 +29,10 @@ defmodule Sportyweb.OrganizationTest do
     end
 
     test "create_club/1 with valid data creates a club" do
-      valid_attrs = %{founded_at: ~D[2022-11-05], description: "some description", name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
+      valid_attrs = %{foundation_date: ~D[2022-11-05], description: "some description", name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
 
       assert {:ok, %Club{} = club} = Organization.create_club(valid_attrs)
-      assert club.founded_at == ~D[2022-11-05]
+      assert club.foundation_date == ~D[2022-11-05]
       assert club.description == "some description"
       assert club.name == "some name"
       assert club.reference_number == "some reference_number"
@@ -45,10 +45,10 @@ defmodule Sportyweb.OrganizationTest do
 
     test "update_club/2 with valid data updates the club" do
       club = club_fixture()
-      update_attrs = %{founded_at: ~D[2022-11-06], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number", website_url: "some updated website_url"}
+      update_attrs = %{foundation_date: ~D[2022-11-06], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number", website_url: "some updated website_url"}
 
       assert {:ok, %Club{} = club} = Organization.update_club(club, update_attrs)
-      assert club.founded_at == ~D[2022-11-06]
+      assert club.foundation_date == ~D[2022-11-06]
       assert club.description == "some updated description"
       assert club.name == "some updated name"
       assert club.reference_number == "some updated reference_number"
@@ -78,7 +78,7 @@ defmodule Sportyweb.OrganizationTest do
 
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{name: nil, reference_number: nil, description: nil, created_at: nil}
+    @invalid_attrs %{name: nil, reference_number: nil, description: nil, creation_date: nil}
 
     test "list_departments/1 returns all departments of a given club" do
       department = department_fixture()
@@ -107,10 +107,10 @@ defmodule Sportyweb.OrganizationTest do
 
     test "create_department/1 with valid data creates a department" do
       club = club_fixture()
-      valid_attrs = %{club_id: club.id, created_at: ~D[2022-11-05], description: "some description", name: "some name", reference_number: "some reference_number"}
+      valid_attrs = %{club_id: club.id, creation_date: ~D[2022-11-05], description: "some description", name: "some name", reference_number: "some reference_number"}
 
       assert {:ok, %Department{} = department} = Organization.create_department(valid_attrs)
-      assert department.created_at == ~D[2022-11-05]
+      assert department.creation_date == ~D[2022-11-05]
       assert department.description == "some description"
       assert department.name == "some name"
       assert department.reference_number == "some reference_number"
@@ -122,10 +122,10 @@ defmodule Sportyweb.OrganizationTest do
 
     test "update_department/2 with valid data updates the department" do
       department = department_fixture()
-      update_attrs = %{created_at: ~D[2022-11-06], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
+      update_attrs = %{creation_date: ~D[2022-11-06], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
 
       assert {:ok, %Department{} = department} = Organization.update_department(department, update_attrs)
-      assert department.created_at == ~D[2022-11-06]
+      assert department.creation_date == ~D[2022-11-06]
       assert department.description == "some updated description"
       assert department.name == "some updated name"
       assert department.reference_number == "some updated reference_number"
@@ -154,7 +154,7 @@ defmodule Sportyweb.OrganizationTest do
 
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{name: nil, reference_number: nil, description: nil, created_at: nil}
+    @invalid_attrs %{name: nil, reference_number: nil, description: nil, creation_date: nil}
 
     test "list_groups/0 returns all groups" do
       group = group_fixture()
@@ -168,10 +168,10 @@ defmodule Sportyweb.OrganizationTest do
 
     test "create_group/1 with valid data creates a group" do
       department = department_fixture()
-      valid_attrs = %{department_id: department.id, created_at: ~D[2023-02-11], description: "some description", name: "some name", reference_number: "some reference_number"}
+      valid_attrs = %{department_id: department.id, creation_date: ~D[2023-02-11], description: "some description", name: "some name", reference_number: "some reference_number"}
 
       assert {:ok, %Group{} = group} = Organization.create_group(valid_attrs)
-      assert group.created_at == ~D[2023-02-11]
+      assert group.creation_date == ~D[2023-02-11]
       assert group.description == "some description"
       assert group.name == "some name"
       assert group.reference_number == "some reference_number"
@@ -183,10 +183,10 @@ defmodule Sportyweb.OrganizationTest do
 
     test "update_group/2 with valid data updates the group" do
       group = group_fixture()
-      update_attrs = %{created_at: ~D[2023-02-12], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
+      update_attrs = %{creation_date: ~D[2023-02-12], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
 
       assert {:ok, %Group{} = group} = Organization.update_group(group, update_attrs)
-      assert group.created_at == ~D[2023-02-12]
+      assert group.creation_date == ~D[2023-02-12]
       assert group.description == "some updated description"
       assert group.name == "some updated name"
       assert group.reference_number == "some updated reference_number"

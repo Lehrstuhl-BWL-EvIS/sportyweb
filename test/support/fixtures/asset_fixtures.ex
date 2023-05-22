@@ -40,9 +40,9 @@ defmodule Sportyweb.AssetFixtures do
         reference_number: "some reference_number",
         serial_number: "some serial_number",
         description: "some description",
-        purchased_at: ~D[2022-11-05],
-        commission_at: ~D[2022-11-10],
-        decommission_at: ~D[2022-11-15],
+        purchase_date: ~D[2022-11-05],
+        commission_date: ~D[2022-11-10],
+        decommission_date: ~D[2022-11-15],
       })
       |> Sportyweb.Asset.create_equipment()
 

@@ -22,13 +22,13 @@
       <%= format_string_field(@equipment.description) %>
     </:item>
     <:item title="Gekauft am">
-      <%= format_date_field_dmy(@equipment.purchased_at) %>
+      <%= format_date_field_dmy(@equipment.purchase_date) %>
     </:item>
     <:item title="Nutzung ab">
-      <%= format_date_field_dmy(@equipment.commission_at) %>
+      <%= format_date_field_dmy(@equipment.commission_date) %>
     </:item>
     <:item title="Nutzung bis">
-      <%= format_date_field_dmy(@equipment.decommission_at) %>
+      <%= format_date_field_dmy(@equipment.decommission_date) %>
     </:item>
   </.list>
 </.card>

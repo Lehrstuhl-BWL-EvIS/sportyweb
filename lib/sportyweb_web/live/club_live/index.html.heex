@@ -32,7 +32,7 @@
         </div>
       </:col>
       <:col :let={{_id, club}} label="Gründungsdatum">
-        <%= format_date_field_dmy(club.founded_at) %>
+        <%= format_date_field_dmy(club.foundation_date) %>
       </:col>
 
       <:action :let={{_id, club}}>

@@ -13,10 +13,10 @@ defmodule Sportyweb.Legal.Contract do
     belongs_to :fee, Fee
     has_many :contract_pauses, ContractPause
 
-    field :signed_at, :date, default: nil
-    field :starts_at, :date, default: nil
-    field :terminated_at, :date, default: nil
-    field :ends_at, :date, default: nil
+    field :signing_date, :date, default: nil
+    field :start_date, :date, default: nil
+    field :termination_date, :date, default: nil
+    field :end_date, :date, default: nil
 
     timestamps()
   end
@@ -27,12 +27,12 @@ defmodule Sportyweb.Legal.Contract do
     |> cast(attrs, [
       :club_id,
       :fee_id,
-      :signed_at,
-      :starts_at,
-      :terminated_at,
-      :ends_at],
+      :signing_date,
+      :start_date,
+      :termination_date,
+      :end_date],
       empty_values: ["", nil]
     )
-    |> validate_required([:club_id, :fee_id, :signed_at, :starts_at])
+    |> validate_required([:club_id, :fee_id, :signing_date, :start_date])
   end
 end

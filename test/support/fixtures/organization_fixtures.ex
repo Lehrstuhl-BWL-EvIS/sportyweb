@@ -20,7 +20,7 @@ defmodule Sportyweb.OrganizationFixtures do
         reference_number: "some reference_number",
         description: "some description",
         website_url: unique_club_website_url(),
-        founded_at: ~D[2022-11-05]
+        foundation_date: ~D[2022-11-05]
       })
       |> Sportyweb.Organization.create_club()
 
@@ -40,7 +40,7 @@ defmodule Sportyweb.OrganizationFixtures do
         name: "some name",
         reference_number: "some reference_number",
         description: "some description",
-        created_at: ~D[2022-11-05]
+        creation_date: ~D[2022-11-05]
       })
       |> Sportyweb.Organization.create_department()
 
@@ -60,7 +60,7 @@ defmodule Sportyweb.OrganizationFixtures do
         name: "some group name",
         reference_number: "some reference_number",
         description: "some description",
-        created_at: ~D[2022-11-05]
+        creation_date: ~D[2022-11-05]
       })
       |> Sportyweb.Organization.create_group()
 
