@@ -424,7 +424,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 12,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     Repo.insert!(%Fee{
@@ -440,7 +441,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 13,
       maximum_age_in_years: 17,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     default_club_fee = Repo.insert!(%Fee{
@@ -456,7 +458,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 65,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     Repo.insert!(%Fee{
@@ -472,7 +475,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 65,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     Repo.insert!(%Fee{
@@ -488,7 +492,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 66,
       maximum_age_in_years: 100,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     # Fees: General - Departments
@@ -506,7 +511,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 17,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     Repo.insert!(%Fee{
@@ -522,7 +528,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 100,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     # Fees: General - Groups
@@ -540,7 +547,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 17,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     Repo.insert!(%Fee{
@@ -556,7 +564,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 100,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     # Fees: General - Events
@@ -574,7 +583,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 12,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     Repo.insert!(%Fee{
@@ -590,7 +600,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 65,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     # Fees: General - Equipment
@@ -608,7 +619,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 100,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     Repo.insert!(%Fee{
@@ -624,7 +636,8 @@ Organization.list_clubs()
       is_group_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 100,
-      commission_date: ~D[2020-01-01]
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
     })
 
     # Fees: Specific - Departments
@@ -646,6 +659,7 @@ Organization.list_clubs()
         minimum_age_in_years: 0,
         maximum_age_in_years: 17,
         commission_date: ~D[2023-01-01],
+        notes: [%Note{}],
         departments: [department]
       })
 
@@ -663,6 +677,7 @@ Organization.list_clubs()
         minimum_age_in_years: 18,
         maximum_age_in_years: 100,
         commission_date: ~D[2023-01-01],
+        notes: [%Note{}],
         departments: [department]
       })
 
@@ -685,6 +700,7 @@ Organization.list_clubs()
           minimum_age_in_years: 0,
           maximum_age_in_years: 17,
           commission_date: ~D[2023-01-01],
+          notes: [%Note{}],
           groups: [group]
         })
 
@@ -702,6 +718,7 @@ Organization.list_clubs()
           minimum_age_in_years: 18,
           maximum_age_in_years: 100,
           commission_date: ~D[2023-01-01],
+          notes: [%Note{}],
           groups: [group]
         })
       end)
@@ -740,6 +757,7 @@ Organization.list_clubs()
         minimum_age_in_years: 0,
         maximum_age_in_years: 100,
         commission_date: ~D[2023-01-01],
+        notes: [%Note{}],
         events: [event]
       })
     end
@@ -801,6 +819,7 @@ Organization.list_clubs()
         minimum_age_in_years: 0,
         maximum_age_in_years: 100,
         commission_date: ~D[2023-01-01],
+        notes: [%Note{}],
         venues: [venue]
       })
 
@@ -834,6 +853,7 @@ Organization.list_clubs()
           minimum_age_in_years: 0,
           maximum_age_in_years: 100,
           commission_date: ~D[2023-01-01],
+          notes: [%Note{}],
           equipment: [equipment]
         })
       end
