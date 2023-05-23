@@ -2,12 +2,14 @@ defmodule Sportyweb.Organization.ClubContract do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Legal.Contract
+  alias Sportyweb.Organization.Club
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "club_contracts" do
-
-    field :club_id, :binary_id
-    field :contract_id, :binary_id
+    belongs_to :club, Club
+    belongs_to :contract, Contract
 
     timestamps()
   end
@@ -15,7 +17,7 @@ defmodule Sportyweb.Organization.ClubContract do
   @doc false
   def changeset(club_contract, attrs) do
     club_contract
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:club_id, :contract_id])
+    |> validate_required([:club_id, :contract_id])
   end
 end

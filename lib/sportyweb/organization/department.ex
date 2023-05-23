@@ -2,8 +2,10 @@ defmodule Sportyweb.Organization.Department do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Organization.DepartmentContract
   alias Sportyweb.Organization.DepartmentEmail
   alias Sportyweb.Organization.DepartmentFee
   alias Sportyweb.Organization.DepartmentNote
@@ -18,6 +20,7 @@ defmodule Sportyweb.Organization.Department do
   schema "departments" do
     belongs_to :club, Club
     has_many :groups, Group
+    many_to_many :contracts, Contract, join_through: DepartmentContract
     many_to_many :emails, Email, join_through: DepartmentEmail
     many_to_many :fees, Fee, join_through: DepartmentFee
     many_to_many :notes, Note, join_through: DepartmentNote

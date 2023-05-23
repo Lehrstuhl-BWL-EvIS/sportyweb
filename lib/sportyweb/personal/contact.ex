@@ -2,6 +2,7 @@ defmodule Sportyweb.Personal.Contact do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization.Club
   alias Sportyweb.Personal.ContactEmail
   alias Sportyweb.Personal.ContactFinancialData
@@ -18,6 +19,7 @@ defmodule Sportyweb.Personal.Contact do
   @foreign_key_type :binary_id
   schema "contacts" do
     belongs_to :club, Club
+    has_many :contracts, Contract
     many_to_many :emails, Email, join_through: ContactEmail
     many_to_many :financial_data, FinancialData, join_through: ContactFinancialData
     many_to_many :notes, Note, join_through: ContactNote

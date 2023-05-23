@@ -4,8 +4,8 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartmentContracts do
   def change do
     create table(:department_contracts, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :department_id, references(:departments, on_delete: :nothing, type: :binary_id)
-      add :contract_id, references(:contracts, on_delete: :nothing, type: :binary_id)
+      add :department_id, references(:departments, on_delete: :delete_all, type: :binary_id), null: false
+      add :contract_id, references(:contracts, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end

@@ -2,12 +2,14 @@ defmodule Sportyweb.Organization.DepartmentContract do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Legal.Contract
+  alias Sportyweb.Organization.Department
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "department_contracts" do
-
-    field :department_id, :binary_id
-    field :contract_id, :binary_id
+    belongs_to :department, Department
+    belongs_to :contract, Contract
 
     timestamps()
   end
@@ -15,7 +17,7 @@ defmodule Sportyweb.Organization.DepartmentContract do
   @doc false
   def changeset(department_contract, attrs) do
     department_contract
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:department_id, :contract_id])
+    |> validate_required([:department_id, :contract_id])
   end
 end

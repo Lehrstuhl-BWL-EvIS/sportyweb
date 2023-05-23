@@ -4,7 +4,9 @@ defmodule Sportyweb.Organization.Club do
 
   alias Sportyweb.Asset.Venue
   alias Sportyweb.Calendar.Event
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.Fee
+  alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.ClubEmail
   alias Sportyweb.Organization.ClubFinancialData
   alias Sportyweb.Organization.ClubNote
@@ -18,10 +20,12 @@ defmodule Sportyweb.Organization.Club do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "clubs" do
+    has_many :all_contracts, Contract
     has_many :all_fees, Fee
     has_many :departments, Department
     has_many :events, Event
     has_many :venues, Venue
+    many_to_many :contracts, Contract, join_through: ClubContract
     many_to_many :emails, Email, join_through: ClubEmail
     many_to_many :financial_data, FinancialData, join_through: ClubFinancialData
     many_to_many :notes, Note, join_through: ClubNote
