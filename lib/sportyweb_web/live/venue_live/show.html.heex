@@ -22,6 +22,27 @@
 </.card>
 
 <.header level="2" class="mt-12">
+  Gebühren
+  <:actions>
+    <.link navigate={~p"/venues/#{@venue}/fees/new"}>
+      <.button>Standortspezifische Gebühr erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@fees) do %>
+    <.live_component
+      id="index-fees-table"
+      module={SportywebWeb.FeeLive.IndexFeesTableComponent}
+      fees={@fees}
+    />
+  <% else %>
+    <p>Bisher wurde noch keine standortspezifische Gebühr erstellt.</p>
+  <% end %>
+</.card>
+
+<.header level="2" class="mt-12">
   Equipment
   <:actions>
     <.link navigate={~p"/venues/#{@venue}/equipment/new"}>
@@ -55,26 +76,5 @@
     </.table>
   <% else %>
     <p>Bisher wurde noch kein Equipment erstellt.</p>
-  <% end %>
-</.card>
-
-<.header level="2" class="mt-12">
-  Gebühren
-  <:actions>
-    <.link navigate={~p"/venues/#{@venue}/fees/new"}>
-      <.button>Standortspezifische Gebühr erstellen</.button>
-    </.link>
-  </:actions>
-</.header>
-
-<.card>
-  <%= if Enum.any?(@fees) do %>
-    <.live_component
-      id="index-fees-table"
-      module={SportywebWeb.FeeLive.IndexFeesTableComponent}
-      fees={@fees}
-    />
-  <% else %>
-    <p>Bisher wurde noch keine standortspezifische Gebühr erstellt.</p>
   <% end %>
 </.card>
