@@ -37,6 +37,23 @@ defmodule Sportyweb.Legal do
   end
 
   @doc """
+  Returns a list of fees that might be possible successors for the given fee.
+
+  ## Examples
+
+      iex> list_possible_successor_fees(1, "club")
+      [%Fee{}, ...]
+
+  """
+  def list_possible_successor_fees(fee) do
+    # TODO:
+    # - general and non-general
+    # - archive_date > today
+    # - max_age > fee.max_age
+    Legal.list_general_fees(fee.club_id, fee.type)
+  end
+
+  @doc """
   Gets a single fee.
 
   Raises `Ecto.NoResultsError` if the Fee does not exist.
@@ -121,12 +138,7 @@ defmodule Sportyweb.Legal do
 
   """
   def delete_fee(%Fee{} = fee) do
-    fee = Legal.get_fee!(fee.id, :contracts)
-    if Enum.any?(fee.contracts) do
-      {:error, %Ecto.Changeset{}}
-    else
-      Repo.delete(fee)
-    end
+    Repo.delete(fee)
   end
 
   @doc """

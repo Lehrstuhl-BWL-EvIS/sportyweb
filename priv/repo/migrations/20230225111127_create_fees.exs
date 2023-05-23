@@ -18,6 +18,7 @@ defmodule Sportyweb.Repo.Migrations.CreateFees do
       add :commission_date, :date, null: false
       add :archive_date, :date, null: true
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
+      add :successor_id, references(:fees, on_delete: :restrict, type: :binary_id), null: true
 
       timestamps()
     end

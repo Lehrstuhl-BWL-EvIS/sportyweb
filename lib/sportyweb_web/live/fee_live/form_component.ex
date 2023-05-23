@@ -74,11 +74,21 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:minimum_age_in_years]} type="number" label="Mindestalter" />
+                <.input field={@form[:minimum_age_in_years]} type="number" label="Mindestalter (optional)" />
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:maximum_age_in_years]} type="number" label="Höchstalter" />
+                <.input field={@form[:maximum_age_in_years]} type="number" label="Höchstalter (optional)" />
+              </div>
+
+              <div class="col-span-12">
+                <.input
+                  field={@form[:successor_id]}
+                  type="select"
+                  label="Nachfolger-Gebühr (optional)"
+                  options={Legal.list_possible_successor_fees(@fee) |> Enum.map(&{&1.name, &1.id})}
+                  prompt="Bitte auswählen"
+                />
               </div>
             </.input_grid>
 
@@ -103,11 +113,14 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               </div>
             </.input_grid>
 
-            <.input_grid class="pt-6" :if={@fee.id && !Fee.is_archived?(@fee) && Enum.any?(@fee.contracts)}>
+            <.input_grid class="pt-6" :if={@fee.id && !Fee.is_archived?(@fee) && (Enum.any?(@fee.ancestors) || Enum.any?(@fee.contracts))}>
               <div class="col-span-12">
                 <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
-                  Diese Gebühr wird derzeit in <%= Enum.count(@fee.contracts) %> Verträgen verwendet
-                  und kann deshalb nicht gelöscht, sondern nur archiviert werden.
+                  Diese Gebühr kann nicht gelöscht, sondern nur archiviert werden, denn:
+                  <ul class="list-disc pl-4">
+                    <li :if={Enum.any?(@fee.contracts)}>Sie wird in <%= Enum.count(@fee.contracts) %> Verträgen verwendet.</li>
+                    <li :if={Enum.any?(@fee.ancestors)}>Sie dient <%= Enum.count(@fee.ancestors) %> anderen Gebühren als Nachfolger.</li>
+                  </ul>
                 </div>
               </div>
             </.input_grid>
@@ -116,7 +129,8 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               <div class="col-span-12">
                 <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
                   Diese Gebühr ist derzeit archiviert.
-                  Wird das Datum im Feld "Archiviert ab" gelöscht oder durch ein Zukünftiges ersetzt, lässt sich die Archivierung komplett bzw. temporär aufheben.
+                  Wird das Datum im Feld "Archiviert ab" gelöscht oder durch ein Zukünftiges ersetzt,
+                  lässt sich die Archivierung komplett bzw. temporär aufheben.
                 </div>
               </div>
             </.input_grid>
@@ -130,14 +144,14 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               </.link>
             </div>
             <.button
-              :if={@fee.id && !Enum.any?(@fee.contracts)}
+              :if={@fee.id && !(Enum.any?(@fee.ancestors) || Enum.any?(@fee.contracts))}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @fee.id})}
               data-confirm="Unwiderruflich löschen?">
               Löschen
             </.button>
             <.button
-              :if={@fee.id && !Fee.is_archived?(@fee) && Enum.any?(@fee.contracts)}
+              :if={@fee.id && !Fee.is_archived?(@fee) && (Enum.any?(@fee.ancestors) || Enum.any?(@fee.contracts))}
               class="bg-amber-700 hover:bg-amber-800"
               phx-target={@myself}
               phx-click={JS.push("archive", value: %{id: @fee.id})}

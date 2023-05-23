@@ -35,7 +35,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    fee = Legal.get_fee!(id, [:club, :notes, :contracts])
+    fee = Legal.get_fee!(id, [:club, :ancestors, :contracts, :notes])
     fee_title = if fee.is_general, do: "Allgemeine", else: "Spezifische"
     club_navigation_current_item = case fee.type do
       "department" -> :structure

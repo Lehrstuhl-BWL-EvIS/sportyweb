@@ -22,6 +22,8 @@ defmodule Sportyweb.Legal.Fee do
   @foreign_key_type :binary_id
   schema "fees" do
     belongs_to :club, Club
+    belongs_to :successor, Fee, foreign_key: :successor_id
+    has_many :ancestors, Fee, foreign_key: :successor_id
     has_many :contracts, Contract
     many_to_many :departments, Department, join_through: DepartmentFee
     many_to_many :equipment, Equipment, join_through: EquipmentFee
@@ -90,6 +92,7 @@ defmodule Sportyweb.Legal.Fee do
     fee
     |> cast(attrs, [
       :club_id,
+      :successor_id,
       :is_general,
       :type,
       :name,
