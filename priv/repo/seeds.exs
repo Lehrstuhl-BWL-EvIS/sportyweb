@@ -17,6 +17,7 @@ alias Sportyweb.Accounts.User
 alias Sportyweb.Asset.Equipment
 alias Sportyweb.Asset.Venue
 alias Sportyweb.Calendar.Event
+alias Sportyweb.Legal.Contract
 alias Sportyweb.Legal.Fee
 alias Sportyweb.Organization
 alias Sportyweb.Organization.Club
@@ -408,125 +409,6 @@ Organization.list_clubs()
   # No data for the "empty club"!
   if club.id != club_4.id do
 
-    # Events
-
-    for i <- 0..Enum.random(10..30) do
-      event = Repo.insert!(%Event{
-        club_id: club.id,
-        name: "Verans.: #{Faker.Lorem.characters(Enum.random(5..15))}",
-        reference_number: Sportyweb.SeedHelper.get_random_string(5),
-        status: "public",
-        description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
-        minimum_participants: 0,
-        maximum_participants: Enum.random(3..40),
-        minimum_age_in_years: 0,
-        maximum_age_in_years: Enum.random(5..100),
-        location_type: "free_form",
-        location_description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
-      })
-
-      # Fees: Specific - Event
-
-      Repo.insert!(%Fee{
-        club_id: club.id,
-        is_general: false,
-        type: "event",
-        name: "Spez. Teilnahmegebühr Veranstaltung #{event.reference_number}",
-        reference_number: Sportyweb.SeedHelper.get_random_string(3),
-        description: "",
-        base_fee_in_eur_cent: Enum.random(10..150) * 100,
-        admission_fee_in_eur_cent: 0,
-        is_recurring: true,
-        is_group_only: false,
-        minimum_age_in_years: 0,
-        maximum_age_in_years: 100,
-        commission_date: ~D[2023-01-01],
-        events: [event]
-      })
-    end
-
-    # Contacts
-
-    for i <- 0..Enum.random(10..30) do
-      # Use the context function instead of Repo.insert!() to invoke the changeset which sets the name.
-      Personal.create_contact(%{
-        club_id: club.id,
-        type: (if :rand.uniform() < 0.7, do: "person", else: "organization"),
-        organization_name: "#{Faker.Company.buzzword_prefix()} #{Faker.Industry.sub_sector()} #{Faker.Company.buzzword_prefix()}",
-        organization_type: Contact.get_valid_organization_types()|> Enum.map(fn organization_type -> organization_type[:value] end) |> Enum.random(),
-        person_last_name: Faker.Person.last_name(),
-        person_first_name_1: Faker.Person.first_name(),
-        person_first_name_2: Faker.Person.first_name(),
-        person_gender: Contact.get_valid_genders() |> Enum.map(fn gender -> gender[:value] end) |> Enum.random(),
-        person_birthday: Faker.Date.date_of_birth(6..99)
-      })
-    end
-
-    # Venues
-
-    for i <- 0..Enum.random(3..7) do
-      venue = Repo.insert!(%Venue{
-        club_id: club.id,
-        name: (if i == 0, do: "Zentrale", else: "Standort #{i + 1}"),
-        reference_number: String.pad_leading("#{i + 1}", 3, "0"),
-        description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
-        is_main: i == 0
-      })
-
-      # Fees: Specific - Venue
-
-      Repo.insert!(%Fee{
-        club_id: club.id,
-        is_general: false,
-        type: "venue",
-        name: "Spez. Standortmiete #{venue.reference_number}",
-        reference_number: Sportyweb.SeedHelper.get_random_string(3),
-        description: "",
-        base_fee_in_eur_cent: Enum.random(10..150) * 100,
-        admission_fee_in_eur_cent: 0,
-        is_recurring: true,
-        is_group_only: false,
-        minimum_age_in_years: 0,
-        maximum_age_in_years: 100,
-        commission_date: ~D[2023-01-01],
-        venues: [venue]
-      })
-
-      # Equipment
-
-      for j <- 0..Enum.random(1..30) do
-        equipment = Repo.insert!(%Equipment{
-          venue_id: venue.id,
-          name: Faker.Commerce.product_name(),
-          reference_number: Sportyweb.SeedHelper.get_random_string(5),
-          serial_number: Sportyweb.SeedHelper.get_random_string(15),
-          description: (if :rand.uniform() < 0.50, do: Faker.Lorem.paragraph(), else: ""),
-          purchase_date: Faker.Date.backward(Enum.random(300..2000)),
-          commission_date: Faker.Date.backward(Enum.random(0..299)),
-          decommission_date: (if :rand.uniform() < 0.65, do: Faker.Date.forward(Enum.random(100..2000)), else: nil)
-        })
-
-        # Fees: Specific - Equipment
-
-        Repo.insert!(%Fee{
-          club_id: club.id,
-          is_general: false,
-          type: "equipment",
-          name: "Spez. Ausleihgebühr Equipment #{equipment.reference_number}",
-          reference_number: Sportyweb.SeedHelper.get_random_string(3),
-          description: "",
-          base_fee_in_eur_cent: Enum.random(10..150) * 100,
-          admission_fee_in_eur_cent: 0,
-          is_recurring: true,
-          is_group_only: false,
-          minimum_age_in_years: 0,
-          maximum_age_in_years: 100,
-          commission_date: ~D[2023-01-01],
-          equipment: [equipment]
-        })
-      end
-    end
-
     # Fees: General - Club
 
     Repo.insert!(%Fee{
@@ -561,7 +443,7 @@ Organization.list_clubs()
       commission_date: ~D[2020-01-01]
     })
 
-    Repo.insert!(%Fee{
+    default_club_fee = Repo.insert!(%Fee{
       club_id: club.id,
       is_general: true,
       type: "club",
@@ -824,5 +706,137 @@ Organization.list_clubs()
         })
       end)
     end)
+
+    # Events
+
+    for i <- 0..Enum.random(10..30) do
+      event = Repo.insert!(%Event{
+        club_id: club.id,
+        name: "Verans.: #{Faker.Lorem.characters(Enum.random(5..15))}",
+        reference_number: Sportyweb.SeedHelper.get_random_string(5),
+        status: "public",
+        description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
+        minimum_participants: 0,
+        maximum_participants: Enum.random(3..40),
+        minimum_age_in_years: 0,
+        maximum_age_in_years: Enum.random(5..100),
+        location_type: "free_form",
+        location_description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
+      })
+
+      # Fees: Specific - Event
+
+      Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: false,
+        type: "event",
+        name: "Spez. Teilnahmegebühr Veranstaltung #{event.reference_number}",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(10..150) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 0,
+        maximum_age_in_years: 100,
+        commission_date: ~D[2023-01-01],
+        events: [event]
+      })
+    end
+
+    # Contacts & Contracts
+
+    for i <- 0..Enum.random(10..30) do
+      # Use the context function instead of Repo.insert!() to invoke the changeset which sets the name.
+      {:ok, %Contact{} = contact} = Personal.create_contact(%{
+        club_id: club.id,
+        type: (if :rand.uniform() < 0.7, do: "person", else: "organization"),
+        organization_name: "#{Faker.Company.buzzword_prefix()} #{Faker.Industry.sub_sector()} #{Faker.Company.buzzword_prefix()}",
+        organization_type: Contact.get_valid_organization_types()|> Enum.map(fn organization_type -> organization_type[:value] end) |> Enum.random(),
+        person_last_name: Faker.Person.last_name(),
+        person_first_name_1: Faker.Person.first_name(),
+        person_first_name_2: Faker.Person.first_name(),
+        person_gender: Contact.get_valid_genders() |> Enum.map(fn gender -> gender[:value] end) |> Enum.random(),
+        person_birthday: Faker.Date.date_of_birth(6..99)
+      })
+
+      if :rand.uniform() < 0.7 do
+        Repo.insert!(%Contract{
+          club_id: club.id,
+          contact_id: contact.id,
+          fee_id: default_club_fee.id,
+          signing_date: Date.utc_today(),
+          start_date: Date.utc_today(),
+          termination_date: nil,
+          end_date: nil,
+          clubs: [club]
+        })
+      end
+    end
+
+    # Venues
+
+    for i <- 0..Enum.random(3..7) do
+      venue = Repo.insert!(%Venue{
+        club_id: club.id,
+        name: (if i == 0, do: "Zentrale", else: "Standort #{i + 1}"),
+        reference_number: String.pad_leading("#{i + 1}", 3, "0"),
+        description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
+        is_main: i == 0
+      })
+
+      # Fees: Specific - Venue
+
+      Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: false,
+        type: "venue",
+        name: "Spez. Standortmiete #{venue.reference_number}",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(10..150) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 0,
+        maximum_age_in_years: 100,
+        commission_date: ~D[2023-01-01],
+        venues: [venue]
+      })
+
+      # Equipment
+
+      for j <- 0..Enum.random(1..30) do
+        equipment = Repo.insert!(%Equipment{
+          venue_id: venue.id,
+          name: Faker.Commerce.product_name(),
+          reference_number: Sportyweb.SeedHelper.get_random_string(5),
+          serial_number: Sportyweb.SeedHelper.get_random_string(15),
+          description: (if :rand.uniform() < 0.50, do: Faker.Lorem.paragraph(), else: ""),
+          purchase_date: Faker.Date.backward(Enum.random(300..2000)),
+          commission_date: Faker.Date.backward(Enum.random(0..299)),
+          decommission_date: (if :rand.uniform() < 0.65, do: Faker.Date.forward(Enum.random(100..2000)), else: nil)
+        })
+
+        # Fees: Specific - Equipment
+
+        Repo.insert!(%Fee{
+          club_id: club.id,
+          is_general: false,
+          type: "equipment",
+          name: "Spez. Ausleihgebühr Equipment #{equipment.reference_number}",
+          reference_number: Sportyweb.SeedHelper.get_random_string(3),
+          description: "",
+          base_fee_in_eur_cent: Enum.random(10..150) * 100,
+          admission_fee_in_eur_cent: 0,
+          is_recurring: true,
+          is_group_only: false,
+          minimum_age_in_years: 0,
+          maximum_age_in_years: 100,
+          commission_date: ~D[2023-01-01],
+          equipment: [equipment]
+        })
+      end
+    end
   end
 end)
