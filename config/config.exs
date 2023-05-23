@@ -41,7 +41,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.3.2",
+  version: "3.2.4", # IMPORTANT NOTE: Versions > 3.2.4 break the coloring of buttons. Check after future upgrade!
   default: [
     args: ~w(
       --config=tailwind.config.js
