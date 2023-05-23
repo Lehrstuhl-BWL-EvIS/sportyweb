@@ -16,7 +16,7 @@ defmodule Sportyweb.Repo.Migrations.CreateFees do
       add :minimum_age_in_years, :integer, null: true
       add :maximum_age_in_years, :integer, null: true
       add :commission_date, :date, null: false
-      add :decommission_date, :date, null: true
+      add :archive_date, :date, null: true
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()

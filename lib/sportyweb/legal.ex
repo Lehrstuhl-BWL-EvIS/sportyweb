@@ -6,6 +6,7 @@ defmodule Sportyweb.Legal do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
+  alias Sportyweb.Legal
   alias Sportyweb.Legal.Fee
 
   @doc """
@@ -120,7 +121,12 @@ defmodule Sportyweb.Legal do
 
   """
   def delete_fee(%Fee{} = fee) do
-    Repo.delete(fee)
+    fee = Legal.get_fee!(fee.id, :contracts)
+    if Enum.any?(fee.contracts) do
+      {:error, %Ecto.Changeset{}}
+    else
+      Repo.delete(fee)
+    end
   end
 
   @doc """
@@ -134,5 +140,23 @@ defmodule Sportyweb.Legal do
   """
   def change_fee(%Fee{} = fee, attrs \\ %{}) do
     Fee.changeset(fee, attrs)
+  end
+
+  @doc """
+  Archives a fee.
+
+  ## Examples
+
+      iex> archive_fee(fee)
+      {:ok, %Fee{}}
+
+      iex> archive_fee(fee)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def archive_fee(%Fee{} = fee) do
+    fee
+    |> Fee.archive_changeset(%{archive_date: Date.utc_today()})
+    |> Repo.update()
   end
 end

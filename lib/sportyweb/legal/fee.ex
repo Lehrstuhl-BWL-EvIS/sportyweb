@@ -9,6 +9,7 @@ defmodule Sportyweb.Legal.Fee do
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Calendar.EventFee
   alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.Fee
   alias Sportyweb.Legal.FeeNote
   alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.Department
@@ -43,7 +44,7 @@ defmodule Sportyweb.Legal.Fee do
     field :minimum_age_in_years, :integer, default: nil
     field :maximum_age_in_years, :integer, default: nil
     field :commission_date, :date, default: nil
-    field :decommission_date, :date, default: nil
+    field :archive_date, :date, default: nil
 
     timestamps()
   end
@@ -60,6 +61,10 @@ defmodule Sportyweb.Legal.Fee do
       [key: "Standort", value: "venue"],
       [key: "Equipment", value: "equipment"]
     ]
+  end
+
+  def is_archived?(%Fee{} = fee) do
+    fee.archive_date && fee.archive_date <= Date.utc_today()
   end
 
   @doc false
@@ -99,7 +104,7 @@ defmodule Sportyweb.Legal.Fee do
       :minimum_age_in_years,
       :maximum_age_in_years,
       :commission_date,
-      :decommission_date],
+      :archive_date],
       empty_values: ["", nil]
     )
     |> cast_assoc(:notes, required: false)
@@ -124,6 +129,12 @@ defmodule Sportyweb.Legal.Fee do
     |> validate_number(:admission_fee_in_eur_cent, greater_than_or_equal_to: 0, less_than_or_equal_to: 1_000_000)
     |> validate_number(:minimum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
     |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125) # TODO: max >= min
+  end
+
+  def archive_changeset(fee, attrs) do
+    fee
+    |> cast(attrs, [:archive_date], empty_values: ["", nil])
+    |> validate_required([:archive_date])
   end
 
   defp update_base_fee(changeset, fee, attrs) do
