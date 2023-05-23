@@ -18,7 +18,7 @@ defmodule Sportyweb.Personal do
 
   """
   def list_contacts(club_id) do
-    query = from(c in Contact, where: c.club_id == ^club_id, order_by: [c.organization_name, c.person_last_name, c.person_first_name_1, c.person_first_name_2])
+    query = from(c in Contact, where: c.club_id == ^club_id, order_by: [c.name])
     Repo.all(query)
   end
 
