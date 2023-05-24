@@ -74,19 +74,25 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:minimum_age_in_years]} type="number" label="Mindestalter (optional)" />
+                <.input field={@form[:minimum_age_in_years]} type="number" label="Mindestalter (optional)" min="0" />
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:maximum_age_in_years]} type="number" label="Höchstalter (optional)" />
+                <.input
+                  field={@form[:maximum_age_in_years]}
+                  type="number"
+                  label="Höchstalter (optional)"
+                  min="0"
+                  phx-change="update_successor_fees"
+                />
               </div>
 
-              <div class="col-span-12">
+              <div class="col-span-12" :if={Enum.any?(@successor_fees)}>
                 <.input
                   field={@form[:successor_id]}
                   type="select"
                   label="Nachfolger-Gebühr (optional)"
-                  options={Legal.list_possible_successor_fees(@fee) |> Enum.map(&{&1.name, &1.id})}
+                  options={@successor_fees |> Enum.map(&{&1.name, &1.id})}
                   prompt="Bitte auswählen"
                 />
               </div>
@@ -172,7 +178,8 @@ defmodule SportywebWeb.FeeLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_form(changeset)
+     |> assign_successor_fees(fee, fee.maximum_age_in_years)}
   end
 
   @impl true
@@ -187,6 +194,13 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
   def handle_event("save", %{"fee" => fee_params}, socket) do
     save_fee(socket, socket.assigns.action, fee_params)
+  end
+
+  @impl true
+  def handle_event("update_successor_fees", %{"fee" => %{"maximum_age_in_years" => maximum_age_in_years}}, socket) do
+    {:noreply,
+     socket
+     |> assign_successor_fees(socket.assigns.fee, maximum_age_in_years)}
   end
 
   @impl true
@@ -240,6 +254,10 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp assign_successor_fees(socket, fee, maximum_age_in_years) do
+    assign(socket, :successor_fees, Legal.list_successor_fees(fee, maximum_age_in_years))
   end
 
   defp create_association(socket, fee) do

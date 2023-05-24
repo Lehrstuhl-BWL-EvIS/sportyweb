@@ -53,7 +53,7 @@
       <%= if @fee.archive_date do %>
         -
         Diese Gebühr ist
-        <span :if={!Fee.is_archived?(@fee)}>nicht</span>
+        <span :if={!Fee.is_archived?(@fee)}>noch nicht</span>
         archiviert.
       <% end %>
     </:item>

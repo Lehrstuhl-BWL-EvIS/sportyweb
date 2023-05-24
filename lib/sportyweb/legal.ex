@@ -6,7 +6,6 @@ defmodule Sportyweb.Legal do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
-  alias Sportyweb.Legal
   alias Sportyweb.Legal.Fee
 
   @doc """
@@ -37,20 +36,49 @@ defmodule Sportyweb.Legal do
   end
 
   @doc """
-  Returns a list of fees that might be possible successors for the given fee.
+  Returns a list of fees that are possible successors for the given fee.
+  The selection is based on a set of different criteria.
 
   ## Examples
 
-      iex> list_possible_successor_fees(1, "club")
+      iex> list_successor_fees(1, "club")
       [%Fee{}, ...]
 
   """
-  def list_possible_successor_fees(fee) do
-    # TODO:
-    # - general and non-general
-    # - archive_date > today
-    # - max_age > fee.max_age
-    Legal.list_general_fees(fee.club_id, fee.type)
+  def list_successor_fees(fee, maximum_age_in_years) do
+    # TODOs:
+    # - also non-general, based on the "assigned" object
+    # - group_only
+
+    if maximum_age_in_years == nil || (is_binary(maximum_age_in_years) && String.trim(maximum_age_in_years) == "") do
+      []
+    else
+      maximum_age_in_years = case is_binary(maximum_age_in_years) do
+        true -> String.to_integer(String.trim(maximum_age_in_years))
+        _ -> maximum_age_in_years
+      end
+
+      query =
+        from(
+          f in Fee,
+          where: f.club_id == ^fee.club_id,
+          where: f.is_general == true,
+          where: f.type == ^fee.type,
+          where: is_nil(f.minimum_age_in_years) or f.minimum_age_in_years - 1 <= ^maximum_age_in_years,
+          where: is_nil(f.maximum_age_in_years) or f.maximum_age_in_years > ^maximum_age_in_years,
+          where: is_nil(f.archive_date) or f.archive_date > ^Date.utc_today(),
+          order_by: f.name)
+
+      # fee.id is nil for new, not yet persisted fees.
+      # This would lead to an error when executing the where clause with "!=".
+      # The following conditional avoid this and only extends the query if fee.nil is not nil.
+      query = case fee.id do
+        nil -> query
+        _ -> from(f in query, where: f.id != ^fee.id)
+      end
+
+      Repo.all(query)
+    end
   end
 
   @doc """
