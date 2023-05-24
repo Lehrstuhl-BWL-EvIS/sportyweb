@@ -24,5 +24,8 @@
     <:item title="Geburtstag" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
       <%= format_date_field_dmy(@contact.person_birthday) %>
     </:item>
+    <:item title="Mitglied" :if={Contact.has_active_membership_contract?(@contact)}>
+      <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
+    </:item>
   </.list>
 </.card>

@@ -18,7 +18,13 @@ defmodule Sportyweb.Legal do
 
   """
   def list_general_fees(club_id, type) do
-    query = from(f in Fee, where: f.club_id == ^club_id, where: f.is_general == true, where: f.type == ^type, order_by: f.name)
+    query =
+      from(
+        f in Fee,
+        where: f.club_id == ^club_id,
+        where: f.is_general == true,
+        where: f.type == ^type,
+        order_by: f.name)
     Repo.all(query)
   end
 

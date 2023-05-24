@@ -10,7 +10,7 @@ defmodule SportywebWeb.ContactLive.Index do
     {:ok,
      socket
      |> assign(:club_navigation_current_item, :contacts)
-     |> stream(:contacts, Personal.list_contacts(club_id))}
+     |> stream(:contacts, Personal.list_contacts(club_id, :contracts))}
   end
 
   @impl true
