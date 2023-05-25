@@ -12,6 +12,7 @@ defmodule Sportyweb.Organization.Club do
   alias Sportyweb.Organization.ClubNote
   alias Sportyweb.Organization.ClubPhone
   alias Sportyweb.Organization.Department
+  alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.ContactGroup
   alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.FinancialData
@@ -23,6 +24,7 @@ defmodule Sportyweb.Organization.Club do
   schema "clubs" do
     has_many :all_contracts, Contract
     has_many :all_fees, Fee
+    has_many :contacts, Contact
     has_many :contact_groups, ContactGroup
     has_many :departments, Department
     has_many :events, Event
