@@ -135,4 +135,100 @@ defmodule Sportyweb.Personal do
   def change_contact(%Contact{} = contact, attrs \\ %{}) do
     Contact.changeset(contact, attrs)
   end
+
+  alias Sportyweb.Personal.ContactGroup
+
+  @doc """
+  Returns the list of contact_groups.
+
+  ## Examples
+
+      iex> list_contact_groups()
+      [%ContactGroup{}, ...]
+
+  """
+  def list_contact_groups do
+    Repo.all(ContactGroup)
+  end
+
+  @doc """
+  Gets a single contact_group.
+
+  Raises `Ecto.NoResultsError` if the Contact group does not exist.
+
+  ## Examples
+
+      iex> get_contact_group!(123)
+      %ContactGroup{}
+
+      iex> get_contact_group!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_contact_group!(id), do: Repo.get!(ContactGroup, id)
+
+  @doc """
+  Creates a contact_group.
+
+  ## Examples
+
+      iex> create_contact_group(%{field: value})
+      {:ok, %ContactGroup{}}
+
+      iex> create_contact_group(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_contact_group(attrs \\ %{}) do
+    %ContactGroup{}
+    |> ContactGroup.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a contact_group.
+
+  ## Examples
+
+      iex> update_contact_group(contact_group, %{field: new_value})
+      {:ok, %ContactGroup{}}
+
+      iex> update_contact_group(contact_group, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_contact_group(%ContactGroup{} = contact_group, attrs) do
+    contact_group
+    |> ContactGroup.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a contact_group.
+
+  ## Examples
+
+      iex> delete_contact_group(contact_group)
+      {:ok, %ContactGroup{}}
+
+      iex> delete_contact_group(contact_group)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_contact_group(%ContactGroup{} = contact_group) do
+    Repo.delete(contact_group)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking contact_group changes.
+
+  ## Examples
+
+      iex> change_contact_group(contact_group)
+      %Ecto.Changeset{data: %ContactGroup{}}
+
+  """
+  def change_contact_group(%ContactGroup{} = contact_group, attrs \\ %{}) do
+    ContactGroup.changeset(contact_group, attrs)
+  end
 end
