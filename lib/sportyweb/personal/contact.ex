@@ -106,6 +106,7 @@ defmodule Sportyweb.Personal.Contact do
       :type,
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
     )
+    |> validate_required_type_condition()
     |> validate_length(:organization_name, max: 250)
     |> validate_inclusion(
       :organization_type,
@@ -121,7 +122,19 @@ defmodule Sportyweb.Personal.Contact do
     |> set_name()
   end
 
-  defp set_name(changeset) do
+  defp validate_required_type_condition(%Ecto.Changeset{} = changeset) do
+    # Some fields are only required if the type has a certain value.
+    case get_field(changeset, :type) do
+      "organization" ->
+        changeset |> validate_required([:organization_name, :organization_type])
+      "person" ->
+        changeset |> validate_required([:person_last_name, :person_first_name_1, :person_gender, :person_birthday])
+      _ ->
+        changeset
+    end
+  end
+
+  defp set_name(%Ecto.Changeset{} = changeset) do
     # The "name" field is only set internally and its content is based on
     # the contact type and the content of (multiple) other fields.
 

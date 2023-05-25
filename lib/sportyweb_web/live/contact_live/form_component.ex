@@ -1,5 +1,6 @@
 defmodule SportywebWeb.ContactLive.FormComponent do
   use SportywebWeb, :live_component
+  import Ecto.Changeset
 
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
@@ -21,7 +22,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
           phx-submit="save"
         >
           <.input_grid>
-            <div class="col-span-12">
+            <div class={["col-span-12", (if @step != 1, do: "hidden")]}>
               <.input
                 field={@form[:type]}
                 type="select"
@@ -31,50 +32,66 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               />
             </div>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:organization_name]} type="text" label="Organisationsname" />
-            </div>
+            <%= if @step == 2 do %>
+              <%= if @contact_type == "organization" do %>
+                <div class="col-span-12 md:col-span-6">
+                  <.input field={@form[:organization_name]} type="text" label="Organisationsname" />
+                </div>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input
-                field={@form[:organization_type]}
-                type="select"
-                label="Organisationstyp"
-                options={Contact.get_valid_organization_types}
-                prompt="Bitte auswählen"
-              />
-            </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input
+                    field={@form[:organization_type]}
+                    type="select"
+                    label="Organisationstyp"
+                    options={Contact.get_valid_organization_types}
+                    prompt="Bitte auswählen"
+                  />
+                </div>
+              <% else %>
+                <div class="col-span-12 md:col-span-4">
+                  <.input field={@form[:person_last_name]} type="text" label="Nachname" />
+                </div>
 
-            <div class="col-span-12 md:col-span-4">
-              <.input field={@form[:person_last_name]} type="text" label="Nachname" />
-            </div>
+                <div class="col-span-12 md:col-span-4">
+                  <.input field={@form[:person_first_name_1]} type="text" label="Vorname" />
+                </div>
 
-            <div class="col-span-12 md:col-span-4">
-              <.input field={@form[:person_first_name_1]} type="text" label="Vorname" />
-            </div>
+                <div class="col-span-12 md:col-span-4">
+                  <.input field={@form[:person_first_name_2]} type="text" label="2. Vorname (optional)" />
+                </div>
 
-            <div class="col-span-12 md:col-span-4">
-              <.input field={@form[:person_first_name_2]} type="text" label="2. Vorname (optional)" />
-            </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input
+                    field={@form[:person_gender]}
+                    type="select"
+                    label="Geschlecht"
+                    options={Contact.get_valid_genders}
+                    prompt="Bitte auswählen"
+                  />
+                </div>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input
-                field={@form[:person_gender]}
-                type="select"
-                label="Geschlecht"
-                options={Contact.get_valid_genders}
-                prompt="Bitte auswählen"
-              />
-            </div>
-
-            <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:person_birthday]} type="date" label="Geburtstag" />
-            </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input field={@form[:person_birthday]} type="date" label="Geburtstag" />
+                </div>
+              <% end %>
+            <% end %>
           </.input_grid>
 
           <:actions>
             <div>
-              <.button phx-disable-with="Speichern...">Speichern</.button>
+              <%= if @step == 1 && @contact_type != "" do %>
+                <.button
+                  type="button"
+                  phx-target={@myself}
+                  phx-click={JS.push("update_step", value: %{step: 2})}>
+                  Weiter
+                </.button>
+              <% end %>
+
+              <%= if @step == 2 do %>
+                <.button phx-disable-with="Speichern...">Speichern</.button>
+              <% end %>
+
               <.link navigate={@navigate} class="mx-2 py-1 px-1 text-sm font-semibold hover:underline">
                 Abbrechen
               </.link>
@@ -97,9 +114,16 @@ defmodule SportywebWeb.ContactLive.FormComponent do
   def update(%{contact: contact} = assigns, socket) do
     changeset = Personal.change_contact(contact)
 
+    step = cond do
+      get_field(changeset, :type) != "" -> 2
+      true -> 1
+    end
+
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:step, step)
+     |> assign(:contact_type, contact.type)
      |> assign_form(changeset)}
   end
 
@@ -110,11 +134,21 @@ defmodule SportywebWeb.ContactLive.FormComponent do
       |> Personal.change_contact(contact_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign_form(socket, changeset)}
+    {:noreply,
+     socket
+     |> assign(:contact_type, get_field(changeset, :type))
+     |> assign_form(changeset)}
   end
 
   def handle_event("save", %{"contact" => contact_params}, socket) do
     save_contact(socket, socket.assigns.action, contact_params)
+  end
+
+  @impl true
+  def handle_event("update_step", %{"step" => step}, socket) do
+    {:noreply,
+     socket
+     |> assign(:step, step)}
   end
 
   defp save_contact(socket, :edit, contact_params) do
