@@ -36,8 +36,8 @@
 <.card>
   <%= if Enum.any?(@fees) do %>
     <.live_component
-      id="index-fees-table"
       module={SportywebWeb.FeeLive.IndexFeesTableComponent}
+      id="index-fees-table"
       fees={@fees}
     />
   <% else %>
