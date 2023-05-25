@@ -4,7 +4,7 @@ defmodule Sportyweb.Repo.Migrations.CreateContactGroups do
   def change do
     create table(:contact_groups, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :club_id, references(:clubs, on_delete: :nothing, type: :binary_id)
+      add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()
     end

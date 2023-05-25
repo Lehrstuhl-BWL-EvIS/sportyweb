@@ -5,6 +5,8 @@ defmodule Sportyweb.Personal.Contact do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization.Club
   alias Sportyweb.Personal.ContactEmail
+  alias Sportyweb.Personal.ContactGroup
+  alias Sportyweb.Personal.ContactGroupContact
   alias Sportyweb.Personal.ContactFinancialData
   alias Sportyweb.Personal.ContactNote
   alias Sportyweb.Personal.ContactPhone
@@ -20,6 +22,7 @@ defmodule Sportyweb.Personal.Contact do
   schema "contacts" do
     belongs_to :club, Club
     has_many :contracts, Contract
+    many_to_many :contact_groups, ContactGroup, join_through: ContactGroupContact
     many_to_many :emails, Email, join_through: ContactEmail
     many_to_many :financial_data, FinancialData, join_through: ContactFinancialData
     many_to_many :notes, Note, join_through: ContactNote

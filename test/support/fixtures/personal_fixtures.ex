@@ -34,10 +34,12 @@ defmodule Sportyweb.PersonalFixtures do
   Generate a contact_group.
   """
   def contact_group_fixture(attrs \\ %{}) do
+    club = club_fixture()
+
     {:ok, contact_group} =
       attrs
       |> Enum.into(%{
-
+        club_id: club.id
       })
       |> Sportyweb.Personal.create_contact_group()
 
