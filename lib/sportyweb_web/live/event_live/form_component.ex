@@ -78,6 +78,28 @@ defmodule SportywebWeb.EventLive.FormComponent do
                 <.input field={@form[:location_description]} type="textarea" label="Veranstaltungsort" />
               </div>
             </.input_grid>
+
+            <.input_grid class="pt-6">
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.EmailsFormComponent}
+                id={"emails"}
+                form={@form}
+              />
+
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.PhonesFormComponent}
+                id={"phones"}
+                form={@form}
+              />
+            </.input_grid>
+
+            <.input_grid class="pt-6">
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.NotesFormComponent}
+                id={"notes"}
+                form={@form}
+              />
+            </.input_grid>
           </.input_grids>
 
           <:actions>

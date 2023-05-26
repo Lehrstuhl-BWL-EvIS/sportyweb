@@ -19,27 +19,51 @@ defmodule SportywebWeb.ClubLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <.input_grid>
-            <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:name]} type="text" label="Name" />
-            </div>
+          <.input_grids>
+            <.input_grid>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:name]} type="text" label="Name" />
+              </div>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
-            </div>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+              </div>
 
-            <div class="col-span-12">
-              <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
-            </div>
+              <div class="col-span-12">
+                <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
+              </div>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:website_url]} type="text" label="URL (optional)" />
-            </div>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:website_url]} type="text" label="URL (optional)" />
+              </div>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:foundation_date]} type="date" label="Gründungsdatum" />
-            </div>
-          </.input_grid>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:foundation_date]} type="date" label="Gründungsdatum" />
+              </div>
+            </.input_grid>
+
+            <.input_grid class="pt-6">
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.EmailsFormComponent}
+                id={"emails"}
+                form={@form}
+              />
+
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.PhonesFormComponent}
+                id={"phones"}
+                form={@form}
+              />
+            </.input_grid>
+
+            <.input_grid class="pt-6">
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.NotesFormComponent}
+                id={"notes"}
+                form={@form}
+              />
+            </.input_grid>
+          </.input_grids>
 
           <:actions>
             <div>

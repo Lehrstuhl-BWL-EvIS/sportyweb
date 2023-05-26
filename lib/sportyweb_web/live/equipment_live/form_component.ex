@@ -19,46 +19,70 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <.input_grid>
-            <%= if @equipment.id do %>
-              <div class="col-span-12">
-                <.input
-                  field={@form[:venue_id]}
-                  type="select"
-                  label="Standort"
-                  options={Asset.list_venues(@equipment.venue.club_id) |> Enum.map(&{&1.name, &1.id})}
-                />
+          <.input_grids>
+            <.input_grid>
+              <%= if @equipment.id do %>
+                <div class="col-span-12">
+                  <.input
+                    field={@form[:venue_id]}
+                    type="select"
+                    label="Standort"
+                    options={Asset.list_venues(@equipment.venue.club_id) |> Enum.map(&{&1.name, &1.id})}
+                  />
+                </div>
+              <% end %>
+
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:name]} type="text" label="Name" />
               </div>
-            <% end %>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:name]} type="text" label="Name" />
-            </div>
+              <div class="col-span-12 md:col-span-3">
+                <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+              </div>
 
-            <div class="col-span-12 md:col-span-3">
-              <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
-            </div>
+              <div class="col-span-12 md:col-span-3">
+                <.input field={@form[:serial_number]} type="text" label="Seriennummer (optional)" />
+              </div>
 
-            <div class="col-span-12 md:col-span-3">
-              <.input field={@form[:serial_number]} type="text" label="Seriennummer (optional)" />
-            </div>
+              <div class="col-span-12">
+                <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
+              </div>
 
-            <div class="col-span-12">
-              <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
-            </div>
+              <div class="col-span-12 md:col-span-4">
+                <.input field={@form[:purchase_date]} type="date" label="Gekauft am (optional)" />
+              </div>
 
-            <div class="col-span-12 md:col-span-4">
-              <.input field={@form[:purchase_date]} type="date" label="Gekauft am (optional)" />
-            </div>
+              <div class="col-span-12 md:col-span-4">
+                <.input field={@form[:commission_date]} type="date" label="Nutzung ab (optional)" />
+              </div>
 
-            <div class="col-span-12 md:col-span-4">
-              <.input field={@form[:commission_date]} type="date" label="Nutzung ab (optional)" />
-            </div>
+              <div class="col-span-12 md:col-span-4">
+                <.input field={@form[:decommission_date]} type="date" label="Nutzung bis (optional)" />
+              </div>
+            </.input_grid>
 
-            <div class="col-span-12 md:col-span-4">
-              <.input field={@form[:decommission_date]} type="date" label="Nutzung bis (optional)" />
-            </div>
-          </.input_grid>
+            <.input_grid class="pt-6">
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.EmailsFormComponent}
+                id={"emails"}
+                form={@form}
+              />
+
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.PhonesFormComponent}
+                id={"phones"}
+                form={@form}
+              />
+            </.input_grid>
+
+            <.input_grid class="pt-6">
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.NotesFormComponent}
+                id={"notes"}
+                form={@form}
+              />
+            </.input_grid>
+          </.input_grids>
 
           <:actions>
             <div>

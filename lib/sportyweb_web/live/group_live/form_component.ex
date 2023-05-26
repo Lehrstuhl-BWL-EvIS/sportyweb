@@ -19,34 +19,60 @@ defmodule SportywebWeb.GroupLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <.input_grid>
+          <.input_grids>
             <%= if @group.id do %>
-              <div class="col-span-12">
-                <.input
-                  field={@form[:department_id]}
-                  type="select"
-                  label="Abteilung"
-                  options={Organization.list_departments(@group.department.club_id) |> Enum.map(&{&1.name, &1.id})}
-                />
-              </div>
+              <.input_grid>
+                <div class="col-span-12">
+                  <.input
+                    field={@form[:department_id]}
+                    type="select"
+                    label="Abteilung"
+                    options={Organization.list_departments(@group.department.club_id) |> Enum.map(&{&1.name, &1.id})}
+                  />
+                </div>
+              </.input_grid>
             <% end %>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:name]} type="text" label="Name" />
-            </div>
+            <.input_grid class="pt-6">
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:name]} type="text" label="Name" />
+              </div>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
-            </div>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+              </div>
 
-            <div class="col-span-12">
-              <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
-            </div>
+              <div class="col-span-12">
+                <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
+              </div>
 
-            <div class="col-span-12 md:col-span-6">
-              <.input field={@form[:creation_date]} type="date" label="Erstellungsdatum" />
-            </div>
-          </.input_grid>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:creation_date]} type="date" label="Erstellungsdatum" />
+              </div>
+            </.input_grid>
+
+            <.input_grid class="pt-6">
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.EmailsFormComponent}
+                id={"emails"}
+                form={@form}
+              />
+
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.PhonesFormComponent}
+                id={"phones"}
+                form={@form}
+              />
+            </.input_grid>
+
+            <.input_grid class="pt-6">
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.NotesFormComponent}
+                id={"notes"}
+                form={@form}
+              />
+            </.input_grid>
+          </.input_grids>
 
           <:actions>
             <div>

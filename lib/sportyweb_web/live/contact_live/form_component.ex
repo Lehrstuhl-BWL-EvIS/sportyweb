@@ -21,61 +21,96 @@ defmodule SportywebWeb.ContactLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
-          <.input_grid>
-            <div class={["col-span-12", (if @step != 1, do: "hidden")]}>
-              <.input
-                field={@form[:type]}
-                type="select"
-                label="Art"
-                options={Contact.get_valid_types}
-                prompt="Bitte auswählen"
-              />
-            </div>
+          <div class="hidden">
+            <.input field={@form[:type]} type="hidden" readonly />
+          </div>
+
+          <.input_grids>
+            <%= if @step == 1 do %>
+              <.input_grid>
+                <div class="col-span-12" id="step-1-type">
+                  <!-- Don't remove the id of the div, otherwise LiveView doesn't remove the input in step 2. -->
+                  <.input
+                    field={@form[:type]}
+                    type="select"
+                    label="Art"
+                    options={Contact.get_valid_types}
+                    prompt="Bitte auswählen"
+                  />
+                </div>
+              </.input_grid>
+            <% end %>
 
             <%= if @step == 2 do %>
               <%= if @contact_type == "organization" do %>
-                <div class="col-span-12 md:col-span-6">
-                  <.input field={@form[:organization_name]} type="text" label="Organisationsname" />
-                </div>
+                <.input_grid>
+                  <div class="col-span-12 md:col-span-6">
+                    <.input field={@form[:organization_name]} type="text" label="Organisationsname" />
+                  </div>
 
-                <div class="col-span-12 md:col-span-6">
-                  <.input
-                    field={@form[:organization_type]}
-                    type="select"
-                    label="Organisationstyp"
-                    options={Contact.get_valid_organization_types}
-                    prompt="Bitte auswählen"
-                  />
-                </div>
+                  <div class="col-span-12 md:col-span-6">
+                    <.input
+                      field={@form[:organization_type]}
+                      type="select"
+                      label="Organisationstyp"
+                      options={Contact.get_valid_organization_types}
+                      prompt="Bitte auswählen"
+                    />
+                  </div>
+                </.input_grid>
               <% else %>
-                <div class="col-span-12 md:col-span-4">
-                  <.input field={@form[:person_last_name]} type="text" label="Nachname" />
-                </div>
+                <.input_grid>
+                  <div class="col-span-12 md:col-span-4">
+                    <.input field={@form[:person_last_name]} type="text" label="Nachname" />
+                  </div>
 
-                <div class="col-span-12 md:col-span-4">
-                  <.input field={@form[:person_first_name_1]} type="text" label="Vorname" />
-                </div>
+                  <div class="col-span-12 md:col-span-4">
+                    <.input field={@form[:person_first_name_1]} type="text" label="Vorname" />
+                  </div>
 
-                <div class="col-span-12 md:col-span-4">
-                  <.input field={@form[:person_first_name_2]} type="text" label="2. Vorname (optional)" />
-                </div>
+                  <div class="col-span-12 md:col-span-4">
+                    <.input field={@form[:person_first_name_2]} type="text" label="2. Vorname (optional)" />
+                  </div>
 
-                <div class="col-span-12 md:col-span-6">
-                  <.input
-                    field={@form[:person_gender]}
-                    type="select"
-                    label="Geschlecht"
-                    options={Contact.get_valid_genders}
-                    prompt="Bitte auswählen"
-                  />
-                </div>
+                  <div class="col-span-12 md:col-span-6">
+                    <.input
+                      field={@form[:person_gender]}
+                      type="select"
+                      label="Geschlecht"
+                      options={Contact.get_valid_genders}
+                      prompt="Bitte auswählen"
+                    />
+                  </div>
 
-                <div class="col-span-12 md:col-span-6">
-                  <.input field={@form[:person_birthday]} type="date" label="Geburtstag" />
-                </div>
+                  <div class="col-span-12 md:col-span-6">
+                    <.input field={@form[:person_birthday]} type="date" label="Geburtstag" />
+                  </div>
+                </.input_grid>
               <% end %>
+
+              <.input_grid class="pt-6">
+                <.live_component
+                  module={SportywebWeb.PolymorphicLive.EmailsFormComponent}
+                  id={"emails"}
+                  form={@form}
+                />
+
+                <.live_component
+                  module={SportywebWeb.PolymorphicLive.PhonesFormComponent}
+                  id={"phones"}
+                  form={@form}
+                />
+              </.input_grid>
+
+              <.input_grid class="pt-6">
+                <.live_component
+                  module={SportywebWeb.PolymorphicLive.NotesFormComponent}
+                  id={"notes"}
+                  form={@form}
+                />
+              </.input_grid>
             <% end %>
-          </.input_grid>
+          </.input_grids>
 
           <:actions>
             <div>
@@ -118,6 +153,8 @@ defmodule SportywebWeb.ContactLive.FormComponent do
       get_field(changeset, :type) != "" -> 2
       true -> 1
     end
+
+    #step = 2
 
     {:ok,
      socket

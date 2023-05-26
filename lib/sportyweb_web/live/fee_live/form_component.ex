@@ -1,5 +1,4 @@
 defmodule SportywebWeb.FeeLive.FormComponent do
-  alias Sportyweb.Organization
   use SportywebWeb, :live_component
 
   alias Sportyweb.Asset
@@ -24,13 +23,13 @@ defmodule SportywebWeb.FeeLive.FormComponent do
           phx-change="validate"
           phx-submit="save"
         >
+          <div class="hidden">
+            <.input field={@form[:type]} type="hidden" readonly />
+            <.input field={@form[:is_general]} type="checkbox" />
+          </div>
+
           <.input_grids>
             <.input_grid>
-              <div class="hidden">
-                <.input field={@form[:type]} type="hidden" readonly />
-                <.input field={@form[:is_general]} type="checkbox" />
-              </div>
-
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:name]} type="text" label="Name" />
               </div>
@@ -109,14 +108,11 @@ defmodule SportywebWeb.FeeLive.FormComponent do
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <div class="col-span-12">
-                <.label>Notizen (optional)</.label>
-                <.inputs_for :let={f_nested} field={@form[:notes]}>
-                  <div class="col-span-12">
-                    <.input field={f_nested[:content]} type="textarea" />
-                  </div>
-                </.inputs_for>
-              </div>
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.NotesFormComponent}
+                id={"notes"}
+                form={@form}
+              />
             </.input_grid>
 
             <.input_grid class="pt-6" :if={@fee.id && !Fee.is_archived?(@fee) && (Enum.any?(@fee.ancestors) || Enum.any?(@fee.contracts))}>
