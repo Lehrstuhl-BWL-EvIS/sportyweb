@@ -3,6 +3,9 @@ defmodule SportywebWeb.GroupLive.NewEdit do
 
   alias Sportyweb.Organization
   alias Sportyweb.Organization.Group
+  alias Sportyweb.Polymorphic.Email
+  alias Sportyweb.Polymorphic.Note
+  alias Sportyweb.Polymorphic.Phone
 
   @impl true
   def render(assigns) do
@@ -33,7 +36,7 @@ defmodule SportywebWeb.GroupLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    group = Organization.get_group!(id, [department: :club])
+    group = Organization.get_group!(id, [:emails, :phones, :notes, department: :club])
 
     socket
      |> assign(:page_title, "Gruppe bearbeiten")
@@ -43,11 +46,17 @@ defmodule SportywebWeb.GroupLive.NewEdit do
   end
 
   defp apply_action(socket, :new, %{"department_id" => department_id}) do
-    department = Organization.get_department!(department_id, [:club])
+    department = Organization.get_department!(department_id, [:club, :emails, :phones, :notes])
 
     socket
     |> assign(:page_title, "Gruppe erstellen")
-    |> assign(:group, %Group{department_id: department.id, department: department})
+    |> assign(:group, %Group{
+      department_id: department.id,
+      department: department,
+      emails: [%Email{}],
+      phones: [%Phone{}],
+      notes: [%Note{}]}
+    )
     |> assign(:department, department)
     |> assign(:club, department.club)
   end

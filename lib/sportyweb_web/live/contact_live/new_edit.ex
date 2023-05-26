@@ -4,6 +4,9 @@ defmodule SportywebWeb.ContactLive.NewEdit do
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Organization
+  alias Sportyweb.Polymorphic.Email
+  alias Sportyweb.Polymorphic.Note
+  alias Sportyweb.Polymorphic.Phone
 
   @impl true
   def render(assigns) do
@@ -34,7 +37,7 @@ defmodule SportywebWeb.ContactLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    contact = Personal.get_contact!(id, [:club])
+    contact = Personal.get_contact!(id, [:club, :emails, :phones, :notes])
 
     socket
     |> assign(:page_title, "Kontakt bearbeiten")
@@ -47,7 +50,13 @@ defmodule SportywebWeb.ContactLive.NewEdit do
 
     socket
     |> assign(:page_title, "Kontakt erstellen")
-    |> assign(:contact, %Contact{club_id: club.id, club: club})
+    |> assign(:contact, %Contact{
+      club_id: club.id,
+      club: club,
+      emails: [%Email{}],
+      phones: [%Phone{}],
+      notes: [%Note{}]}
+    )
     |> assign(:club, club)
   end
 

@@ -116,7 +116,10 @@ club_1 = Repo.insert!(%Club{
   reference_number: "FCB",
   description: "One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin.",
   website_url: "https://fcbayern.com/",
-  foundation_date: ~D[1900-02-27]
+  foundation_date: ~D[1900-02-27],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 department = Repo.insert!(%Department{
@@ -125,37 +128,52 @@ department = Repo.insert!(%Department{
   creation_date: ~D[1900-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note(), Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "1. Herrenmannschaft",
-  creation_date: ~D[1900-03-01]
+  creation_date: ~D[1900-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "2. Herrenmannschaft",
-  creation_date: ~D[1901-03-01]
+  creation_date: ~D[1901-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "A-Jugend",
-  creation_date: ~D[1902-03-01]
+  creation_date: ~D[1902-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "B-Jugend",
-  creation_date: ~D[1903-03-01]
+  creation_date: ~D[1903-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "Kinder",
-  creation_date: ~D[1904-03-01]
+  creation_date: ~D[1904-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 department = Repo.insert!(%Department{
@@ -170,31 +188,46 @@ department = Repo.insert!(%Department{
 Repo.insert!(%Group{
   department: department,
   name: "1. Damenmannschaft",
-  creation_date: ~D[1905-03-01]
+  creation_date: ~D[1905-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "2. Damenmannschaft",
-  creation_date: ~D[1906-03-01]
+  creation_date: ~D[1906-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "A-Jugend",
-  creation_date: ~D[1907-03-01]
+  creation_date: ~D[1907-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "B-Jugend",
-  creation_date: ~D[1908-03-01]
+  creation_date: ~D[1908-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "Kinder",
-  creation_date: ~D[1909-03-01]
+  creation_date: ~D[1909-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Department{
@@ -203,7 +236,7 @@ Repo.insert!(%Department{
   creation_date: ~D[1910-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [%Note{}]
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Department{
@@ -212,7 +245,7 @@ Repo.insert!(%Department{
   creation_date: ~D[1915-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [%Note{}]
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Department{
@@ -221,7 +254,7 @@ Repo.insert!(%Department{
   creation_date: ~D[1920-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [%Note{}]
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 ###################################
@@ -232,7 +265,10 @@ club_2 = Repo.insert!(%Club{
   reference_number: "Effzeh",
   description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
   website_url: "https://fc.de/",
-  foundation_date: ~D[1948-02-13]
+  foundation_date: ~D[1948-02-13],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 department = Repo.insert!(%Department{
@@ -247,31 +283,46 @@ department = Repo.insert!(%Department{
 Repo.insert!(%Group{
   department: department,
   name: "1. Herrenmannschaft",
-  creation_date: ~D[1948-03-01]
+  creation_date: ~D[1948-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "2. Herrenmannschaft",
-  creation_date: ~D[1949-03-01]
+  creation_date: ~D[1949-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "A-Jugend",
-  creation_date: ~D[1950-03-01]
+  creation_date: ~D[1950-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "B-Jugend",
-  creation_date: ~D[1951-03-01]
+  creation_date: ~D[1951-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "Kinder",
-  creation_date: ~D[1952-03-01]
+  creation_date: ~D[1952-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 department = Repo.insert!(%Department{
@@ -280,37 +331,52 @@ department = Repo.insert!(%Department{
   creation_date: ~D[1950-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [%Note{}]
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "1. Damenmannschaft",
-  creation_date: ~D[1950-03-01]
+  creation_date: ~D[1950-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "2. Damenmannschaft",
-  creation_date: ~D[1951-03-01]
+  creation_date: ~D[1951-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "A-Jugend",
-  creation_date: ~D[1952-03-01]
+  creation_date: ~D[1952-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "B-Jugend",
-  creation_date: ~D[1953-03-01]
+  creation_date: ~D[1953-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Group{
   department: department,
   name: "Kinder",
-  creation_date: ~D[1954-03-01]
+  creation_date: ~D[1954-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Department{
@@ -319,7 +385,7 @@ Repo.insert!(%Department{
   creation_date: ~D[1955-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [%Note{}]
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Department{
@@ -328,7 +394,7 @@ Repo.insert!(%Department{
   creation_date: ~D[1960-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [%Note{}]
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 ###################################
@@ -360,7 +426,10 @@ testclub = Repo.insert!(%Club{
   name: "TestVerein",
   reference_number: "",
   website_url: "",
-  foundation_date: ~D[2023-03-01]
+  foundation_date: ~D[2023-03-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Department{
@@ -369,7 +438,7 @@ Repo.insert!(%Department{
   creation_date: ~D[2023-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [%Note{}],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 Repo.insert!(%Department{
@@ -378,7 +447,7 @@ Repo.insert!(%Department{
   creation_date: ~D[2023-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [%Note{}],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 ###################################
@@ -739,6 +808,9 @@ Organization.list_clubs()
         maximum_age_in_years: Enum.random(5..100),
         location_type: "free_form",
         location_description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
+        emails: [Sportyweb.SeedHelper.get_random_email()],
+        phones: [Sportyweb.SeedHelper.get_random_phone()],
+        notes: [Sportyweb.SeedHelper.get_random_note()]
       })
 
       # Fees: Specific - Event
@@ -775,7 +847,10 @@ Organization.list_clubs()
         person_first_name_1: Faker.Person.first_name(),
         person_first_name_2: Faker.Person.first_name(),
         person_gender: Contact.get_valid_genders() |> Enum.map(fn gender -> gender[:value] end) |> Enum.random(),
-        person_birthday: Faker.Date.date_of_birth(6..99)
+        person_birthday: Faker.Date.date_of_birth(6..99),
+        emails: [Map.from_struct(Sportyweb.SeedHelper.get_random_email())],
+        phones: [Map.from_struct(Sportyweb.SeedHelper.get_random_phone())],
+        notes: [Map.from_struct(Sportyweb.SeedHelper.get_random_note())]
       })
 
       if :rand.uniform() < 0.7 do
@@ -800,7 +875,10 @@ Organization.list_clubs()
         name: (if i == 0, do: "Zentrale", else: "Standort #{i + 1}"),
         reference_number: String.pad_leading("#{i + 1}", 3, "0"),
         description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
-        is_main: i == 0
+        is_main: i == 0,
+        emails: [Sportyweb.SeedHelper.get_random_email()],
+        phones: [Sportyweb.SeedHelper.get_random_phone()],
+        notes: [Sportyweb.SeedHelper.get_random_note()]
       })
 
       # Fees: Specific - Venue
@@ -834,7 +912,10 @@ Organization.list_clubs()
           description: (if :rand.uniform() < 0.50, do: Faker.Lorem.paragraph(), else: ""),
           purchase_date: Faker.Date.backward(Enum.random(300..2000)),
           commission_date: Faker.Date.backward(Enum.random(0..299)),
-          decommission_date: (if :rand.uniform() < 0.65, do: Faker.Date.forward(Enum.random(100..2000)), else: nil)
+          decommission_date: (if :rand.uniform() < 0.65, do: Faker.Date.forward(Enum.random(100..2000)), else: nil),
+          emails: [Sportyweb.SeedHelper.get_random_email()],
+          phones: [Sportyweb.SeedHelper.get_random_phone()],
+          notes: [Sportyweb.SeedHelper.get_random_note()]
         })
 
         # Fees: Specific - Equipment

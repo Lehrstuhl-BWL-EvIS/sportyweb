@@ -3,6 +3,9 @@ defmodule SportywebWeb.EquipmentLive.NewEdit do
 
   alias Sportyweb.Asset
   alias Sportyweb.Asset.Equipment
+  alias Sportyweb.Polymorphic.Email
+  alias Sportyweb.Polymorphic.Note
+  alias Sportyweb.Polymorphic.Phone
 
   @impl true
   def render(assigns) do
@@ -33,7 +36,7 @@ defmodule SportywebWeb.EquipmentLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    equipment = Asset.get_equipment!(id, [venue: :club])
+    equipment = Asset.get_equipment!(id, [:emails, :phones, :notes, venue: :club])
 
     socket
      |> assign(:page_title, "Equipment bearbeiten")
@@ -47,7 +50,13 @@ defmodule SportywebWeb.EquipmentLive.NewEdit do
 
     socket
     |> assign(:page_title, "Equipment erstellen")
-    |> assign(:equipment, %Equipment{venue_id: venue.id, venue: venue})
+    |> assign(:equipment, %Equipment{
+      venue_id: venue.id,
+      venue: venue,
+      emails: [%Email{}],
+      phones: [%Phone{}],
+      notes: [%Note{}]}
+    )
     |> assign(:venue, venue)
     |> assign(:club, venue.club)
   end
