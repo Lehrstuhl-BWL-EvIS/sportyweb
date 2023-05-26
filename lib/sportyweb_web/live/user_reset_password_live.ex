@@ -10,7 +10,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
 
       <.card class="mt-8">
         <.simple_form
-            for={@form}
+          for={@form}
           id="reset_password_form"
           phx-submit="reset_password"
           phx-change="validate"

@@ -28,16 +28,26 @@ defmodule SportywebWeb.UserSettingsLive do
             phx-submit="update_email"
             phx-change="validate_email"
           >
-            <.input field={@email_form[:email]} type="email" label="E-Mail-Adresse" required />
-            <.input
-              field={@email_form[:current_password]}
-              name="current_password"
-              id="current_password_for_email"
-              type="password"
-              label="Aktuelles Passwort"
-              value={@email_form_current_password}
-              required
-            />
+            <.input_grids>
+              <.input_grid>
+                <div class="col-span-12">
+                  <.input field={@email_form[:email]} type="email" label="E-Mail-Adresse" required />
+                </div>
+
+                <div class="col-span-12">
+                  <.input
+                    field={@email_form[:current_password]}
+                    name="current_password"
+                    id="current_password_for_email"
+                    type="password"
+                    label="Aktuelles Passwort"
+                    value={@email_form_current_password}
+                    required
+                  />
+                </div>
+              </.input_grid>
+            </.input_grids>
+
             <:actions>
               <.button phx-disable-with="E-Mail-Adresse ändern...">E-Mail-Adresse ändern</.button>
             </:actions>
@@ -58,22 +68,38 @@ defmodule SportywebWeb.UserSettingsLive do
             phx-submit="update_password"
             phx-trigger-action={@trigger_submit}
           >
-            <.input field={@password_form[:email]} type="hidden" value={@current_email} />
-            <.input field={@password_form[:password]} type="password" label="Neues Passwort" required />
-            <.input
-              field={@password_form[:password_confirmation]}
-              type="password"
-              label="Neues Passwort"
-            />
-            <.input
-              field={@password_form[:current_password]}
-              name="current_password"
-              type="password"
-              label="Aktuelles Passwort"
-              id="current_password_for_password"
-              value={@current_password}
-              required
-            />
+            <div class="hidden">
+              <.input field={@password_form[:email]} type="hidden" value={@current_email} />
+            </div>
+
+            <.input_grids>
+              <.input_grid>
+                <div class="col-span-12">
+                  <.input field={@password_form[:password]} type="password" label="Neues Passwort" required />
+                </div>
+
+                <div class="col-span-12">
+                  <.input
+                    field={@password_form[:password_confirmation]}
+                    type="password"
+                    label="Neues Passwort"
+                  />
+                </div>
+
+                <div class="col-span-12">
+                  <.input
+                    field={@password_form[:current_password]}
+                    name="current_password"
+                    type="password"
+                    label="Aktuelles Passwort"
+                    id="current_password_for_password"
+                    value={@current_password}
+                    required
+                  />
+                </div>
+              </.input_grid>
+            </.input_grids>
+
             <:actions>
               <.button phx-disable-with="Passwort ändern...">Passwort ändern</.button>
             </:actions>

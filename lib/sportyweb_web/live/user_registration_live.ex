@@ -28,11 +28,20 @@ defmodule SportywebWeb.UserRegistrationLive do
           method="post"
         >
           <.error :if={@check_errors}>
-              Bitte überprüfen Sie ihre Eingaben.
+            Bitte überprüfen Sie ihre Eingaben.
           </.error>
 
-          <.input field={@form[:email]} type="email" label="E-Mail-Adresse" required />
-          <.input field={@form[:password]} type="password" label="Passwort" required />
+          <.input_grids>
+            <.input_grid>
+              <div class="col-span-12">
+                <.input field={@form[:email]} type="email" label="E-Mail-Adresse" required />
+              </div>
+
+              <div class="col-span-12">
+                <.input field={@form[:password]} type="password" label="Passwort" required />
+              </div>
+            </.input_grid>
+          </.input_grids>
 
           <:actions>
             <.button phx-disable-with="Konto wird erstellt..." class="w-full">Konto erstellen</.button>

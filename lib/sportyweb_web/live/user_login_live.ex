@@ -15,9 +15,23 @@ defmodule SportywebWeb.UserLoginLive do
       </.header>
 
       <.card class="mt-8">
-        <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
-          <.input field={@form[:email]} type="email" label="E-Mail-Adresse" required />
-          <.input field={@form[:password]} type="password" label="Passwort" required />
+        <.simple_form
+          for={@form}
+          id="login_form"
+          action={~p"/users/log_in"}
+          phx-update="ignore"
+        >
+          <.input_grids>
+            <.input_grid>
+              <div class="col-span-12">
+                <.input field={@form[:email]} type="email" label="E-Mail-Adresse" required />
+              </div>
+
+              <div class="col-span-12">
+                <.input field={@form[:password]} type="password" label="Passwort" required />
+              </div>
+            </.input_grid>
+          </.input_grids>
 
           <:actions>
             <.input field={@form[:remember_me]} type="checkbox" label="Angemeldet bleiben" />
