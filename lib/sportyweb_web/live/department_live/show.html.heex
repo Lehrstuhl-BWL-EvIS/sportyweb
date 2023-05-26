@@ -25,17 +25,11 @@
       <%= format_struct_list(@department.phones, :number) %>
     </:item>
     <:item title="Notizen">
-      <%= if Enum.any?(@department.notes) do %>
-        <div class="divide-y divide-zinc-100">
-          <%= for note <- @department.notes do %>
-            <div class="py-4 first:pt-0 last:pb-0">
-              <%= format_string_field(note.content) %>
-            </div>
-          <% end %>
-        </div>
-      <% else %>
-        -
-      <% end %>
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
+        id="notes"
+        notes={@department.notes}
+      />
     </:item>
   </.list>
 </.card>
@@ -50,11 +44,11 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@fees) do %>
+  <%= if Enum.any?(@department.fees) do %>
     <.live_component
       module={SportywebWeb.FeeLive.IndexFeesTableComponent}
       id="index-fees-table"
-      fees={@fees}
+      fees={@department.fees}
     />
   <% else %>
     <p>Bisher wurde noch keine abteilungsspezifische Gebühr erstellt.</p>

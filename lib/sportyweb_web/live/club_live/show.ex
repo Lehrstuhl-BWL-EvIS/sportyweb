@@ -12,7 +12,7 @@ defmodule SportywebWeb.ClubLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    club = Organization.get_club!(id, [:departments])
+    club = Organization.get_club!(id, [:departments, :emails, :notes, :phones])
 
     {:noreply,
      socket

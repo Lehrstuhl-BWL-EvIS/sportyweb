@@ -57,6 +57,13 @@
         archiviert.
       <% end %>
     </:item>
+    <:item title="Notizen">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
+        id="notes"
+        notes={@fee.notes}
+      />
+    </:item>
     <:item title="Einsatz">
       Diese Gebühr wird derzeit in <%= Enum.count(@fee.contracts) %> Verträgen verwendet
       und dient <%= Enum.count(@fee.ancestors) %> anderen Gebühren als Nachfolger.

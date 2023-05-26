@@ -7,7 +7,7 @@ defmodule SportywebWeb.FeeLive.IndexFeesTableComponent do
   def render(assigns) do
     ~H"""
     <div>
-     <.table
+      <.table
         id="fees"
         rows={@fees}
         row_click={&JS.navigate(~p"/fees/#{&1}")}

@@ -12,14 +12,13 @@ defmodule SportywebWeb.DepartmentLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    department = Organization.get_department!(id, [:club, :emails, :phones, :notes, :groups, :fees])
+    department = Organization.get_department!(id, [:club, :emails, :fees, :groups, :notes, :phones])
 
     {:noreply,
      socket
      |> assign(:page_title, "Abteilung: #{department.name}")
      |> assign(:department, department)
      |> assign(:club, department.club)
-     |> assign(:fees, department.fees)
      |> stream(:groups, department.groups)}
   end
 end

@@ -25,5 +25,18 @@
     <:item title="Gründungsdatum">
       <%= format_date_field_dmy(@club.foundation_date) %>
     </:item>
+    <:item title="E-Mail">
+      <%= format_struct_list(@club.emails, :address) %>
+    </:item>
+    <:item title="Telefon">
+      <%= format_struct_list(@club.phones, :number) %>
+    </:item>
+    <:item title="Notizen">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
+        id="notes"
+        notes={@club.notes}
+      />
+    </:item>
   </.list>
 </.card>

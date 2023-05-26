@@ -11,7 +11,7 @@ defmodule SportywebWeb.FeeLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    fee = Legal.get_fee!(id, [:club, :successor, :ancestors, :contracts, :notes])
+    fee = Legal.get_fee!(id, [:ancestors, :club, :contracts, :notes, :successor])
     fee_title = if fee.is_general, do: "Allgemeine", else: "Spezifische"
     club_navigation_current_item = case fee.type do
       "department" -> :structure

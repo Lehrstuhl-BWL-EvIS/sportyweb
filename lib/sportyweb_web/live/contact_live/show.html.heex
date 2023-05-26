@@ -24,6 +24,19 @@
     <:item title="Geburtstag" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
       <%= format_date_field_dmy(@contact.person_birthday) %>
     </:item>
+    <:item title="E-Mail">
+      <%= format_struct_list(@contact.emails, :address) %>
+    </:item>
+    <:item title="Telefon">
+      <%= format_struct_list(@contact.phones, :number) %>
+    </:item>
+    <:item title="Notizen">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
+        id="notes"
+        notes={@contact.notes}
+      />
+    </:item>
     <:item title="Mitglied" :if={Contact.has_active_membership_contract?(@contact)}>
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>

@@ -30,6 +30,19 @@
     <:item title="Höchstalter">
       <%= format_integer_field(@event.maximum_age_in_years) %>
     </:item>
+    <:item title="E-Mail">
+      <%= format_struct_list(@event.emails, :address) %>
+    </:item>
+    <:item title="Telefon">
+      <%= format_struct_list(@event.phones, :number) %>
+    </:item>
+    <:item title="Notizen">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
+        id="notes"
+        notes={@event.notes}
+      />
+    </:item>
   </.list>
 </.card>
 
@@ -43,11 +56,11 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@fees) do %>
+  <%= if Enum.any?(@event.fees) do %>
     <.live_component
       module={SportywebWeb.FeeLive.IndexFeesTableComponent}
       id="index-fees-table"
-      fees={@fees}
+      fees={@event.fees}
     />
   <% else %>
     <p>Bisher wurde noch keine veranstaltungsspezifische Gebühr erstellt.</p>

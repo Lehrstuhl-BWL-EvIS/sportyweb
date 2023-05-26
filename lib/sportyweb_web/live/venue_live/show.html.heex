@@ -18,6 +18,19 @@
     <:item title="Hauptsitz" :if={@venue.is_main}>
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>
+    <:item title="E-Mail">
+      <%= format_struct_list(@venue.emails, :address) %>
+    </:item>
+    <:item title="Telefon">
+      <%= format_struct_list(@venue.phones, :number) %>
+    </:item>
+    <:item title="Notizen">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
+        id="notes"
+        notes={@venue.notes}
+      />
+    </:item>
   </.list>
 </.card>
 
@@ -31,11 +44,11 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@fees) do %>
+  <%= if Enum.any?(@venue.fees) do %>
     <.live_component
       module={SportywebWeb.FeeLive.IndexFeesTableComponent}
       id="index-fees-table"
-      fees={@fees}
+      fees={@venue.fees}
     />
   <% else %>
     <p>Bisher wurde noch keine standortspezifische Gebühr erstellt.</p>
