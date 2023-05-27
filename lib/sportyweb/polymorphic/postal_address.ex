@@ -15,9 +15,17 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
     field :zipcode, :string, default: ""
     field :city, :string, default: ""
     field :country, :string, default: ""
-    field :is_main, :boolean, default: false
+    field :is_main, :boolean, default: true
 
     timestamps()
+  end
+
+  def get_valid_countries do
+    [
+      [key: "Deutschland", value: "DEU"],
+      [key: "Österreich", value: "AUT"],
+      [key: "Schweiz", value: "CHE"]
+    ]
   end
 
   @doc false
@@ -39,6 +47,15 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
       :zipcode,
       :city,
       :country]
+    )
+    |> validate_length(:street, max: 250)
+    |> validate_length(:street_number, max: 250)
+    |> validate_length(:street_additional_information, max: 250)
+    |> validate_length(:zipcode, max: 10)
+    |> validate_length(:city, max: 250)
+    |> validate_inclusion(
+      :country,
+      get_valid_countries() |> Enum.map(fn country -> country[:value] end)
     )
   end
 end
