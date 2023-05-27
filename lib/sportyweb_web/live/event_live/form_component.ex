@@ -1,6 +1,8 @@
 defmodule SportywebWeb.EventLive.FormComponent do
   use SportywebWeb, :live_component
+  import Ecto.Changeset
 
+  alias Sportyweb.Asset
   alias Sportyweb.Calendar
   alias Sportyweb.Calendar.Event
 
@@ -74,15 +76,32 @@ defmodule SportywebWeb.EventLive.FormComponent do
                 />
               </div>
 
-              <.live_component
-                module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
-                id={"postal_addresses"}
-                form={@form}
-              />
+              <%= if @location_type == "venue" do %>
+                <.inputs_for :let={f_nested} field={@form[:venues]}>
+                  <div class="col-span-12">
+                    <.input
+                      field={f_nested[:id]}
+                      type="select"
+                      label="Standort"
+                      options={Asset.list_venues(@event.club_id) |> Enum.map(&{&1.name, &1.id})}
+                    />
+                  </div>
+                </.inputs_for>
+              <% end %>
 
-              <div class="col-span-12">
-                <.input field={@form[:location_description]} type="textarea" label="Veranstaltungsort" />
-              </div>
+              <%= if @location_type == "postal_address" do %>
+                <.live_component
+                  module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
+                  id={"postal_addresses"}
+                  form={@form}
+                />
+              <% end %>
+
+              <%= if @location_type == "free_form" do %>
+                <div class="col-span-12">
+                  <.input field={@form[:location_description]} type="textarea" label="Veranstaltungsort" />
+                </div>
+              <% end %>
             </.input_grid>
 
             <.input_grid class="pt-6">
@@ -136,6 +155,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:location_type, event.location_type)
      |> assign_form(changeset)}
   end
 
@@ -146,7 +166,10 @@ defmodule SportywebWeb.EventLive.FormComponent do
       |> Calendar.change_event(event_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign_form(socket, changeset)}
+    {:noreply,
+     socket
+     |> assign(:location_type, get_field(changeset, :location_type))
+     |> assign_form(changeset)}
   end
 
   def handle_event("save", %{"event" => event_params}, socket) do

@@ -11,6 +11,6 @@ defmodule Sportyweb.Repo.Migrations.CreateEventVenues do
     end
 
     create index(:event_venues, [:event_id])
-    create unique_index(:event_venues, [:venue_id])
+    create unique_index(:event_venues, [:event_id, :venue_id])
   end
 end

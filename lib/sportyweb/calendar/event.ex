@@ -90,8 +90,6 @@ defmodule Sportyweb.Calendar.Event do
     |> cast_assoc(:groups, required: false)
     |> cast_assoc(:notes, required: true)
     |> cast_assoc(:phones, required: true)
-    |> cast_assoc(:postal_addresses, required: true) # TODO: Change based on location_type value
-    |> cast_assoc(:venues, required: false)
     |> validate_required([
       :club_id,
       :name,
@@ -113,6 +111,21 @@ defmodule Sportyweb.Calendar.Event do
       :location_type,
       get_valid_location_types() |> Enum.map(fn location_type -> location_type[:value] end)
     )
+    |> validate_required_location_type_condition()
     |> validate_length(:location_description, max: 20_000)
+  end
+
+  defp validate_required_location_type_condition(%Ecto.Changeset{} = changeset) do
+    # Some fields are only required if the location_type has a certain value.
+    case get_field(changeset, :location_type) do
+      "venue" ->
+        changeset |> cast_assoc(:venues, required: true)
+      "postal_address" ->
+        changeset |> cast_assoc(:postal_addresses, required: true)
+      "free_form" ->
+        changeset |> validate_required([:location_description])
+      _ ->
+        changeset
+    end
   end
 end

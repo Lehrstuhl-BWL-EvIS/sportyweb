@@ -14,6 +14,7 @@ alias Sportyweb.Repo
 
 alias Sportyweb.Accounts
 alias Sportyweb.Accounts.User
+alias Sportyweb.Asset
 alias Sportyweb.Asset.Equipment
 alias Sportyweb.Asset.Venue
 alias Sportyweb.Calendar.Event
@@ -28,6 +29,7 @@ alias Sportyweb.Personal.Contact
 alias Sportyweb.Polymorphic.Email
 alias Sportyweb.Polymorphic.Note
 alias Sportyweb.Polymorphic.Phone
+alias Sportyweb.Polymorphic.PostalAddress
 
 alias Sportyweb.RBAC.Role.ApplicationRole
 alias Sportyweb.RBAC.Role.ClubRole
@@ -40,6 +42,17 @@ alias Sportyweb.RBAC.Role.RolePermissionMatrix, as: RPM
 defmodule Sportyweb.SeedHelper do
   def get_random_string(length) do
     :crypto.strong_rand_bytes(100) |> Base.encode64() |> String.slice(0, length)
+  end
+
+  def get_random_postal_address do
+    %PostalAddress{
+      street: Faker.Address.street_name(),
+      street_number: Faker.Address.building_number(),
+      street_additional_information: "",
+      zipcode: Faker.Address.zip(),
+      city: Faker.Address.city(),
+      country: PostalAddress.get_valid_countries() |> Enum.map(fn country -> country[:value] end) |> Enum.random()
+    }
   end
 
   def get_random_email do
@@ -793,47 +806,6 @@ Organization.list_clubs()
       end)
     end)
 
-    # Events
-
-    for i <- 0..Enum.random(10..30) do
-      event = Repo.insert!(%Event{
-        club_id: club.id,
-        name: "Verans.: #{Faker.Lorem.characters(Enum.random(5..15))}",
-        reference_number: Sportyweb.SeedHelper.get_random_string(5),
-        status: "public",
-        description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
-        minimum_participants: 0,
-        maximum_participants: Enum.random(3..40),
-        minimum_age_in_years: 0,
-        maximum_age_in_years: Enum.random(5..100),
-        location_type: "free_form",
-        location_description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
-        emails: [Sportyweb.SeedHelper.get_random_email()],
-        phones: [Sportyweb.SeedHelper.get_random_phone()],
-        notes: [Sportyweb.SeedHelper.get_random_note()]
-      })
-
-      # Fees: Specific - Event
-
-      Repo.insert!(%Fee{
-        club_id: club.id,
-        is_general: false,
-        type: "event",
-        name: "Spez. Teilnahmegebühr Veranstaltung #{event.reference_number}",
-        reference_number: Sportyweb.SeedHelper.get_random_string(3),
-        description: "",
-        base_fee_in_eur_cent: Enum.random(10..150) * 100,
-        admission_fee_in_eur_cent: 0,
-        is_recurring: true,
-        is_group_only: false,
-        minimum_age_in_years: 0,
-        maximum_age_in_years: 100,
-        commission_date: ~D[2023-01-01],
-        notes: [%Note{}],
-        events: [event]
-      })
-    end
-
     # Contacts & Contracts
 
     for i <- 0..Enum.random(10..30) do
@@ -848,6 +820,7 @@ Organization.list_clubs()
         person_first_name_2: Faker.Person.first_name(),
         person_gender: Contact.get_valid_genders() |> Enum.map(fn gender -> gender[:value] end) |> Enum.random(),
         person_birthday: Faker.Date.date_of_birth(6..99),
+        postal_addresses: [Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address())],
         emails: [Map.from_struct(Sportyweb.SeedHelper.get_random_email())],
         phones: [Map.from_struct(Sportyweb.SeedHelper.get_random_phone())],
         notes: [Map.from_struct(Sportyweb.SeedHelper.get_random_note())]
@@ -876,6 +849,7 @@ Organization.list_clubs()
         reference_number: String.pad_leading("#{i + 1}", 3, "0"),
         description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
         is_main: i == 0,
+        postal_addresses: [Sportyweb.SeedHelper.get_random_postal_address()],
         emails: [Sportyweb.SeedHelper.get_random_email()],
         phones: [Sportyweb.SeedHelper.get_random_phone()],
         notes: [Sportyweb.SeedHelper.get_random_note()]
@@ -938,6 +912,50 @@ Organization.list_clubs()
           equipment: [equipment]
         })
       end
+    end
+
+    # Events
+
+    venues = Asset.list_venues(club.id)
+    for i <- 0..Enum.random(10..30) do
+      event = Repo.insert!(%Event{
+        club_id: club.id,
+        name: "Verans.: #{Faker.Lorem.characters(Enum.random(5..15))}",
+        reference_number: Sportyweb.SeedHelper.get_random_string(5),
+        status: "public",
+        description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
+        minimum_participants: 0,
+        maximum_participants: Enum.random(3..40),
+        minimum_age_in_years: 0,
+        maximum_age_in_years: Enum.random(5..100),
+        location_type: Event.get_valid_location_types()|> Enum.map(fn location_type -> location_type[:value] end) |> Enum.random(),
+        location_description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
+        venues: [venues |> Enum.random()],
+        postal_addresses: [Sportyweb.SeedHelper.get_random_postal_address()],
+        emails: [Sportyweb.SeedHelper.get_random_email()],
+        phones: [Sportyweb.SeedHelper.get_random_phone()],
+        notes: [Sportyweb.SeedHelper.get_random_note()]
+      })
+
+      # Fees: Specific - Event
+
+      Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: false,
+        type: "event",
+        name: "Spez. Teilnahmegebühr Veranstaltung #{event.reference_number}",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(10..150) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_group_only: false,
+        minimum_age_in_years: 0,
+        maximum_age_in_years: 100,
+        commission_date: ~D[2023-01-01],
+        notes: [%Note{}],
+        events: [event]
+      })
     end
   end
 end)

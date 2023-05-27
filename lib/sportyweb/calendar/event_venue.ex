@@ -19,6 +19,6 @@ defmodule Sportyweb.Calendar.EventVenue do
     event_venue
     |> cast(attrs, [:event_id, :venue_id])
     |> validate_required([:event_id, :venue_id])
-    |> unique_constraint(:venue_id, name: "event_venues_venue_id_index")
+    |> unique_constraint(:venue_id, name: "event_venues_event_id_venue_id_index")
   end
 end

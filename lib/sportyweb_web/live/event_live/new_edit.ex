@@ -1,6 +1,7 @@
 defmodule SportywebWeb.EventLive.NewEdit do
   use SportywebWeb, :live_view
 
+  alias Sportyweb.Asset.Venue
   alias Sportyweb.Calendar
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Organization
@@ -38,7 +39,7 @@ defmodule SportywebWeb.EventLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    event = Calendar.get_event!(id, [:club, :emails, :phones, :postal_addresses, :notes])
+    event = Calendar.get_event!(id, [:club, :emails, :phones, :postal_addresses, :notes, :venues])
 
     socket
     |> assign(:page_title, "Veranstaltung bearbeiten")
@@ -54,6 +55,7 @@ defmodule SportywebWeb.EventLive.NewEdit do
     |> assign(:event, %Event{
       club_id: club.id,
       club: club,
+      venues: [%Venue{}],
       postal_addresses: [%PostalAddress{}],
       emails: [%Email{}],
       phones: [%Phone{}],

@@ -30,12 +30,22 @@
     <:item title="Höchstalter">
       <%= format_integer_field(@event.maximum_age_in_years) %>
     </:item>
-    <:item title="Adresse">
-      <.live_component
-        module={SportywebWeb.PolymorphicLive.PostalAddressesShowComponent}
-        id="postal_addresses"
-        postal_addresses={@event.postal_addresses}
-      />
+    <:item title="Veranstaltungsort">
+      <%= if @event.location_type == "venue" do %>
+        <%= format_struct_list(@event.venues, :name) %>
+      <% end %>
+
+      <%= if @event.location_type == "postal_address" do %>
+        <.live_component
+          module={SportywebWeb.PolymorphicLive.PostalAddressesShowComponent}
+          id="postal_addresses"
+          postal_addresses={@event.postal_addresses}
+        />
+      <% end %>
+
+      <%= if @event.location_type == "free_form" do %>
+        <%= format_string_field(@event.location_description) %>
+      <% end %>
     </:item>
     <:item title="E-Mail">
       <%= format_struct_list(@event.emails, :address) %>
