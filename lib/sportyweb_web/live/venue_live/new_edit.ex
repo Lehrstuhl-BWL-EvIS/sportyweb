@@ -7,6 +7,7 @@ defmodule SportywebWeb.VenueLive.NewEdit do
   alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
+  alias Sportyweb.Polymorphic.PostalAddress
 
   @impl true
   def render(assigns) do
@@ -37,7 +38,7 @@ defmodule SportywebWeb.VenueLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    venue = Asset.get_venue!(id, [:club, :emails, :phones, :notes])
+    venue = Asset.get_venue!(id, [:club, :emails, :phones, :postal_addresses, :notes])
 
     socket
     |> assign(:page_title, "Standort bearbeiten")
@@ -53,6 +54,7 @@ defmodule SportywebWeb.VenueLive.NewEdit do
     |> assign(:venue, %Venue{
       club_id: club.id,
       club: club,
+      postal_addresses: [%PostalAddress{}],
       emails: [%Email{}],
       phones: [%Phone{}],
       notes: [%Note{}]}

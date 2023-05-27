@@ -99,11 +99,12 @@ defmodule Sportyweb.Personal.Contact do
       ],
       empty_values: ["", nil]
     )
-    |> cast_assoc(:emails, required: false)
+    |> cast_assoc(:contact_groups, required: false)
+    |> cast_assoc(:emails, required: true)
     |> cast_assoc(:financial_data, required: false)
-    |> cast_assoc(:notes, required: false)
-    |> cast_assoc(:phones, required: false)
-    |> cast_assoc(:postal_addresses, required: false)
+    |> cast_assoc(:notes, required: true)
+    |> cast_assoc(:phones, required: true)
+    |> cast_assoc(:postal_addresses, required: true)
     |> validate_required([:type])
     |> validate_inclusion(
       :type,

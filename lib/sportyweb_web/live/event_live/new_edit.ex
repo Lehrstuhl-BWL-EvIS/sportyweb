@@ -7,6 +7,7 @@ defmodule SportywebWeb.EventLive.NewEdit do
   alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
+  alias Sportyweb.Polymorphic.PostalAddress
 
   @impl true
   def render(assigns) do
@@ -37,7 +38,7 @@ defmodule SportywebWeb.EventLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    event = Calendar.get_event!(id, [:club, :emails, :phones, :notes])
+    event = Calendar.get_event!(id, [:club, :emails, :phones, :postal_addresses, :notes])
 
     socket
     |> assign(:page_title, "Veranstaltung bearbeiten")
@@ -53,6 +54,7 @@ defmodule SportywebWeb.EventLive.NewEdit do
     |> assign(:event, %Event{
       club_id: club.id,
       club: club,
+      postal_addresses: [%PostalAddress{}],
       emails: [%Email{}],
       phones: [%Phone{}],
       notes: [%Note{}]}

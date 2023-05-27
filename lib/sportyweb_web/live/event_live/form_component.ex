@@ -74,6 +74,12 @@ defmodule SportywebWeb.EventLive.FormComponent do
                 />
               </div>
 
+              <.live_component
+                module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
+                id={"postal_addresses"}
+                form={@form}
+              />
+
               <div class="col-span-12">
                 <.input field={@form[:location_description]} type="textarea" label="Veranstaltungsort" />
               </div>

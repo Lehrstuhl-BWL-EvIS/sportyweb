@@ -18,6 +18,13 @@
     <:item title="Hauptsitz" :if={@venue.is_main}>
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>
+    <:item title="Adresse">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.PostalAddressesShowComponent}
+        id="postal_addresses"
+        postal_addresses={@venue.postal_addresses}
+      />
+    </:item>
     <:item title="E-Mail">
       <%= format_struct_list(@venue.emails, :address) %>
     </:item>

@@ -85,12 +85,12 @@ defmodule Sportyweb.Calendar.Event do
       empty_values: ["", nil]
     )
     |> cast_assoc(:departments, required: false)
-    |> cast_assoc(:emails, required: false)
+    |> cast_assoc(:emails, required: true)
     |> cast_assoc(:equipment, required: false)
     |> cast_assoc(:groups, required: false)
-    |> cast_assoc(:notes, required: false)
-    |> cast_assoc(:phones, required: false)
-    |> cast_assoc(:postal_addresses, required: false)
+    |> cast_assoc(:notes, required: true)
+    |> cast_assoc(:phones, required: true)
+    |> cast_assoc(:postal_addresses, required: true) # TODO: Change based on location_type value
     |> cast_assoc(:venues, required: false)
     |> validate_required([
       :club_id,

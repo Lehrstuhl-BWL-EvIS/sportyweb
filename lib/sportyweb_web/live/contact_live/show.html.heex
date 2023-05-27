@@ -24,6 +24,13 @@
     <:item title="Geburtstag" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
       <%= format_date_field_dmy(@contact.person_birthday) %>
     </:item>
+    <:item title="Adresse">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.PostalAddressesShowComponent}
+        id="postal_addresses"
+        postal_addresses={@contact.postal_addresses}
+      />
+    </:item>
     <:item title="E-Mail">
       <%= format_struct_list(@contact.emails, :address) %>
     </:item>

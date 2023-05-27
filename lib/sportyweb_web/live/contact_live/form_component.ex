@@ -90,6 +90,14 @@ defmodule SportywebWeb.ContactLive.FormComponent do
 
               <.input_grid class="pt-6">
                 <.live_component
+                  module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
+                  id={"postal_addresses"}
+                  form={@form}
+                />
+              </.input_grid>
+
+              <.input_grid class="pt-6">
+                <.live_component
                   module={SportywebWeb.PolymorphicLive.EmailsFormComponent}
                   id={"emails"}
                   form={@form}

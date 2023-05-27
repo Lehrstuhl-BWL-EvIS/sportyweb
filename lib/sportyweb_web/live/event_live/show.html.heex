@@ -30,6 +30,13 @@
     <:item title="Höchstalter">
       <%= format_integer_field(@event.maximum_age_in_years) %>
     </:item>
+    <:item title="Adresse">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.PostalAddressesShowComponent}
+        id="postal_addresses"
+        postal_addresses={@event.postal_addresses}
+      />
+    </:item>
     <:item title="E-Mail">
       <%= format_struct_list(@event.emails, :address) %>
     </:item>
