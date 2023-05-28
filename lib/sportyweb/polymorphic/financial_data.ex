@@ -9,7 +9,7 @@ defmodule Sportyweb.Polymorphic.FinancialData do
   schema "financial_data" do
     belongs_to :postal_address, PostalAddress, foreign_key: :invoice_recipient_postal_address_id, references: :id
 
-    field :type, :string, default: ""
+    field :type, :string, default: "direct_debit"
     field :direct_debit_account_holder, :string, default: ""
     field :direct_debit_iban, :string, default: ""
     field :direct_debit_institute, :string, default: ""
@@ -46,5 +46,18 @@ defmodule Sportyweb.Polymorphic.FinancialData do
       :type,
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
     )
+    |> validate_required_type_condition()
+  end
+
+  defp validate_required_type_condition(%Ecto.Changeset{} = changeset) do
+    # Some fields are only required if the type has a certain value.
+    case get_field(changeset, :type) do
+      "direct_debit" ->
+        changeset |> validate_required([:direct_debit_account_holder, :direct_debit_iban, :direct_debit_institute])
+      "invoice" ->
+        changeset |> validate_required([:invoice_recipient])
+      _ ->
+        changeset
+    end
   end
 end
