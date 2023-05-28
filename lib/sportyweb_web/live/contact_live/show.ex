@@ -13,7 +13,8 @@ defmodule SportywebWeb.ContactLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    contact = Personal.get_contact!(id, [:club, :contracts, :emails, :notes, :phones, :postal_addresses])
+    contact = Personal.get_contact!(id, [
+      :club, :contracts, :emails, :financial_data, :notes, :phones, :postal_addresses])
 
     {:noreply,
      socket

@@ -35,7 +35,6 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                     type="select"
                     label="Art"
                     options={Contact.get_valid_types}
-                    prompt="Bitte auswählen"
                   />
                 </div>
               </.input_grid>
@@ -111,6 +110,16 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               </.input_grid>
 
               <.input_grid class="pt-6">
+                <.inputs_for :let={financial_data} field={@form[:financial_data]}>
+                  <.live_component
+                    module={SportywebWeb.PolymorphicLive.FinancialDataFormComponent}
+                    id={"financial_data_#{financial_data.index}"}
+                    financial_data={financial_data}
+                  />
+                </.inputs_for>
+              </.input_grid>
+
+              <.input_grid class="pt-6">
                 <.live_component
                   module={SportywebWeb.PolymorphicLive.NotesFormComponent}
                   id={"notes"}
@@ -158,11 +167,9 @@ defmodule SportywebWeb.ContactLive.FormComponent do
     changeset = Personal.change_contact(contact)
 
     step = cond do
-      get_field(changeset, :type) != "" -> 2
+      !is_nil(contact.id) || get_field(changeset, :step) == 1 && get_field(changeset, :type) != "" -> 2
       true -> 1
     end
-
-    #step = 2
 
     {:ok,
      socket

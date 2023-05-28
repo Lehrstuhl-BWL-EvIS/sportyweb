@@ -29,7 +29,7 @@ defmodule Sportyweb.Personal.Contact do
     many_to_many :phones, Phone, join_through: ContactPhone
     many_to_many :postal_addresses, PostalAddress, join_through: ContactPostalAddress
 
-    field :type, :string, default: ""
+    field :type, :string, default: "person"
     field :name, :string, default: ""
     field :organization_name, :string, default: ""
     field :organization_type, :string, default: ""
@@ -101,7 +101,7 @@ defmodule Sportyweb.Personal.Contact do
     )
     |> cast_assoc(:contact_groups, required: false)
     |> cast_assoc(:emails, required: true)
-    |> cast_assoc(:financial_data, required: false)
+    |> cast_assoc(:financial_data, required: true)
     |> cast_assoc(:notes, required: true)
     |> cast_assoc(:phones, required: true)
     |> cast_assoc(:postal_addresses, required: true)

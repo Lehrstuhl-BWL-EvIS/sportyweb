@@ -27,6 +27,7 @@ alias Sportyweb.Organization.Group
 alias Sportyweb.Personal
 alias Sportyweb.Personal.Contact
 alias Sportyweb.Polymorphic.Email
+alias Sportyweb.Polymorphic.FinancialData
 alias Sportyweb.Polymorphic.Note
 alias Sportyweb.Polymorphic.Phone
 alias Sportyweb.Polymorphic.PostalAddress
@@ -44,6 +45,37 @@ defmodule Sportyweb.SeedHelper do
     :crypto.strong_rand_bytes(100) |> Base.encode64() |> String.slice(0, length)
   end
 
+  def get_random_email do
+    %Email{
+      type: Email.get_valid_types()|> Enum.map(fn type -> type[:value] end) |> Enum.random(),
+      address: (if :rand.uniform() < 0.7, do: Faker.Internet.email(), else: "")
+    }
+  end
+
+  def get_random_financial_data do
+    if :rand.uniform() < 0.9 do
+      %FinancialData{
+        type: "direct_debit",
+        direct_debit_account_holder: "Max Mustermann",
+        direct_debit_iban: "DE06495352657836424132",
+        direct_debit_institute: "Beispielbank"
+      }
+    else
+      %FinancialData{
+        type: "invoice",
+        invoice_recipient: "Max Mustermann",
+        invoice_additional_information: ""
+      }
+    end
+  end
+
+  def get_random_phone do
+    %Phone{
+      type: Phone.get_valid_types()|> Enum.map(fn type -> type[:value] end) |> Enum.random(),
+      number: (if :rand.uniform() < 0.7, do: Faker.Phone.EnUs.phone(), else: "")
+    }
+  end
+
   def get_random_postal_address do
     %PostalAddress{
       street: Faker.Address.street_name(),
@@ -52,20 +84,6 @@ defmodule Sportyweb.SeedHelper do
       zipcode: Faker.Address.zip(),
       city: Faker.Address.city(),
       country: PostalAddress.get_valid_countries() |> Enum.map(fn country -> country[:value] end) |> Enum.random()
-    }
-  end
-
-  def get_random_email do
-    %Email{
-      type: Email.get_valid_types()|> Enum.map(fn type -> type[:value] end) |> Enum.random(),
-      address: (if :rand.uniform() < 0.7, do: Faker.Internet.email(), else: "")
-    }
-  end
-
-  def get_random_phone do
-    %Phone{
-      type: Phone.get_valid_types()|> Enum.map(fn type -> type[:value] end) |> Enum.random(),
-      number: (if :rand.uniform() < 0.7, do: Faker.Phone.EnUs.phone(), else: "")
     }
   end
 
@@ -132,6 +150,7 @@ club_1 = Repo.insert!(%Club{
   foundation_date: ~D[1900-02-27],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
+  financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
   notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
@@ -281,6 +300,7 @@ club_2 = Repo.insert!(%Club{
   foundation_date: ~D[1948-02-13],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
+  financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
   notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
@@ -418,7 +438,11 @@ club_3 = Repo.insert!(%Club{
   reference_number: "-",
   description: "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.",
   website_url: "https://www.fcstpauli.com/",
-  foundation_date: ~D[1910-05-15]
+  foundation_date: ~D[1910-05-15],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 ###################################
@@ -429,7 +453,11 @@ club_4 = Repo.insert!(%Club{
   reference_number: "",
   description: "",
   website_url: "",
-  foundation_date: ~D[2020-04-01]
+  foundation_date: ~D[2020-04-01],
+  emails: [Sportyweb.SeedHelper.get_random_email()],
+  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
+  notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
 ###################################
@@ -442,6 +470,7 @@ testclub = Repo.insert!(%Club{
   foundation_date: ~D[2023-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
+  financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
   notes: [Sportyweb.SeedHelper.get_random_note()]
 })
 
@@ -823,6 +852,7 @@ Organization.list_clubs()
         postal_addresses: [Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address())],
         emails: [Map.from_struct(Sportyweb.SeedHelper.get_random_email())],
         phones: [Map.from_struct(Sportyweb.SeedHelper.get_random_phone())],
+        financial_data: [Map.from_struct(Sportyweb.SeedHelper.get_random_financial_data())],
         notes: [Map.from_struct(Sportyweb.SeedHelper.get_random_note())]
       })
 

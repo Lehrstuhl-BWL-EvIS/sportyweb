@@ -56,10 +56,10 @@ defmodule Sportyweb.Organization.Club do
       ],
       empty_values: ["", nil]
     )
-    |> cast_assoc(:emails, required: false)
-    |> cast_assoc(:financial_data, required: false)
-    |> cast_assoc(:notes, required: false)
-    |> cast_assoc(:phones, required: false)
+    |> cast_assoc(:emails, required: true)
+    |> cast_assoc(:financial_data, required: true)
+    |> cast_assoc(:notes, required: true)
+    |> cast_assoc(:phones, required: true)
     |> validate_required([:name, :foundation_date])
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)

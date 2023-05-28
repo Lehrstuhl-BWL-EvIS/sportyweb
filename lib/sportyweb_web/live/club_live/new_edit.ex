@@ -4,6 +4,7 @@ defmodule SportywebWeb.ClubLive.NewEdit do
   alias Sportyweb.Organization
   alias Sportyweb.Organization.Club
   alias Sportyweb.Polymorphic.Email
+  alias Sportyweb.Polymorphic.FinancialData
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
 
@@ -36,7 +37,7 @@ defmodule SportywebWeb.ClubLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    club = Organization.get_club!(id, [:emails, :phones, :notes])
+    club = Organization.get_club!(id, [:emails, :financial_data, :phones, :notes])
 
     socket
     |> assign(:page_title, "Verein bearbeiten")
@@ -49,6 +50,7 @@ defmodule SportywebWeb.ClubLive.NewEdit do
     |> assign(:club, %Club{
       emails: [%Email{}],
       phones: [%Phone{}],
+      financial_data: [%FinancialData{}],
       notes: [%Note{}]}
     )
   end
