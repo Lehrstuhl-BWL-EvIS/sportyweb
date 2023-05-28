@@ -1,6 +1,5 @@
 defmodule SportywebWeb.FeeLive.IndexFeesTableComponent do
   use SportywebWeb, :live_component
-
   import SportywebWeb.CommonHelper
 
   @impl true

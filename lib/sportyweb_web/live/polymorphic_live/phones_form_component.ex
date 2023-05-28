@@ -7,15 +7,15 @@ defmodule SportywebWeb.PolymorphicLive.PhonesFormComponent do
   def render(assigns) do
     ~H"""
     <div class="col-span-12">
-      <.inputs_for :let={f_nested} field={@form[:phones]}>
+      <.inputs_for :let={phone} field={@form[:phones]}>
         <.input_grid>
           <div class="col-span-12 md:col-span-8">
-            <.input field={f_nested[:number]} type="text" label="Telefon (optional)" />
+            <.input field={phone[:number]} type="text" label="Telefon (optional)" />
           </div>
 
           <div class="col-span-12 md:col-span-4">
             <.input
-              field={f_nested[:type]}
+              field={phone[:type]}
               type="select"
               label="Art"
               options={Phone.get_valid_types}
