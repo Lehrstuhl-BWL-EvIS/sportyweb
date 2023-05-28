@@ -110,7 +110,7 @@ defmodule Sportyweb.Legal.Fee do
       :archive_date],
       empty_values: ["", nil]
     )
-    |> cast_assoc(:notes, required: false)
+    |> cast_assoc(:notes, required: true)
     |> validate_required([
       :club_id,
       :type,

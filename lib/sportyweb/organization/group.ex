@@ -44,9 +44,9 @@ defmodule Sportyweb.Organization.Group do
       ],
       empty_values: ["", nil]
     )
-    |> cast_assoc(:emails, required: false)
-    |> cast_assoc(:notes, required: false)
-    |> cast_assoc(:phones, required: false)
+    |> cast_assoc(:emails, required: true)
+    |> cast_assoc(:notes, required: true)
+    |> cast_assoc(:phones, required: true)
     |> validate_required([:department_id, :name, :creation_date])
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
