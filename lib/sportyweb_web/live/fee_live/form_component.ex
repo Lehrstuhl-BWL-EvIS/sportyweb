@@ -108,11 +108,12 @@ defmodule SportywebWeb.FeeLive.FormComponent do
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <.live_component
-                module={SportywebWeb.PolymorphicLive.NotesFormComponent}
-                id={"notes"}
-                form={@form}
-              />
+              <div class="col-span-12">
+                <.label>Notizen (optional)</.label>
+                <.inputs_for :let={note} field={@form[:notes]}>
+                  <.input field={note[:content]} type="textarea" />
+                </.inputs_for>
+              </div>
             </.input_grid>
 
             <.input_grid class="pt-6" :if={@fee.id && !Fee.is_archived?(@fee) && (Enum.any?(@fee.ancestors) || Enum.any?(@fee.contracts))}>

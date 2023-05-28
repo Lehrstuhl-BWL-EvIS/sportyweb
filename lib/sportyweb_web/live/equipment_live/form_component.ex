@@ -62,25 +62,30 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <.live_component
-                module={SportywebWeb.PolymorphicLive.EmailsFormComponent}
-                id={"emails"}
-                form={@form}
-              />
+              <.inputs_for :let={email} field={@form[:emails]}>
+                <.live_component
+                  module={SportywebWeb.PolymorphicLive.EmailFormComponent}
+                  id={"email_#{email.index}"}
+                  email={email}
+                />
+              </.inputs_for>
 
-              <.live_component
-                module={SportywebWeb.PolymorphicLive.PhonesFormComponent}
-                id={"phones"}
-                form={@form}
-              />
+              <.inputs_for :let={phone} field={@form[:phones]}>
+                <.live_component
+                  module={SportywebWeb.PolymorphicLive.PhoneFormComponent}
+                  id={"phone_#{phone.index}"}
+                  phone={phone}
+                />
+              </.inputs_for>
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <.live_component
-                module={SportywebWeb.PolymorphicLive.NotesFormComponent}
-                id={"notes"}
-                form={@form}
-              />
+              <div class="col-span-12">
+                <.label>Notizen (optional)</.label>
+                <.inputs_for :let={note} field={@form[:notes]}>
+                  <.input field={note[:content]} type="textarea" />
+                </.inputs_for>
+              </div>
             </.input_grid>
           </.input_grids>
 

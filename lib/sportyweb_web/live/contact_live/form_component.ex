@@ -88,25 +88,31 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               <% end %>
 
               <.input_grid class="pt-6">
-                <.live_component
-                  module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
-                  id={"postal_addresses"}
-                  form={@form}
-                />
+                <.inputs_for :let={postal_address} field={@form[:postal_addresses]}>
+                  <.live_component
+                    module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
+                    id={"postal_addresses_#{postal_address.index}"}
+                    postal_address={postal_address}
+                  />
+                </.inputs_for>
               </.input_grid>
 
               <.input_grid class="pt-6">
-                <.live_component
-                  module={SportywebWeb.PolymorphicLive.EmailsFormComponent}
-                  id={"emails"}
-                  form={@form}
-                />
+                <.inputs_for :let={email} field={@form[:emails]}>
+                  <.live_component
+                    module={SportywebWeb.PolymorphicLive.EmailFormComponent}
+                    id={"email_#{email.index}"}
+                    email={email}
+                  />
+                </.inputs_for>
 
-                <.live_component
-                  module={SportywebWeb.PolymorphicLive.PhonesFormComponent}
-                  id={"phones"}
-                  form={@form}
-                />
+                <.inputs_for :let={phone} field={@form[:phones]}>
+                  <.live_component
+                    module={SportywebWeb.PolymorphicLive.PhoneFormComponent}
+                    id={"phone_#{phone.index}"}
+                    phone={phone}
+                  />
+                </.inputs_for>
               </.input_grid>
 
               <.input_grid class="pt-6">
@@ -120,11 +126,12 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               </.input_grid>
 
               <.input_grid class="pt-6">
-                <.live_component
-                  module={SportywebWeb.PolymorphicLive.NotesFormComponent}
-                  id={"notes"}
-                  form={@form}
-                />
+                <div class="col-span-12">
+                  <.label>Notizen (optional)</.label>
+                  <.inputs_for :let={note} field={@form[:notes]}>
+                    <.input field={note[:content]} type="textarea" />
+                  </.inputs_for>
+                </div>
               </.input_grid>
             <% end %>
           </.input_grids>

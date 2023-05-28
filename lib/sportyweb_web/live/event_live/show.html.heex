@@ -37,7 +37,7 @@
 
       <%= if @event.location_type == "postal_address" do %>
         <.live_component
-          module={SportywebWeb.PolymorphicLive.PostalAddressesShowComponent}
+          module={SportywebWeb.PolymorphicLive.PostalAddressShowComponent}
           id="postal_addresses"
           postal_addresses={@event.postal_addresses}
         />

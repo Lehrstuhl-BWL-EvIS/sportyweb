@@ -1,4 +1,4 @@
-defmodule SportywebWeb.PolymorphicLive.PostalAddressesShowComponent do
+defmodule SportywebWeb.PolymorphicLive.PostalAddressShowComponent do
   use SportywebWeb, :live_component
   import SportywebWeb.CommonHelper
 
