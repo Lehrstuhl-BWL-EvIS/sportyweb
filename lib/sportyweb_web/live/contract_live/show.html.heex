@@ -1,0 +1,35 @@
+<.header>
+  <%= @page_title %>
+</.header>
+
+<.card>
+  <.list>
+    <:item title="Vertragsobjekt">
+      <.link navigate={@object_path} class="text-indigo-600 hover:underline">
+        <%= format_string_field(@object.name) %>
+      </.link>
+    </:item>
+    <:item title="Kontakt">
+      <.link navigate={~p"/contacts/#{@contract.contact}"} class="text-indigo-600 hover:underline">
+        <%= format_string_field(@contract.contact.name) %>
+      </.link>
+    </:item>
+    <:item title="Gebühr">
+      <.link navigate={~p"/fees/#{@contract.fee}"} class="text-indigo-600 hover:underline">
+        <%= format_string_field(@contract.fee.name) %>
+      </.link>
+    </:item>
+    <:item title="Unterzeichnungsdatum">
+      <%= format_date_field_dmy(@contract.signing_date) %>
+    </:item>
+    <:item title="Vertragsbeginn">
+      <%= format_date_field_dmy(@contract.start_date) %>
+    </:item>
+    <:item title="Kündigungsdatum">
+      <%= format_date_field_dmy(@contract.termination_date) %>
+    </:item>
+        <:item title="Vertragsende">
+      <%= format_date_field_dmy(@contract.end_date) %>
+    </:item>
+  </.list>
+</.card>

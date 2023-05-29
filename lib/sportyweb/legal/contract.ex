@@ -1,7 +1,9 @@
 defmodule Sportyweb.Legal.Contract do
+  use SportywebWeb, :live_view
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.ContractPause
   alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.Club
@@ -29,6 +31,34 @@ defmodule Sportyweb.Legal.Contract do
     field :end_date, :date, default: nil
 
     timestamps()
+  end
+
+  @doc """
+  A contract "connects" a contact, a fee and the actual "object" the contract is about.
+  This object (not in the OOP sense!) could be an instance of the entities
+  club, department or group. Others could be added in the future.
+  This function automatically determines to which entity and especially to which
+  instance of an entity the given contract has a polymorphic association to.
+  It then returns this instance and also the path to its "show" page.
+
+  Note: I'm not 100% sure if this is the best place to put this particular function.
+        Maybe its better to move it into a new helper module in the future, if more
+        such functions pop up over time.
+  """
+  def get_object(%Contract{} = contract) do
+    case contract.fee.type do
+      "club" ->
+        club = Enum.at(contract.clubs, 0)
+        {club, ~p"/clubs/#{club}"}
+      "department" ->
+        department = Enum.at(contract.departments, 0)
+        {department, ~p"/departments/#{department}"}
+      "group" ->
+        group = Enum.at(contract.groups, 0)
+        {group, ~p"/groups/#{group}"}
+      _ ->
+        {nil, nil}
+    end
   end
 
   @doc false

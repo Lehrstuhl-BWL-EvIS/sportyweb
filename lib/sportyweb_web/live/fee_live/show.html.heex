@@ -39,7 +39,7 @@
     <:item title="Nachfolger-Gebühr">
       <%= if @fee.successor do %>
         <.link navigate={~p"/fees/#{@fee.successor}"} class="text-indigo-600 hover:underline">
-          <%= @fee.successor.name %>
+          <%= format_string_field(@fee.successor.name) %>
         </.link>
       <% else %>
         -
