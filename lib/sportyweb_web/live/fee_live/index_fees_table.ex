@@ -1,4 +1,4 @@
-defmodule SportywebWeb.FeeLive.IndexFeesTableComponent do
+defmodule SportywebWeb.FeeLive.IndexTableComponent do
   use SportywebWeb, :live_component
   import SportywebWeb.CommonHelper
 

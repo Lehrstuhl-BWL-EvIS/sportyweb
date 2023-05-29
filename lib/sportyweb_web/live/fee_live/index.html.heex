@@ -31,7 +31,7 @@
     <% assigns = assign(assigns, :fees, Legal.list_general_fees(@club.id, type[:value])) %>
     <%= if Enum.any?(@fees) do %>
       <.live_component
-        module={SportywebWeb.FeeLive.IndexFeesTableComponent}
+        module={SportywebWeb.FeeLive.IndexTableComponent}
         id={"index-fees-table-#{type[:value]}"}
         fees={@fees}
       />
