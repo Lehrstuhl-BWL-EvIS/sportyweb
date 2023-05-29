@@ -1,6 +1,9 @@
 <.header>
   <%= @page_title %>
   <:actions>
+    <.link navigate={~p"/clubs/#{@club}/contracts/new"}>
+      <.button>Mitglied erstellen</.button>
+    </.link>
     <.link navigate={~p"/clubs/#{@club}/contacts/new"}>
       <.button>Kontakt erstellen</.button>
     </.link>

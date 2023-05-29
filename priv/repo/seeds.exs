@@ -856,18 +856,19 @@ Organization.list_clubs()
         notes: [Map.from_struct(Sportyweb.SeedHelper.get_random_note())]
       })
 
-      if :rand.uniform() < 0.7 do
-        Repo.insert!(%Contract{
-          club_id: club.id,
-          contact_id: contact.id,
-          fee_id: default_club_fee.id,
-          signing_date: Date.utc_today(),
-          start_date: Date.utc_today(),
-          termination_date: nil,
-          end_date: nil,
-          clubs: [club]
-        })
-      end
+      # TODO: Add fee that matches the age of the contact.
+      # if :rand.uniform() < 0.7 do
+      #   Repo.insert!(%Contract{
+      #     club_id: club.id,
+      #     contact_id: contact.id,
+      #     fee_id: default_club_fee.id,
+      #     signing_date: Date.utc_today(),
+      #     start_date: Date.utc_today(),
+      #     termination_date: nil,
+      #     end_date: nil,
+      #     clubs: [club]
+      #   })
+      # end
     end
 
     # Venues

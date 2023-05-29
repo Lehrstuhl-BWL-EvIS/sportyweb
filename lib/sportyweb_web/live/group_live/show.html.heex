@@ -57,3 +57,26 @@
     <p>Bisher wurde noch keine gruppenspezifische Gebühr erstellt.</p>
   <% end %>
 </.card>
+
+<.header level="2" class="mt-12">
+  Mitglieder
+  <:actions>
+    <.link navigate={~p"/groups/#{@group}/contracts/new"}>
+      <.button>Mitglied erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@group.contacts) do %>
+    <.live_component
+      module={SportywebWeb.ContactLive.IndexTableComponent}
+      id="contacts-table"
+      contacts={@group.contacts}
+    />
+  <% else %>
+    <p>
+      Bisher wurde noch kein Mitglied erstellt.
+    </p>
+  <% end %>
+</.card>

@@ -6,6 +6,137 @@ defmodule Sportyweb.Legal do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
+  alias Sportyweb.Legal.Contract
+  alias Sportyweb.Personal
+
+  @doc """
+  Returns a clubs list of contracts.
+
+  ## Examples
+
+      iex> list_contracts(1)
+      [%Contract{}, ...]
+
+  """
+  def list_contracts(club_id) do
+    query = from(c in Contract, where: c.club_id == ^club_id, order_by: c.name)
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns a clubs list of contracts. Preloads associations.
+
+  ## Examples
+
+      iex> list_contracts(1, [:club])
+      [%Contract{}, ...]
+
+  """
+  def list_contracts(club_id, preloads) do
+    Repo.preload(list_contracts(club_id), preloads)
+  end
+
+  @doc """
+  Gets a single contract.
+
+  Raises `Ecto.NoResultsError` if the Contract does not exist.
+
+  ## Examples
+
+      iex> get_contract!(123)
+      %Contract{}
+
+      iex> get_contract!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_contract!(id), do: Repo.get!(Contract, id)
+
+  @doc """
+  Gets a single contract. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Contract does not exist.
+
+  ## Examples
+
+      iex> get_contract!(123, [:club])
+      %Contract{}
+
+      iex> get_contract!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_contract!(id, preloads) do
+    Contract
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
+  Creates a contract.
+
+  ## Examples
+
+      iex> create_contract(%{field: value})
+      {:ok, %Contract{}}
+
+      iex> create_contract(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_contract(attrs \\ %{}) do
+    %Contract{}
+    |> Contract.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a contract.
+
+  ## Examples
+
+      iex> update_contract(contract, %{field: new_value})
+      {:ok, %Contract{}}
+
+      iex> update_contract(contract, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_contract(%Contract{} = contract, attrs) do
+    contract
+    |> Contract.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a contract.
+
+  ## Examples
+
+      iex> delete_contract(contract)
+      {:ok, %Contract{}}
+
+      iex> delete_contract(contract)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_contract(%Contract{} = contract) do
+    Repo.delete(contract)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking contract changes.
+
+  ## Examples
+
+      iex> change_contract(contract)
+      %Ecto.Changeset{data: %Contract{}}
+
+  """
+  def change_contract(%Contract{} = contract, attrs \\ %{}) do
+    Contract.changeset(contract, attrs)
+  end
+
   alias Sportyweb.Legal.Fee
 
   @doc """
@@ -51,12 +182,12 @@ defmodule Sportyweb.Legal do
       [%Fee{}, ...]
 
   """
-  def list_successor_fees(fee, maximum_age_in_years) do
+  def list_successor_fees(%Fee{} = fee, maximum_age_in_years) do
     # TODOs:
     # - also non-general, based on the "assigned" object
     # - group_only
 
-    if maximum_age_in_years == nil || (is_binary(maximum_age_in_years) && String.trim(maximum_age_in_years) == "") do
+    if is_nil(maximum_age_in_years) || (is_binary(maximum_age_in_years) && String.trim(maximum_age_in_years) == "") do
       []
     else
       maximum_age_in_years = case is_binary(maximum_age_in_years) do
@@ -82,6 +213,37 @@ defmodule Sportyweb.Legal do
         nil -> query
         _ -> from(f in query, where: f.id != ^fee.id)
       end
+
+      Repo.all(query)
+    end
+  end
+
+  @doc """
+  Returns a list of fees that are possible options for the given contact.
+  The selection is based on a set of different criteria.
+
+  ## Examples
+
+      iex> list_contact_fee_options(1)
+      [%Fee{}, ...]
+
+      iex> list_contact_fee_options(nil)
+      []
+
+  """
+  def list_contact_fee_options(contact_id) do
+    if is_nil(contact_id) do
+      []
+    else
+      contact = Personal.get_contact!(contact_id)
+
+      # TODO: Add more limitations to query!
+
+      query =
+        from(
+          f in Fee,
+          where: f.club_id == ^contact.club_id,
+          order_by: f.name)
 
       Repo.all(query)
     end

@@ -6,9 +6,13 @@ defmodule Sportyweb.Organization do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Organization.ClubContract
+  alias Sportyweb.Organization.DepartmentContract
   alias Sportyweb.Organization.DepartmentFee
+  alias Sportyweb.Organization.GroupContract
   alias Sportyweb.Organization.GroupFee
 
   @doc """
@@ -124,6 +128,25 @@ defmodule Sportyweb.Organization do
   """
   def change_club(%Club{} = club, attrs \\ %{}) do
     Club.changeset(club, attrs)
+  end
+
+  @doc """
+  Creates a club_contract (many_to_many).
+
+  ## Examples
+
+      iex> create_club_contract(club, contract)
+      {:ok, %ClubContract{}}
+
+      iex> create_club_contract(club, contract)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_club_contract(%Club{} = club, %Contract{} = contract) do
+    Repo.insert(%ClubContract{
+      club_id: club.id,
+      contract_id: contract.id
+    })
   end
 
   alias Sportyweb.Organization.Department
@@ -254,6 +277,25 @@ defmodule Sportyweb.Organization do
   """
   def change_department(%Department{} = department, attrs \\ %{}) do
     Department.changeset(department, attrs)
+  end
+
+  @doc """
+  Creates a department_contract (many_to_many).
+
+  ## Examples
+
+      iex> create_department_contract(department, contract)
+      {:ok, %DepartmentContract{}}
+
+      iex> create_department_contract(department, contract)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_department_contract(%Department{} = department, %Contract{} = contract) do
+    Repo.insert(%DepartmentContract{
+      department_id: department.id,
+      contract_id: contract.id
+    })
   end
 
   @doc """
@@ -390,6 +432,25 @@ defmodule Sportyweb.Organization do
   """
   def change_group(%Group{} = group, attrs \\ %{}) do
     Group.changeset(group, attrs)
+  end
+
+  @doc """
+  Creates a group_contract (many_to_many).
+
+  ## Examples
+
+      iex> create_group_contract(group, contract)
+      {:ok, %GroupContract{}}
+
+      iex> create_group_contract(group, contract)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_group_contract(%Group{} = group, %Contract{} = contract) do
+    Repo.insert(%GroupContract{
+      group_id: group.id,
+      contract_id: contract.id
+    })
   end
 
   @doc """
