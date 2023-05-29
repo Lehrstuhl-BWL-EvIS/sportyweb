@@ -178,11 +178,11 @@ defmodule Sportyweb.Legal do
 
   ## Examples
 
-      iex> list_successor_fees(1, "club")
+      iex> list_successor_fee_options(%Fee{...}, 67)
       [%Fee{}, ...]
 
   """
-  def list_successor_fees(%Fee{} = fee, maximum_age_in_years) do
+  def list_successor_fee_options(%Fee{} = fee, maximum_age_in_years) do
     # TODOs:
     # - also non-general, based on the "assigned" object
     # - group_only

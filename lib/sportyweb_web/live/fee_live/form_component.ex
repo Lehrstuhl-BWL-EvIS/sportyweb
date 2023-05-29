@@ -82,16 +82,16 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                   type="number"
                   label="Höchstalter (optional)"
                   min="0"
-                  phx-change="update_successor_fees"
+                  phx-change="update_successor_fee_options"
                 />
               </div>
 
-              <div class="col-span-12" :if={Enum.any?(@successor_fees)}>
+              <div class="col-span-12" :if={Enum.any?(@successor_fee_options)}>
                 <.input
                   field={@form[:successor_id]}
                   type="select"
                   label="Nachfolger-Gebühr (optional)"
-                  options={@successor_fees |> Enum.map(&{&1.name, &1.id})}
+                  options={@successor_fee_options |> Enum.map(&{&1.name, &1.id})}
                   prompt="Bitte auswählen"
                 />
               </div>
@@ -176,7 +176,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign_form(changeset)
-     |> assign_successor_fees(fee, fee.maximum_age_in_years)}
+     |> assign_successor_fee_options(fee, fee.maximum_age_in_years)}
   end
 
   @impl true
@@ -194,10 +194,10 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   end
 
   @impl true
-  def handle_event("update_successor_fees", %{"fee" => %{"maximum_age_in_years" => maximum_age_in_years}}, socket) do
+  def handle_event("update_successor_fee_options", %{"fee" => %{"maximum_age_in_years" => maximum_age_in_years}}, socket) do
     {:noreply,
      socket
-     |> assign_successor_fees(socket.assigns.fee, maximum_age_in_years)}
+     |> assign_successor_fee_options(socket.assigns.fee, maximum_age_in_years)}
   end
 
   @impl true
@@ -253,8 +253,8 @@ defmodule SportywebWeb.FeeLive.FormComponent do
     assign(socket, :form, to_form(changeset))
   end
 
-  defp assign_successor_fees(socket, fee, maximum_age_in_years) do
-    assign(socket, :successor_fees, Legal.list_successor_fees(fee, maximum_age_in_years))
+  defp assign_successor_fee_options(socket, fee, maximum_age_in_years) do
+    assign(socket, :successor_fee_options, Legal.list_successor_fee_options(fee, maximum_age_in_years))
   end
 
   defp create_association(socket, fee) do
