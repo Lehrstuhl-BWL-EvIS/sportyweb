@@ -33,6 +33,12 @@ defmodule SportywebWeb.EventLive.FeeNew do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
+  defp apply_action(socket, :index, %{"id" => id}) do
+    # If the route behind this function should be more than a redirect in the future, put it in its own "Index"-LiveView!
+    socket
+    |> push_navigate(to: ~p"/events/#{id}")
+  end
+
   # There is no "edit" action in this LiveView because that gets handled in the default SportywebWeb.FeeLive.NewEdit
 
   defp apply_action(socket, :new, %{"id" => id}) do

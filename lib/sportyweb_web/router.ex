@@ -87,6 +87,9 @@ defmodule SportywebWeb.Router do
 
       live "/clubs/:id", ClubLive.Show, :show
 
+      live "/clubs/:id/contracts", ClubLive.ContractNew, :index
+      live "/clubs/:id/contracts/new", ClubLive.ContractNew, :new
+
       # Events (Each belongs to a club)
 
       live "/events", EventLive.Index, :index_root
@@ -97,6 +100,7 @@ defmodule SportywebWeb.Router do
 
       live "/events/:id", EventLive.Show, :show
 
+      live "/events/:id/fees", EventLive.FeeNew, :index
       live "/events/:id/fees/new", EventLive.FeeNew, :new
 
       # Departments (Each belongs to a club)
@@ -109,6 +113,7 @@ defmodule SportywebWeb.Router do
 
       live "/departments/:id", DepartmentLive.Show, :show
 
+      live "/departments/:id/fees", DepartmentLive.FeeNew, :index
       live "/departments/:id/fees/new", DepartmentLive.FeeNew, :new
 
       # Groups (Each belongs to a department)
@@ -121,6 +126,7 @@ defmodule SportywebWeb.Router do
 
       live "/groups/:id", GroupLive.Show, :show
 
+      live "/groups/:id/fees", GroupLive.FeeNew, :index
       live "/groups/:id/fees/new", GroupLive.FeeNew, :new
 
       # Contacts (Each belongs to a club)
@@ -143,6 +149,7 @@ defmodule SportywebWeb.Router do
 
       live "/venues/:id", VenueLive.Show, :show
 
+      live "/venues/:id/fees", VenueLive.FeeNew, :index
       live "/venues/:id/fees/new", VenueLive.FeeNew, :new
 
       # Equipment (Each belongs to a venue)
@@ -155,14 +162,23 @@ defmodule SportywebWeb.Router do
 
       live "/equipment/:id", EquipmentLive.Show, :show
 
+      live "/equipment/:id/fees", EquipmentLive.FeeNew, :index
       live "/equipment/:id/fees/new", EquipmentLive.FeeNew, :new
+
+      # Contracts (Polymorphic)
+
+      live "/contracts", ContractLive.Index, :index_root
+
+      live "/contracts/:id/edit", ContractLive.NewEdit, :edit
+
+      live "/contracts/:id", ContractLive.Show, :show
 
       # Fees (Polymorphic)
 
       live "/fees", FeeLive.Index, :index_root
-      live "/clubs/:club_id/fees", FeeLive.Index, :index
+      live "/clubs/:club_id/fees", FeeLive.Index, :index # General fees
 
-      live "/clubs/:club_id/fees/new/:type", FeeLive.NewEdit, :new
+      live "/clubs/:club_id/fees/new/:type", FeeLive.NewEdit, :new # General fees
       live "/fees/:id/edit", FeeLive.NewEdit, :edit
 
       live "/fees/:id", FeeLive.Show, :show
