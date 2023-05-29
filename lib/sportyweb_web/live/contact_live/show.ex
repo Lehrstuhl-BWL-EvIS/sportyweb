@@ -1,6 +1,7 @@
 defmodule SportywebWeb.ContactLive.Show do
   use SportywebWeb, :live_view
 
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
 
@@ -14,12 +15,14 @@ defmodule SportywebWeb.ContactLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     contact = Personal.get_contact!(id, [
-      :club, :contracts, :emails, :financial_data, :notes, :phones, :postal_addresses])
+      :club, :emails, :financial_data, :notes, :phones, :postal_addresses,
+      contracts: [:clubs, :departments, :fee, :groups]])
 
     {:noreply,
      socket
      |> assign(:page_title, "Kontakt: #{contact.name}")
      |> assign(:contact, contact)
-     |> assign(:club, contact.club)}
+     |> assign(:club, contact.club)
+     |> stream(:contracts, contact.contracts)}
   end
 end

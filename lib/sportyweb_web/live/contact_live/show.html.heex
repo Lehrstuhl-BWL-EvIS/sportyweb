@@ -56,3 +56,33 @@
     </:item>
   </.list>
 </.card>
+
+<.header level="2" class="mt-12">
+  Mitgliedschaftsverträge
+</.header>
+
+<.card>
+  <%= if Enum.any?(@streams.contracts) do %>
+    <.table
+      id="contracts"
+      rows={@streams.contracts}
+      row_click={fn {_id, contract} -> JS.navigate(~p"/contracts/#{contract}") end}
+    >
+      <:col :let={{_id, contract}} label="Vertragsobjekt">
+        <% {object, _object_path} = Contract.get_object(contract) %>
+        <%= format_string_field(object.name) %>
+      </:col>
+      <:col :let={{_id, contract}} label="Gebühr">
+        <%= format_string_field(contract.fee.name) %>
+      </:col>
+
+      <:action :let={{_id, contract}}>
+        <.link navigate={~p"/contracts/#{contract}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Bisher wurde noch kein Mitglied erstellt.
+    </p>
+  <% end %>
+</.card>
