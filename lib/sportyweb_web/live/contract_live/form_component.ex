@@ -126,7 +126,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
 
     case Legal.create_contract(contract_params) do
       {:ok, contract} ->
-        case create_association(socket, contract, socket.assigns.contract_object) do
+        case create_association(contract, socket.assigns.contract_object) do
           {:ok, _} ->
             {:noreply,
              socket
@@ -152,22 +152,22 @@ defmodule SportywebWeb.ContractLive.FormComponent do
     assign(socket, :fees, Legal.list_contact_fee_options(socket.assigns.contract_object, contact_id))
   end
 
-  defp create_association(socket, contract, %Club{} = contract_object) do
+  defp create_association(contract, %Club{} = contract_object) do
     Organization.create_club_contract(contract_object, contract)
     {:ok, contract}
   end
 
-  defp create_association(socket, contract, %Department{} = contract_object) do
+  defp create_association(contract, %Department{} = contract_object) do
     Organization.create_department_contract(contract_object, contract)
     {:ok, contract}
   end
 
-  defp create_association(socket, contract, %Group{} = contract_object) do
+  defp create_association(contract, %Group{} = contract_object) do
     Organization.create_group_contract(contract_object, contract)
     {:ok, contract}
   end
 
-  defp create_association(socket, contract, _) do
+  defp create_association(contract, _) do
     # Immediately delete the contract if no association could be created.
     # Otherwise the contract would be "free floating", without a contract_object.
     {:error, _} = Legal.delete_contract(contract)

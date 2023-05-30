@@ -236,7 +236,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
     case Legal.create_fee(fee_params) do
       {:ok, fee} ->
-        case create_association(socket, fee, socket.assigns.fee_object) do
+        case create_association(fee, socket.assigns.fee_object) do
           {:ok, _} ->
             {:noreply,
              socket
@@ -262,37 +262,37 @@ defmodule SportywebWeb.FeeLive.FormComponent do
     assign(socket, :successor_fee_options, Legal.list_successor_fee_options(fee, maximum_age_in_years))
   end
 
-  defp create_association(socket, fee, _) when fee.is_general do
+  defp create_association(fee, _) when fee.is_general do
     # Don't create any association if the fee is a general fee.
     {:ok, fee}
   end
 
-  defp create_association(socket, fee, %Department{} = fee_object) do
+  defp create_association(fee, %Department{} = fee_object) do
     Organization.create_department_fee(fee_object, fee)
     {:ok, fee}
   end
 
-  defp create_association(socket, fee, %Equipment{} = fee_object) do
+  defp create_association(fee, %Equipment{} = fee_object) do
     Asset.create_equipment_fee(fee_object, fee)
     {:ok, fee}
   end
 
-  defp create_association(socket, fee, %Event{} = fee_object) do
+  defp create_association(fee, %Event{} = fee_object) do
     Calendar.create_event_fee(fee_object, fee)
     {:ok, fee}
   end
 
-  defp create_association(socket, fee, %Group{} = fee_object) do
+  defp create_association(fee, %Group{} = fee_object) do
     Organization.create_group_fee(fee_object, fee)
     {:ok, fee}
   end
 
-  defp create_association(socket, fee, %Venue{} = fee_object) do
+  defp create_association(fee, %Venue{} = fee_object) do
     Asset.create_venue_fee(fee_object, fee)
     {:ok, fee}
   end
 
-  defp create_association(socket, fee, _) do
+  defp create_association(fee, _) do
     # Immediately delete the fee if no association could be created.
     # Otherwise the fee would be "free floating", without a fee_object.
     {:error, _} = Legal.delete_fee(fee)
