@@ -53,17 +53,19 @@ defmodule Sportyweb.SeedHelper do
   end
 
   def get_random_financial_data do
+    random_name = "#{Faker.Person.last_name()}, #{Faker.Person.first_name()}"
+
     if :rand.uniform() < 0.9 do
       %FinancialData{
         type: "direct_debit",
-        direct_debit_account_holder: "Max Mustermann",
+        direct_debit_account_holder: random_name,
         direct_debit_iban: "DE06495352657836424132",
         direct_debit_institute: "Beispielbank"
       }
     else
       %FinancialData{
         type: "invoice",
-        invoice_recipient: "Max Mustermann",
+        invoice_recipient: random_name,
         invoice_additional_information: ""
       }
     end
@@ -148,8 +150,8 @@ club_1 = Repo.insert!(%Club{
   description: "One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin.",
   website_url: "https://fcbayern.com/",
   foundation_date: ~D[1900-02-27],
-  emails: [Sportyweb.SeedHelper.get_random_email()],
-  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  emails: [%Email{type: "organization", address: "service@fcbayern.com"}],
+  phones: [%Phone{type: "organization", number: "+49 89 699 31-0"}],
   financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
   notes: [Sportyweb.SeedHelper.get_random_note()]
 })
@@ -298,8 +300,8 @@ club_2 = Repo.insert!(%Club{
   description: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.",
   website_url: "https://fc.de/",
   foundation_date: ~D[1948-02-13],
-  emails: [Sportyweb.SeedHelper.get_random_email()],
-  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  emails: [%Email{type: "organization", address: "service@fc.de"}],
+  phones: [%Phone{type: "organization", number: "0221 99 1948 0"}],
   financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
   notes: [Sportyweb.SeedHelper.get_random_note()]
 })
@@ -439,8 +441,8 @@ club_3 = Repo.insert!(%Club{
   description: "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.",
   website_url: "https://www.fcstpauli.com/",
   foundation_date: ~D[1910-05-15],
-  emails: [Sportyweb.SeedHelper.get_random_email()],
-  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  emails: [%Email{type: "organization", address: "info@fcstpauli.com"}],
+  phones: [%Phone{type: "organization", number: "040 - 317 874 0"}],
   financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
   notes: [Sportyweb.SeedHelper.get_random_note()]
 })
@@ -454,8 +456,8 @@ club_4 = Repo.insert!(%Club{
   description: "",
   website_url: "",
   foundation_date: ~D[2020-04-01],
-  emails: [Sportyweb.SeedHelper.get_random_email()],
-  phones: [Sportyweb.SeedHelper.get_random_phone()],
+  emails: [%Email{type: "organization", address: ""}],
+  phones: [%Phone{type: "organization", number: ""}],
   financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
   notes: [Sportyweb.SeedHelper.get_random_note()]
 })
@@ -522,42 +524,26 @@ Organization.list_clubs()
 
     # Fees: General - Club
 
-    Repo.insert!(%Fee{
+    fee_pensioners = Repo.insert!(%Fee{
       club_id: club.id,
       is_general: true,
       type: "club",
-      name: "Jahresmitgl. Verein Kinder",
+      name: "Jahresmitgl. Verein Senioren",
       reference_number: Sportyweb.SeedHelper.get_random_string(3),
       description: "",
-      base_fee_in_eur_cent: Enum.random(10..25) * 100,
+      base_fee_in_eur_cent: Enum.random(40..60) * 100,
       admission_fee_in_eur_cent: 0,
       is_recurring: true,
       is_for_contact_group_contacts_only: false,
-      minimum_age_in_years: 0,
-      maximum_age_in_years: 12,
+      minimum_age_in_years: 66,
+      maximum_age_in_years: nil,
       commission_date: ~D[2020-01-01],
       notes: [%Note{}]
     })
 
-    Repo.insert!(%Fee{
+    fee_adults = Repo.insert!(%Fee{
       club_id: club.id,
-      is_general: true,
-      type: "club",
-      name: "Jahresmitgl. Verein Jugendliche",
-      reference_number: Sportyweb.SeedHelper.get_random_string(3),
-      description: "",
-      base_fee_in_eur_cent: Enum.random(30..40) * 100,
-      admission_fee_in_eur_cent: 0,
-      is_recurring: true,
-      is_for_contact_group_contacts_only: false,
-      minimum_age_in_years: 13,
-      maximum_age_in_years: 17,
-      commission_date: ~D[2020-01-01],
-      notes: [%Note{}]
-    })
-
-    default_club_fee = Repo.insert!(%Fee{
-      club_id: club.id,
+      successor_id: fee_pensioners.id,
       is_general: true,
       type: "club",
       name: "Jahresmitgl. Verein Erwachsene (Vollmitglied)",
@@ -575,6 +561,7 @@ Organization.list_clubs()
 
     Repo.insert!(%Fee{
       club_id: club.id,
+      successor_id: fee_pensioners.id,
       is_general: true,
       type: "club",
       name: "Jahresmitgl. Verein Erwachsene (Unterstützungsempfänger)",
@@ -590,27 +577,64 @@ Organization.list_clubs()
       notes: [%Note{}]
     })
 
-    Repo.insert!(%Fee{
+    fee_teenagers = Repo.insert!(%Fee{
       club_id: club.id,
+      successor_id: fee_adults.id,
       is_general: true,
       type: "club",
-      name: "Jahresmitgl. Verein Senioren",
+      name: "Jahresmitgl. Verein Jugendliche",
       reference_number: Sportyweb.SeedHelper.get_random_string(3),
       description: "",
-      base_fee_in_eur_cent: Enum.random(40..60) * 100,
+      base_fee_in_eur_cent: Enum.random(30..40) * 100,
       admission_fee_in_eur_cent: 0,
       is_recurring: true,
       is_for_contact_group_contacts_only: false,
-      minimum_age_in_years: 66,
-      maximum_age_in_years: 100,
+      minimum_age_in_years: 13,
+      maximum_age_in_years: 17,
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
+    })
+
+    Repo.insert!(%Fee{
+      club_id: club.id,
+      successor_id: fee_teenagers.id,
+      is_general: true,
+      type: "club",
+      name: "Jahresmitgl. Verein Kinder",
+      reference_number: Sportyweb.SeedHelper.get_random_string(3),
+      description: "",
+      base_fee_in_eur_cent: Enum.random(10..25) * 100,
+      admission_fee_in_eur_cent: 0,
+      is_recurring: true,
+      is_for_contact_group_contacts_only: false,
+      minimum_age_in_years: 0,
+      maximum_age_in_years: 12,
       commission_date: ~D[2020-01-01],
       notes: [%Note{}]
     })
 
     # Fees: General - Departments
 
+    fee_adults = Repo.insert!(%Fee{
+      club_id: club.id,
+      is_general: true,
+      type: "department",
+      name: "Allg. Jahresmitgl. Abteilung Erwachsene & Senioren",
+      reference_number: Sportyweb.SeedHelper.get_random_string(3),
+      description: "",
+      base_fee_in_eur_cent: Enum.random(15..25) * 100,
+      admission_fee_in_eur_cent: 0,
+      is_recurring: true,
+      is_for_contact_group_contacts_only: false,
+      minimum_age_in_years: 18,
+      maximum_age_in_years: nil,
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
+    })
+
     Repo.insert!(%Fee{
       club_id: club.id,
+      successor_id: fee_adults.id,
       is_general: true,
       type: "department",
       name: "Allg. Jahresmitgl. Abteilung Kinder & Jugendliche",
@@ -626,11 +650,13 @@ Organization.list_clubs()
       notes: [%Note{}]
     })
 
-    Repo.insert!(%Fee{
+    # Fees: General - Groups
+
+    fee_adults = Repo.insert!(%Fee{
       club_id: club.id,
       is_general: true,
-      type: "department",
-      name: "Allg. Jahresmitgl. Abteilung Erwachsene & Senioren",
+      type: "group",
+      name: "Allg. Jahresmitgl. Gruppe Erwachsene & Senioren",
       reference_number: Sportyweb.SeedHelper.get_random_string(3),
       description: "",
       base_fee_in_eur_cent: Enum.random(15..25) * 100,
@@ -638,15 +664,14 @@ Organization.list_clubs()
       is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 18,
-      maximum_age_in_years: 100,
+      maximum_age_in_years: nil,
       commission_date: ~D[2020-01-01],
       notes: [%Note{}]
     })
 
-    # Fees: General - Groups
-
     Repo.insert!(%Fee{
       club_id: club.id,
+      successor_id: fee_adults.id,
       is_general: true,
       type: "group",
       name: "Allg. Jahresmitgl. Gruppe Kinder & Jugendliche",
@@ -662,43 +687,9 @@ Organization.list_clubs()
       notes: [%Note{}]
     })
 
-    Repo.insert!(%Fee{
-      club_id: club.id,
-      is_general: true,
-      type: "group",
-      name: "Allg. Jahresmitgl. Gruppe Erwachsene & Senioren",
-      reference_number: Sportyweb.SeedHelper.get_random_string(3),
-      description: "",
-      base_fee_in_eur_cent: Enum.random(15..25) * 100,
-      admission_fee_in_eur_cent: 0,
-      is_recurring: true,
-      is_for_contact_group_contacts_only: false,
-      minimum_age_in_years: 18,
-      maximum_age_in_years: 100,
-      commission_date: ~D[2020-01-01],
-      notes: [%Note{}]
-    })
-
     # Fees: General - Events
 
-    Repo.insert!(%Fee{
-      club_id: club.id,
-      is_general: true,
-      type: "event",
-      name: "Allg. Teilnahmegebühr Einführungskurs Fußball Kinder",
-      reference_number: Sportyweb.SeedHelper.get_random_string(3),
-      description: "",
-      base_fee_in_eur_cent: Enum.random(20..25) * 100,
-      admission_fee_in_eur_cent: 0,
-      is_recurring: true,
-      is_for_contact_group_contacts_only: false,
-      minimum_age_in_years: 0,
-      maximum_age_in_years: 12,
-      commission_date: ~D[2020-01-01],
-      notes: [%Note{}]
-    })
-
-    Repo.insert!(%Fee{
+    fee_adults = Repo.insert!(%Fee{
       club_id: club.id,
       is_general: true,
       type: "event",
@@ -711,6 +702,24 @@ Organization.list_clubs()
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 65,
+      commission_date: ~D[2020-01-01],
+      notes: [%Note{}]
+    })
+
+    Repo.insert!(%Fee{
+      club_id: club.id,
+      successor_id: fee_adults.id,
+      is_general: true,
+      type: "event",
+      name: "Allg. Teilnahmegebühr Einführungskurs Fußball Kinder",
+      reference_number: Sportyweb.SeedHelper.get_random_string(3),
+      description: "",
+      base_fee_in_eur_cent: Enum.random(20..25) * 100,
+      admission_fee_in_eur_cent: 0,
+      is_recurring: true,
+      is_for_contact_group_contacts_only: false,
+      minimum_age_in_years: 0,
+      maximum_age_in_years: 12,
       commission_date: ~D[2020-01-01],
       notes: [%Note{}]
     })
@@ -728,8 +737,8 @@ Organization.list_clubs()
       admission_fee_in_eur_cent: 0,
       is_recurring: true,
       is_for_contact_group_contacts_only: false,
-      minimum_age_in_years: 0,
-      maximum_age_in_years: 100,
+      minimum_age_in_years: nil,
+      maximum_age_in_years: nil,
       commission_date: ~D[2020-01-01],
       notes: [%Note{}]
     })
@@ -738,7 +747,7 @@ Organization.list_clubs()
       club_id: club.id,
       is_general: true,
       type: "equipment",
-      name: "Allg. Ausleihgebühr Fußballschuhe Kinder",
+      name: "Allg. Ausleihgebühr Fußballschuhe Kinder & Jugendliche",
       reference_number: Sportyweb.SeedHelper.get_random_string(3),
       description: "",
       base_fee_in_eur_cent: 200,
@@ -746,7 +755,7 @@ Organization.list_clubs()
       is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 0,
-      maximum_age_in_years: 100,
+      maximum_age_in_years: 17,
       commission_date: ~D[2020-01-01],
       notes: [%Note{}]
     })
@@ -756,8 +765,27 @@ Organization.list_clubs()
     Organization.list_departments(club.id)
     |> Enum.with_index()
     |> Enum.each(fn {department, _department_index} ->
+      fee_adults = Repo.insert!(%Fee{
+        club_id: club.id,
+        is_general: false,
+        type: "department",
+        name: "Spez. Jahresmitgl. Abteilung Erwachsene & Senioren",
+        reference_number: Sportyweb.SeedHelper.get_random_string(3),
+        description: "",
+        base_fee_in_eur_cent: Enum.random(5..25) * 100,
+        admission_fee_in_eur_cent: 0,
+        is_recurring: true,
+        is_for_contact_group_contacts_only: false,
+        minimum_age_in_years: 18,
+        maximum_age_in_years: nil,
+        commission_date: ~D[2023-01-01],
+        notes: [%Note{}],
+        departments: [department]
+      })
+
       Repo.insert!(%Fee{
         club_id: club.id,
+        successor_id: fee_adults.id,
         is_general: false,
         type: "department",
         name: "Spez. Jahresmitgl. Abteilung Kinder & Jugendliche",
@@ -774,31 +802,32 @@ Organization.list_clubs()
         departments: [department]
       })
 
-      Repo.insert!(%Fee{
-        club_id: club.id,
-        is_general: false,
-        type: "department",
-        name: "Spez. Jahresmitgl. Abteilung Erwachsene & Senioren",
-        reference_number: Sportyweb.SeedHelper.get_random_string(3),
-        description: "",
-        base_fee_in_eur_cent: Enum.random(5..25) * 100,
-        admission_fee_in_eur_cent: 0,
-        is_recurring: true,
-        is_for_contact_group_contacts_only: false,
-        minimum_age_in_years: 18,
-        maximum_age_in_years: 100,
-        commission_date: ~D[2023-01-01],
-        notes: [%Note{}],
-        departments: [department]
-      })
-
       # Fees: Specific - Groups
 
       Organization.list_groups(department.id)
       |> Enum.with_index()
       |> Enum.each(fn {group, _group_index} ->
+        fee_adults = Repo.insert!(%Fee{
+          club_id: club.id,
+          is_general: false,
+          type: "group",
+          name: "Spez. Jahresmitgl. Gruppe Erwachsene & Senioren",
+          reference_number: Sportyweb.SeedHelper.get_random_string(3),
+          description: "",
+          base_fee_in_eur_cent: Enum.random(15..25) * 100,
+          admission_fee_in_eur_cent: 0,
+          is_recurring: true,
+          is_for_contact_group_contacts_only: false,
+          minimum_age_in_years: 18,
+          maximum_age_in_years: nil,
+          commission_date: ~D[2023-01-01],
+          notes: [%Note{}],
+          groups: [group]
+        })
+
         Repo.insert!(%Fee{
           club_id: club.id,
+          successor_id: fee_adults.id,
           is_general: false,
           type: "group",
           name: "Spez. Jahresmitgl. Gruppe Kinder & Jugendliche",
@@ -814,30 +843,12 @@ Organization.list_clubs()
           notes: [%Note{}],
           groups: [group]
         })
-
-        Repo.insert!(%Fee{
-          club_id: club.id,
-          is_general: false,
-          type: "group",
-          name: "Spez. Jahresmitgl. Gruppe Erwachsene & Senioren",
-          reference_number: Sportyweb.SeedHelper.get_random_string(3),
-          description: "",
-          base_fee_in_eur_cent: Enum.random(15..25) * 100,
-          admission_fee_in_eur_cent: 0,
-          is_recurring: true,
-          is_for_contact_group_contacts_only: false,
-          minimum_age_in_years: 18,
-          maximum_age_in_years: 100,
-          commission_date: ~D[2023-01-01],
-          notes: [%Note{}],
-          groups: [group]
-        })
       end)
     end)
 
     # Contacts & Contracts
 
-    for i <- 0..Enum.random(10..30) do
+    for i <- 0..Enum.random(15..40) do
       # Use the context function instead of Repo.insert!() to invoke the changeset which sets the name.
       {:ok, %Contact{} = contact} = Personal.create_contact(%{
         club_id: club.id,
@@ -899,8 +910,8 @@ Organization.list_clubs()
         admission_fee_in_eur_cent: 0,
         is_recurring: true,
         is_for_contact_group_contacts_only: false,
-        minimum_age_in_years: 0,
-        maximum_age_in_years: 100,
+        minimum_age_in_years: nil,
+        maximum_age_in_years: nil,
         commission_date: ~D[2023-01-01],
         notes: [%Note{}],
         venues: [venue]
@@ -936,8 +947,8 @@ Organization.list_clubs()
           admission_fee_in_eur_cent: 0,
           is_recurring: true,
           is_for_contact_group_contacts_only: false,
-          minimum_age_in_years: 0,
-          maximum_age_in_years: 100,
+          minimum_age_in_years: nil,
+          maximum_age_in_years: nil,
           commission_date: ~D[2023-01-01],
           notes: [%Note{}],
           equipment: [equipment]
@@ -981,8 +992,8 @@ Organization.list_clubs()
         admission_fee_in_eur_cent: 0,
         is_recurring: true,
         is_for_contact_group_contacts_only: false,
-        minimum_age_in_years: 0,
-        maximum_age_in_years: 100,
+        minimum_age_in_years: nil,
+        maximum_age_in_years: nil,
         commission_date: ~D[2023-01-01],
         notes: [%Note{}],
         events: [event]
