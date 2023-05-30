@@ -16,7 +16,7 @@ defmodule Sportyweb.Organization do
   alias Sportyweb.Organization.GroupFee
 
   @doc """
-  Returns the list of clubs.
+  Returns a list of clubs.
 
   ## Examples
 
@@ -27,6 +27,19 @@ defmodule Sportyweb.Organization do
   def list_clubs do
     query = from(c in Club, order_by: c.name)
     Repo.all(query)
+  end
+
+  @doc """
+  Returns a list of clubs. Preloads associations.
+
+  ## Examples
+
+      iex> list_clubs(1, [:departments])
+      [%Club{}, ...]
+
+  """
+  def list_clubs(preloads) do
+    Repo.preload(list_clubs(), preloads)
   end
 
   @doc """

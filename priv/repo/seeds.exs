@@ -18,6 +18,7 @@ alias Sportyweb.Asset
 alias Sportyweb.Asset.Equipment
 alias Sportyweb.Asset.Venue
 alias Sportyweb.Calendar.Event
+alias Sportyweb.Legal
 alias Sportyweb.Legal.Contract
 alias Sportyweb.Legal.Fee
 alias Sportyweb.Organization
@@ -435,7 +436,7 @@ Repo.insert!(%Department{
 ###################################
 # Add Club 3
 
-club_3 = Repo.insert!(%Club{
+_club_3 = Repo.insert!(%Club{
   name: "FC St. Pauli",
   reference_number: "-",
   description: "A wonderful serenity has taken possession of my entire soul, like these sweet mornings of spring which I enjoy with my whole heart.",
@@ -516,7 +517,7 @@ end
 ###################################
 # Randomly generated associated data
 
-Organization.list_clubs()
+Organization.list_clubs([departments: [:fees, groups: :fees]])
 |> Enum.with_index()
 |> Enum.each(fn {club, _club_index} ->
   # No data for the "empty club"!
@@ -848,16 +849,16 @@ Organization.list_clubs()
 
     # Contacts & Contracts
 
-    for i <- 0..Enum.random(15..40) do
+    for _i <- 0..Enum.random(20..50) do
       # Use the context function instead of Repo.insert!() to invoke the changeset which sets the name.
       {:ok, %Contact{} = contact} = Personal.create_contact(%{
         club_id: club.id,
-        type: (if :rand.uniform() < 0.7, do: "person", else: "organization"),
+        type: (if :rand.uniform() < 0.8, do: "person", else: "organization"),
         organization_name: "#{Faker.Company.buzzword_prefix()} #{Faker.Industry.sub_sector()} #{Faker.Company.buzzword_prefix()}",
         organization_type: Contact.get_valid_organization_types()|> Enum.map(fn organization_type -> organization_type[:value] end) |> Enum.random(),
         person_last_name: Faker.Person.last_name(),
         person_first_name_1: Faker.Person.first_name(),
-        person_first_name_2: Faker.Person.first_name(),
+        person_first_name_2: (if :rand.uniform() < 0.80, do: "", else: Faker.Person.first_name()),
         person_gender: Contact.get_valid_genders() |> Enum.map(fn gender -> gender[:value] end) |> Enum.random(),
         person_birthday: Faker.Date.date_of_birth(6..99),
         postal_addresses: [Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address())],
@@ -867,19 +868,60 @@ Organization.list_clubs()
         notes: [Map.from_struct(Sportyweb.SeedHelper.get_random_note())]
       })
 
-      # TODO: Add fee that matches the age of the contact.
-      # if :rand.uniform() < 0.7 do
-      #   Repo.insert!(%Contract{
-      #     club_id: club.id,
-      #     contact_id: contact.id,
-      #     fee_id: default_club_fee.id,
-      #     signing_date: Date.utc_today(),
-      #     start_date: Date.utc_today(),
-      #     termination_date: nil,
-      #     end_date: nil,
-      #     clubs: [club]
-      #   })
-      # end
+      if contact.type == "person" do
+        if :rand.uniform() < 0.5 do
+          # Select a random fee that works with this combination of club & contact
+          fee = Legal.list_contract_fee_options(club, contact.id) |> Enum.random()
+          Repo.insert!(%Contract{
+            club_id: club.id,
+            contact_id: contact.id,
+            fee_id: fee.id,
+            signing_date: Date.utc_today(),
+            start_date: Date.utc_today(),
+            termination_date: nil,
+            end_date: nil,
+            clubs: [club]
+          })
+        end
+
+        if Enum.any?(club.departments) do
+          department = club.departments |> Enum.random()
+
+          if :rand.uniform() < 0.3 do
+            # Select a random fee that works with this combination of club & department
+            fee = Legal.list_contract_fee_options(department, contact.id) |> Enum.random()
+            Repo.insert!(%Contract{
+              club_id: club.id,
+              contact_id: contact.id,
+              fee_id: fee.id,
+              signing_date: Date.utc_today(),
+              start_date: Date.utc_today(),
+              termination_date: nil,
+              end_date: nil,
+              departments: [department]
+            })
+          end
+
+          if Enum.any?(department.groups) do
+            group = department.groups |> Enum.random()
+
+            if :rand.uniform() < 0.3 do
+              # Select a random fee that works with this combination of club & group
+              fee = Legal.list_contract_fee_options(group, contact.id) |> Enum.random()
+              Repo.insert!(%Contract{
+                club_id: club.id,
+                contact_id: contact.id,
+                fee_id: fee.id,
+                signing_date: Date.utc_today(),
+                start_date: Date.utc_today(),
+                termination_date: nil,
+                end_date: nil,
+                groups: [group]
+              })
+            end
+          end
+        end
+      end
     end
 
     # Venues
@@ -919,7 +961,7 @@ Organization.list_clubs()
 
       # Equipment
 
-      for j <- 0..Enum.random(1..30) do
+      for _j <- 0..Enum.random(1..30) do
         equipment = Repo.insert!(%Equipment{
           venue_id: venue.id,
           name: Faker.Commerce.product_name(),
@@ -959,7 +1001,7 @@ Organization.list_clubs()
     # Events
 
     venues = Asset.list_venues(club.id)
-    for i <- 0..Enum.random(10..30) do
+    for _i <- 0..Enum.random(10..30) do
       event = Repo.insert!(%Event{
         club_id: club.id,
         name: "Verans.: #{Faker.Lorem.characters(Enum.random(5..15))}",
