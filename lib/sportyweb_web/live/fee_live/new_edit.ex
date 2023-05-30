@@ -16,6 +16,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
         title={@page_title}
         action={@live_action}
         fee={@fee}
+        fee_object={nil}
         navigate={if @fee.id, do: ~p"/fees/#{@fee}", else: ~p"/clubs/#{@fee.club}/fees"}
       />
     </div>

@@ -15,6 +15,7 @@ defmodule SportywebWeb.DepartmentLive.FeeNew do
         title={@page_title}
         action={@live_action}
         fee={@fee}
+        fee_object={@department}
         navigate={if @fee.id, do: ~p"/fees/#{@fee}", else: ~p"/departments/#{@department}"}
       />
     </div>
