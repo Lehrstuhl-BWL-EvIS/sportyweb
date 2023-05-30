@@ -42,7 +42,7 @@ defmodule SportywebWeb.GroupLive.ContractNew do
   # There is no "edit" action in this LiveView because that gets handled in the default SportywebWeb.ContractLive.NewEdit
 
   defp apply_action(socket, :new, %{"id" => id}) do
-    group = Organization.get_group!(id, [:fees, department: :club])
+    group = Organization.get_group!(id, [:contracts, :fees, department: :club])
     club = group.department.club
 
     socket

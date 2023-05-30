@@ -31,7 +31,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
                   field={@form[:contact_id]}
                   type="select"
                   label="Kontakt"
-                  options={@contacts |> Enum.map(&{&1.name, &1.id})}
+                  options={@contact_options |> Enum.map(&{&1.name, &1.id})}
                   prompt="Bitte auswählen"
                   phx-change="update_fee_options"
                 />
@@ -42,7 +42,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
                   field={@form[:fee_id]}
                   type="select"
                   label="Gebühr"
-                  options={@fees |> Enum.map(&{&1.name, &1.id})}
+                  options={@fee_options |> Enum.map(&{&1.name, &1.id})}
                   prompt="Bitte auswählen"
                 />
               </div>
@@ -75,12 +75,12 @@ defmodule SportywebWeb.ContractLive.FormComponent do
   def update(%{contract: contract} = assigns, socket) do
     changeset = Legal.change_contract(contract)
 
-    contacts = Personal.list_contacts(contract.club_id)
+    contact_options = Personal.list_contract_contact_options(contract, assigns.contract_object)
 
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:contacts, contacts)
+     |> assign(:contact_options, contact_options)
      |> assign_form(changeset)
      |> assign_fee_options(nil)}
   end
@@ -149,7 +149,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
   end
 
   defp assign_fee_options(socket, contact_id) do
-    assign(socket, :fees, Legal.list_contact_fee_options(socket.assigns.contract_object, contact_id))
+    assign(socket, :fee_options, Legal.list_contract_fee_options(socket.assigns.contract_object, contact_id))
   end
 
   defp create_association(contract, %Club{} = contract_object) do

@@ -229,14 +229,14 @@ defmodule Sportyweb.Legal do
 
   ## Examples
 
-      iex> list_contact_fee_options(1)
+      iex> list_contract_fee_options(%{}, 1)
       [%Fee{}, ...]
 
-      iex> list_contact_fee_options(nil)
+      iex> list_contract_fee_options(nil, nil)
       []
 
   """
-  def list_contact_fee_options(contract_object, contact_id) do
+  def list_contract_fee_options(contract_object, contact_id) do
     # TODO: group_only
 
     if is_nil(contact_id) || (is_binary(contact_id) && String.trim(contact_id) == "") do
@@ -262,7 +262,8 @@ defmodule Sportyweb.Legal do
           where: f.type == ^fee_type,
           where: f.is_general == true or f.id in ^specific_fee_ids,
           where: is_nil(f.archive_date) or f.archive_date > ^Date.utc_today(),
-          order_by: f.name)
+          order_by: f.name
+        )
 
       # The age restriction only plays a role for persons
       query = if Contact.is_person?(contact) do
@@ -270,7 +271,7 @@ defmodule Sportyweb.Legal do
         from(
           f in query,
           where: is_nil(f.minimum_age_in_years) or f.minimum_age_in_years <= ^contact_age_in_years,
-          where: is_nil(f.maximum_age_in_years) or f.maximum_age_in_years >= ^contact_age_in_years,
+          where: is_nil(f.maximum_age_in_years) or f.maximum_age_in_years >= ^contact_age_in_years
         )
       else
         query

@@ -173,9 +173,10 @@ defmodule SportywebWeb.ContactLive.FormComponent do
   def update(%{contact: contact} = assigns, socket) do
     changeset = Personal.change_contact(contact)
 
-    step = cond do
-      !is_nil(contact.id) || get_field(changeset, :step) == 1 && get_field(changeset, :type) != "" -> 2
-      true -> 1
+    step = if !is_nil(contact.id) || get_field(changeset, :step) == 1 && get_field(changeset, :type) != "" do
+      2
+    else
+      1
     end
 
     {:ok,

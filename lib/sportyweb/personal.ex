@@ -18,7 +18,7 @@ defmodule Sportyweb.Personal do
 
   """
   def list_contacts(club_id) do
-    query = from(c in Contact, where: c.club_id == ^club_id, order_by: [c.name])
+    query = from(c in Contact, where: c.club_id == ^club_id, order_by: c.name)
     Repo.all(query)
   end
 
@@ -33,6 +33,41 @@ defmodule Sportyweb.Personal do
   """
   def list_contacts(club_id, preloads) do
     Repo.preload(list_contacts(club_id), preloads)
+  end
+
+  @doc """
+  Returns a list of contacts that are possible options for the given contact.
+  The list won't include contacts that have an active (non-archived) contract
+  with the given contract_object.
+
+  Example: If the contract_object is a certain club, all contacts which have
+  active membership contracts with this club won't be part of the returned
+  options list.
+
+  ## Examples
+
+      iex> list_contract_contact_options(1, 2)
+      [%Contact{}, ...]
+
+  """
+  def list_contract_contact_options(contract, contract_object) do
+    # Get all the ids of contacts that have an active contract with the contract_object.
+    # These contacts won't appear in the select input as an option for the new contract.
+    contact_ids = Enum.map(contract_object.contracts, fn contract ->
+      if is_nil(contract.end_date) || contract.end_date > Date.utc_today() do
+        contract.contact_id
+      end
+    end)
+
+    query =
+      from(
+        c in Contact,
+        where: c.club_id == ^contract.club_id,
+        where: not c.id in ^contact_ids,
+        order_by: c.name
+      )
+
+    Repo.all(query)
   end
 
   @doc """
