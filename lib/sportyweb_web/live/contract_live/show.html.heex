@@ -5,9 +5,7 @@
 <.card>
   <.list>
     <:item title="Vertragsobjekt">
-      <.link navigate={@object_path} class="text-indigo-600 hover:underline">
-        <%= format_string_field(@object.name) %>
-      </.link>
+      <%= format_string_field(@contract_object.name) %>
     </:item>
     <:item title="Kontakt">
       <.link navigate={~p"/contacts/#{@contract.contact}"} class="text-indigo-600 hover:underline">

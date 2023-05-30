@@ -1,5 +1,4 @@
 defmodule Sportyweb.Legal.Contract do
-  use SportywebWeb, :live_view
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -39,25 +38,22 @@ defmodule Sportyweb.Legal.Contract do
   club, department or group. Others could be added in the future.
   This function automatically determines to which entity and especially to which
   instance of an entity the given contract has a polymorphic association to.
-  It then returns this instance and also the path to its "show" page.
+  It then returns this instance.
 
   Note: I'm not 100% sure if this is the best place to put this particular function.
         Maybe its better to move it into a new helper module in the future, if more
         such functions pop up over time.
   """
   def get_object(%Contract{} = contract) do
-    case contract.fee.type do
-      "club" ->
-        club = Enum.at(contract.clubs, 0)
-        {club, ~p"/clubs/#{club}"}
-      "department" ->
-        department = Enum.at(contract.departments, 0)
-        {department, ~p"/departments/#{department}"}
-      "group" ->
-        group = Enum.at(contract.groups, 0)
-        {group, ~p"/groups/#{group}"}
-      _ ->
-        {nil, nil}
+    cond do
+      is_list(contract.clubs) && Enum.any?(contract.clubs) ->
+        Enum.at(contract.clubs, 0)
+      is_list(contract.departments) && Enum.any?(contract.departments) ->
+        Enum.at(contract.departments, 0)
+      is_list(contract.groups) && Enum.any?(contract.groups) ->
+        Enum.at(contract.groups, 0)
+      true ->
+        nil
     end
   end
 
