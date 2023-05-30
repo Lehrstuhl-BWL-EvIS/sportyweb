@@ -42,7 +42,7 @@ defmodule Sportyweb.Legal.Fee do
     field :admission_fee_in_eur, :integer, default: nil, virtual: true
     field :admission_fee_in_eur_cent, :integer, default: nil
     field :is_recurring, :boolean, default: false
-    field :is_group_only, :boolean, default: false
+    field :is_for_contact_group_contacts_only, :boolean, default: false
     field :minimum_age_in_years, :integer, default: nil
     field :maximum_age_in_years, :integer, default: nil
     field :commission_date, :date, default: nil
@@ -103,7 +103,7 @@ defmodule Sportyweb.Legal.Fee do
       :admission_fee_in_eur,
       :admission_fee_in_eur_cent,
       :is_recurring,
-      :is_group_only,
+      :is_for_contact_group_contacts_only,
       :minimum_age_in_years,
       :maximum_age_in_years,
       :commission_date,

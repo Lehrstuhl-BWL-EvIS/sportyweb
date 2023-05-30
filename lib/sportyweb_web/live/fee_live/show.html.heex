@@ -27,8 +27,8 @@
     <:item title="Wiederholend?">
       <%= format_boolean_field(@fee.is_recurring) %>
     </:item>
-    <:item title="Nur für Gruppen?">
-      <%= format_boolean_field(@fee.is_group_only) %>
+    <:item title="Nur für Kontaktgruppen-Mitglieder?">
+      <%= format_boolean_field(@fee.is_for_contact_group_contacts_only) %>
     </:item>
     <:item title="Mindestalter">
       <%= format_integer_field(@fee.minimum_age_in_years) %>

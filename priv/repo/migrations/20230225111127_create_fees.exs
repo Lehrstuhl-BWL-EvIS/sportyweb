@@ -12,7 +12,7 @@ defmodule Sportyweb.Repo.Migrations.CreateFees do
       add :base_fee_in_eur_cent, :integer, null: false
       add :admission_fee_in_eur_cent, :integer, null: false
       add :is_recurring, :boolean, null: false
-      add :is_group_only, :boolean, null: false
+      add :is_for_contact_group_contacts_only, :boolean, null: false
       add :minimum_age_in_years, :integer, null: true
       add :maximum_age_in_years, :integer, null: true
       add :commission_date, :date, null: false

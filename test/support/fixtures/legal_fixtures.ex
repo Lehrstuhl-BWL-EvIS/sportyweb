@@ -25,7 +25,7 @@ defmodule Sportyweb.LegalFixtures do
         base_fee_in_eur_cent: 4200,
         admission_fee_in_eur: 15,
         admission_fee_in_eur_cent: 1500,
-        is_group_only: true,
+        is_for_contact_group_contacts_only: true,
         is_recurring: true,
         minimum_age_in_years: 18,
         maximum_age_in_years: 50,

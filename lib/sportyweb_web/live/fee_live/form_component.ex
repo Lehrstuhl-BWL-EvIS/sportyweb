@@ -67,12 +67,12 @@ defmodule SportywebWeb.FeeLive.FormComponent do
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:is_recurring]} type="checkbox" label="Wiederholend?" />
-              </div>
-
-              <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:is_group_only]} type="checkbox" label="Nur für Gruppen?" />
+              <div class="col-span-12">
+                <.input
+                  field={@form[:is_for_contact_group_contacts_only]}
+                  type="checkbox"
+                  label="Soll diese Gebühr nur für Mitglieder einer Kontaktgruppe (z.B. Familie, Ehepartner, Alleinerziehende mit Kindern, etc.) zur Verfügung stehen?"
+                />
               </div>
             </.input_grid>
 
@@ -99,6 +99,12 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                   options={@successor_fee_options |> Enum.map(&{&1.name, &1.id})}
                   prompt="Bitte auswählen"
                 />
+              </div>
+            </.input_grid>
+
+            <.input_grid class="pt-6">
+              <div class="col-span-12">
+                <.input field={@form[:is_recurring]} type="checkbox" label="Wiederholend?" />
               </div>
             </.input_grid>
 
