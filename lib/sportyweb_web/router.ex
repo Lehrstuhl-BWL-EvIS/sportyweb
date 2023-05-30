@@ -189,6 +189,15 @@ defmodule SportywebWeb.Router do
 
       live "/fees/:id", FeeLive.Show, :show
 
+      # Subsidies (Each belongs to a club)
+
+      live "/subsidies", SubsidyLive.Index, :index
+      live "/subsidies/new", SubsidyLive.Index, :new
+      live "/subsidies/:id/edit", SubsidyLive.Index, :edit
+
+      live "/subsidies/:id", SubsidyLive.Show, :show
+      live "/subsidies/:id/show/edit", SubsidyLive.Show, :edit
+
       # Roles
 
       live "/clubs/:club_id/roles", RoleLive.Index, :index

@@ -82,4 +82,68 @@ defmodule Sportyweb.LegalTest do
       assert %Ecto.Changeset{} = Legal.change_fee(fee)
     end
   end
+
+  describe "subsidies" do
+    alias Sportyweb.Legal.Subsidy
+
+    import Sportyweb.LegalFixtures
+
+    @invalid_attrs %{archive_date: nil, commission_date: nil, description: nil, name: nil, reference_number: nil, value: nil}
+
+    test "list_subsidies/0 returns all subsidies" do
+      subsidy = subsidy_fixture()
+      assert Legal.list_subsidies() == [subsidy]
+    end
+
+    test "get_subsidy!/1 returns the subsidy with given id" do
+      subsidy = subsidy_fixture()
+      assert Legal.get_subsidy!(subsidy.id) == subsidy
+    end
+
+    test "create_subsidy/1 with valid data creates a subsidy" do
+      valid_attrs = %{archive_date: ~D[2023-05-29], commission_date: ~D[2023-05-29], description: "some description", name: "some name", reference_number: "some reference_number", value: 42}
+
+      assert {:ok, %Subsidy{} = subsidy} = Legal.create_subsidy(valid_attrs)
+      assert subsidy.archive_date == ~D[2023-05-29]
+      assert subsidy.commission_date == ~D[2023-05-29]
+      assert subsidy.description == "some description"
+      assert subsidy.name == "some name"
+      assert subsidy.reference_number == "some reference_number"
+      assert subsidy.value == 42
+    end
+
+    test "create_subsidy/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Legal.create_subsidy(@invalid_attrs)
+    end
+
+    test "update_subsidy/2 with valid data updates the subsidy" do
+      subsidy = subsidy_fixture()
+      update_attrs = %{archive_date: ~D[2023-05-30], commission_date: ~D[2023-05-30], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number", value: 43}
+
+      assert {:ok, %Subsidy{} = subsidy} = Legal.update_subsidy(subsidy, update_attrs)
+      assert subsidy.archive_date == ~D[2023-05-30]
+      assert subsidy.commission_date == ~D[2023-05-30]
+      assert subsidy.description == "some updated description"
+      assert subsidy.name == "some updated name"
+      assert subsidy.reference_number == "some updated reference_number"
+      assert subsidy.value == 43
+    end
+
+    test "update_subsidy/2 with invalid data returns error changeset" do
+      subsidy = subsidy_fixture()
+      assert {:error, %Ecto.Changeset{}} = Legal.update_subsidy(subsidy, @invalid_attrs)
+      assert subsidy == Legal.get_subsidy!(subsidy.id)
+    end
+
+    test "delete_subsidy/1 deletes the subsidy" do
+      subsidy = subsidy_fixture()
+      assert {:ok, %Subsidy{}} = Legal.delete_subsidy(subsidy)
+      assert_raise Ecto.NoResultsError, fn -> Legal.get_subsidy!(subsidy.id) end
+    end
+
+    test "change_subsidy/1 returns a subsidy changeset" do
+      subsidy = subsidy_fixture()
+      assert %Ecto.Changeset{} = Legal.change_subsidy(subsidy)
+    end
+  end
 end

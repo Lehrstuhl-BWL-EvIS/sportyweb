@@ -1,0 +1,46 @@
+<.header>
+  Listing Subsidies
+  <:actions>
+    <.link patch={~p"/subsidies/new"}>
+      <.button>New Subsidy</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="subsidies"
+  rows={@streams.subsidies}
+  row_click={fn {_id, subsidy} -> JS.navigate(~p"/subsidies/#{subsidy}") end}
+>
+  <:col :let={{_id, subsidy}} label="Name"><%= subsidy.name %></:col>
+  <:col :let={{_id, subsidy}} label="Reference number"><%= subsidy.reference_number %></:col>
+  <:col :let={{_id, subsidy}} label="Description"><%= subsidy.description %></:col>
+  <:col :let={{_id, subsidy}} label="Value"><%= subsidy.value %></:col>
+  <:col :let={{_id, subsidy}} label="Commission date"><%= subsidy.commission_date %></:col>
+  <:col :let={{_id, subsidy}} label="Archive date"><%= subsidy.archive_date %></:col>
+  <:action :let={{_id, subsidy}}>
+    <div class="sr-only">
+      <.link navigate={~p"/subsidies/#{subsidy}"}>Show</.link>
+    </div>
+    <.link patch={~p"/subsidies/#{subsidy}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, subsidy}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: subsidy.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="subsidy-modal" show on_cancel={JS.patch(~p"/subsidies")}>
+  <.live_component
+    module={SportywebWeb.SubsidyLive.FormComponent}
+    id={@subsidy.id || :new}
+    title={@page_title}
+    action={@live_action}
+    subsidy={@subsidy}
+    patch={~p"/subsidies"}
+  />
+</.modal>

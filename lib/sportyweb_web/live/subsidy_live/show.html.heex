@@ -1,0 +1,31 @@
+<.header>
+  Subsidy <%= @subsidy.id %>
+  <:subtitle>This is a subsidy record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/subsidies/#{@subsidy}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit subsidy</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @subsidy.name %></:item>
+  <:item title="Reference number"><%= @subsidy.reference_number %></:item>
+  <:item title="Description"><%= @subsidy.description %></:item>
+  <:item title="Value"><%= @subsidy.value %></:item>
+  <:item title="Commission date"><%= @subsidy.commission_date %></:item>
+  <:item title="Archive date"><%= @subsidy.archive_date %></:item>
+</.list>
+
+<.back navigate={~p"/subsidies"}>Back to subsidies</.back>
+
+<.modal :if={@live_action == :edit} id="subsidy-modal" show on_cancel={JS.patch(~p"/subsidies/#{@subsidy}")}>
+  <.live_component
+    module={SportywebWeb.SubsidyLive.FormComponent}
+    id={@subsidy.id}
+    title={@page_title}
+    action={@live_action}
+    subsidy={@subsidy}
+    patch={~p"/subsidies/#{@subsidy}"}
+  />
+</.modal>

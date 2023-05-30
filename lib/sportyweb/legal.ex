@@ -399,4 +399,100 @@ defmodule Sportyweb.Legal do
     |> Fee.archive_changeset(%{archive_date: Date.utc_today()})
     |> Repo.update()
   end
+
+  alias Sportyweb.Legal.Subsidy
+
+  @doc """
+  Returns the list of subsidies.
+
+  ## Examples
+
+      iex> list_subsidies()
+      [%Subsidy{}, ...]
+
+  """
+  def list_subsidies do
+    Repo.all(Subsidy)
+  end
+
+  @doc """
+  Gets a single subsidy.
+
+  Raises `Ecto.NoResultsError` if the Subsidy does not exist.
+
+  ## Examples
+
+      iex> get_subsidy!(123)
+      %Subsidy{}
+
+      iex> get_subsidy!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_subsidy!(id), do: Repo.get!(Subsidy, id)
+
+  @doc """
+  Creates a subsidy.
+
+  ## Examples
+
+      iex> create_subsidy(%{field: value})
+      {:ok, %Subsidy{}}
+
+      iex> create_subsidy(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_subsidy(attrs \\ %{}) do
+    %Subsidy{}
+    |> Subsidy.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a subsidy.
+
+  ## Examples
+
+      iex> update_subsidy(subsidy, %{field: new_value})
+      {:ok, %Subsidy{}}
+
+      iex> update_subsidy(subsidy, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_subsidy(%Subsidy{} = subsidy, attrs) do
+    subsidy
+    |> Subsidy.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a subsidy.
+
+  ## Examples
+
+      iex> delete_subsidy(subsidy)
+      {:ok, %Subsidy{}}
+
+      iex> delete_subsidy(subsidy)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_subsidy(%Subsidy{} = subsidy) do
+    Repo.delete(subsidy)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking subsidy changes.
+
+  ## Examples
+
+      iex> change_subsidy(subsidy)
+      %Ecto.Changeset{data: %Subsidy{}}
+
+  """
+  def change_subsidy(%Subsidy{} = subsidy, attrs \\ %{}) do
+    Subsidy.changeset(subsidy, attrs)
+  end
 end

@@ -36,4 +36,23 @@ defmodule Sportyweb.LegalFixtures do
 
     fee
   end
+
+  @doc """
+  Generate a subsidy.
+  """
+  def subsidy_fixture(attrs \\ %{}) do
+    {:ok, subsidy} =
+      attrs
+      |> Enum.into(%{
+        archive_date: ~D[2023-05-29],
+        commission_date: ~D[2023-05-29],
+        description: "some description",
+        name: "some name",
+        reference_number: "some reference_number",
+        value: 42
+      })
+      |> Sportyweb.Legal.create_subsidy()
+
+    subsidy
+  end
 end
