@@ -4,6 +4,7 @@ defmodule Sportyweb.Personal.Contact do
 
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.ContactEmail
   alias Sportyweb.Personal.ContactGroup
   alias Sportyweb.Personal.ContactGroupContact
@@ -71,15 +72,31 @@ defmodule Sportyweb.Personal.Contact do
     ]
   end
 
-  def is_organization?(contact) do
+  def is_organization?(%Contact{} = contact) do
     contact.type == "organization"
   end
 
-  def is_person?(contact) do
+  def is_person?(%Contact{} = contact) do
     contact.type == "person"
   end
 
-  def has_active_membership_contract?(contact) do
+  def age_in_years(%Contact{} = contact) do
+    # Based on: https://stackoverflow.com/a/71043385
+
+    birthday = contact.person_birthday
+    today = Date.utc_today()
+
+    years_diff = today.year - birthday.year
+
+    # If today's date in the year is before the contact's birthday, substract 1
+    if Date.compare(today, %Date{birthday | year: today.year}) == :lt do
+      years_diff - 1
+    else
+      years_diff
+    end
+  end
+
+  def has_active_membership_contract?(%Contact{} = contact) do
     Enum.any?(contact.contracts, fn contract -> is_nil(contract.end_date) || contract.end_date > Date.utc_today() end)
   end
 

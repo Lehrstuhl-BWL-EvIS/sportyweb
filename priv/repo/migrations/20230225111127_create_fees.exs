@@ -24,5 +24,6 @@ defmodule Sportyweb.Repo.Migrations.CreateFees do
     end
 
     create index(:fees, [:club_id])
+    create index(:fees, [:club_id, :type, :is_general])
   end
 end
