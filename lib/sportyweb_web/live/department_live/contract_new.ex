@@ -14,6 +14,7 @@ defmodule SportywebWeb.DepartmentLive.ContractNew do
         title={@page_title}
         action={@live_action}
         contract={@contract}
+        contract_object={@department}
         navigate={if @contract.id, do: ~p"/contracts/#{@contract}", else: ~p"/departments/#{@department}"}
       />
     </div>

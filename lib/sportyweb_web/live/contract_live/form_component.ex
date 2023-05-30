@@ -3,6 +3,9 @@ defmodule SportywebWeb.ContractLive.FormComponent do
 
   alias Sportyweb.Legal
   alias Sportyweb.Organization
+  alias Sportyweb.Organization.Club
+  alias Sportyweb.Organization.Department
+  alias Sportyweb.Organization.Group
   alias Sportyweb.Personal
 
   @impl true
@@ -123,7 +126,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
 
     case Legal.create_contract(contract_params) do
       {:ok, contract} ->
-        case create_association(socket, contract) do
+        case create_association(socket, contract, socket.assigns.contract_object) do
           {:ok, _} ->
             {:noreply,
              socket
@@ -145,36 +148,28 @@ defmodule SportywebWeb.ContractLive.FormComponent do
     assign(socket, :form, to_form(changeset))
   end
 
-  defp assign_fee_options(socket, contact) do
-    assign(socket, :fees, Legal.list_contact_fee_options(contact))
+  defp assign_fee_options(socket, contact_id) do
+    assign(socket, :fees, Legal.list_contact_fee_options(socket.assigns.contract_object, contact_id))
   end
 
-  defp create_association(socket, contract) do
-    # Contracts (should) always have an association
-    # with a certain entity via a polymorphic many_to_many relationship.
-    # The concrete data type of this entity is, due to the polymorphic
-    # many_to_many relationship, not predefinined.
-    # The following code checks all possible "association lists" of the
-    # contract if they contain the entity to which the current contract should be
-    # "connected". After that has been determined, the many_to_many
-    # relationship will be created.
-    cond do
-      is_list(socket.assigns.contract.clubs) ->
-        club = Enum.at(socket.assigns.contract.clubs, 0)
-        Organization.create_club_contract(club, contract)
-        {:ok, contract}
-      is_list(socket.assigns.contract.departments) ->
-        department = Enum.at(socket.assigns.contract.departments, 0)
-        Organization.create_department_contract(department, contract)
-        {:ok, contract}
-      is_list(socket.assigns.contract.groups) ->
-        group = Enum.at(socket.assigns.contract.groups, 0)
-        Organization.create_group_contract(group, contract)
-        {:ok, contract}
-      true ->
-        # Immediately delete the contract if no association could be created.
-        # Otherwise the contract would be "free floating" and could not be accessed via the UI.
-        {:error, _} = Legal.delete_contract(contract)
-    end
+  defp create_association(socket, contract, %Club{} = contract_object) do
+    Organization.create_club_contract(contract_object, contract)
+    {:ok, contract}
+  end
+
+  defp create_association(socket, contract, %Department{} = contract_object) do
+    Organization.create_department_contract(contract_object, contract)
+    {:ok, contract}
+  end
+
+  defp create_association(socket, contract, %Group{} = contract_object) do
+    Organization.create_group_contract(contract_object, contract)
+    {:ok, contract}
+  end
+
+  defp create_association(socket, contract, _) do
+    # Immediately delete the contract if no association could be created.
+    # Otherwise the contract would be "free floating", without a contract_object.
+    {:error, _} = Legal.delete_contract(contract)
   end
 end
