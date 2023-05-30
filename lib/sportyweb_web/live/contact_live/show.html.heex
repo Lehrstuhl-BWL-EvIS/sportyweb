@@ -15,14 +15,15 @@
     <:item title="Name">
       <%= format_string_field(@contact.name) %>
     </:item>
-    <:item title="Organisationstyp" :if={Sportyweb.Personal.Contact.is_organization?(@contact)}>
+    <:item title="Organisationstyp" :if={Contact.is_organization?(@contact)}>
       <%= get_key_for_value(Contact.get_valid_organization_types, @contact.organization_type) %>
     </:item>
-    <:item title="Geschlecht" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
+    <:item title="Geschlecht" :if={Contact.is_person?(@contact)}>
       <%= get_key_for_value(Contact.get_valid_genders, @contact.person_gender) %>
     </:item>
-    <:item title="Geburtstag" :if={Sportyweb.Personal.Contact.is_person?(@contact)}>
+    <:item title="Geburtstag" :if={Contact.is_person?(@contact)}>
       <%= format_date_field_dmy(@contact.person_birthday) %>
+      - <%= Contact.age_in_years(@contact) %> Jahre
     </:item>
     <:item title="Adresse">
       <.live_component
