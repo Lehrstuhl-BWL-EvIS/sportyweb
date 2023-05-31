@@ -403,16 +403,30 @@ defmodule Sportyweb.Legal do
   alias Sportyweb.Legal.Subsidy
 
   @doc """
-  Returns the list of subsidies.
+  Returns a clubs list of subsidies.
 
   ## Examples
 
-      iex> list_subsidies()
+      iex> list_subsidies(1)
       [%Subsidy{}, ...]
 
   """
-  def list_subsidies do
-    Repo.all(Subsidy)
+  def list_subsidies(club_id) do
+    query = from(s in Subsidy, where: s.club_id == ^club_id, order_by: s.name)
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns a clubs list of subsidies. Preloads associations.
+
+  ## Examples
+
+      iex> list_subsidies(1, [:fee])
+      [%Subsidy{}, ...]
+
+  """
+  def list_subsidies(club_id, preloads) do
+    Repo.preload(list_subsidies(club_id), preloads)
   end
 
   @doc """
@@ -430,6 +444,26 @@ defmodule Sportyweb.Legal do
 
   """
   def get_subsidy!(id), do: Repo.get!(Subsidy, id)
+
+  @doc """
+  Gets a single subsidy. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Subsidy does not exist.
+
+  ## Examples
+
+      iex> get_subsidy!(123, [:club])
+      %Subsidy{}
+
+      iex> get_subsidy!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_subsidy!(id, preloads) do
+    Subsidy
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a subsidy.

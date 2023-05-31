@@ -1,31 +1,44 @@
 <.header>
-  Subsidy <%= @subsidy.id %>
-  <:subtitle>This is a subsidy record from your database.</:subtitle>
+  <%= @page_title %>
   <:actions>
-    <.link patch={~p"/subsidies/#{@subsidy}/show/edit"} phx-click={JS.push_focus()}>
-      <.button>Edit subsidy</.button>
+    <.link navigate={~p"/subsidies/#{@subsidy}/edit"}>
+      <.button>Zuschuss bearbeiten</.button>
     </.link>
   </:actions>
 </.header>
 
-<.list>
-  <:item title="Name"><%= @subsidy.name %></:item>
-  <:item title="Reference number"><%= @subsidy.reference_number %></:item>
-  <:item title="Description"><%= @subsidy.description %></:item>
-  <:item title="Value"><%= @subsidy.value %></:item>
-  <:item title="Commission date"><%= @subsidy.commission_date %></:item>
-  <:item title="Archive date"><%= @subsidy.archive_date %></:item>
-</.list>
-
-<.back navigate={~p"/subsidies"}>Back to subsidies</.back>
-
-<.modal :if={@live_action == :edit} id="subsidy-modal" show on_cancel={JS.patch(~p"/subsidies/#{@subsidy}")}>
-  <.live_component
-    module={SportywebWeb.SubsidyLive.FormComponent}
-    id={@subsidy.id}
-    title={@page_title}
-    action={@live_action}
-    subsidy={@subsidy}
-    patch={~p"/subsidies/#{@subsidy}"}
-  />
-</.modal>
+<.card>
+  <.list>
+    <:item title="Referenznummer">
+      <%= format_string_field(@subsidy.reference_number) %>
+    </:item>
+    <:item title="Beschreibung">
+      <%= format_string_field(@subsidy.description) %>
+    </:item>
+    <:item title="Betrag">
+      <%= format_integer_field(@subsidy.value) %> &euro;
+    </:item>
+    <:item title="Verwendung ab">
+      <%= format_date_field_dmy(@subsidy.commission_date) %>
+    </:item>
+    <:item title="Archiviert ab">
+      <%= format_date_field_dmy(@subsidy.archive_date) %>
+      <%= if @subsidy.archive_date do %>
+        -
+        Dieser Zuschuss ist
+        <span :if={!Subsidy.is_archived?(@subsidy)}>noch nicht</span>
+        archiviert.
+      <% end %>
+    </:item>
+    <:item title="Notizen">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
+        id="notes"
+        notes={@subsidy.notes}
+      />
+    </:item>
+    <:item title="Einsatz">
+      Dieser Zuschuss wird derzeit in <%= Enum.count(@subsidy.fees) %> Verträgen verwendet.
+    </:item>
+  </.list>
+</.card>

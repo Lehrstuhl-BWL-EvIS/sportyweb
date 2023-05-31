@@ -24,8 +24,14 @@
     <:item title="Aufnahmegebühr">
       <%= format_eur_cent_field(@fee.admission_fee_in_eur_cent) %> &euro;
     </:item>
-    <:item title="Wiederholend?">
-      <%= format_boolean_field(@fee.is_recurring) %>
+    <:item title="Zuschuss">
+      <%= if @fee.subsidy do %>
+        <.link navigate={~p"/subsidies/#{@fee.subsidy}"} class="text-indigo-600 hover:underline">
+          <%= format_string_field(@fee.subsidy.name) %>
+        </.link>
+      <% else %>
+        -
+      <% end %>
     </:item>
     <:item title="Nur für Kontaktgruppen-Mitglieder?">
       <%= format_boolean_field(@fee.is_for_contact_group_contacts_only) %>
@@ -44,6 +50,9 @@
       <% else %>
         -
       <% end %>
+    </:item>
+    <:item title="Wiederholend?">
+      <%= format_boolean_field(@fee.is_recurring) %>
     </:item>
     <:item title="Verwendung ab">
       <%= format_date_field_dmy(@fee.commission_date) %>

@@ -191,12 +191,13 @@ defmodule SportywebWeb.Router do
 
       # Subsidies (Each belongs to a club)
 
-      live "/subsidies", SubsidyLive.Index, :index
-      live "/subsidies/new", SubsidyLive.Index, :new
-      live "/subsidies/:id/edit", SubsidyLive.Index, :edit
+      live "/subsidies", SubsidyLive.Index, :index_root
+      live "/clubs/:club_id/subsidies", SubsidyLive.Index, :index
+
+      live "/clubs/:club_id/subsidies/new", SubsidyLive.NewEdit, :new
+      live "/subsidies/:id/edit", SubsidyLive.NewEdit, :edit
 
       live "/subsidies/:id", SubsidyLive.Show, :show
-      live "/subsidies/:id/show/edit", SubsidyLive.Show, :edit
 
       # Roles
 

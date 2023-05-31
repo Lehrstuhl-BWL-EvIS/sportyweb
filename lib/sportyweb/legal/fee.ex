@@ -11,6 +11,7 @@ defmodule Sportyweb.Legal.Fee do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.Fee
   alias Sportyweb.Legal.FeeNote
+  alias Sportyweb.Legal.Subsidy
   alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.Department
   alias Sportyweb.Organization.DepartmentFee
@@ -22,6 +23,7 @@ defmodule Sportyweb.Legal.Fee do
   @foreign_key_type :binary_id
   schema "fees" do
     belongs_to :club, Club
+    belongs_to :subsidy, Subsidy
     belongs_to :successor, Fee, foreign_key: :successor_id
     has_many :ancestors, Fee, foreign_key: :successor_id
     has_many :contracts, Contract
@@ -92,6 +94,7 @@ defmodule Sportyweb.Legal.Fee do
     fee
     |> cast(attrs, [
       :club_id,
+      :subsidy_id,
       :successor_id,
       :is_general,
       :type,

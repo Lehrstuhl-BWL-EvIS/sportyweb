@@ -69,6 +69,18 @@ defmodule SportywebWeb.FeeLive.FormComponent do
             <.input_grid class="pt-6">
               <div class="col-span-12">
                 <.input
+                  field={@form[:subsidy_id]}
+                  type="select"
+                  label="Zuschuss (optional)"
+                  options={Legal.list_subsidies(@fee.club_id) |> Enum.map(&{&1.name, &1.id})}
+                  prompt="Kein Zuschuss"
+                />
+              </div>
+            </.input_grid>
+
+            <.input_grid class="pt-6">
+              <div class="col-span-12">
+                <.input
                   field={@form[:is_for_contact_group_contacts_only]}
                   type="checkbox"
                   label="Soll diese Gebühr nur für Mitglieder einer Kontaktgruppe (z.B. Familie, Ehepartner, Alleinerziehende mit Kindern, etc.) zur Verfügung stehen?"
@@ -97,7 +109,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                   type="select"
                   label="Nachfolger-Gebühr (optional)"
                   options={@successor_fee_options |> Enum.map(&{&1.name, &1.id})}
-                  prompt="Bitte auswählen"
+                  prompt="Keine Nachfolger-Gebühr"
                 />
               </div>
             </.input_grid>

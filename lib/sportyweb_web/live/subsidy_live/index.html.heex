@@ -1,46 +1,41 @@
 <.header>
-  Listing Subsidies
+  <%= @page_title %>
   <:actions>
-    <.link patch={~p"/subsidies/new"}>
-      <.button>New Subsidy</.button>
+    <.link navigate={~p"/clubs/#{@club}/subsidies/new"}>
+      <.button>Zuschuss erstellen</.button>
     </.link>
   </:actions>
 </.header>
 
-<.table
-  id="subsidies"
-  rows={@streams.subsidies}
-  row_click={fn {_id, subsidy} -> JS.navigate(~p"/subsidies/#{subsidy}") end}
->
-  <:col :let={{_id, subsidy}} label="Name"><%= subsidy.name %></:col>
-  <:col :let={{_id, subsidy}} label="Reference number"><%= subsidy.reference_number %></:col>
-  <:col :let={{_id, subsidy}} label="Description"><%= subsidy.description %></:col>
-  <:col :let={{_id, subsidy}} label="Value"><%= subsidy.value %></:col>
-  <:col :let={{_id, subsidy}} label="Commission date"><%= subsidy.commission_date %></:col>
-  <:col :let={{_id, subsidy}} label="Archive date"><%= subsidy.archive_date %></:col>
-  <:action :let={{_id, subsidy}}>
-    <div class="sr-only">
-      <.link navigate={~p"/subsidies/#{subsidy}"}>Show</.link>
-    </div>
-    <.link patch={~p"/subsidies/#{subsidy}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={{id, subsidy}}>
-    <.link
-      phx-click={JS.push("delete", value: %{id: subsidy.id}) |> hide("##{id}")}
-      data-confirm="Are you sure?"
+<.card>
+  <%= if Enum.any?(@streams.subsidies) do %>
+    <.table
+      id="subsidies"
+      rows={@streams.subsidies}
+      row_click={fn {_id, subsidy} -> JS.navigate(~p"/subsidies/#{subsidy}") end}
     >
-      Delete
-    </.link>
-  </:action>
-</.table>
+      <:col :let={{_id, subsidy}} label="Name">
+        <%= format_string_field(subsidy.name) %>
+      </:col>
+      <:col :let={{_id, subsidy}} label="Ref.nr.">
+        <%= format_string_field(subsidy.reference_number) %>
+      </:col>
+      <:col :let={{_id, subsidy}} label="Beschreibung">
+        <div class="max-w-[200px] truncate overflow-hidden">
+          <%= format_string_field(subsidy.description) %>
+        </div>
+      </:col>
+      <:col :let={{_id, subsidy}} label="Betrag">
+        <%= format_integer_field(subsidy.value) %> &euro;
+      </:col>
 
-<.modal :if={@live_action in [:new, :edit]} id="subsidy-modal" show on_cancel={JS.patch(~p"/subsidies")}>
-  <.live_component
-    module={SportywebWeb.SubsidyLive.FormComponent}
-    id={@subsidy.id || :new}
-    title={@page_title}
-    action={@live_action}
-    subsidy={@subsidy}
-    patch={~p"/subsidies"}
-  />
-</.modal>
+      <:action :let={{_id, subsidy}}>
+        <.link navigate={~p"/subsidies/#{subsidy}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Bisher wurde noch kein Zuschuss erstellt.
+    </p>
+  <% end %>
+</.card>
