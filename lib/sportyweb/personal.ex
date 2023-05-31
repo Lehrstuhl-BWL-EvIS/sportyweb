@@ -63,7 +63,7 @@ defmodule Sportyweb.Personal do
       from(
         c in Contact,
         where: c.club_id == ^contract.club_id,
-        where: not c.id in ^contact_ids,
+        where: c.id not in ^contact_ids,
         order_by: c.name
       )
 
