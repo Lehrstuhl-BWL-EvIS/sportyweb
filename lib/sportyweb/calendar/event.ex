@@ -1,6 +1,7 @@
 defmodule Sportyweb.Calendar.Event do
   use Ecto.Schema
   import Ecto.Changeset
+  import SportywebWeb.CommonValidations
 
   alias Sportyweb.Asset.Equipment
   alias Sportyweb.Asset.Venue
@@ -96,17 +97,24 @@ defmodule Sportyweb.Calendar.Event do
       :status,
       :location_type]
     )
+    |> update_change(:name, &String.trim/1)
+    |> update_change(:reference_number, &String.trim/1)
+    |> update_change(:description, &String.trim/1)
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
+    |> validate_length(:description, max: 20_000)
     |> validate_inclusion(
       :status,
       get_valid_statuses() |> Enum.map(fn status -> status[:value] end)
     )
-    |> validate_length(:description, max: 20_000)
     |> validate_number(:minimum_participants, greater_than_or_equal_to: 0, less_than_or_equal_to: 100_000)
-    |> validate_number(:maximum_participants, greater_than_or_equal_to: 0, less_than_or_equal_to: 100_000) # TODO: max >= min
+    |> validate_number(:maximum_participants, greater_than_or_equal_to: 0, less_than_or_equal_to: 100_000)
     |> validate_number(:minimum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
-    |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125) # TODO: max >= min
+    |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
+    |> validate_numbers_order(:minimum_participants, :maximum_participants,
+       "Muss größer oder gleich \"Minimale Anzahl an Teilnehmern\" sein!")
+    |> validate_numbers_order(:minimum_age_in_years, :maximum_age_in_years,
+       "Muss größer oder gleich \"Mindestalter\" sein!")
     |> validate_inclusion(
       :location_type,
       get_valid_location_types() |> Enum.map(fn location_type -> location_type[:value] end)

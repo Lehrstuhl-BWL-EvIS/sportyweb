@@ -1,6 +1,7 @@
 defmodule Sportyweb.Legal.Fee do
   use Ecto.Schema
   import Ecto.Changeset
+  import SportywebWeb.CommonValidations
 
   alias Sportyweb.Asset.Equipment
   alias Sportyweb.Asset.EquipmentFee
@@ -129,12 +130,21 @@ defmodule Sportyweb.Legal.Fee do
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
     )
     |> update_change(:name, &String.trim/1)
+    |> update_change(:reference_number, &String.trim/1)
+    |> update_change(:description, &String.trim/1)
+    |> validate_length(:name, max: 250)
+    |> validate_length(:reference_number, max: 250)
+    |> validate_length(:description, max: 20_000)
     |> update_base_fee(fee, attrs)
     |> update_admission_fee(fee, attrs)
     |> validate_number(:base_fee_in_eur_cent, greater_than_or_equal_to: 0, less_than_or_equal_to: 1_000_000)
     |> validate_number(:admission_fee_in_eur_cent, greater_than_or_equal_to: 0, less_than_or_equal_to: 1_000_000)
     |> validate_number(:minimum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
-    |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125) # TODO: max >= min
+    |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
+    |> validate_numbers_order(:minimum_age_in_years, :maximum_age_in_years,
+       "Muss größer oder gleich \"Mindestalter\" sein!")
+    |> validate_dates_order(:commission_date, :archive_date,
+       "Muss zeitlich später als oder gleich \"Verwendung ab\" sein!")
   end
 
   def archive_changeset(fee, attrs) do

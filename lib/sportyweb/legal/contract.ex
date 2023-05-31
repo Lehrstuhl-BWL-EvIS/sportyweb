@@ -1,6 +1,7 @@
 defmodule Sportyweb.Legal.Contract do
   use Ecto.Schema
   import Ecto.Changeset
+  import SportywebWeb.CommonValidations
 
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.ContractPause
@@ -77,5 +78,11 @@ defmodule Sportyweb.Legal.Contract do
       :signing_date,
       :start_date]
     )
+    |> validate_dates_order(:signing_date, :start_date,
+       "Muss zeitlich später als oder gleich \"Unterzeichnungsdatum\" sein!")
+    |> validate_dates_order(:start_date, :termination_date,
+       "Muss zeitlich später als oder gleich \"Vertragsbeginn\" sein!")
+    |> validate_dates_order(:termination_date, :end_date,
+       "Muss zeitlich später als oder gleich \"Kündigungsdatum\" sein!")
   end
 end

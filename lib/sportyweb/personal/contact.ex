@@ -123,23 +123,27 @@ defmodule Sportyweb.Personal.Contact do
     |> cast_assoc(:phones, required: true)
     |> cast_assoc(:postal_addresses, required: true)
     |> validate_required([:type])
+    |> update_change(:organization_name, &String.trim/1)
+    |> update_change(:person_last_name, &String.trim/1)
+    |> update_change(:person_first_name_1, &String.trim/1)
+    |> update_change(:person_first_name_2, &String.trim/1)
+    |> validate_length(:organization_name, max: 250)
+    |> validate_length(:person_last_name, max: 100)
+    |> validate_length(:person_first_name_1, max: 75)
+    |> validate_length(:person_first_name_2, max: 75)
     |> validate_inclusion(
       :type,
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
     )
-    |> validate_required_type_condition()
-    |> validate_length(:organization_name, max: 250)
     |> validate_inclusion(
       :organization_type,
       get_valid_organization_types() |> Enum.map(fn organization_type -> organization_type[:value] end)
     )
-    |> validate_length(:person_last_name, max: 250)
-    |> validate_length(:person_first_name_1, max: 250)
-    |> validate_length(:person_first_name_2, max: 250)
     |> validate_inclusion(
       :person_gender,
       get_valid_genders() |> Enum.map(fn gender -> gender[:value] end)
     )
+    |> validate_required_type_condition()
     |> set_name()
   end
 
@@ -159,16 +163,16 @@ defmodule Sportyweb.Personal.Contact do
     # The "name" field is only set internally and its content is based on
     # the contact type and the content of (multiple) other fields.
 
-    type                = get_field(changeset, :type)
-    organization_name   = get_field(changeset, :organization_name)
-    person_last_name    = get_field(changeset, :person_last_name)
-    person_first_name_1 = get_field(changeset, :person_first_name_1)
-    person_first_name_2 = get_field(changeset, :person_first_name_2)
-
-    name = case type do
-      "organization" -> organization_name
-      "person"       -> "#{person_last_name}, #{person_first_name_1} #{person_first_name_2}"
-      _              -> ""
+    name = case get_field(changeset, :type) do
+      "organization" ->
+        get_field(changeset, :organization_name)
+      "person" ->
+        person_last_name    = get_field(changeset, :person_last_name)
+        person_first_name_1 = get_field(changeset, :person_first_name_1)
+        person_first_name_2 = get_field(changeset, :person_first_name_2)
+        "#{person_last_name}, #{person_first_name_1} #{person_first_name_2}"
+      _ ->
+        ""
     end
 
     changeset |> Ecto.Changeset.change(name: String.trim(name))

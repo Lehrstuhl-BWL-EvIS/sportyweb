@@ -61,10 +61,14 @@ defmodule Sportyweb.Organization.Club do
     |> cast_assoc(:notes, required: true)
     |> cast_assoc(:phones, required: true)
     |> validate_required([:name, :foundation_date])
+    |> update_change(:name, &String.trim/1)
+    |> update_change(:reference_number, &String.trim/1)
+    |> update_change(:description, &String.trim/1)
+    |> update_change(:website_url, &String.trim/1)
+    |> update_change(:website_url, &String.downcase/1)
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
     |> validate_length(:description, max: 20_000)
     |> validate_length(:website_url, max: 250)
-    |> update_change(:website_url, &String.downcase/1)
   end
 end

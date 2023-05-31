@@ -15,7 +15,7 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
     field :zipcode, :string, default: ""
     field :city, :string, default: ""
     field :country, :string, default: ""
-    field :is_main, :boolean, default: true
+    field :is_main, :boolean, default: false
 
     timestamps()
   end
@@ -48,10 +48,15 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
       :city,
       :country]
     )
+    |> update_change(:street, &String.trim/1)
+    |> update_change(:street_number, &String.trim/1)
+    |> update_change(:street_additional_information, &String.trim/1)
+    |> update_change(:zipcode, &String.trim/1)
+    |> update_change(:city, &String.trim/1)
     |> validate_length(:street, max: 250)
     |> validate_length(:street_number, max: 250)
     |> validate_length(:street_additional_information, max: 250)
-    |> validate_length(:zipcode, max: 10)
+    |> validate_length(:zipcode, max: 15)
     |> validate_length(:city, max: 250)
     |> validate_inclusion(
       :country,

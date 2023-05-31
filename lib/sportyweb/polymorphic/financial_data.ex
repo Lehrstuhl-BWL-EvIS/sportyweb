@@ -42,6 +42,16 @@ defmodule Sportyweb.Polymorphic.FinancialData do
       empty_values: ["", nil]
     )
     |> validate_required([:type])
+    |> update_change(:direct_debit_account_holder, &String.trim/1)
+    |> update_change(:direct_debit_iban, &String.trim/1)
+    |> update_change(:direct_debit_institute, &String.trim/1)
+    |> update_change(:invoice_recipient, &String.trim/1)
+    |> update_change(:invoice_additional_information, &String.trim/1)
+    |> validate_length(:direct_debit_account_holder, max: 250)
+    |> validate_length(:direct_debit_iban, max: 250)
+    |> validate_length(:direct_debit_institute, max: 250)
+    |> validate_length(:invoice_recipient, max: 250)
+    |> validate_length(:invoice_additional_information, max: 250)
     |> validate_inclusion(
       :type,
       get_valid_types() |> Enum.map(fn type -> type[:value] end)

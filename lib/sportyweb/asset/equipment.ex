@@ -1,6 +1,7 @@
 defmodule Sportyweb.Asset.Equipment do
   use Ecto.Schema
   import Ecto.Changeset
+  import SportywebWeb.CommonValidations
 
   alias Sportyweb.Asset.EquipmentEmail
   alias Sportyweb.Asset.EquipmentFee
@@ -51,9 +52,17 @@ defmodule Sportyweb.Asset.Equipment do
     |> cast_assoc(:notes, required: true)
     |> cast_assoc(:phones, required: true)
     |> validate_required([:venue_id, :name])
+    |> update_change(:name, &String.trim/1)
+    |> update_change(:reference_number, &String.trim/1)
+    |> update_change(:serial_number, &String.trim/1)
+    |> update_change(:description, &String.trim/1)
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
     |> validate_length(:serial_number, max: 250)
     |> validate_length(:description, max: 20_000)
+    |> validate_dates_order(:purchase_date, :commission_date,
+       "Muss zeitlich später als oder gleich \"Gekauft am\" sein!")
+    |> validate_dates_order(:commission_date, :decommission_date,
+       "Muss zeitlich später als oder gleich \"Nutzung ab\" sein!")
   end
 end

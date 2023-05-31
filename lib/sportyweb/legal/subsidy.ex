@@ -1,6 +1,7 @@
 defmodule Sportyweb.Legal.Subsidy do
   use Ecto.Schema
   import Ecto.Changeset
+  import SportywebWeb.CommonValidations
 
   alias Sportyweb.Legal.Fee
   alias Sportyweb.Legal.Subsidy
@@ -51,9 +52,12 @@ defmodule Sportyweb.Legal.Subsidy do
     )
     |> update_change(:name, &String.trim/1)
     |> update_change(:reference_number, &String.trim/1)
+    |> update_change(:description, &String.trim/1)
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
     |> validate_length(:description, max: 20_000)
     |> validate_number(:value, greater_than_or_equal_to: 0, less_than_or_equal_to: 10_000)
+    |> validate_dates_order(:commission_date, :archive_date,
+       "Muss zeitlich später als oder gleich \"Verwendung ab\" sein!")
   end
 end
