@@ -27,7 +27,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
   def mount(_params, _session, socket) do
     {:ok,
      socket
-     |> assign(:club_navigation_current_item, :finances)}
+     |> assign(:club_navigation_current_item, :fees)}
   end
 
   @impl true
@@ -44,7 +44,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
       "event" -> :calendar
       "venue" -> :assets
       "equipment" -> :assets
-      _ -> :finances
+      _ -> :fees
     end
 
     socket

@@ -8,7 +8,7 @@ defmodule SportywebWeb.SubsidyLive.Index do
   def mount(%{"club_id" => club_id}, _session, socket) do
     {:ok,
      socket
-     |> assign(:club_navigation_current_item, :finances)
+     |> assign(:club_navigation_current_item, :subsidies)
      |> stream(:subsidies, Legal.list_subsidies(club_id))}
   end
 

@@ -19,7 +19,7 @@ defmodule SportywebWeb.FeeLive.Show do
       "event" -> :calendar
       "venue" -> :assets
       "equipment" -> :assets
-      _ -> :finances
+      _ -> :fees
     end
 
     {:noreply,
