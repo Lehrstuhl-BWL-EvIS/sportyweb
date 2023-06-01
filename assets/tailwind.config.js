@@ -30,7 +30,7 @@ module.exports = {
     plugin(({addVariant}) => addVariant("phx-submit-loading", [".phx-submit-loading&", ".phx-submit-loading &"])),
     plugin(({addVariant}) => addVariant("phx-change-loading", [".phx-change-loading&", ".phx-change-loading &"])),
 
-    // Embeds Hero Icons (https://heroicons.com) into your app.css bundle
+    // Embeds Heroicons (https://heroicons.com) into your app.css bundle
     // See your `CoreComponents.icon/1` for more information.
     //
     plugin(function({matchComponents, theme}) {
@@ -54,6 +54,7 @@ module.exports = {
             [`--hero-${name}`]: `url('data:image/svg+xml;utf8,${content}')`,
             "-webkit-mask": `var(--hero-${name})`,
             "mask": `var(--hero-${name})`,
+            "mask-repeat": "no-repeat",
             "background-color": "currentColor",
             "vertical-align": "middle",
             "display": "inline-block",

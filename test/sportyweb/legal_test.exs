@@ -7,6 +7,7 @@ defmodule Sportyweb.LegalTest do
     alias Sportyweb.Legal.Contract
 
     import Sportyweb.LegalFixtures
+    import Sportyweb.OrganizationFixtures
 
     @invalid_attrs %{}
 

@@ -39,11 +39,4 @@ defmodule SportywebWeb.UserSessionController do
     |> put_flash(:info, "Erfolgreich abgemeldet.")
     |> UserAuth.log_out_user()
   end
-
-
-
-
-
-
-
 end

@@ -118,7 +118,7 @@ defmodule SportywebWeb.UserAuthTest do
   end
 
   describe "on_mount: mount_current_user" do
-    test "assigns current_user based on a valid user_token ", %{conn: conn, user: user} do
+    test "assigns current_user based on a valid user_token", %{conn: conn, user: user} do
       user_token = Accounts.generate_user_session_token(user)
       session = conn |> put_session(:user_token, user_token) |> get_session()
 
@@ -128,7 +128,7 @@ defmodule SportywebWeb.UserAuthTest do
       assert updated_socket.assigns.current_user.id == user.id
     end
 
-    test "assigns nil to current_user assign if there isn't a valid user_token ", %{conn: conn} do
+    test "assigns nil to current_user assign if there isn't a valid user_token", %{conn: conn} do
       user_token = "invalid_token"
       session = conn |> put_session(:user_token, user_token) |> get_session()
 
@@ -149,7 +149,7 @@ defmodule SportywebWeb.UserAuthTest do
   end
 
   describe "on_mount: ensure_authenticated" do
-    test "authenticates current_user based on a valid user_token ", %{conn: conn, user: user} do
+    test "authenticates current_user based on a valid user_token", %{conn: conn, user: user} do
       user_token = Accounts.generate_user_session_token(user)
       session = conn |> put_session(:user_token, user_token) |> get_session()
 
@@ -159,7 +159,7 @@ defmodule SportywebWeb.UserAuthTest do
       assert updated_socket.assigns.current_user.id == user.id
     end
 
-    test "redirects to login page if there isn't a valid user_token ", %{conn: conn} do
+    test "redirects to login page if there isn't a valid user_token", %{conn: conn} do
       user_token = "invalid_token"
       session = conn |> put_session(:user_token, user_token) |> get_session()
 
@@ -172,7 +172,7 @@ defmodule SportywebWeb.UserAuthTest do
       assert updated_socket.assigns.current_user == nil
     end
 
-    test "redirects to login page if there isn't a user_token ", %{conn: conn} do
+    test "redirects to login page if there isn't a user_token", %{conn: conn} do
       session = conn |> get_session()
 
       socket = %LiveView.Socket{
@@ -199,7 +199,7 @@ defmodule SportywebWeb.UserAuthTest do
                )
     end
 
-    test "Don't redirect is there is no authenticated user", %{conn: conn} do
+    test "doesn't redirect if there is no authenticated user", %{conn: conn} do
       session = conn |> get_session()
 
       assert {:cont, _updated_socket} =
