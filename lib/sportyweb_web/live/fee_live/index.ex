@@ -7,9 +7,7 @@ defmodule SportywebWeb.FeeLive.Index do
 
   @impl true
   def mount(%{"club_id" => _club_id}, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:club_navigation_current_item, :fees)}
+    {:ok, assign(socket, :club_navigation_current_item, :fees)}
   end
 
   @impl true

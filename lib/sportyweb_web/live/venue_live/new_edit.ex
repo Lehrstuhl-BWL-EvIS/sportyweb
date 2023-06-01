@@ -19,7 +19,7 @@ defmodule SportywebWeb.VenueLive.NewEdit do
         title={@page_title}
         action={@live_action}
         venue={@venue}
-        navigate={if @venue.id, do: ~p"/venues/#{@venue}", else: ~p"/clubs/#{@venue.club}/venues"}
+        navigate={if @venue.id, do: ~p"/venues/#{@venue}", else: ~p"/clubs/#{@club}/venues"}
       />
     </div>
     """
@@ -27,9 +27,7 @@ defmodule SportywebWeb.VenueLive.NewEdit do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:club_navigation_current_item, :assets)}
+    {:ok, assign(socket, :club_navigation_current_item, :assets)}
   end
 
   @impl true

@@ -20,7 +20,7 @@ defmodule SportywebWeb.ContactLive.NewEdit do
         title={@page_title}
         action={@live_action}
         contact={@contact}
-        navigate={if @contact.id, do: ~p"/contacts/#{@contact}", else: ~p"/clubs/#{@contact.club}/contacts"}
+        navigate={if @contact.id, do: ~p"/contacts/#{@contact}", else: ~p"/clubs/#{@club}/contacts"}
       />
     </div>
     """
@@ -28,9 +28,7 @@ defmodule SportywebWeb.ContactLive.NewEdit do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:club_navigation_current_item, :contacts)}
+    {:ok, assign(socket, :club_navigation_current_item, :contacts)}
   end
 
   @impl true

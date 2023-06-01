@@ -6,6 +6,7 @@ defmodule Sportyweb.Organization.Club do
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.Fee
+  alias Sportyweb.Legal.Subsidy
   alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.ClubEmail
   alias Sportyweb.Organization.ClubFinancialData
@@ -28,6 +29,7 @@ defmodule Sportyweb.Organization.Club do
     has_many :contact_groups, ContactGroup
     has_many :departments, Department
     has_many :events, Event
+    has_many :subsidies, Subsidy
     has_many :venues, Venue
     many_to_many :contracts, Contract, join_through: ClubContract
     many_to_many :emails, Email, join_through: ClubEmail

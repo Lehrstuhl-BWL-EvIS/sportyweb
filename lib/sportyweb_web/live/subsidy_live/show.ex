@@ -6,9 +6,7 @@ defmodule SportywebWeb.SubsidyLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:club_navigation_current_item, :subsidies)}
+    {:ok, assign(socket, :club_navigation_current_item, :subsidies)}
   end
 
   @impl true

@@ -17,7 +17,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
         action={@live_action}
         fee={@fee}
         fee_object={nil}
-        navigate={if @fee.id, do: ~p"/fees/#{@fee}", else: ~p"/clubs/#{@fee.club}/fees"}
+        navigate={if @fee.id, do: ~p"/fees/#{@fee}", else: ~p"/clubs/#{@club}/fees"}
       />
     </div>
     """
@@ -25,9 +25,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:club_navigation_current_item, :fees)}
+    {:ok, assign(socket, :club_navigation_current_item, :fees)}
   end
 
   @impl true

@@ -17,7 +17,7 @@ defmodule SportywebWeb.GroupLive.NewEdit do
         title={@page_title}
         action={@live_action}
         group={@group}
-        navigate={if @group.id, do: ~p"/groups/#{@group}", else: ~p"/departments/#{@group.department}"}
+        navigate={if @group.id, do: ~p"/groups/#{@group}", else: ~p"/departments/#{@department}"}
       />
     </div>
     """
@@ -25,9 +25,7 @@ defmodule SportywebWeb.GroupLive.NewEdit do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:club_navigation_current_item, :structure)}
+    {:ok, assign(socket, :club_navigation_current_item, :structure)}
   end
 
   @impl true

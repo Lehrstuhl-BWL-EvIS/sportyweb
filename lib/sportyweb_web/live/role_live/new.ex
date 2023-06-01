@@ -7,7 +7,7 @@ defmodule SportywebWeb.RoleLive.New do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket |> assign(:club_navigation_current_item, :authorization), temporary_assigns: [changeset: nil]}
+    {:ok, assign(socket, :club_navigation_current_item, :authorization), temporary_assigns: [changeset: nil]}
   end
 
   @impl true

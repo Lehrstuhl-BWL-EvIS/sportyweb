@@ -17,7 +17,7 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
         title={@page_title}
         action={@live_action}
         department={@department}
-        navigate={if @department.id, do: ~p"/departments/#{@department}", else: ~p"/clubs/#{@department.club}/departments"}
+        navigate={if @department.id, do: ~p"/departments/#{@department}", else: ~p"/clubs/#{@club}/departments"}
       />
     </div>
     """
@@ -25,9 +25,7 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:club_navigation_current_item, :structure)}
+    {:ok, assign(socket, :club_navigation_current_item, :structure)}
   end
 
   @impl true

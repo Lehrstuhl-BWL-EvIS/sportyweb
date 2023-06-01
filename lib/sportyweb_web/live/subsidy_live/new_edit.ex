@@ -16,7 +16,7 @@ defmodule SportywebWeb.SubsidyLive.NewEdit do
         title={@page_title}
         action={@live_action}
         subsidy={@subsidy}
-        navigate={if @subsidy.id, do: ~p"/subsidies/#{@subsidy}", else: ~p"/clubs/#{@subsidy.club}/subsidies"}
+        navigate={if @subsidy.id, do: ~p"/subsidies/#{@subsidy}", else: ~p"/clubs/#{@club}/subsidies"}
       />
     </div>
     """
@@ -24,9 +24,7 @@ defmodule SportywebWeb.SubsidyLive.NewEdit do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:club_navigation_current_item, :subsidies)}
+    {:ok, assign(socket, :club_navigation_current_item, :subsidies)}
   end
 
   @impl true

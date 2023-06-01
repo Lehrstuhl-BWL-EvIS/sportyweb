@@ -5,16 +5,8 @@ defmodule SportywebWeb.SubsidyLive.Index do
   alias Sportyweb.Organization
 
   @impl true
-  def mount(%{"club_id" => club_id}, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:club_navigation_current_item, :subsidies)
-     |> stream(:subsidies, Legal.list_subsidies(club_id))}
-  end
-
-  @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, :club_navigation_current_item, :subsidies)}
   end
 
   @impl true
@@ -28,10 +20,11 @@ defmodule SportywebWeb.SubsidyLive.Index do
   end
 
   defp apply_action(socket, :index, %{"club_id" => club_id}) do
-    club = Organization.get_club!(club_id)
+    club = Organization.get_club!(club_id, [:subsidies])
 
     socket
     |> assign(:page_title, "Zuschüsse")
     |> assign(:club, club)
+    |> stream(:subsidies, club.subsidies)
   end
 end

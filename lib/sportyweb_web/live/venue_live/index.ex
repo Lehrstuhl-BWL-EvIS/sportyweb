@@ -5,16 +5,8 @@ defmodule SportywebWeb.VenueLive.Index do
   alias Sportyweb.Asset
 
   @impl true
-  def mount(%{"club_id" => club_id}, _session, socket) do
-    {:ok,
-     socket
-     |> assign(:club_navigation_current_item, :assets)
-     |> stream(:venues, Asset.list_venues(club_id, [:equipment]))}
-  end
-
-  @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, :club_navigation_current_item, :assets)}
   end
 
   @impl true
@@ -28,10 +20,11 @@ defmodule SportywebWeb.VenueLive.Index do
   end
 
   defp apply_action(socket, :index, %{"club_id" => club_id}) do
-    club = Organization.get_club!(club_id)
+    club = Organization.get_club!(club_id, [venues: :equipment])
 
     socket
     |> assign(:page_title, "Standorte & Equipment")
     |> assign(:club, club)
+    |> stream(:venues, club.venues)
   end
 end
