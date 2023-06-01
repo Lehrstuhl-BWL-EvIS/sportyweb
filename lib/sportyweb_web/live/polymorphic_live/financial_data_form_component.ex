@@ -82,8 +82,6 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataFormComponent do
     %{"_target" => keys} = map
     type = get_in(map, keys)
 
-    {:noreply,
-     socket
-     |> assign(:type, type)}
+    {:noreply, assign(socket, :type, type)}
   end
 end

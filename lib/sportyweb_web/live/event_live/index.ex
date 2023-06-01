@@ -1,7 +1,6 @@
 defmodule SportywebWeb.EventLive.Index do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Calendar
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Organization
 

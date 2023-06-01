@@ -101,9 +101,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
 
   @impl true
   def handle_event("update_fee_options", %{"contract" => %{"contact_id" => contact_id}}, socket) do
-    {:noreply,
-     socket
-     |> assign_fee_options(contact_id)}
+    {:noreply, assign_fee_options(socket, contact_id)}
   end
 
   defp save_contract(socket, :edit, contract_params) do

@@ -3,13 +3,14 @@ defmodule SportywebWeb.ForecastLive.Show do
 
   alias Sportyweb.Organization
   alias Sportyweb.Personal
-  alias Sportyweb.Legal.Subsidy
+  alias Sportyweb.Legal
 
   @impl true
   def mount(_params, _session, socket) do
     {:ok, assign(socket, :club_navigation_current_item, :forecasts)}
   end
 
+  @impl true
   def handle_params(%{"club_id" => club_id, "start_date" => start_date, "end_date" => end_date} = params, _url, socket) do
     club = Organization.get_club!(club_id)
 

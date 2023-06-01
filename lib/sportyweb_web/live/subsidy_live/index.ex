@@ -1,7 +1,6 @@
 defmodule SportywebWeb.SubsidyLive.Index do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Legal
   alias Sportyweb.Organization
 
   @impl true

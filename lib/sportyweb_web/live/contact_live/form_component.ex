@@ -206,9 +206,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
 
   @impl true
   def handle_event("update_step", %{"step" => step}, socket) do
-    {:noreply,
-     socket
-     |> assign(:step, step)}
+    {:noreply, assign(socket, :step, step)}
   end
 
   defp save_contact(socket, :edit, contact_params) do

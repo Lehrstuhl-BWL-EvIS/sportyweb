@@ -2,7 +2,6 @@ defmodule SportywebWeb.ContactLive.Index do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Organization
-  alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
 
   @impl true
