@@ -12,9 +12,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
   ## Examples
 
       def mount(_params, _session, socket) do
-        {:ok,
-         socket
-         |> assign(:club_navigation_current_item, :dashboard)}
+        {:ok, assign(socket, :club_navigation_current_item, :dashboard)}
       end
 
   """
@@ -65,6 +63,16 @@ defmodule SportywebWeb.ClubNavigationComponent do
 
         <ul class={["mb-1 px-2", (if !@show_submenu_finances, do: "hidden")]}>
           <li>
+            <.link navigate={~p"/clubs/#{@club}/forecasts"}
+              class={[
+                @classes_menu_item, @classes_submenu_item,
+                (if @club_navigation_current_item == :forecasts, do: @classes_menu_item_active)
+              ]}
+            >
+              <span class="truncate">Vorschau</span>
+            </.link>
+          </li>
+          <li>
             <.link navigate={~p"/clubs/#{@club}/fees"}
               class={[
                 @classes_menu_item, @classes_submenu_item,
@@ -98,7 +106,9 @@ defmodule SportywebWeb.ClubNavigationComponent do
 
   @impl true
   def update(assigns, socket) do
-    show_submenu_finances = assigns.club_navigation_current_item == :fees || assigns.club_navigation_current_item == :subsidies
+    show_submenu_finances = assigns.club_navigation_current_item == :forecasts ||
+                            assigns.club_navigation_current_item == :fees ||
+                            assigns.club_navigation_current_item == :subsidies
 
     {:ok,
      socket

@@ -171,6 +171,15 @@ defmodule SportywebWeb.Router do
       live "/equipment/:id/fees", EquipmentLive.FeeNew, :index
       live "/equipment/:id/fees/new", EquipmentLive.FeeNew, :new
 
+      # Forecasts
+
+      live "/clubs/:club_id/forecasts", ForecastLive.NewEdit, :new
+
+      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/contact", ForecastLive.Show, :show_contacts_all
+      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/contact/:contact_id", ForecastLive.Show, :show_contacts_single
+      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/subsidy", ForecastLive.Show, :show_subsidies_all
+      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/subsidy/:subsidy_id", ForecastLive.Show, :show_subsidies_single
+
       # Contracts (Polymorphic)
 
       live "/contracts", ContractLive.Index, :index_root
