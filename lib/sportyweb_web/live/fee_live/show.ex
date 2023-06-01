@@ -1,8 +1,8 @@
 defmodule SportywebWeb.FeeLive.Show do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Legal
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance
+  alias Sportyweb.Finance.Fee
 
   @impl true
   def mount(_params, _session, socket) do
@@ -11,7 +11,7 @@ defmodule SportywebWeb.FeeLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    fee = Legal.get_fee!(id, [:ancestors, :club, :contracts, :notes, :subsidy, :successor])
+    fee = Finance.get_fee!(id, [:ancestors, :club, :contracts, :notes, :subsidy, :successor])
     fee_title = if fee.is_general, do: "Allgemeine", else: "Spezifische"
     club_navigation_current_item = case fee.type do
       "department" -> :structure

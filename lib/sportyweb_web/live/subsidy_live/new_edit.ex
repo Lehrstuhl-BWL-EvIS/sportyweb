@@ -1,8 +1,8 @@
 defmodule SportywebWeb.SubsidyLive.NewEdit do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Legal
-  alias Sportyweb.Legal.Subsidy
+  alias Sportyweb.Finance
+  alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Organization
   alias Sportyweb.Polymorphic.Note
 
@@ -33,7 +33,7 @@ defmodule SportywebWeb.SubsidyLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    subsidy = Legal.get_subsidy!(id, [:club, :notes])
+    subsidy = Finance.get_subsidy!(id, [:club, :notes])
 
     socket
     |> assign(:page_title, "Zuschuss bearbeiten")
@@ -56,8 +56,8 @@ defmodule SportywebWeb.SubsidyLive.NewEdit do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    subsidy = Legal.get_subsidy!(id)
-    {:ok, _} = Legal.delete_subsidy(subsidy)
+    subsidy = Finance.get_subsidy!(id)
+    {:ok, _} = Finance.delete_subsidy(subsidy)
 
     {:noreply,
      socket

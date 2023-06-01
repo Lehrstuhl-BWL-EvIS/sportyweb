@@ -4,55 +4,32 @@ defmodule Sportyweb.LegalFixtures do
   entities via the `Sportyweb.Legal` context.
   """
 
+  import Sportyweb.FinanceFixtures
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.PersonalFixtures
 
   @doc """
-  Generate a fee.
+  Generate a contract.
   """
-  def fee_fixture(attrs \\ %{}) do
+  def contract_fixture(attrs \\ %{}) do
     club = club_fixture()
+    contact = contact_fixture()
+    fee = fee_fixture()
 
-    {:ok, fee} =
+    {:ok, contract} =
       attrs
       |> Enum.into(%{
         club_id: club.id,
-        is_general: true,
-        type: "club",
-        name: "some name",
-        reference_number: "some reference_number",
-        description: "some description",
-        base_fee_in_eur: 42,
-        base_fee_in_eur_cent: 4200,
-        admission_fee_in_eur: 15,
-        admission_fee_in_eur_cent: 1500,
-        is_for_contact_group_contacts_only: true,
-        is_recurring: true,
-        minimum_age_in_years: 18,
-        maximum_age_in_years: 50,
-        commission_date: ~D[2023-02-24],
-        archive_date: ~D[2023-02-24],
+        contact_id: contact.id,
+        fee_id: fee.id,
+        signing_date: ~D[2023-06-01],
+        start_date: ~D[2023-06-01],
+        termination_date: nil,
+        end_date: nil,
+        clubs: [club]
       })
-      |> Sportyweb.Legal.create_fee()
+      |> Sportyweb.Legal.create_contract()
 
-    fee
-  end
-
-  @doc """
-  Generate a subsidy.
-  """
-  def subsidy_fixture(attrs \\ %{}) do
-    {:ok, subsidy} =
-      attrs
-      |> Enum.into(%{
-        archive_date: ~D[2023-05-29],
-        commission_date: ~D[2023-05-29],
-        description: "some description",
-        name: "some name",
-        reference_number: "some reference_number",
-        value: 42
-      })
-      |> Sportyweb.Legal.create_subsidy()
-
-    subsidy
+    contract
   end
 end

@@ -1,4 +1,4 @@
-defmodule Sportyweb.Legal.Fee do
+defmodule Sportyweb.Finance.Fee do
   use Ecto.Schema
   import Ecto.Changeset
   import SportywebWeb.CommonValidations
@@ -9,10 +9,10 @@ defmodule Sportyweb.Legal.Fee do
   alias Sportyweb.Asset.VenueFee
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Calendar.EventFee
+  alias Sportyweb.Finance.Fee
+  alias Sportyweb.Finance.FeeNote
+  alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Legal.Contract
-  alias Sportyweb.Legal.Fee
-  alias Sportyweb.Legal.FeeNote
-  alias Sportyweb.Legal.Subsidy
   alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.Department
   alias Sportyweb.Organization.DepartmentFee

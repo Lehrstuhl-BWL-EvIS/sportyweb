@@ -3,7 +3,7 @@ defmodule Sportyweb.Asset.VenueFee do
   import Ecto.Changeset
 
   alias Sportyweb.Asset.Venue
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance.Fee
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

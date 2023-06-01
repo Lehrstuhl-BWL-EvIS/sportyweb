@@ -18,9 +18,9 @@ alias Sportyweb.Asset
 alias Sportyweb.Asset.Equipment
 alias Sportyweb.Asset.Venue
 alias Sportyweb.Calendar.Event
-alias Sportyweb.Legal
+alias Sportyweb.Finance
+alias Sportyweb.Finance.Fee
 alias Sportyweb.Legal.Contract
-alias Sportyweb.Legal.Fee
 alias Sportyweb.Organization
 alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
@@ -871,7 +871,7 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       if contact.type == "person" do
         if :rand.uniform() < 0.5 do
           # Select a random fee that works with this combination of club & contact
-          fee = Legal.list_contract_fee_options(club, contact.id) |> Enum.random()
+          fee = Finance.list_contract_fee_options(club, contact.id) |> Enum.random()
           Repo.insert!(%Contract{
             club_id: club.id,
             contact_id: contact.id,
@@ -889,7 +889,7 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
 
           if :rand.uniform() < 0.3 do
             # Select a random fee that works with this combination of club & department
-            fee = Legal.list_contract_fee_options(department, contact.id) |> Enum.random()
+            fee = Finance.list_contract_fee_options(department, contact.id) |> Enum.random()
             Repo.insert!(%Contract{
               club_id: club.id,
               contact_id: contact.id,
@@ -907,7 +907,7 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
 
             if :rand.uniform() < 0.3 do
               # Select a random fee that works with this combination of club & group
-              fee = Legal.list_contract_fee_options(group, contact.id) |> Enum.random()
+              fee = Finance.list_contract_fee_options(group, contact.id) |> Enum.random()
               Repo.insert!(%Contract{
                 club_id: club.id,
                 contact_id: contact.id,

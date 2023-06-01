@@ -1,8 +1,8 @@
 defmodule SportywebWeb.SubsidyLive.Show do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Legal
-  alias Sportyweb.Legal.Subsidy
+  alias Sportyweb.Finance
+  alias Sportyweb.Finance.Subsidy
 
   @impl true
   def mount(_params, _session, socket) do
@@ -11,7 +11,7 @@ defmodule SportywebWeb.SubsidyLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    subsidy = Legal.get_subsidy!(id, [:club, :fees, :notes])
+    subsidy = Finance.get_subsidy!(id, [:club, :fees, :notes])
 
     {:noreply,
      socket

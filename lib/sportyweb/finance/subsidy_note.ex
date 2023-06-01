@@ -1,8 +1,8 @@
-defmodule Sportyweb.Legal.SubsidyNote do
+defmodule Sportyweb.Finance.SubsidyNote do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Sportyweb.Legal.Subsidy
+  alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Polymorphic.Note
 
   @primary_key {:id, :binary_id, autogenerate: true}

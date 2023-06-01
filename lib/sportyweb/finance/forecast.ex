@@ -1,4 +1,4 @@
-defmodule Sportyweb.Legal.Forecast do
+defmodule Sportyweb.Finance.Forecast do
   use Ecto.Schema
   import Ecto.Changeset
   import SportywebWeb.CommonValidations

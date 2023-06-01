@@ -2,8 +2,8 @@ defmodule Sportyweb.Organization.Group do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Legal.Contract
-  alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.Department
   alias Sportyweb.Organization.GroupContract
   alias Sportyweb.Organization.GroupEmail

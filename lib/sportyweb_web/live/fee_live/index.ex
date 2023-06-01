@@ -1,8 +1,8 @@
 defmodule SportywebWeb.FeeLive.Index do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Legal
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization
 
   @impl true

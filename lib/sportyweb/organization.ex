@@ -7,7 +7,7 @@ defmodule Sportyweb.Organization do
   alias Sportyweb.Repo
 
   alias Sportyweb.Legal.Contract
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.DepartmentContract

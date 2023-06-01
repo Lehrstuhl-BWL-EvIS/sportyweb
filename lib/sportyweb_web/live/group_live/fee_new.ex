@@ -1,7 +1,7 @@
 defmodule SportywebWeb.GroupLive.FeeNew do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization
   alias Sportyweb.Polymorphic.Note
 

@@ -8,7 +8,7 @@ defmodule Sportyweb.Asset.Equipment do
   alias Sportyweb.Asset.EquipmentNote
   alias Sportyweb.Asset.EquipmentPhone
   alias Sportyweb.Asset.Venue
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone

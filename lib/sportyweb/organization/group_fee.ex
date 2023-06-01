@@ -2,7 +2,7 @@ defmodule Sportyweb.Organization.GroupFee do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization.Group
 
   @primary_key {:id, :binary_id, autogenerate: true}

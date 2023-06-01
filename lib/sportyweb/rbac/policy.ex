@@ -4,7 +4,7 @@ defmodule Sportyweb.RBAC.Policy do
   alias Sportyweb.Organization
   alias Sportyweb.Asset
   alias Sportyweb.Calendar
-  alias Sportyweb.Legal
+  alias Sportyweb.Finance
   alias Sportyweb.Personal
 
   alias Sportyweb.RBAC.UserRole
@@ -138,7 +138,7 @@ defmodule Sportyweb.RBAC.Policy do
       :ContactLive -> id |> Personal.get_contact!() |> Map.get(:club_id)
       :VenueLive  -> id |> Asset.get_venue!() |> Map.get(:club_id)
       :EquipmentLive -> id |> Asset.get_equipment!() |> Map.get(:venue_id)
-      :FeeLive -> id |> Legal.get_fee!() |> Map.get(:club_id)
+      :FeeLive -> id |> Finance.get_fee!() |> Map.get(:club_id)
     end
   end
 

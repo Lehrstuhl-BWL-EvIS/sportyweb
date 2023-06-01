@@ -14,7 +14,7 @@ defmodule Sportyweb.Calendar.Event do
   alias Sportyweb.Calendar.EventPhone
   alias Sportyweb.Calendar.EventPostalAddress
   alias Sportyweb.Calendar.EventVenue
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.Department
   alias Sportyweb.Organization.Group

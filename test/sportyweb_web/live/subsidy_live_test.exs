@@ -2,7 +2,7 @@ defmodule SportywebWeb.SubsidyLiveTest do
   use SportywebWeb.ConnCase
 
   import Phoenix.LiveViewTest
-  import Sportyweb.LegalFixtures
+  import Sportyweb.FinanceFixtures
 
   @create_attrs %{archive_date: "2023-05-29", commission_date: "2023-05-29", description: "some description", name: "some name", reference_number: "some reference_number", value: 42}
   @update_attrs %{archive_date: "2023-05-30", commission_date: "2023-05-30", description: "some updated description", name: "some updated name", reference_number: "some updated reference_number", value: 43}

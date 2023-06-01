@@ -1,7 +1,7 @@
 defmodule SportywebWeb.SubsidyLive.FormComponent do
   use SportywebWeb, :live_component
 
-  alias Sportyweb.Legal
+  alias Sportyweb.Finance
 
   @impl true
   def render(assigns) do
@@ -83,7 +83,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
 
   @impl true
   def update(%{subsidy: subsidy} = assigns, socket) do
-    changeset = Legal.change_subsidy(subsidy)
+    changeset = Finance.change_subsidy(subsidy)
 
     {:ok,
      socket
@@ -95,7 +95,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
   def handle_event("validate", %{"subsidy" => subsidy_params}, socket) do
     changeset =
       socket.assigns.subsidy
-      |> Legal.change_subsidy(subsidy_params)
+      |> Finance.change_subsidy(subsidy_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
@@ -106,7 +106,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
   end
 
   defp save_subsidy(socket, :edit, subsidy_params) do
-    case Legal.update_subsidy(socket.assigns.subsidy, subsidy_params) do
+    case Finance.update_subsidy(socket.assigns.subsidy, subsidy_params) do
       {:ok, _subsidy} ->
         {:noreply,
          socket
@@ -123,7 +123,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
       "club_id" => socket.assigns.subsidy.club.id
     })
 
-    case Legal.create_subsidy(subsidy_params) do
+    case Finance.create_subsidy(subsidy_params) do
       {:ok, _subsidy} ->
         {:noreply,
          socket

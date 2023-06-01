@@ -1,11 +1,11 @@
-defmodule Sportyweb.Legal.Subsidy do
+defmodule Sportyweb.Finance.Subsidy do
   use Ecto.Schema
   import Ecto.Changeset
   import SportywebWeb.CommonValidations
 
-  alias Sportyweb.Legal.Fee
-  alias Sportyweb.Legal.Subsidy
-  alias Sportyweb.Legal.SubsidyNote
+  alias Sportyweb.Finance.Fee
+  alias Sportyweb.Finance.Subsidy
+  alias Sportyweb.Finance.SubsidyNote
   alias Sportyweb.Organization.Club
   alias Sportyweb.Polymorphic.Note
 

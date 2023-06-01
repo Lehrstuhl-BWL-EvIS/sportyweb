@@ -10,7 +10,7 @@ defmodule Sportyweb.Asset do
   alias Sportyweb.Asset.EquipmentFee
   alias Sportyweb.Asset.Venue
   alias Sportyweb.Asset.VenueFee
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance.Fee
 
   @doc """
   Returns a clubs list of venues.

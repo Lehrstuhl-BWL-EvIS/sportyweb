@@ -1,6 +1,7 @@
 defmodule SportywebWeb.ContractLive.FormComponent do
   use SportywebWeb, :live_component
 
+  alias Sportyweb.Finance
   alias Sportyweb.Legal
   alias Sportyweb.Organization
   alias Sportyweb.Organization.Club
@@ -147,7 +148,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
   end
 
   defp assign_fee_options(socket, contact_id) do
-    assign(socket, :fee_options, Legal.list_contract_fee_options(socket.assigns.contract_object, contact_id))
+    assign(socket, :fee_options, Finance.list_contract_fee_options(socket.assigns.contract_object, contact_id))
   end
 
   defp create_association(contract, %Club{} = contract_object) do

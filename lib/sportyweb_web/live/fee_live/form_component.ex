@@ -7,8 +7,8 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   alias Sportyweb.Asset.Venue
   alias Sportyweb.Calendar
   alias Sportyweb.Calendar.Event
-  alias Sportyweb.Legal
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization
   alias Sportyweb.Organization.Department
   alias Sportyweb.Organization.Group
@@ -73,7 +73,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                   field={@form[:subsidy_id]}
                   type="select"
                   label="Zuschuss (optional)"
-                  options={Legal.list_subsidies(@fee.club_id) |> Enum.map(&{&1.name, &1.id})}
+                  options={Finance.list_subsidies(@fee.club_id) |> Enum.map(&{&1.name, &1.id})}
                   prompt="Kein Zuschuss"
                 />
               </div>
@@ -188,7 +188,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
   @impl true
   def update(%{fee: fee} = assigns, socket) do
-    changeset = Legal.change_fee(fee)
+    changeset = Finance.change_fee(fee)
 
     {:ok,
      socket
@@ -201,7 +201,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   def handle_event("validate", %{"fee" => fee_params}, socket) do
     changeset =
       socket.assigns.fee
-      |> Legal.change_fee(fee_params)
+      |> Finance.change_fee(fee_params)
       |> Map.put(:action, :validate)
 
     changed_maximum_age_in_years = get_change(changeset, :maximum_age_in_years)
@@ -232,8 +232,8 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
   @impl true
   def handle_event("archive", %{"id" => id}, socket) do
-    fee = Legal.get_fee!(id)
-    {:ok, _} = Legal.archive_fee(fee)
+    fee = Finance.get_fee!(id)
+    {:ok, _} = Finance.archive_fee(fee)
 
     {:noreply,
      socket
@@ -242,7 +242,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   end
 
   defp save_fee(socket, :edit, fee_params) do
-    case Legal.update_fee(socket.assigns.fee, fee_params) do
+    case Finance.update_fee(socket.assigns.fee, fee_params) do
       {:ok, _fee} ->
         {:noreply,
          socket
@@ -259,7 +259,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
       "club_id" => socket.assigns.fee.club.id
     })
 
-    case Legal.create_fee(fee_params) do
+    case Finance.create_fee(fee_params) do
       {:ok, fee} ->
         case create_association(fee, socket.assigns.fee_object) do
           {:ok, _} ->
@@ -284,7 +284,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   end
 
   defp assign_successor_fee_options(socket, fee, maximum_age_in_years) do
-    assign(socket, :successor_fee_options, Legal.list_successor_fee_options(fee, maximum_age_in_years))
+    assign(socket, :successor_fee_options, Finance.list_successor_fee_options(fee, maximum_age_in_years))
   end
 
   defp create_association(fee, _) when fee.is_general do
@@ -320,6 +320,6 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   defp create_association(fee, _) do
     # Immediately delete the fee if no association could be created.
     # Otherwise the fee would be "free floating", without a fee_object.
-    {:error, _} = Legal.delete_fee(fee)
+    {:error, _} = Finance.delete_fee(fee)
   end
 end

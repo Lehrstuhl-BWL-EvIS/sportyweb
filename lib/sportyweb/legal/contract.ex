@@ -3,9 +3,9 @@ defmodule Sportyweb.Legal.Contract do
   import Ecto.Changeset
   import SportywebWeb.CommonValidations
 
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.ContractPause
-  alias Sportyweb.Legal.Fee
   alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.Department

@@ -4,9 +4,9 @@ defmodule Sportyweb.Organization.Club do
 
   alias Sportyweb.Asset.Venue
   alias Sportyweb.Calendar.Event
+  alias Sportyweb.Finance.Fee
+  alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Legal.Contract
-  alias Sportyweb.Legal.Fee
-  alias Sportyweb.Legal.Subsidy
   alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.ClubEmail
   alias Sportyweb.Organization.ClubFinancialData

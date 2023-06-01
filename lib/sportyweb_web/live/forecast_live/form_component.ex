@@ -2,9 +2,9 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
   use SportywebWeb, :live_component
   import Ecto.Changeset
 
+  alias Sportyweb.Finance
+  alias Sportyweb.Finance.Forecast
   alias Sportyweb.Personal
-  alias Sportyweb.Legal
-  alias Sportyweb.Legal.Forecast
 
   @impl true
   def render(assigns) do
@@ -90,7 +90,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
      |> assign(assigns)
      |> assign(:type, forecast.type)
      |> assign(:contact_options, Personal.list_contacts(assigns.club.id))
-     |> assign(:subsidy_options, Legal.list_subsidies(assigns.club.id))
+     |> assign(:subsidy_options, Finance.list_subsidies(assigns.club.id))
      |> assign_form(changeset)}
   end
 

@@ -1,7 +1,7 @@
 defmodule SportywebWeb.ForecastLive.NewEdit do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Legal.Forecast
+  alias Sportyweb.Finance.Forecast
   alias Sportyweb.Organization
 
   @impl true

@@ -2,7 +2,7 @@ defmodule SportywebWeb.EventLive.FeeNew do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Calendar
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Polymorphic.Note
 
   @impl true

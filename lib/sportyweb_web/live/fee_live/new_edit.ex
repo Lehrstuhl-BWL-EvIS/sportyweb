@@ -1,8 +1,8 @@
 defmodule SportywebWeb.FeeLive.NewEdit do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Legal
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance
+  alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization
   alias Sportyweb.Polymorphic.Note
 
@@ -34,7 +34,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    fee = Legal.get_fee!(id, [:club, :ancestors, :contracts, :notes])
+    fee = Finance.get_fee!(id, [:club, :ancestors, :contracts, :notes])
     fee_title = if fee.is_general, do: "Allgemeine", else: "Spezifische"
     club_navigation_current_item = case fee.type do
       "department" -> :structure
@@ -69,8 +69,8 @@ defmodule SportywebWeb.FeeLive.NewEdit do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    fee = Legal.get_fee!(id)
-    {:ok, _} = Legal.delete_fee(fee)
+    fee = Finance.get_fee!(id)
+    {:ok, _} = Finance.delete_fee(fee)
 
     {:noreply,
      socket

@@ -3,7 +3,7 @@ defmodule SportywebWeb.ContractLive.Show do
 
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance.Fee
 
   @impl true
   def mount(_params, _session, socket) do

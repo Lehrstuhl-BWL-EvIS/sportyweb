@@ -1,9 +1,9 @@
 defmodule SportywebWeb.ForecastLive.Show do
   use SportywebWeb, :live_view
 
+  alias Sportyweb.Finance
   alias Sportyweb.Organization
   alias Sportyweb.Personal
-  alias Sportyweb.Legal
 
   @impl true
   def mount(_params, _session, socket) do
@@ -40,7 +40,7 @@ defmodule SportywebWeb.ForecastLive.Show do
   end
 
   defp apply_action(socket, :show_subsidies_single, %{"subsidy_id" => subsidy_id}) do
-    subsidy = Legal.get_subsidy!(subsidy_id)
+    subsidy = Finance.get_subsidy!(subsidy_id)
 
     socket
     |> assign(:page_title, "Vorschau Zuschuss: - #{subsidy.name}")

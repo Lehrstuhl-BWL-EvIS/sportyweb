@@ -3,7 +3,7 @@ defmodule SportywebWeb.FeeLiveTest do
 
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
-  import Sportyweb.LegalFixtures
+  import Sportyweb.FinanceFixtures
   import Sportyweb.OrganizationFixtures
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures

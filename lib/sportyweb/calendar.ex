@@ -8,7 +8,7 @@ defmodule Sportyweb.Calendar do
 
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Calendar.EventFee
-  alias Sportyweb.Legal.Fee
+  alias Sportyweb.Finance.Fee
 
   @doc """
   Returns a clubs list of events.
