@@ -19,7 +19,7 @@ defmodule Sportyweb.Organization.Department do
   @foreign_key_type :binary_id
   schema "departments" do
     belongs_to :club, Club
-    has_many :groups, Group
+    has_many :groups, Group, preload_order: [asc: :name]
     many_to_many :contracts, Contract, join_through: DepartmentContract
     many_to_many :emails, Email, join_through: DepartmentEmail
     many_to_many :fees, Fee, join_through: DepartmentFee

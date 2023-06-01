@@ -25,12 +25,12 @@ defmodule Sportyweb.Organization.Club do
   schema "clubs" do
     has_many :all_contracts, Contract
     has_many :all_fees, Fee
-    has_many :contacts, Contact
+    has_many :contacts, Contact, preload_order: [asc: :name]
     has_many :contact_groups, ContactGroup
-    has_many :departments, Department
+    has_many :departments, Department, preload_order: [asc: :name]
     has_many :events, Event
-    has_many :subsidies, Subsidy
-    has_many :venues, Venue
+    has_many :subsidies, Subsidy, preload_order: [asc: :name]
+    has_many :venues, Venue, preload_order: [asc: :name]
     many_to_many :contracts, Contract, join_through: ClubContract
     many_to_many :emails, Email, join_through: ClubEmail
     many_to_many :financial_data, FinancialData, join_through: ClubFinancialData

@@ -53,13 +53,7 @@ defmodule Sportyweb.Asset do
       ** (Ecto.NoResultsError)
 
   """
-  def get_venue!(id) do
-    # Preload to get the sorted equipment
-    query = from(
-      v in Venue, where: v.id == ^id, select: v,
-      preload: [:club, equipment: ^from(e in Equipment, order_by: [asc: :name])])
-    Repo.one!(query)
-  end
+  def get_venue!(id), do: Repo.get!(Venue, id)
 
   @doc """
   Gets a single venue. Preloads associations.

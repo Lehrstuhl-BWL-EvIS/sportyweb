@@ -19,7 +19,7 @@ defmodule Sportyweb.Asset.Venue do
   @foreign_key_type :binary_id
   schema "venues" do
     belongs_to :club, Club
-    has_many :equipment, Equipment
+    has_many :equipment, Equipment, preload_order: [asc: :name]
     many_to_many :emails, Email, join_through: VenueEmail
     many_to_many :fees, Fee, join_through: VenueFee
     many_to_many :notes, Note, join_through: VenueNote
