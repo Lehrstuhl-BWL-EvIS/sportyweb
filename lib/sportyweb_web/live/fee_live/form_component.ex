@@ -1,5 +1,6 @@
 defmodule SportywebWeb.FeeLive.FormComponent do
   use SportywebWeb, :live_component
+  import Ecto.Changeset
 
   alias Sportyweb.Asset
   alias Sportyweb.Asset.Equipment
@@ -94,13 +95,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input
-                  field={@form[:maximum_age_in_years]}
-                  type="number"
-                  label="Höchstalter (optional)"
-                  min="0"
-                  phx-change="update_successor_fee_options"
-                />
+                <.input field={@form[:maximum_age_in_years]} type="number" label="Höchstalter (optional)" min="0" />
               </div>
 
               <div class="col-span-12" :if={Enum.any?(@successor_fee_options)}>
@@ -209,18 +204,30 @@ defmodule SportywebWeb.FeeLive.FormComponent do
       |> Legal.change_fee(fee_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign_form(socket, changeset)}
+    changed_maximum_age_in_years = get_change(changeset, :maximum_age_in_years)
+    if changed_maximum_age_in_years do
+      # Assigning new successor_fee_options should usually be done in a separate
+      # handle_event function that gets called every time a change happens
+      # to the value of the :maximum_age_in_years field. This was the case once,
+      # but adding a phx-change="..." to the field removed the ability to
+      # dynamically validate with this function. This led to some unwanted
+      # behaviours (the validation only happend after clicking submit)
+      # and was therefore replaced with what you can see here.
+      # It is not optimal, because the assignment of new successor_fee_options
+      # happens more often than it would with a separate handle_event function,
+      # but at least the dynamic validation works (again) and doesn't confuse users.
+      # TODO: Link to docs. (Form Binding)
+      {:noreply,
+       socket
+       |> assign_form(changeset)
+       |> assign_successor_fee_options(socket.assigns.fee, changed_maximum_age_in_years)}
+    else
+      {:noreply, assign_form(socket, changeset)}
+    end
   end
 
   def handle_event("save", %{"fee" => fee_params}, socket) do
     save_fee(socket, socket.assigns.action, fee_params)
-  end
-
-  @impl true
-  def handle_event("update_successor_fee_options", %{"fee" => %{"maximum_age_in_years" => maximum_age_in_years}}, socket) do
-    {:noreply,
-     socket
-     |> assign_successor_fee_options(socket.assigns.fee, maximum_age_in_years)}
   end
 
   @impl true

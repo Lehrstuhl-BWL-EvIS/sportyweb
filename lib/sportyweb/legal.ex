@@ -191,14 +191,9 @@ defmodule Sportyweb.Legal do
   def list_successor_fee_options(%Fee{} = fee, maximum_age_in_years) do
     # TODOs: non-general, based on the "assigned" object & group_only
 
-    if is_nil(maximum_age_in_years) || (is_binary(maximum_age_in_years) && String.trim(maximum_age_in_years) == "") do
+    if is_nil(maximum_age_in_years) do
       []
     else
-      maximum_age_in_years = case is_binary(maximum_age_in_years) do
-        true -> String.to_integer(String.trim(maximum_age_in_years))
-        _ -> maximum_age_in_years
-      end
-
       query =
         from(
           f in Fee,
@@ -211,9 +206,10 @@ defmodule Sportyweb.Legal do
           order_by: f.name
         )
 
+      # The following code extends the query to exclude the current fee to be part of the results.
       # fee.id is nil for new, not yet persisted fees.
       # This would lead to an error when executing the where clause with "!=".
-      # The following conditional avoid this and only extends the query if fee.nil is not nil.
+      # The case statement avoid this and only extends the query if fee.id is not nil.
       query = case fee.id do
         nil -> query
         _ -> from(f in query, where: f.id != ^fee.id)
