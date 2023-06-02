@@ -6,7 +6,9 @@ defmodule Sportyweb.Legal do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
+  alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
+  alias Sportyweb.Personal.Contact
 
   @doc """
   Returns a clubs list of contracts.
@@ -105,6 +107,43 @@ defmodule Sportyweb.Legal do
     contract
     |> Contract.changeset(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Updates the referenced fee of all contracts where the age of the contact
+  exceedes the upper age limit ("maximum_age_in_years") of the current fee.
+  The new fee will be the currents fee successor, if one was set.
+
+  ## Examples
+
+      iex> update_contract_fees_for_aged_contacts()
+      {:ok, nil}
+
+  """
+  def update_contract_fees_for_aged_contacts() do
+    query =
+      from(
+        c in Contract,
+        join: contact in assoc(c, :contact),
+        join: fee in assoc(c, :fee),
+        where: c.end_date < ^Date.utc_today(),
+        where: not is_nil(contact.person_birthday),
+        where: not is_nil(fee.maximum_age_in_years),
+        where: not is_nil(fee.successor_id),
+        preload: [:contact, fee: fee]
+      )
+
+    Repo.all(query)
+    |> Enum.each(fn contract ->
+      fee = contract.fee
+      contact_age = Contact.age_in_years(contract.contact)
+
+      if fee.successor_id && contact_age > fee.maximum_age_in_years do
+        Legal.update_contract(contract, %{fee_id: fee.successor_id})
+      end
+    end)
+
+    {:ok, nil}
   end
 
   @doc """
