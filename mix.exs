@@ -70,7 +70,7 @@ defmodule Sportyweb.MixProject do
       # Linter for better code consistency
       # https://hexdocs.pm/credo/overview.html
       # https://github.com/rrrene/credo
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
 
       # A mix task for generating Entity Relationship Diagrams
       # https://hexdocs.pm/ecto_erd/Mix.Tasks.Ecto.Gen.Erd.html
@@ -86,6 +86,11 @@ defmodule Sportyweb.MixProject do
       # https://hexdocs.pm/faker/readme.html
       # https://github.com/elixirs/faker
       {:faker, "~> 0.17", only: [:dev, :test]},
+
+      # Cron-like job scheduler for Elixir.
+      # https://hexdocs.pm/quantum/readme.html
+      # https://github.com/quantum-elixir/quantum-core
+      {:quantum, "~> 3.5"},
 
       # TimeZoneDatabase for DateTime (which per default only supports UTC)
       # https://hexdocs.pm/tzdata/readme.html

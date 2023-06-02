@@ -17,9 +17,11 @@ defmodule Sportyweb.Application do
       # Start Finch
       {Finch, name: Sportyweb.Finch},
       # Start the Endpoint (http/https)
-      SportywebWeb.Endpoint
+      SportywebWeb.Endpoint,
       # Start a worker by calling: Sportyweb.Worker.start_link(arg)
       # {Sportyweb.Worker, arg}
+      # Start the cron-like scheduler
+      Sportyweb.Scheduler
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
