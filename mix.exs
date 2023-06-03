@@ -87,10 +87,15 @@ defmodule Sportyweb.MixProject do
       # https://github.com/elixirs/faker
       {:faker, "~> 0.17", only: [:dev, :test]},
 
-      # Cron-like job scheduler for Elixir.
+      # Cron-like job scheduler for Elixir
       # https://hexdocs.pm/quantum/readme.html
       # https://github.com/quantum-elixir/quantum-core
       {:quantum, "~> 3.5"},
+
+      # Date recurrence library based on iCalendar events
+      # https://hexdocs.pm/cocktail/readme.html
+      # https://github.com/peek-travel/cocktail
+      {:cocktail, "~> 0.10"},
 
       # TimeZoneDatabase for DateTime (which per default only supports UTC)
       # https://hexdocs.pm/tzdata/readme.html
