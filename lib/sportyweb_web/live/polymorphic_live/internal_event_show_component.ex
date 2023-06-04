@@ -2,8 +2,6 @@ defmodule SportywebWeb.PolymorphicLive.InternalEventShowComponent do
   use SportywebWeb, :live_component
   import SportywebWeb.CommonHelper
 
-  alias Sportyweb.Polymorphic.FinancialData
-
   @impl true
   def render(assigns) do
     ~H"""

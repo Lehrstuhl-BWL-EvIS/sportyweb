@@ -27,6 +27,6 @@ defmodule Sportyweb.Finance.Forecast do
     )
     |> validate_required([:type, :start_date, :end_date])
     |> validate_dates_order(:start_date, :end_date,
-       "Muss zeitlich später als oder gleich \"Von\" sein!")
+      "Muss zeitlich später als oder gleich \"Von\" sein!")
   end
 end

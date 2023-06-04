@@ -22,6 +22,6 @@ defmodule Sportyweb.Legal.ContractPause do
     |> cast(attrs, [:contract_id, :start_date, :end_date], empty_values: ["", nil])
     |> validate_required([:contract_id, :start_date, :end_date])
     |> validate_dates_order(:start_date, :end_date,
-       "Muss zeitlich später als oder gleich \"Startdatum\" sein!")
+      "Muss zeitlich später als oder gleich \"Startdatum\" sein!")
   end
 end

@@ -14,7 +14,7 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataShowComponent do
             <div class="py-4 first:pt-0 last:pb-0">
               <ul>
                 <li>Zahlungsart: <%= get_key_for_value(FinancialData.get_valid_types, financial_data_single.type) %></li>
-                  <%= if financial_data_single.type == "direct_debit" do %>
+                <%= if financial_data_single.type == "direct_debit" do %>
                   <li>Kontoinhaber: <%= format_string_field(financial_data_single.direct_debit_account_holder) %></li>
                   <li>IBAN: <%= format_string_field(financial_data_single.direct_debit_iban) %></li>
                   <li>Name des Instituts: <%= format_string_field(financial_data_single.direct_debit_institute) %></li>

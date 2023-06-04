@@ -79,10 +79,10 @@ defmodule Sportyweb.Legal.Contract do
       :start_date]
     )
     |> validate_dates_order(:signing_date, :start_date,
-       "Muss zeitlich später als oder gleich \"Unterzeichnungsdatum\" sein!")
+      "Muss zeitlich später als oder gleich \"Unterzeichnungsdatum\" sein!")
     |> validate_dates_order(:start_date, :termination_date,
-       "Muss zeitlich später als oder gleich \"Vertragsbeginn\" sein!")
+      "Muss zeitlich später als oder gleich \"Vertragsbeginn\" sein!")
     |> validate_dates_order(:termination_date, :end_date,
-       "Muss zeitlich später als oder gleich \"Kündigungsdatum\" sein!")
+      "Muss zeitlich später als oder gleich \"Kündigungsdatum\" sein!")
   end
 end

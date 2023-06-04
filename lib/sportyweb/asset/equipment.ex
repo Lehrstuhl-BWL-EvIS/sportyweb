@@ -61,8 +61,8 @@ defmodule Sportyweb.Asset.Equipment do
     |> validate_length(:serial_number, max: 250)
     |> validate_length(:description, max: 20_000)
     |> validate_dates_order(:purchase_date, :commission_date,
-       "Muss zeitlich später als oder gleich \"Gekauft am\" sein!")
+      "Muss zeitlich später als oder gleich \"Gekauft am\" sein!")
     |> validate_dates_order(:commission_date, :decommission_date,
-       "Muss zeitlich später als oder gleich \"Nutzung ab\" sein!")
+      "Muss zeitlich später als oder gleich \"Nutzung ab\" sein!")
   end
 end

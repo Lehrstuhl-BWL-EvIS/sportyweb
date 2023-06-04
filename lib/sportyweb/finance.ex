@@ -248,24 +248,6 @@ defmodule Sportyweb.Finance do
     Fee.changeset(fee, attrs)
   end
 
-  @doc """
-  Archives a fee.
-
-  ## Examples
-
-      iex> archive_fee(fee)
-      {:ok, %Fee{}}
-
-      iex> archive_fee(fee)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def archive_fee(%Fee{} = fee) do
-    fee
-    |> Fee.archive_changeset() # TODO: %{archive_date: Date.utc_today()}
-    |> Repo.update()
-  end
-
   alias Sportyweb.Finance.Subsidy
 
   @doc """

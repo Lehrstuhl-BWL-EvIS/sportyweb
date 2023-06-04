@@ -225,9 +225,10 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   end
 
   @impl true
-  def handle_event("archive", %{"id" => id}, socket) do
-    fee = Finance.get_fee!(id)
-    {:ok, _} = Finance.archive_fee(fee)
+  def handle_event("archive", %{"id" => _id}, socket) do
+    # TODO: Archive via update_fee
+    # fee = Finance.get_fee!(id)
+    # {:ok, _} = Finance.archive_fee(fee)
 
     {:noreply,
      socket

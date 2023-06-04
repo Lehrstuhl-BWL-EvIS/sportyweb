@@ -72,15 +72,14 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataFormComponent do
   end
 
   @impl true
-  def handle_event("update_type", map, socket) do
-    # The structure of the map looks different, based on the "parent" component.
+  def handle_event("update_type", %{"_target" => keys} = params, socket) do
+    # The structure of the params looks different, based on the "parent" component.
     # If the parent is a clubs form_component, it looks like this:
     # %{"club" => %{"financial_data" => %{"0" => %{"type" => type}}}}
     # If the parent is a contacts form_component, it looks like this:
     # %{"contact" => %{"financial_data" => %{"0" => %{"type" => type}}}}
     # The following code extracts the type value, no matter what.
-    %{"_target" => keys} = map
-    type = get_in(map, keys)
+    type = get_in(params, keys)
 
     {:noreply, assign(socket, :type, type)}
   end
