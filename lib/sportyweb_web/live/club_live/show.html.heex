@@ -16,14 +16,25 @@
       <%= format_string_field(@club.description) %>
     </:item>
     <:item title="URL">
-      <%= if @club.website_url do %>
+      <%= if String.trim(@club.website_url) != "" do %>
         <.link href={@club.website_url} class="text-indigo-600 hover:underline" target="_blank">
           <%= format_string_field(@club.website_url) %>
         </.link>
+      <% else %>
+        -
       <% end %>
     </:item>
     <:item title="Gründungsdatum">
       <%= format_date_field_dmy(@club.foundation_date) %>
+    </:item>
+    <:item title="Hauptstandort">
+      <%= if @club.venue do %>
+        <.link navigate={~p"/venues/#{@club.venue}"} class="text-indigo-600 hover:underline">
+          <%= format_string_field(@club.venue.name) %>
+        </.link>
+      <% else %>
+        -
+      <% end %>
     </:item>
     <:item title="E-Mail">
       <%= format_struct_list(@club.emails, :address) %>

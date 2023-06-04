@@ -19,7 +19,6 @@ defmodule Sportyweb.AssetFixtures do
         name: "some name",
         reference_number: "some reference_number",
         description: "some description",
-        is_main: false
       })
       |> Sportyweb.Asset.create_venue()
 

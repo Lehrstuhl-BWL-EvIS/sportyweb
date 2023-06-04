@@ -2,6 +2,7 @@ defmodule SportywebWeb.VenueLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Asset
+  alias Sportyweb.Organization.Club
 
   @impl true
   def mount(_params, _session, socket) do

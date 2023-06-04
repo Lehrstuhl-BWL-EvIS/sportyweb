@@ -63,19 +63,11 @@ defmodule SportywebWeb.VenueLive.NewEdit do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     venue = Asset.get_venue!(id)
+    {:ok, _} = Asset.delete_venue(venue)
 
-    if venue.is_main do
-      {:noreply,
-       socket
-       |> put_flash(:error, "Hauptsitz kann nicht gelöscht werden!")
-       |> push_navigate(to: "/venues/#{venue.id}")}
-    else
-      {:ok, _} = Asset.delete_venue(venue)
-
-      {:noreply,
-       socket
-       |> put_flash(:info, "Standort erfolgreich gelöscht")
-       |> push_navigate(to: "/clubs/#{venue.club_id}/venues")}
-    end
+    {:noreply,
+     socket
+     |> put_flash(:info, "Standort erfolgreich gelöscht")
+     |> push_navigate(to: "/clubs/#{venue.club_id}/venues")}
   end
 end

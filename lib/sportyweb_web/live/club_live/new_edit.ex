@@ -35,7 +35,7 @@ defmodule SportywebWeb.ClubLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    club = Organization.get_club!(id, [:emails, :financial_data, :phones, :notes])
+    club = Organization.get_club!(id, [:emails, :financial_data, :phones, :notes, :venues])
 
     socket
     |> assign(:page_title, "Verein bearbeiten")

@@ -7,6 +7,7 @@ defmodule Sportyweb.Organization.Club do
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Legal.Contract
+  alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.ClubEmail
   alias Sportyweb.Organization.ClubFinancialData
@@ -23,6 +24,7 @@ defmodule Sportyweb.Organization.Club do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "clubs" do
+    belongs_to :venue, Venue
     has_many :all_contracts, Contract
     has_many :all_fees, Fee
     has_many :contacts, Contact, preload_order: [asc: :name]
@@ -46,16 +48,20 @@ defmodule Sportyweb.Organization.Club do
     timestamps()
   end
 
+  def is_main_venue?(%Club{} = club, %Venue{} = venue) do
+    club.venue_id == venue.id
+  end
+
   @doc false
   def changeset(club, attrs) do
     club
     |> cast(attrs, [
+      :venue_id,
       :name,
       :reference_number,
       :description,
       :website_url,
-      :foundation_date
-      ],
+      :foundation_date],
       empty_values: ["", nil]
     )
     |> cast_assoc(:emails, required: true)

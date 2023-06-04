@@ -940,12 +940,13 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
         name: (if i == 0, do: "Zentrale", else: "Standort #{i + 1}"),
         reference_number: String.pad_leading("#{i + 1}", 3, "0"),
         description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
-        is_main: i == 0,
         postal_addresses: [Sportyweb.SeedHelper.get_random_postal_address()],
         emails: [Sportyweb.SeedHelper.get_random_email()],
         phones: [Sportyweb.SeedHelper.get_random_phone()],
         notes: [Sportyweb.SeedHelper.get_random_note()]
       })
+
+      if i == 0, do: Organization.update_club(club, %{venue_id: venue.id})
 
       # Fees: Specific - Venue
 

@@ -9,7 +9,7 @@ defmodule Sportyweb.AssetTest do
     import Sportyweb.AssetFixtures
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{description: nil, is_main: nil, name: nil, reference_number: nil}
+    @invalid_attrs %{description: nil, name: nil, reference_number: nil}
 
     test "list_venues/1 returns all venues of a given club" do
       venue = venue_fixture()
@@ -31,11 +31,10 @@ defmodule Sportyweb.AssetTest do
 
     test "create_venue/1 with valid data creates a venue" do
       club = club_fixture()
-      valid_attrs = %{club_id: club.id, description: "some description", is_main: true, name: "some name", reference_number: "some reference_number"}
+      valid_attrs = %{club_id: club.id, description: "some description", name: "some name", reference_number: "some reference_number"}
 
       assert {:ok, %Venue{} = venue} = Asset.create_venue(valid_attrs)
       assert venue.description == "some description"
-      assert venue.is_main == true
       assert venue.name == "some name"
       assert venue.reference_number == "some reference_number"
     end
@@ -46,11 +45,10 @@ defmodule Sportyweb.AssetTest do
 
     test "update_venue/2 with valid data updates the venue" do
       venue = venue_fixture()
-      update_attrs = %{description: "some updated description", is_main: false, name: "some updated name", reference_number: "some updated reference_number"}
+      update_attrs = %{description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
 
       assert {:ok, %Venue{} = venue} = Asset.update_venue(venue, update_attrs)
       assert venue.description == "some updated description"
-      assert venue.is_main == false
       assert venue.name == "some updated name"
       assert venue.reference_number == "some updated reference_number"
     end

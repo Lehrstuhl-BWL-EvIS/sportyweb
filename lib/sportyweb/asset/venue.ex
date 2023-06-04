@@ -29,7 +29,6 @@ defmodule Sportyweb.Asset.Venue do
     field :name, :string, default: ""
     field :reference_number, :string, default: ""
     field :description, :string, default: ""
-    field :is_main, :boolean, default: false
 
     timestamps()
   end
@@ -41,9 +40,7 @@ defmodule Sportyweb.Asset.Venue do
       :club_id,
       :name,
       :reference_number,
-      :description,
-      :is_main
-      ],
+      :description],
       empty_values: ["", nil]
     )
     |> cast_assoc(:emails, required: true)

@@ -2,6 +2,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
   use SportywebWeb, :live_component
 
   alias Sportyweb.Asset
+  alias Sportyweb.Organization.Club
 
   @impl true
   def render(assigns) do
@@ -70,6 +71,17 @@ defmodule SportywebWeb.VenueLive.FormComponent do
                 </.inputs_for>
               </div>
             </.input_grid>
+
+            <.input_grid class="pt-6" :if={!show_delete_button?(@venue)}>
+              <div class="col-span-12">
+                <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
+                  Dieser Standort kann derzeit nicht gelöscht, da er als Hauptstandort des Vereins festgelegt wurde.
+                  Wird dies im
+                  <.link navigate={~p"/clubs/#{@venue.club}/edit"} class="text-amber-900 underline">Verein</.link>
+                  geändert, kann im Anschluss eine Löschung dieses Standorts erfolgen.
+                </div>
+              </div>
+            </.input_grid>
           </.input_grids>
 
           <:actions>
@@ -80,7 +92,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
               </.link>
             </div>
             <.button
-              :if={@venue.id && !@venue.is_main}
+              :if={show_delete_button?(@venue)}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @venue.id})}
               data-confirm="Unwiderruflich löschen?">
@@ -149,5 +161,9 @@ defmodule SportywebWeb.VenueLive.FormComponent do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp show_delete_button?(venue) do
+    venue.id && !Club.is_main_venue?(venue.club, venue)
   end
 end
