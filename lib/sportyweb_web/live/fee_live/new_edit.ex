@@ -4,6 +4,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
   alias Sportyweb.Finance
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization
+  alias Sportyweb.Polymorphic.InternalEvent
   alias Sportyweb.Polymorphic.Note
 
   @impl true
@@ -34,7 +35,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    fee = Finance.get_fee!(id, [:club, :ancestors, :contracts, :notes])
+    fee = Finance.get_fee!(id, [:ancestors, :club, :contracts, :internal_events, :notes])
     fee_title = if fee.is_general, do: "Allgemeine", else: "Spezifische"
     club_navigation_current_item = case fee.type do
       "department" -> :structure
@@ -62,6 +63,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
       club: club,
       is_general: true,
       type: type,
+      internal_events: [%InternalEvent{}],
       notes: [%Note{}]}
     )
     |> assign(:club, club)

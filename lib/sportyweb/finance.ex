@@ -72,7 +72,7 @@ defmodule Sportyweb.Finance do
           where: f.is_general == true,
           where: is_nil(f.minimum_age_in_years) or f.minimum_age_in_years - 1 <= ^maximum_age_in_years,
           where: is_nil(f.maximum_age_in_years) or f.maximum_age_in_years > ^maximum_age_in_years,
-          where: is_nil(f.archive_date) or f.archive_date > ^Date.utc_today(),
+          # TODO: where: is_nil(f.archive_date) or f.archive_date > ^Date.utc_today(),
           order_by: f.name
         )
 
@@ -127,7 +127,7 @@ defmodule Sportyweb.Finance do
           where: f.club_id == ^contact.club_id,
           where: f.type == ^fee_type,
           where: f.is_general == true or f.id in ^specific_fee_ids,
-          where: is_nil(f.archive_date) or f.archive_date > ^Date.utc_today(),
+          # TODO: where: is_nil(f.archive_date) or f.archive_date > ^Date.utc_today(),
           order_by: f.name
         )
 
@@ -262,7 +262,7 @@ defmodule Sportyweb.Finance do
   """
   def archive_fee(%Fee{} = fee) do
     fee
-    |> Fee.archive_changeset(%{archive_date: Date.utc_today()})
+    |> Fee.archive_changeset() # TODO: %{archive_date: Date.utc_today()}
     |> Repo.update()
   end
 

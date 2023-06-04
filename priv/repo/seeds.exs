@@ -29,6 +29,7 @@ alias Sportyweb.Personal
 alias Sportyweb.Personal.Contact
 alias Sportyweb.Polymorphic.Email
 alias Sportyweb.Polymorphic.FinancialData
+alias Sportyweb.Polymorphic.InternalEvent
 alias Sportyweb.Polymorphic.Note
 alias Sportyweb.Polymorphic.Phone
 alias Sportyweb.Polymorphic.PostalAddress
@@ -48,7 +49,7 @@ defmodule Sportyweb.SeedHelper do
 
   def get_random_email do
     %Email{
-      type: Email.get_valid_types()|> Enum.map(fn type -> type[:value] end) |> Enum.random(),
+      type: Email.get_valid_types() |> Enum.map(fn type -> type[:value] end) |> Enum.random(),
       address: (if :rand.uniform() < 0.7, do: Faker.Internet.email(), else: "")
     }
   end
@@ -72,9 +73,19 @@ defmodule Sportyweb.SeedHelper do
     end
   end
 
+  def get_random_internal_event do
+    %InternalEvent{
+      is_recurring: true,
+      commission_date: ~D[2020-01-01],
+      archive_date: nil,
+      frequency: InternalEvent.get_valid_frequencies() |> Enum.map(fn frequency -> frequency[:value] end) |> Enum.random(),
+      interval: 1
+    }
+  end
+
   def get_random_phone do
     %Phone{
-      type: Phone.get_valid_types()|> Enum.map(fn type -> type[:value] end) |> Enum.random(),
+      type: Phone.get_valid_types() |> Enum.map(fn type -> type[:value] end) |> Enum.random(),
       number: (if :rand.uniform() < 0.7, do: Faker.Phone.EnUs.phone(), else: "")
     }
   end
@@ -534,11 +545,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(40..60) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 66,
       maximum_age_in_years: nil,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -552,11 +562,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(60..200) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 65,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -570,11 +579,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(30..50) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 65,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -588,11 +596,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(30..40) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 13,
       maximum_age_in_years: 17,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -606,11 +613,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(10..25) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 12,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -625,11 +631,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(15..25) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: nil,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -643,11 +648,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(5..15) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 17,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -662,11 +666,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(15..25) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: nil,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -680,11 +683,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(5..15) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 17,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -699,11 +701,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(25..40) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 18,
       maximum_age_in_years: 65,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -717,11 +718,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: Enum.random(20..25) * 100,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 12,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -736,11 +736,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: 300,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: nil,
       maximum_age_in_years: nil,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -753,11 +752,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
       description: "",
       base_fee_in_eur_cent: 200,
       admission_fee_in_eur_cent: 0,
-      is_recurring: true,
       is_for_contact_group_contacts_only: false,
       minimum_age_in_years: 0,
       maximum_age_in_years: 17,
-      commission_date: ~D[2020-01-01],
+      internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
       notes: [%Note{}]
     })
 
@@ -775,11 +773,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
         description: "",
         base_fee_in_eur_cent: Enum.random(5..25) * 100,
         admission_fee_in_eur_cent: 0,
-        is_recurring: true,
         is_for_contact_group_contacts_only: false,
         minimum_age_in_years: 18,
         maximum_age_in_years: nil,
-        commission_date: ~D[2023-01-01],
+        internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
         notes: [%Note{}],
         departments: [department]
       })
@@ -794,11 +791,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
         description: "",
         base_fee_in_eur_cent: Enum.random(5..10) * 100,
         admission_fee_in_eur_cent: 0,
-        is_recurring: true,
         is_for_contact_group_contacts_only: false,
         minimum_age_in_years: 0,
         maximum_age_in_years: 17,
-        commission_date: ~D[2023-01-01],
+        internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
         notes: [%Note{}],
         departments: [department]
       })
@@ -817,11 +813,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
           description: "",
           base_fee_in_eur_cent: Enum.random(15..25) * 100,
           admission_fee_in_eur_cent: 0,
-          is_recurring: true,
           is_for_contact_group_contacts_only: false,
           minimum_age_in_years: 18,
           maximum_age_in_years: nil,
-          commission_date: ~D[2023-01-01],
+          internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
           notes: [%Note{}],
           groups: [group]
         })
@@ -836,11 +831,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
           description: "",
           base_fee_in_eur_cent: Enum.random(5..15) * 100,
           admission_fee_in_eur_cent: 0,
-          is_recurring: true,
           is_for_contact_group_contacts_only: false,
           minimum_age_in_years: 0,
           maximum_age_in_years: 17,
-          commission_date: ~D[2023-01-01],
+          internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
           notes: [%Note{}],
           groups: [group]
         })
@@ -855,7 +849,7 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
         club_id: club.id,
         type: (if :rand.uniform() < 0.8, do: "person", else: "organization"),
         organization_name: "#{Faker.Company.buzzword_prefix()} #{Faker.Industry.sub_sector()} #{Faker.Company.buzzword_prefix()}",
-        organization_type: Contact.get_valid_organization_types()|> Enum.map(fn organization_type -> organization_type[:value] end) |> Enum.random(),
+        organization_type: Contact.get_valid_organization_types() |> Enum.map(fn organization_type -> organization_type[:value] end) |> Enum.random(),
         person_last_name: Faker.Person.last_name(),
         person_first_name_1: Faker.Person.first_name(),
         person_first_name_2: (if :rand.uniform() < 0.80, do: "", else: Faker.Person.first_name()),
@@ -950,11 +944,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
         description: "",
         base_fee_in_eur_cent: Enum.random(10..150) * 100,
         admission_fee_in_eur_cent: 0,
-        is_recurring: true,
         is_for_contact_group_contacts_only: false,
         minimum_age_in_years: nil,
         maximum_age_in_years: nil,
-        commission_date: ~D[2023-01-01],
+        internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
         notes: [%Note{}],
         venues: [venue]
       })
@@ -987,11 +980,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
           description: "",
           base_fee_in_eur_cent: Enum.random(10..150) * 100,
           admission_fee_in_eur_cent: 0,
-          is_recurring: true,
           is_for_contact_group_contacts_only: false,
           minimum_age_in_years: nil,
           maximum_age_in_years: nil,
-          commission_date: ~D[2023-01-01],
+          internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
           notes: [%Note{}],
           equipment: [equipment]
         })
@@ -1012,7 +1004,7 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
         maximum_participants: Enum.random(3..40),
         minimum_age_in_years: 0,
         maximum_age_in_years: Enum.random(5..100),
-        location_type: Event.get_valid_location_types()|> Enum.map(fn location_type -> location_type[:value] end) |> Enum.random(),
+        location_type: Event.get_valid_location_types() |> Enum.map(fn location_type -> location_type[:value] end) |> Enum.random(),
         location_description: (if :rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
         venues: [venues |> Enum.random()],
         postal_addresses: [Sportyweb.SeedHelper.get_random_postal_address()],
@@ -1032,11 +1024,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
         description: "",
         base_fee_in_eur_cent: Enum.random(10..150) * 100,
         admission_fee_in_eur_cent: 0,
-        is_recurring: true,
         is_for_contact_group_contacts_only: false,
         minimum_age_in_years: nil,
         maximum_age_in_years: nil,
-        commission_date: ~D[2023-01-01],
+        internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
         notes: [%Note{}],
         events: [event]
       })

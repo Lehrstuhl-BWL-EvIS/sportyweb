@@ -4,11 +4,11 @@ defmodule Sportyweb.Repo.Migrations.CreateInternalEvents do
   def change do
     create table(:internal_events, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :is_recurring, :boolean, default: false, null: false
-      add :commission_date, :date
-      add :archive_date, :date
-      add :frequency, :string
-      add :interval, :integer
+      add :commission_date, :date, null: false
+      add :archive_date, :date, null: true
+      add :is_recurring, :boolean, null: false
+      add :frequency, :string, null: true
+      add :interval, :integer, null: true
 
       timestamps()
     end

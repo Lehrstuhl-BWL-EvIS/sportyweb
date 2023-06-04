@@ -51,20 +51,12 @@
         -
       <% end %>
     </:item>
-    <:item title="Wiederholend?">
-      <%= format_boolean_field(@fee.is_recurring) %>
-    </:item>
-    <:item title="Verwendung ab">
-      <%= format_date_field_dmy(@fee.commission_date) %>
-    </:item>
-    <:item title="Archiviert ab">
-      <%= format_date_field_dmy(@fee.archive_date) %>
-      <%= if @fee.archive_date do %>
-        -
-        Diese Gebühr ist
-        <span :if={!Fee.is_archived?(@fee)}>noch nicht</span>
-        archiviert.
-      <% end %>
+    <:item title="Art der Abrechnung">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.InternalEventShowComponent}
+        id="internal_events"
+        internal_events={@fee.internal_events}
+      />
     </:item>
     <:item title="Notizen">
       <.live_component

@@ -110,19 +110,13 @@ defmodule SportywebWeb.FeeLive.FormComponent do
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <div class="col-span-12">
-                <.input field={@form[:is_recurring]} type="checkbox" label="Wiederholend?" />
-              </div>
-            </.input_grid>
-
-            <.input_grid class="pt-6">
-              <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:commission_date]} type="date" label="Verwendung ab" />
-              </div>
-
-              <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:archive_date]} type="date" label="Archiviert ab (optional)" />
-              </div>
+              <.inputs_for :let={internal_event} field={@form[:internal_events]}>
+                <.live_component
+                  module={SportywebWeb.PolymorphicLive.InternalEventFormComponent}
+                  id={"internal_event_#{internal_event.index}"}
+                  internal_event={internal_event}
+                />
+              </.inputs_for>
             </.input_grid>
 
             <.input_grid class="pt-6">
@@ -134,7 +128,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               </div>
             </.input_grid>
 
-            <.input_grid class="pt-6" :if={@fee.id && !Fee.is_archived?(@fee) && (Enum.any?(@fee.ancestors) || Enum.any?(@fee.contracts))}>
+            <.input_grid class="pt-6" :if={show_archive_button?(@fee)}>
               <div class="col-span-12">
                 <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
                   Diese Gebühr kann nicht gelöscht, sondern nur archiviert werden, denn:
@@ -165,14 +159,14 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               </.link>
             </div>
             <.button
-              :if={@fee.id && !(Enum.any?(@fee.ancestors) || Enum.any?(@fee.contracts))}
+              :if={show_delete_button?(@fee)}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @fee.id})}
               data-confirm="Unwiderruflich löschen?">
               Löschen
             </.button>
             <.button
-              :if={@fee.id && !Fee.is_archived?(@fee) && (Enum.any?(@fee.ancestors) || Enum.any?(@fee.contracts))}
+              :if={show_archive_button?(@fee)}
               class="bg-amber-700 hover:bg-amber-800"
               phx-target={@myself}
               phx-click={JS.push("archive", value: %{id: @fee.id})}
@@ -321,5 +315,13 @@ defmodule SportywebWeb.FeeLive.FormComponent do
     # Immediately delete the fee if no association could be created.
     # Otherwise the fee would be "free floating", without a fee_object.
     {:error, _} = Finance.delete_fee(fee)
+  end
+
+  defp show_delete_button?(fee) do
+    fee.id && !(Enum.any?(fee.ancestors) || Enum.any?(fee.contracts))
+  end
+
+  defp show_archive_button?(fee) do
+    fee.id && (Enum.any?(fee.ancestors) || Enum.any?(fee.contracts)) && !Fee.is_archived?(fee)
   end
 end

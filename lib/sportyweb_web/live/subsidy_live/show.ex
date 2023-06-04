@@ -11,7 +11,7 @@ defmodule SportywebWeb.SubsidyLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    subsidy = Finance.get_subsidy!(id, [:club, :fees, :notes])
+    subsidy = Finance.get_subsidy!(id, [:club, :fees, :internal_events, :notes])
 
     {:noreply,
      socket

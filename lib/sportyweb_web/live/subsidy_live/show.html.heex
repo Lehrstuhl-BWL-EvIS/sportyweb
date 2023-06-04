@@ -16,19 +16,14 @@
       <%= format_string_field(@subsidy.description) %>
     </:item>
     <:item title="Betrag">
-      <%= format_integer_field(@subsidy.value) %> &euro;
+      <%= format_integer_field(@subsidy.amount) %> &euro;
     </:item>
-    <:item title="Verwendung ab">
-      <%= format_date_field_dmy(@subsidy.commission_date) %>
-    </:item>
-    <:item title="Archiviert ab">
-      <%= format_date_field_dmy(@subsidy.archive_date) %>
-      <%= if @subsidy.archive_date do %>
-        -
-        Dieser Zuschuss ist
-        <span :if={!Subsidy.is_archived?(@subsidy)}>noch nicht</span>
-        archiviert.
-      <% end %>
+    <:item title="Art der Abrechnung">
+      <.live_component
+        module={SportywebWeb.PolymorphicLive.InternalEventShowComponent}
+        id="internal_events"
+        internal_events={@subsidy.internal_events}
+      />
     </:item>
     <:item title="Notizen">
       <.live_component

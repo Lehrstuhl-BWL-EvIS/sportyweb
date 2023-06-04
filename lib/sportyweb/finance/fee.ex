@@ -10,6 +10,7 @@ defmodule Sportyweb.Finance.Fee do
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Calendar.EventFee
   alias Sportyweb.Finance.Fee
+  alias Sportyweb.Finance.FeeInternalEvent
   alias Sportyweb.Finance.FeeNote
   alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Legal.Contract
@@ -18,6 +19,7 @@ defmodule Sportyweb.Finance.Fee do
   alias Sportyweb.Organization.DepartmentFee
   alias Sportyweb.Organization.Group
   alias Sportyweb.Organization.GroupFee
+  alias Sportyweb.Polymorphic.InternalEvent
   alias Sportyweb.Polymorphic.Note
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -32,6 +34,7 @@ defmodule Sportyweb.Finance.Fee do
     many_to_many :equipment, Equipment, join_through: EquipmentFee
     many_to_many :events, Event, join_through: EventFee
     many_to_many :groups, Group, join_through: GroupFee
+    many_to_many :internal_events, InternalEvent, join_through: FeeInternalEvent
     many_to_many :notes, Note, join_through: FeeNote
     many_to_many :venues, Venue, join_through: VenueFee
 
@@ -44,12 +47,9 @@ defmodule Sportyweb.Finance.Fee do
     field :base_fee_in_eur_cent, :integer, default: nil
     field :admission_fee_in_eur, :integer, default: nil, virtual: true
     field :admission_fee_in_eur_cent, :integer, default: nil
-    field :is_recurring, :boolean, default: false
     field :is_for_contact_group_contacts_only, :boolean, default: false
     field :minimum_age_in_years, :integer, default: nil
     field :maximum_age_in_years, :integer, default: nil
-    field :commission_date, :date, default: nil
-    field :archive_date, :date, default: nil
 
     timestamps()
   end
@@ -69,7 +69,9 @@ defmodule Sportyweb.Finance.Fee do
   end
 
   def is_archived?(%Fee{} = fee) do
-    fee.archive_date && fee.archive_date <= Date.utc_today()
+    Enum.any?(fee.internal_events, fn internal_event ->
+      internal_event.archive_date && internal_event.archive_date <= Date.utc_today()
+    end)
   end
 
   @doc false
@@ -106,14 +108,12 @@ defmodule Sportyweb.Finance.Fee do
       :base_fee_in_eur_cent,
       :admission_fee_in_eur,
       :admission_fee_in_eur_cent,
-      :is_recurring,
       :is_for_contact_group_contacts_only,
       :minimum_age_in_years,
-      :maximum_age_in_years,
-      :commission_date,
-      :archive_date],
+      :maximum_age_in_years],
       empty_values: ["", nil]
     )
+    |> cast_assoc(:internal_events, required: true)
     |> cast_assoc(:notes, required: true)
     |> validate_required([
       :club_id,
@@ -122,8 +122,7 @@ defmodule Sportyweb.Finance.Fee do
       :base_fee_in_eur,
       :base_fee_in_eur_cent,
       :admission_fee_in_eur,
-      :admission_fee_in_eur_cent,
-      :commission_date]
+      :admission_fee_in_eur_cent]
     )
     |> validate_inclusion(
       :type,
@@ -143,14 +142,6 @@ defmodule Sportyweb.Finance.Fee do
     |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
     |> validate_numbers_order(:minimum_age_in_years, :maximum_age_in_years,
        "Muss größer oder gleich \"Mindestalter\" sein!")
-    |> validate_dates_order(:commission_date, :archive_date,
-       "Muss zeitlich später als oder gleich \"Verwendung ab\" sein!")
-  end
-
-  def archive_changeset(fee, attrs) do
-    fee
-    |> cast(attrs, [:archive_date], empty_values: ["", nil])
-    |> validate_required([:archive_date])
   end
 
   defp update_base_fee(changeset, fee, attrs) do

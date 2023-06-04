@@ -4,6 +4,7 @@ defmodule SportywebWeb.SubsidyLive.NewEdit do
   alias Sportyweb.Finance
   alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Organization
+  alias Sportyweb.Polymorphic.InternalEvent
   alias Sportyweb.Polymorphic.Note
 
   @impl true
@@ -33,7 +34,7 @@ defmodule SportywebWeb.SubsidyLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    subsidy = Finance.get_subsidy!(id, [:club, :notes])
+    subsidy = Finance.get_subsidy!(id, [:club, :internal_events, :notes])
 
     socket
     |> assign(:page_title, "Zuschuss bearbeiten")
@@ -49,6 +50,7 @@ defmodule SportywebWeb.SubsidyLive.NewEdit do
     |> assign(:subsidy, %Subsidy{
       club_id: club.id,
       club: club,
+      internal_events: [%InternalEvent{}],
       notes: [%Note{}]}
     )
     |> assign(:club, club)

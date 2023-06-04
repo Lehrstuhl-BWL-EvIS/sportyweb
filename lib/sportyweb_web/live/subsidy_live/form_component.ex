@@ -36,18 +36,18 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12">
-                <.input field={@form[:value]} type="text" label="Betrag in EUR" />
+                <.input field={@form[:amount]} type="text" label="Betrag in EUR" />
               </div>
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:commission_date]} type="date" label="Verwendung ab" />
-              </div>
-
-              <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:archive_date]} type="date" label="Archiviert ab (optional)" />
-              </div>
+              <.inputs_for :let={internal_event} field={@form[:internal_events]}>
+                <.live_component
+                  module={SportywebWeb.PolymorphicLive.InternalEventFormComponent}
+                  id={"internal_event_#{internal_event.index}"}
+                  internal_event={internal_event}
+                />
+              </.inputs_for>
             </.input_grid>
 
             <.input_grid class="pt-6">
