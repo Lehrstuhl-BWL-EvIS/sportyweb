@@ -456,6 +456,29 @@ defmodule SportywebWeb.CoreComponents do
   end
 
   @doc """
+  Renders a description (usually below) input fields.
+
+  ## Examples
+
+      <div class="...">
+        <.input ... />
+        <.input_description>This is some additional information.</.input_description>
+      </div>
+
+  """
+  attr :class, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def input_description(assigns) do
+    ~H"""
+    <div class={["mt-2 text-sm text-zinc-500", @class]}>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  @doc """
   Renders a header with title.
 
     ## Examples
