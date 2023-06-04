@@ -82,6 +82,16 @@ defmodule Sportyweb.MixProject do
       # https://github.com/elixir-lang/ex_doc
       {:ex_doc, "~> 0.29", only: :dev, runtime: false},
 
+      # Elixir implementation of Money with Currency
+      # https://hexdocs.pm/ex_money/readme.html
+      # https://github.com/kipcole9/money
+      {:ex_money, "~> 5.13"},
+
+      # Money functions for the serialization of a money data type
+      # https://hexdocs.pm/ex_money_sql/readme.html
+      # https://github.com/kipcole9/money_sql
+      {:ex_money_sql, "~> 1.9"},
+
       # Generates fake data (primarily for the seed)
       # https://hexdocs.pm/faker/readme.html
       # https://github.com/elixirs/faker

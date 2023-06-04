@@ -10,6 +10,11 @@ import Config
 # Custom: Use tzdata as TimeZoneDatabase
 config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
 
+# Custom: Configures Money
+# https://github.com/kipcole9/money
+config :ex_money,
+  default_cldr_backend: Sportyweb.Cldr
+
 config :sportyweb,
   ecto_repos: [Sportyweb.Repo]
 
@@ -32,7 +37,7 @@ config :sportyweb, SportywebWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :sportyweb, Sportyweb.Mailer, adapter: Swoosh.Adapters.Local
 
-# Configures jobs for Quantum (cron-like scheduler)
+# Custom: Configures jobs for Quantum (cron-like scheduler)
 # https://github.com/quantum-elixir/quantum-core
 config :sportyweb, Sportyweb.Scheduler,
   timezone: "Europe/Berlin",
