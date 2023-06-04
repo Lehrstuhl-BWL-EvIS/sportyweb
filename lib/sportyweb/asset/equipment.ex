@@ -44,8 +44,7 @@ defmodule Sportyweb.Asset.Equipment do
       :description,
       :purchase_date,
       :commission_date,
-      :decommission_date
-      ],
+      :decommission_date],
       empty_values: ["", nil]
     )
     |> cast_assoc(:emails, required: true)

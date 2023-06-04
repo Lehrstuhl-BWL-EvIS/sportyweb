@@ -113,6 +113,6 @@ defmodule Sportyweb.Finance.Fee do
     |> validate_number(:minimum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
     |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
     |> validate_numbers_order(:minimum_age_in_years, :maximum_age_in_years,
-       "Muss größer oder gleich \"Mindestalter\" sein!")
+      "Muss größer oder gleich \"Mindestalter\" sein!")
   end
 end

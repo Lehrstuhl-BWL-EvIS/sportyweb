@@ -112,8 +112,7 @@ defmodule Sportyweb.Personal.Contact do
       :person_first_name_1,
       :person_first_name_2,
       :person_gender,
-      :person_birthday
-      ],
+      :person_birthday],
       empty_values: ["", nil]
     )
     |> cast_assoc(:contact_groups, required: false)

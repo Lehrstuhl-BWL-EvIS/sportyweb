@@ -43,8 +43,7 @@ defmodule Sportyweb.Organization.Department do
       :name,
       :reference_number,
       :description,
-      :creation_date
-      ],
+      :creation_date],
       empty_values: ["", nil]
     )
     |> cast_assoc(:emails, required: true)

@@ -112,9 +112,9 @@ defmodule Sportyweb.Calendar.Event do
     |> validate_number(:minimum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
     |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
     |> validate_numbers_order(:minimum_participants, :maximum_participants,
-       "Muss größer oder gleich \"Minimale Anzahl an Teilnehmern\" sein!")
+      "Muss größer oder gleich \"Minimale Anzahl an Teilnehmern\" sein!")
     |> validate_numbers_order(:minimum_age_in_years, :maximum_age_in_years,
-       "Muss größer oder gleich \"Mindestalter\" sein!")
+      "Muss größer oder gleich \"Mindestalter\" sein!")
     |> validate_inclusion(
       :location_type,
       get_valid_location_types() |> Enum.map(fn location_type -> location_type[:value] end)
