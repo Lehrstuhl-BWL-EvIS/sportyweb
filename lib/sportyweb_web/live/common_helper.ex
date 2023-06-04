@@ -44,17 +44,6 @@ defmodule SportywebWeb.CommonHelper do
     end
   end
 
-  def format_eur_cent_field(field) do
-    if !is_nil(field) && field do
-      field
-      |> Sportyweb.Finance.Fee.convert_eur_cent_to_eur
-      |> Integer.to_string
-      |> String.replace(".", ",") # Use a comma as delimiter
-    else
-      "-"
-    end
-  end
-
   @doc """
   Takes a list of structs and returns a comma separated list of one attribute.
   If the list is empty, the function returns a string containg a hyphen.

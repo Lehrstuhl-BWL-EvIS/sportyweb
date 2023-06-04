@@ -36,7 +36,8 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12">
-                <.input field={@form[:amount]} type="text" label="Betrag in EUR" />
+                <.input field={@form[:amount]} type="text" label="Betrag in Euro" />
+                <.input_description>Das €-Zeichen kann, muss aber nicht angegeben werden.</.input_description>
               </div>
             </.input_grid>
 

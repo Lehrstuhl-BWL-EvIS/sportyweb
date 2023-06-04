@@ -7,7 +7,7 @@ defmodule Sportyweb.Repo.Migrations.CreateSubsidies do
       add :name, :string, null: false
       add :reference_number, :string, null: false
       add :description, :text, null: false
-      add :amount, :integer, null: true
+      add :amount, :money_with_currency
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()

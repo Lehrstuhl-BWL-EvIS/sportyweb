@@ -18,11 +18,11 @@
     <:item title="Beschreibung">
       <%= format_string_field(@fee.description) %>
     </:item>
-    <:item title="Grundgebühr">
-      <%= format_eur_cent_field(@fee.base_fee_in_eur_cent) %> &euro;
+    <:item title="Grundbetrag">
+      <%= @fee.amount %>
     </:item>
-    <:item title="Aufnahmegebühr">
-      <%= format_eur_cent_field(@fee.admission_fee_in_eur_cent) %> &euro;
+    <:item title="Einmalzahlung">
+      <%= @fee.amount_one_time %>
     </:item>
     <:item title="Zuschuss">
       <%= if @fee.subsidy do %>

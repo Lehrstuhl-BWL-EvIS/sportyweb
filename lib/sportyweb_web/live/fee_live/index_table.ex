@@ -17,11 +17,11 @@ defmodule SportywebWeb.FeeLive.IndexTableComponent do
         <:col :let={fee} label="Ref.nr.">
           <%= format_string_field(fee.reference_number) %>
         </:col>
-        <:col :let={fee} label="Grundgeb.">
-          <%= format_eur_cent_field(fee.base_fee_in_eur_cent) %> &euro;
+        <:col :let={fee} label="Grundbetrag">
+          <%= fee.amount %>
         </:col>
-        <:col :let={fee} label="Aufnahmegeb.">
-          <%= format_eur_cent_field(fee.admission_fee_in_eur_cent) %> &euro;
+        <:col :let={fee} label="Einmalzahlung">
+          <%= fee.amount_one_time %>
         </:col>
         <:col :let={fee} label="Alter">
           <%= fee.minimum_age_in_years %>&nbsp;-&nbsp;<%= fee.maximum_age_in_years %>

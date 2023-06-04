@@ -26,7 +26,7 @@
         </div>
       </:col>
       <:col :let={{_id, subsidy}} label="Betrag">
-        <%= format_integer_field(subsidy.amount) %> &euro;
+        <%= subsidy.amount %>
       </:col>
 
       <:action :let={{_id, subsidy}}>

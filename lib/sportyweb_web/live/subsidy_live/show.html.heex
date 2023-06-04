@@ -16,7 +16,7 @@
       <%= format_string_field(@subsidy.description) %>
     </:item>
     <:item title="Betrag">
-      <%= format_integer_field(@subsidy.amount) %> &euro;
+      <%= @subsidy.amount %>
     </:item>
     <:item title="Art der Abrechnung">
       <.live_component
