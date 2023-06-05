@@ -142,69 +142,89 @@ defmodule Sportyweb.Accounting do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Polymorphic.InternalEvent
 
-  def get_transactions(club, %Date{} = start_date, %Date{} = end_date) do
-    # Iterate over all days from start to end.
-    # It's possible that start_date == end_date.
-    Date.range(start_date, end_date)
-    |> Enum.each(fn current_date ->
-      filtered_fees = Enum.filter(club.all_fees, fn fee ->
-        Fee.is_in_use?(fee, current_date) && Enum.any?(fee.contracts)
-      end)
+  def forecast_transactions(type, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
+    get_transactions(type, contracts, start_date, end_date)
+  end
 
-      Enum.each(filtered_fees, fn fee ->
-        internal_event = Enum.at(fee.internal_events, 0)
-        occurrence_dates = get_occurrence_dates(internal_event, current_date, current_date)
+  def create_transactions(type, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
+    get_transactions(type, contracts, start_date, end_date)
+  end
 
-        # Max of 1, mostly 0
-        Enum.each(occurrence_dates, fn _occurrence_date ->
-          filtered_contracts = Enum.filter(fee.contracts, fn contract ->
-            Contract.is_in_use?(contract, current_date)
-          end)
+  defp get_transactions(type, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
+    # Iterate over all days from start to end. It's possible that start_date == end_date.
+    date_range = Date.range(start_date, end_date)
 
-          Enum.each(filtered_contracts, fn contract ->
-            IO.puts("###########")
-            IO.puts(to_string(current_date))
-            IO.puts(contract.contact.name)
+    transactions = Enum.map(date_range, fn date ->
+      get_transactions(type, contracts, date)
+    end)
 
-            transaction = %{
-              id: nil,
-              contact_id: contract.contact.id,
-              contact: contract.contact,
-              creation_date: current_date,
-              name: fee.name,
-              amount: fee.amount
-            }
-            IO.puts(transaction.name)
+    List.flatten(transactions)
+  end
 
-            if is_nil(contract.first_billing_date) do
-              transaction = %{
-                id: nil,
-                contact_id: contract.contact.id,
-                contact: contract.contact,
-                name: "#{fee.name} - Einmalzahlung",
-                amount: fee.amount_one_time,
-                creation_date: current_date
-              }
-              IO.puts(transaction.name)
+  defp get_transactions(:fee, [%Contract{} | _] = contracts, %Date{} = date) do
+    contracts
+    |> Enum.filter(fn contract ->
+      if Contract.is_in_use?(contract, date) && Fee.is_in_use?(contract.fee, date) do
+        internal_event = Enum.at(contract.fee.internal_events, 0)
+        occurrence_dates = get_occurrence_dates(internal_event, date, date)
+        Enum.any?(occurrence_dates)
+      end
+    end)
+    |> Enum.map(fn contract ->
+      # "Default" transaction for the base amount of the fee.
+      transactions = [
+        %{
+          id: nil,
+          contract_id: contract.id,
+          contract: contract,
+          name: "Gebühr: #{contract.fee.name} - Grundbetrag",
+          amount: contract.fee.amount,
+          creation_date: date
+        }
+      ]
 
-              # TODO: contract.first_billing_date setzen bei erster echter Abrechnung.
-            end
+      # Possible additional transaction for the one-time amount of the fee.
+      if is_nil(contract.first_billing_date) do
+        transaction = [
+          %{
+            id: nil,
+            contract_id: contract.id,
+            contract: contract,
+            name: "Gebühr: #{contract.fee.name} - Einmalzahlung",
+            amount: contract.fee.amount_one_time,
+            creation_date: date
+          }
+        ]
 
-            # Calculate subsidy for every contract.
-            if fee.subsidy && Subsidy.is_in_use?(fee.subsidy, current_date) do
-              transaction = %{
-                id: nil,
-                contact_id: contract.contact.id,
-                contact: contract.contact,
-                creation_date: current_date,
-                name: fee.subsidy.name,
-                amount: fee.subsidy.amount
-              }
-              IO.puts(transaction.name)
-            end
-          end)
-        end)
-      end)
+        # TODO: contract.first_billing_date setzen bei erster echter Abrechnung.
+
+        transactions ++ transaction
+      else
+        transactions
+      end
+    end)
+  end
+
+  defp get_transactions(:subsidy, [%Contract{} | _] = contracts, %Date{} = date) do
+    contracts
+    |> Enum.filter(fn contract ->
+      fee = contract.fee
+      subsidy = fee.subsidy
+      if subsidy && Contract.is_in_use?(contract, date) && Fee.is_in_use?(fee, date) && Subsidy.is_in_use?(subsidy, date) do
+        internal_event = Enum.at(subsidy.internal_events, 0)
+        occurrence_dates = get_occurrence_dates(internal_event, date, date)
+        Enum.any?(occurrence_dates)
+      end
+    end)
+    |> Enum.map(fn contract ->
+      %{
+        id: nil,
+        contract_id: contract.id,
+        contract: contract,
+        name: "Zuschuss: #{contract.fee.subsidy.name}",
+        amount: contract.fee.subsidy.amount,
+        creation_date: date
+      }
     end)
   end
 

@@ -3,7 +3,36 @@
 </.header>
 
 <.card>
-  <%= format_date_field_dmy(@start_date) %>
-  -
-  <%= format_date_field_dmy(@end_date) %>
+  <p>
+    Vom
+    <%= format_date_field_dmy(@start_date) %>
+    -
+    <%= format_date_field_dmy(@end_date) %>
+    werden
+    <%= Enum.count(@streams.transactions) %>
+    Transaktionen erzeugt.
+  </p>
+
+  <%= if Enum.any?(@streams.transactions) do %>
+    <.table
+      id="transactions"
+      rows={@streams.transactions}
+      class="mt-12"
+    >
+      <:col :let={{_id, transaction}} label="Name">
+        <%= format_string_field(transaction.name) %>
+      </:col>
+      <:col :let={{_id, transaction}} label="Betrag">
+        <%= transaction.amount %>
+      </:col>
+      <:col :let={{_id, transaction}} label="Erstellungsdatum">
+        <%= format_date_field_dmy(transaction.creation_date) %>
+      </:col>
+      <:col :let={{_id, transaction}} label="Kontakt">
+        <.link navigate={~p"/contacts/#{transaction.contract.contact}"} class="text-indigo-600 hover:underline">
+          <%= format_string_field(transaction.contract.contact.name) %>
+        </.link>
+      </:col>
+    </.table>
+  <% end %>
 </.card>

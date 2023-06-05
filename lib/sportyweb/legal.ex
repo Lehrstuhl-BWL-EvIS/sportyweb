@@ -20,7 +20,7 @@ defmodule Sportyweb.Legal do
 
   """
   def list_contracts(club_id) do
-    query = from(c in Contract, where: c.club_id == ^club_id, order_by: c.name)
+    query = from(c in Contract, where: c.club_id == ^club_id)
     Repo.all(query)
   end
 
