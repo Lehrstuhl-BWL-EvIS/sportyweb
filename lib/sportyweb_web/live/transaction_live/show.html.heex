@@ -1,0 +1,22 @@
+<.header>
+  <%= @page_title %>
+  <:actions>
+    <.link navigate={~p"/transactions/#{@transaction}/edit"}>
+      <.button>Transaktion bearbeiten</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <.list>
+    <:item title="Betrag">
+      <%= @transaction.amount %>
+    </:item>
+    <:item title="Erstellungsdatum">
+      <%= format_date_field_dmy(@transaction.creation_date) %>
+    </:item>
+    <:item title="Zahlungsdatum">
+      <%= format_date_field_dmy(@transaction.payment_date) %>
+    </:item>
+  </.list>
+</.card>

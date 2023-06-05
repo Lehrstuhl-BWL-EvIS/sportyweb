@@ -3,6 +3,7 @@ defmodule Sportyweb.Legal.Contract do
   import Ecto.Changeset
   import SportywebWeb.CommonValidations
 
+  alias Sportyweb.Accounting.Transaction
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.ContractPause
@@ -21,16 +22,27 @@ defmodule Sportyweb.Legal.Contract do
     belongs_to :contact, Contact
     belongs_to :fee, Fee
     has_many :contract_pauses, ContractPause
+    has_many :transactions, Transaction
     many_to_many :clubs, Club, join_through: ClubContract
     many_to_many :departments, Department, join_through: DepartmentContract
     many_to_many :groups, Group, join_through: GroupContract
 
     field :signing_date, :date, default: nil
     field :start_date, :date, default: nil
+    field :first_billing_date, :date, default: nil
     field :termination_date, :date, default: nil
-    field :end_date, :date, default: nil
+    field :archive_date, :date, default: nil
 
     timestamps()
+  end
+
+  def is_in_use?(%Contract{} = contract, %Date{} = date \\ Date.utc_today()) do
+    Date.compare(date, contract.start_date) != :lt &&
+    (is_nil(contract.archive_date) || Date.compare(date, contract.archive_date) == :lt)
+  end
+
+  def is_archived?(%Contract{} = contract, %Date{} = date \\ Date.utc_today()) do
+    contract.archive_date && Date.compare(date, contract.archive_date) != :lt
   end
 
   @doc """
@@ -66,9 +78,10 @@ defmodule Sportyweb.Legal.Contract do
       :contact_id,
       :fee_id,
       :signing_date,
+      :first_billing_date,
       :start_date,
       :termination_date,
-      :end_date],
+      :archive_date],
       empty_values: ["", nil]
     )
     |> validate_required([
@@ -82,7 +95,7 @@ defmodule Sportyweb.Legal.Contract do
       "Muss zeitlich später als oder gleich \"Unterzeichnungsdatum\" sein!")
     |> validate_dates_order(:start_date, :termination_date,
       "Muss zeitlich später als oder gleich \"Vertragsbeginn\" sein!")
-    |> validate_dates_order(:termination_date, :end_date,
+    |> validate_dates_order(:termination_date, :archive_date,
       "Muss zeitlich später als oder gleich \"Kündigungsdatum\" sein!")
   end
 end

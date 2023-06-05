@@ -188,6 +188,15 @@ defmodule SportywebWeb.Router do
 
       live "/contracts/:id", ContractLive.Show, :show
 
+      # Transaction (Each belongs to a contract)
+
+      live "/transactions", TransactionLive.Index, :index_root
+      live "/clubs/:club_id/transactions", TransactionLive.Index, :index
+
+      live "/transactions/:id/edit", TransactionLive.NewEdit, :edit
+
+      live "/transactions/:id", TransactionLive.Show, :show
+
       # Fees (Polymorphic)
 
       live "/fees", FeeLive.Index, :index_root
@@ -214,7 +223,6 @@ defmodule SportywebWeb.Router do
       live "/clubs/:club_id/roles/new", RoleLive.New, :new
       live "/clubs/:club_id/roles/:user_id/edit", RoleLive.Edit, :edit
       live "/clubs/:club_id/roles/show", RoleLive.Show, :show
-
     end
   end
 

@@ -32,6 +32,7 @@ defmodule Sportyweb.Organization.Club do
     has_many :departments, Department, preload_order: [asc: :name]
     has_many :events, Event
     has_many :subsidies, Subsidy, preload_order: [asc: :name]
+    has_many :transactions, through: [:all_contracts, :transactions] # This line has to be below "has_many :all_contracts"!
     has_many :venues, Venue, preload_order: [asc: :name]
     many_to_many :contracts, Contract, join_through: ClubContract
     many_to_many :emails, Email, join_through: ClubEmail

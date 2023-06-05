@@ -1,0 +1,38 @@
+<.header>
+  <%= @page_title %>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@streams.transactions) do %>
+    <.table
+      id="transactions"
+      rows={@streams.transactions}
+      row_click={fn {_id, transaction} -> JS.navigate(~p"/transactions/#{transaction}") end}
+    >
+      <:col :let={{_id, transaction}} label="Name">
+        <%= format_string_field(transaction.name) %>
+      </:col>
+      <:col :let={{_id, transaction}} label="Betrag">
+        <%= transaction.amount %>
+      </:col>
+      <:col :let={{_id, transaction}} label="Erstellungsdatum">
+        <%= format_date_field_dmy(transaction.creation_date) %>
+      </:col>
+      <:col :let={{_id, transaction}} label="Zahlungsdatum">
+        <%= format_date_field_dmy(transaction.payment_date) %>
+      </:col>
+
+      <:action :let={{_id, transaction}}>
+        <.link navigate={~p"/transactions/#{transaction}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p class="mb-3">
+      Transaktionen werden bei der automatisch stattfindenden Berechnung
+      von Gebühren erzeugt und anschließend hier angezeigt.
+    </p>
+    <p>
+      Eine manuelle Erstellung ist nicht möglich.
+    </p>
+  <% end %>
+</.card>

@@ -63,6 +63,16 @@ defmodule SportywebWeb.ClubNavigationComponent do
 
         <ul class={["mb-1 px-2", (if !@show_submenu_finances, do: "hidden")]}>
           <li>
+            <.link navigate={~p"/clubs/#{@club}/transactions"}
+              class={[
+                @classes_menu_item, @classes_submenu_item,
+                (if @club_navigation_current_item == :transactions, do: @classes_menu_item_active)
+              ]}
+            >
+              <span class="truncate">Transaktionen</span>
+            </.link>
+          </li>
+          <li>
             <.link navigate={~p"/clubs/#{@club}/forecasts"}
               class={[
                 @classes_menu_item, @classes_submenu_item,
@@ -106,7 +116,8 @@ defmodule SportywebWeb.ClubNavigationComponent do
 
   @impl true
   def update(assigns, socket) do
-    show_submenu_finances = assigns.club_navigation_current_item == :forecasts ||
+    show_submenu_finances = assigns.club_navigation_current_item == :transactions ||
+                            assigns.club_navigation_current_item == :forecasts ||
                             assigns.club_navigation_current_item == :fees ||
                             assigns.club_navigation_current_item == :subsidies
 
