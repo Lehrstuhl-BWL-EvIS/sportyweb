@@ -6,6 +6,7 @@ defmodule Sportyweb.Personal do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal.Contact
 
   @doc """
@@ -36,7 +37,7 @@ defmodule Sportyweb.Personal do
   end
 
   @doc """
-  Returns a list of contacts that are possible options for the given contact.
+  Returns a list of contacts that are possible options for the given contract.
   The list won't include contacts that have an active (non-archived) contract
   with the given contract_object.
 
@@ -53,8 +54,8 @@ defmodule Sportyweb.Personal do
   def list_contract_contact_options(contract, contract_object) do
     # Get all the ids of contacts that have an active contract with the contract_object.
     # These contacts won't appear in the select input as an option for the new contract.
-    contact_ids = Enum.map(contract_object.contracts, fn contract ->
-      if is_nil(contract.end_date) || contract.end_date > Date.utc_today() do
+    exclude_contact_ids = Enum.map(contract_object.contracts, fn contract ->
+      if !Contract.is_archived?(contract, Date.utc_today()) do
         contract.contact_id
       end
     end)
@@ -63,7 +64,7 @@ defmodule Sportyweb.Personal do
       from(
         c in Contact,
         where: c.club_id == ^contract.club_id,
-        where: c.id not in ^contact_ids,
+        where: c.id not in ^exclude_contact_ids,
         order_by: c.name
       )
 

@@ -1,7 +1,7 @@
 defmodule SportywebWeb.ForecastLive.Show do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Finance
+  alias Sportyweb.Accounting
   alias Sportyweb.Organization
   alias Sportyweb.Personal
 
@@ -11,8 +11,13 @@ defmodule SportywebWeb.ForecastLive.Show do
   end
 
   @impl true
-  def handle_params(%{"club_id" => club_id, "start_date" => start_date, "end_date" => end_date} = params, _url, socket) do
-    club = Organization.get_club!(club_id)
+  def handle_params(%{
+    "club_id" => club_id,
+    "start_date" => start_date_str,
+    "end_date" => end_date_str} = params, _url, socket) do
+    club = Organization.get_club!(club_id, [all_fees: [:internal_events, subsidy: :internal_events, contracts: :contact]])
+    {:ok, start_date} = Date.from_iso8601(start_date_str)
+    {:ok, end_date}   = Date.from_iso8601(end_date_str)
 
     {:noreply,
      socket
@@ -23,15 +28,18 @@ defmodule SportywebWeb.ForecastLive.Show do
   end
 
   defp apply_action(socket, :show_contacts_all, _params) do
+    # TODO
+    Accounting.get_transactions(socket.assigns.club, socket.assigns.start_date, socket.assigns.end_date)
+
     socket
     |> assign(:page_title, "Vorschau: Alle Mitglieder")
   end
 
   defp apply_action(socket, :show_contacts_single, %{"contact_id" => contact_id}) do
-    contact = Personal.get_contact!(contact_id)
+    contact = Personal.get_contact!(contact_id, [contracts: :internal_events])
 
     socket
-    |> assign(:page_title, "Vorschau Mitglied: - #{contact.name}")
+    |> assign(:page_title, "Vorschau Mitglied: #{contact.name}")
   end
 
   defp apply_action(socket, :show_subsidies_all, _params) do
@@ -40,9 +48,9 @@ defmodule SportywebWeb.ForecastLive.Show do
   end
 
   defp apply_action(socket, :show_subsidies_single, %{"subsidy_id" => subsidy_id}) do
-    subsidy = Finance.get_subsidy!(subsidy_id)
+    subsidy = Finance.get_subsidy!(subsidy_id, [:internal_events])
 
     socket
-    |> assign(:page_title, "Vorschau Zuschuss: - #{subsidy.name}")
+    |> assign(:page_title, "Vorschau Zuschuss: #{subsidy.name}")
   end
 end

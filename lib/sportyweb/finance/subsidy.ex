@@ -26,10 +26,12 @@ defmodule Sportyweb.Finance.Subsidy do
     timestamps()
   end
 
-  def is_archived?(%Subsidy{} = subsidy) do
-    Enum.any?(subsidy.internal_events, fn internal_event ->
-      internal_event.archive_date && internal_event.archive_date <= Date.utc_today()
-    end)
+  def is_in_use?(%Subsidy{} = subsidy, %Date{} = date \\ Date.utc_today()) do
+    Enum.any?(subsidy.internal_events, fn internal_event -> InternalEvent.is_in_use?(internal_event, date) end)
+  end
+
+  def is_archived?(%Subsidy{} = subsidy, %Date{} = date \\ Date.utc_today()) do
+    Enum.any?(subsidy.internal_events, fn internal_event -> InternalEvent.is_archived?(internal_event, date) end)
   end
 
   @doc false

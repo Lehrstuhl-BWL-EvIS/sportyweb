@@ -67,6 +67,11 @@ defmodule Sportyweb.MixProject do
       ###################################
       # Custom Dependencies
 
+      # Date recurrence library based on iCalendar events
+      # https://hexdocs.pm/cocktail/readme.html
+      # https://github.com/peek-travel/cocktail
+      {:cocktail, "~> 0.10"},
+
       # Linter for better code consistency
       # https://hexdocs.pm/credo/overview.html
       # https://github.com/rrrene/credo
@@ -101,11 +106,6 @@ defmodule Sportyweb.MixProject do
       # https://hexdocs.pm/quantum/readme.html
       # https://github.com/quantum-elixir/quantum-core
       {:quantum, "~> 3.5"},
-
-      # Date recurrence library based on iCalendar events
-      # https://hexdocs.pm/cocktail/readme.html
-      # https://github.com/peek-travel/cocktail
-      {:cocktail, "~> 0.10"},
 
       # TimeZoneDatabase for DateTime (which per default only supports UTC)
       # https://hexdocs.pm/tzdata/readme.html

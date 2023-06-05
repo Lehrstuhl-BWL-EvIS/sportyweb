@@ -7,6 +7,7 @@ defmodule Sportyweb.Polymorphic.InternalEvent do
   alias Sportyweb.Finance.FeeInternalEvent
   alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Finance.SubsidyInternalEvent
+  alias Sportyweb.Polymorphic.InternalEvent
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -28,6 +29,15 @@ defmodule Sportyweb.Polymorphic.InternalEvent do
       [key: "Monat", value: "month"],
       [key: "Jahr", value: "year"]
     ]
+  end
+
+  def is_in_use?(%InternalEvent{} = internal_event, %Date{} = date \\ Date.utc_today()) do
+    Date.compare(date, internal_event.commission_date) != :lt &&
+    (is_nil(internal_event.archive_date) || Date.compare(date, internal_event.archive_date) == :lt)
+  end
+
+  def is_archived?(%InternalEvent{} = internal_event, %Date{} = date \\ Date.utc_today()) do
+    internal_event.archive_date && Date.compare(date, internal_event.archive_date) != :lt
   end
 
   @doc false

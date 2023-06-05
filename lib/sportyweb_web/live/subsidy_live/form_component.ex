@@ -69,7 +69,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
               </.link>
             </div>
             <.button
-              :if={@subsidy.id}
+              :if={show_delete_button?(@subsidy)}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @subsidy.id})}
               data-confirm="Unwiderruflich löschen?">
@@ -138,5 +138,9 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp show_delete_button?(subsidy) do
+    subsidy.id && !Enum.any?(subsidy.fees)
   end
 end

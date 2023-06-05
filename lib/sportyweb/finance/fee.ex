@@ -52,9 +52,6 @@ defmodule Sportyweb.Finance.Fee do
     timestamps()
   end
 
-  @doc """
-  TODO: Add an explanation regarding the apparent "duplication" of information.
-  """
   def get_valid_types do
     [
       [key: "Verein", value: "club"],
@@ -66,10 +63,12 @@ defmodule Sportyweb.Finance.Fee do
     ]
   end
 
-  def is_archived?(%Fee{} = fee) do
-    Enum.any?(fee.internal_events, fn internal_event ->
-      internal_event.archive_date && internal_event.archive_date <= Date.utc_today()
-    end)
+  def is_in_use?(%Fee{} = fee, %Date{} = date \\ Date.utc_today()) do
+    Enum.any?(fee.internal_events, fn internal_event -> InternalEvent.is_in_use?(internal_event, date) end)
+  end
+
+  def is_archived?(%Fee{} = fee, %Date{} = date \\ Date.utc_today()) do
+    Enum.any?(fee.internal_events, fn internal_event -> InternalEvent.is_archived?(internal_event, date) end)
   end
 
   @doc false

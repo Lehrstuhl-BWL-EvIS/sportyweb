@@ -133,7 +133,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
         "subsidy" ->
           case subsidy_id do
             nil -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy"
-            _   -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy/#{contact_id}"
+            _   -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy/#{subsidy_id}"
           end
       end
 

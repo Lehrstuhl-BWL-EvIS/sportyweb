@@ -97,7 +97,7 @@ defmodule Sportyweb.Personal.Contact do
   end
 
   def has_active_membership_contract?(%Contact{} = contact) do
-    Enum.any?(contact.contracts, fn contract -> is_nil(contract.end_date) || contract.end_date > Date.utc_today() end)
+    Enum.any?(contact.contracts, fn contract -> Contract.is_in_use?(contract, Date.utc_today()) end)
   end
 
   @doc false

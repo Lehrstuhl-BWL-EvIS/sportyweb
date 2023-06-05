@@ -884,10 +884,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
             club_id: club.id,
             contact_id: contact.id,
             fee_id: fee.id,
-            signing_date: Date.utc_today(),
-            start_date: Date.utc_today(),
+            signing_date: ~D[2021-11-28],
+            start_date: ~D[2022-01-01],
             termination_date: nil,
-            end_date: nil,
+            archive_date: nil,
             clubs: [club]
           })
         end
@@ -902,10 +902,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
               club_id: club.id,
               contact_id: contact.id,
               fee_id: fee.id,
-              signing_date: Date.utc_today(),
-              start_date: Date.utc_today(),
+              signing_date: ~D[2021-11-28],
+              start_date: ~D[2022-01-01],
               termination_date: nil,
-              end_date: nil,
+              archive_date: nil,
               departments: [department]
             })
           end
@@ -920,10 +920,10 @@ Organization.list_clubs([departments: [:fees, groups: :fees]])
                 club_id: club.id,
                 contact_id: contact.id,
                 fee_id: fee.id,
-                signing_date: Date.utc_today(),
-                start_date: Date.utc_today(),
+                signing_date: ~D[2021-11-28],
+                start_date: ~D[2022-01-01],
                 termination_date: nil,
-                end_date: nil,
+                archive_date: nil,
                 groups: [group]
               })
             end

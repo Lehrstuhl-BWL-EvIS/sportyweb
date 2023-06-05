@@ -126,7 +126,7 @@ defmodule Sportyweb.Legal do
         c in Contract,
         join: contact in assoc(c, :contact),
         join: fee in assoc(c, :fee),
-        where: c.end_date < ^Date.utc_today(),
+        where: c.archive_date < ^Date.utc_today(),
         where: not is_nil(contact.person_birthday),
         where: not is_nil(fee.maximum_age_in_years),
         where: not is_nil(fee.successor_id),

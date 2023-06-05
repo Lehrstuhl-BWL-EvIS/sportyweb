@@ -34,7 +34,7 @@ defmodule SportywebWeb.SubsidyLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    subsidy = Finance.get_subsidy!(id, [:club, :internal_events, :notes])
+    subsidy = Finance.get_subsidy!(id, [:club, :fees, :internal_events, :notes])
 
     socket
     |> assign(:page_title, "Zuschuss bearbeiten")
