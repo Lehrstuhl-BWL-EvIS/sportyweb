@@ -13,8 +13,8 @@ defmodule Sportyweb.Finance.Forecast do
 
   def get_valid_types do
     [
-      [key: "Mitglied / Mitglieder", value: "contact"],
-      [key: "Zuschuss / Zuschüsse", value: "subsidy"]
+      [key: "Gebühren von Kontakten", value: "contact"],
+      [key: "Zuschüsse", value: "subsidy"]
     ]
   end
 

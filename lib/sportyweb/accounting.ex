@@ -147,6 +147,10 @@ defmodule Sportyweb.Accounting do
     get_transactions(type, contracts, start_date, end_date)
   end
 
+  def forecast_transactions(:fee, _, %Date{} = start_date, %Date{} = end_date) do
+    {[], Money.new(:EUR, 0)}
+  end
+
   def create_transactions(type, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
     get_transactions(type, contracts, start_date, end_date)
   end

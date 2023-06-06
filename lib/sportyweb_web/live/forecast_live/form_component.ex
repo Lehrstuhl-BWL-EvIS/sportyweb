@@ -40,9 +40,9 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
                   <.input
                     field={@form[:contact_id]}
                     type="select"
-                    label="Mitglied"
+                    label="Kontakt"
                     options={@contact_options |> Enum.map(&{&1.name, &1.id})}
-                    prompt="Alle Mitglieder"
+                    prompt="Alle Kontakte"
                   />
                 </div>
               <% end %>
@@ -116,28 +116,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
       |> Map.put(:action, :validate)
 
     if changeset.valid? do
-      club_id    = socket.assigns.club.id
-      type       = get_field(changeset, :type)
-      contact_id = get_field(changeset, :contact_id)
-      subsidy_id = get_field(changeset, :subsidy_id)
-      start_date = Date.to_string(get_field(changeset, :start_date))
-      end_date   = Date.to_string(get_field(changeset, :end_date))
-
-      navigate = case type do
-        "contact" ->
-          case contact_id do
-            nil -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/contact"
-            _   -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/contact/#{contact_id}"
-          end
-
-        "subsidy" ->
-          case subsidy_id do
-            nil -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy"
-            _   -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy/#{subsidy_id}"
-          end
-      end
-
-      {:noreply, push_navigate(socket, to: navigate)}
+      {:noreply, push_navigate(socket, to: get_navigate(socket, changeset))}
     else
       {:noreply, assign_form(socket, changeset)}
     end
@@ -145,5 +124,28 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :form, to_form(changeset))
+  end
+
+  defp get_navigate(socket, %Ecto.Changeset{} = changeset) do
+    club_id    = socket.assigns.club.id
+    type       = get_field(changeset, :type)
+    contact_id = get_field(changeset, :contact_id)
+    subsidy_id = get_field(changeset, :subsidy_id)
+    start_date = Date.to_string(get_field(changeset, :start_date))
+    end_date   = Date.to_string(get_field(changeset, :end_date))
+
+    navigate = case type do
+      "contact" ->
+        case contact_id do
+          nil -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/contact"
+          _   -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/contact/#{contact_id}"
+        end
+
+      "subsidy" ->
+        case subsidy_id do
+          nil -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy"
+          _   -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy/#{subsidy_id}"
+        end
+    end
   end
 end

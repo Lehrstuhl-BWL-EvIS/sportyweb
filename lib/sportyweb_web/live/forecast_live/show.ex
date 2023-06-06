@@ -30,32 +30,58 @@ defmodule SportywebWeb.ForecastLive.Show do
   end
 
   defp apply_action(socket, :show_contacts_all, _params) do
-    contracts = Legal.list_contracts(socket.assigns.club.id, [:contact, fee: [:internal_events, subsidy: :internal_events]])
-    transactions = Accounting.forecast_transactions(:fee, contracts, socket.assigns.start_date, socket.assigns.end_date)
+    {transactions, transactions_amount_sum} =
+      Accounting.forecast_transactions(:fee, all_contracts(socket), socket.assigns.start_date, socket.assigns.end_date)
 
     socket
-    |> assign(:page_title, "Vorschau: Alle Mitglieder")
+    |> assign(:page_title, "Vorschau: Alle Kontakte")
+    |> assign(:transactions_amount_sum, transactions_amount_sum)
     |> stream(:transactions, transactions)
   end
 
   defp apply_action(socket, :show_contacts_single, %{"contact_id" => contact_id}) do
-    contact = Personal.get_contact!(contact_id, [contracts: [:contact, fee: [:internal_events, subsidy: :internal_events]]])
-    transactions = Accounting.forecast_transactions(:fee, contact.contracts, socket.assigns.start_date, socket.assigns.end_date)
+    contact =
+      Personal.get_contact!(contact_id, [contracts: [:contact, fee: [:internal_events, subsidy: :internal_events]]])
+    {transactions, transactions_amount_sum} =
+      Accounting.forecast_transactions(:fee, contact.contracts, socket.assigns.start_date, socket.assigns.end_date)
 
     socket
-    |> assign(:page_title, "Vorschau Mitglied: #{contact.name}")
+    |> assign(:page_title, "Vorschau Kontakt: #{contact.name}")
+    |> assign(:transactions_amount_sum, transactions_amount_sum)
     |> stream(:transactions, transactions)
   end
 
   defp apply_action(socket, :show_subsidies_all, _params) do
+    {transactions, transactions_amount_sum} =
+      Accounting.forecast_transactions(:subsidy, all_contracts(socket), socket.assigns.start_date, socket.assigns.end_date)
+
     socket
     |> assign(:page_title, "Vorschau: Alle Zuschüsse")
+    |> assign(:transactions_amount_sum, transactions_amount_sum)
+    |> stream(:transactions, transactions)
   end
 
   defp apply_action(socket, :show_subsidies_single, %{"subsidy_id" => subsidy_id}) do
-    subsidy = Finance.get_subsidy!(subsidy_id, [:internal_events])
+    # Preloading the data this way might seem inefficent, but it enables a uniform handling of the transaction generation.
+    # And because there are no subsequent database calls it is actually pretty fast.
+    subsidy =
+      Finance.get_subsidy!(subsidy_id, [fees: [contracts: [:contact, fee: [:internal_events, subsidy: :internal_events]]]])
+
+    contracts =
+      subsidy.fees
+      |> Enum.map(fn fee -> fee.contracts end)
+      |> List.flatten()
+
+    {transactions, transactions_amount_sum} =
+      Accounting.forecast_transactions(:subsidy, contracts, socket.assigns.start_date, socket.assigns.end_date)
 
     socket
     |> assign(:page_title, "Vorschau Zuschuss: #{subsidy.name}")
+    |> assign(:transactions_amount_sum, transactions_amount_sum)
+    |> stream(:transactions, transactions)
+  end
+
+  defp all_contracts(socket) do
+    Legal.list_contracts(socket.assigns.club.id, [:contact, fee: [:internal_events, subsidy: :internal_events]])
   end
 end
