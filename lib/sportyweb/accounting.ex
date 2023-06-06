@@ -7,7 +7,11 @@ defmodule Sportyweb.Accounting do
   alias Sportyweb.Repo
 
   alias Sportyweb.Accounting.Transaction
+  alias Sportyweb.Finance.Fee
+  alias Sportyweb.Finance.Subsidy
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization
+  alias Sportyweb.Polymorphic.InternalEvent
 
   @doc """
   Returns a clubs list of transactions.
@@ -137,10 +141,7 @@ defmodule Sportyweb.Accounting do
     Transaction.changeset(transaction, attrs)
   end
 
-  alias Sportyweb.Finance.Fee
-  alias Sportyweb.Finance.Subsidy
-  alias Sportyweb.Legal.Contract
-  alias Sportyweb.Polymorphic.InternalEvent
+  # TODO: Add docs
 
   def forecast_transactions(type, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
     get_transactions(type, contracts, start_date, end_date)
@@ -154,20 +155,47 @@ defmodule Sportyweb.Accounting do
     # Iterate over all days from start to end. It's possible that start_date == end_date.
     date_range = Date.range(start_date, end_date)
 
-    transactions = Enum.map(date_range, fn date ->
-      get_transactions(type, contracts, date)
+    # Calculating the occurrence_dates for each fee or subsidy and for the entire range of dates from start to end
+    # only once via this function call and passing the result as a parameter to all subsequent functions, is much
+    # faster than doing this calculation for every fee or subsidy and every day over and over again!
+    occurrence_dates = get_occurrence_dates(type, contracts, start_date, end_date)
+
+    transactions =
+      date_range
+      |> Enum.map(fn date ->
+        get_transactions(type, contracts, occurrence_dates, date)
+      end)
+      |> List.flatten()
+
+    transactions_amount_sum = Enum.reduce(transactions, Money.new(:EUR, 0), fn transaction, acc ->
+      Money.add!(acc, transaction.amount)
     end)
 
-    List.flatten(transactions)
+    {transactions, transactions_amount_sum}
   end
 
-  defp get_transactions(:fee, [%Contract{} | _] = contracts, %Date{} = date) do
+  defp get_occurrence_dates(:fee, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
+    # Get a list of all fees, some of them might be used by multiple contracts.
+    fees = Enum.map(contracts, fn contract -> contract.fee end)
+    # Filter out possible duplicates.
+    unique_fees = Enum.uniq_by(fees, fn fee -> fee.id end)
+    # Create a map that has fee ids as keys and the list of occurrence_dates for each of those fees as value.
+    unique_fees
+    |> Enum.map(fn fee ->
+      internal_event = Enum.at(fee.internal_events, 0) # There must be an internal event, let it fail otherwise!
+      occurrence_dates = get_occurrence_dates(internal_event, start_date, end_date)
+      {fee.id, occurrence_dates}
+    end)
+    |> Enum.into(%{})
+  end
+
+  defp get_transactions(:fee, [%Contract{} | _] = contracts, %{} = fees_occurrence_dates, %Date{} = date) do
     contracts
     |> Enum.filter(fn contract ->
       if Contract.is_in_use?(contract, date) && Fee.is_in_use?(contract.fee, date) do
-        internal_event = Enum.at(contract.fee.internal_events, 0)
-        occurrence_dates = get_occurrence_dates(internal_event, date, date)
-        Enum.any?(occurrence_dates)
+        Enum.any?(fees_occurrence_dates[contract.fee.id], fn occurrence_date ->
+          Date.compare(date, occurrence_date) == :eq
+        end)
       end
     end)
     |> Enum.map(fn contract ->
@@ -205,15 +233,33 @@ defmodule Sportyweb.Accounting do
     end)
   end
 
-  defp get_transactions(:subsidy, [%Contract{} | _] = contracts, %Date{} = date) do
+  defp get_occurrence_dates(:subsidy, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
+    # Get a list of all subsidies, some of them might be nil or used by multiple contracts (via fees).
+    subsidies =
+      contracts
+      |> Enum.filter(fn contract -> contract.fee.subsidy end) # Filter out nil.
+      |> Enum.map(fn contract -> contract.fee.subsidy end)
+    # Filter out possible duplicates.
+    unique_subsidies = Enum.uniq_by(subsidies, fn subsidy -> subsidy.id end)
+    # Create a map that has subsidy ids as keys and the list of occurrence_dates for each of those subsidies as value.
+    unique_subsidies
+    |> Enum.map(fn subsidy ->
+      internal_event = Enum.at(subsidy.internal_events, 0) # There must be an internal event, let it fail otherwise!
+      occurrence_dates = get_occurrence_dates(internal_event, start_date, end_date)
+      {subsidy.id, occurrence_dates}
+    end)
+    |> Enum.into(%{})
+  end
+
+  defp get_transactions(:subsidy, [%Contract{} | _] = contracts, %{} = subsidies_occurrence_dates, %Date{} = date) do
     contracts
     |> Enum.filter(fn contract ->
       fee = contract.fee
       subsidy = fee.subsidy
       if subsidy && Contract.is_in_use?(contract, date) && Fee.is_in_use?(fee, date) && Subsidy.is_in_use?(subsidy, date) do
-        internal_event = Enum.at(subsidy.internal_events, 0)
-        occurrence_dates = get_occurrence_dates(internal_event, date, date)
-        Enum.any?(occurrence_dates)
+        Enum.any?(subsidies_occurrence_dates[contract.fee.subsidy.id], fn occurrence_date ->
+          Date.compare(date, occurrence_date) == :eq
+        end)
       end
     end)
     |> Enum.map(fn contract ->
@@ -265,9 +311,7 @@ defmodule Sportyweb.Accounting do
     # Convert the stream to a list at the end, to make it easier to work with.
     occurrences_stream
     |> Stream.map(&NaiveDateTime.to_date/1)
-    |> Stream.filter(fn date ->
-      Date.compare(date, start_date) != :lt && Date.compare(date, end_date) != :gt
-    end)
+    |> Stream.filter(fn date -> Date.compare(date, start_date) != :lt && Date.compare(date, end_date) != :gt end)
     |> Enum.to_list()
   end
 end
