@@ -54,4 +54,26 @@ defmodule SportywebWeb.CommonValidations do
       changeset
     end
   end
+
+  @doc """
+  Validates that the currency of the given field is equal to the given currency.
+
+  The type of the field must be Money.Ecto.Composite.Type, as defined by https://github.com/kipcole9/money
+  "The currency code must always be a valid ISO 4217 code or a valid ISO 24165 digital token idenfier."
+
+  ## Examples
+
+      changeset
+      |> validate_currency(:amount, :EUR)
+
+  """
+  def validate_currency(changeset, field, currency) do
+    amount = get_field(changeset, field)
+    if amount && Map.get(amount, :currency) != currency do
+      changeset
+      |> add_error(field, "The currency is unknown or not supported")
+    else
+      changeset
+    end
+  end
 end

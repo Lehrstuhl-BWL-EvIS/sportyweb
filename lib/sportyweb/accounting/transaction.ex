@@ -25,6 +25,7 @@ defmodule Sportyweb.Accounting.Transaction do
     |> validate_required([:contract_id, :name, :amount, :creation_date])
     |> update_change(:name, &String.trim/1)
     |> validate_length(:name, max: 250)
+    |> validate_currency(:amount, :EUR)
     |> validate_dates_order(:creation_date, :payment_date,
       "Muss zeitlich später als oder gleich \"Erstellungsdatum\" sein!")
   end

@@ -109,6 +109,8 @@ defmodule Sportyweb.Finance.Fee do
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
     |> validate_length(:description, max: 20_000)
+    |> validate_currency(:amount, :EUR)
+    |> validate_currency(:amount_one_time, :EUR)
     |> validate_number(:minimum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
     |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
     |> validate_numbers_order(:minimum_age_in_years, :maximum_age_in_years,

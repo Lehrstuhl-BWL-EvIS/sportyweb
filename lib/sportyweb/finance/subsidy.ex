@@ -1,6 +1,7 @@
 defmodule Sportyweb.Finance.Subsidy do
   use Ecto.Schema
   import Ecto.Changeset
+  import SportywebWeb.CommonValidations
 
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Finance.Subsidy
@@ -58,5 +59,6 @@ defmodule Sportyweb.Finance.Subsidy do
     |> validate_length(:name, max: 250)
     |> validate_length(:reference_number, max: 250)
     |> validate_length(:description, max: 20_000)
+    |> validate_currency(:amount, :EUR)
   end
 end
