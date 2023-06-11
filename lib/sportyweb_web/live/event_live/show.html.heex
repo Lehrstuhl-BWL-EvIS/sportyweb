@@ -31,6 +31,10 @@
       <%= format_integer_field(@event.maximum_age_in_years) %>
     </:item>
     <:item title="Veranstaltungsort">
+      <%= if @event.location_type == "no_info" do %>
+        -
+      <% end %>
+
       <%= if @event.location_type == "venue" do %>
         <%= format_struct_list(@event.venues, :name) %>
       <% end %>

@@ -47,7 +47,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
                 <.input
                   field={@form[:venue_id]}
                   type="select"
-                  label="Hauptstandort"
+                  label="Hauptstandort (optional)"
                   options={@club.venues |> Enum.map(&{&1.name, &1.id})}
                   prompt="Bitte auswählen"
                 />

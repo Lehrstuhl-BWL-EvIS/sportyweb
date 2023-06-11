@@ -48,21 +48,21 @@ defmodule SportywebWeb.EventLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:minimum_participants]} type="number" label="Minimale Anzahl an Teilnehmern" />
+                <.input field={@form[:minimum_participants]} type="number" label="Minimale Anzahl an Teilnehmern (optional)" />
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:maximum_participants]} type="number" label="Maximale Anzahl an Teilnehmern" />
+                <.input field={@form[:maximum_participants]} type="number" label="Maximale Anzahl an Teilnehmern (optional)" />
               </div>
             </.input_grid>
 
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:minimum_age_in_years]} type="number" label="Mindestalter" />
+                <.input field={@form[:minimum_age_in_years]} type="number" label="Mindestalter (optional)" />
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:maximum_age_in_years]} type="number" label="Höchstalter" />
+                <.input field={@form[:maximum_age_in_years]} type="number" label="Höchstalter (optional)" />
               </div>
             </.input_grid>
 

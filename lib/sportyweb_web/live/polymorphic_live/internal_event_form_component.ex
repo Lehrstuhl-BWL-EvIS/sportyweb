@@ -20,7 +20,7 @@ defmodule SportywebWeb.PolymorphicLive.InternalEventFormComponent do
           <.input
             field={@internal_event[:is_recurring]}
             type="checkbox"
-            label="Wiederholend?"
+            label="Soll regelmäßig wiederkehrend abgerechnet werden?"
             checked={@is_recurring}
             phx-target={@myself}
             phx-change="update_is_recurring"
