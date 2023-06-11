@@ -4,9 +4,24 @@ defmodule SportywebWeb.TransactionLiveTest do
   import Phoenix.LiveViewTest
   import Sportyweb.AccountingFixtures
 
-  @create_attrs %{amount: 42, creation_date: "2023-06-04", name: "some name", payment_date: "2023-06-04"}
-  @update_attrs %{amount: 43, creation_date: "2023-06-05", name: "some updated name", payment_date: "2023-06-05"}
-  @invalid_attrs %{amount: nil, creation_date: nil, name: nil, payment_date: nil}
+  @create_attrs %{
+    amount: 42,
+    creation_date: "2023-06-04",
+    name: "some name",
+    payment_date: "2023-06-04"
+  }
+  @update_attrs %{
+    amount: 43,
+    creation_date: "2023-06-05",
+    name: "some updated name",
+    payment_date: "2023-06-05"
+  }
+  @invalid_attrs %{
+    amount: nil,
+    creation_date: nil,
+    name: nil,
+    payment_date: nil
+  }
 
   defp create_transaction(_) do
     transaction = transaction_fixture()
@@ -72,7 +87,10 @@ defmodule SportywebWeb.TransactionLiveTest do
     test "deletes transaction in listing", %{conn: conn, transaction: transaction} do
       {:ok, index_live, _html} = live(conn, ~p"/transactions")
 
-      assert index_live |> element("#transactions-#{transaction.id} a", "Delete") |> render_click()
+      assert index_live
+             |> element("#transactions-#{transaction.id} a", "Delete")
+             |> render_click()
+
       refute has_element?(index_live, "#transactions-#{transaction.id}")
     end
   end

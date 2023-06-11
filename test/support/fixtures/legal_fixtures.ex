@@ -23,9 +23,10 @@ defmodule Sportyweb.LegalFixtures do
         contact_id: contact.id,
         fee_id: fee.id,
         signing_date: ~D[2023-06-01],
-        start_date: ~D[2023-06-01],
+        start_date: ~D[2023-07-01],
+        first_billing_date: nil,
         termination_date: nil,
-        end_date: nil,
+        archive_date: nil,
         clubs: [club]
       })
       |> Sportyweb.Legal.create_contract()

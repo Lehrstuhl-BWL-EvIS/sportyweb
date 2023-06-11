@@ -7,9 +7,27 @@ defmodule SportywebWeb.ClubLiveTest do
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{name: "some name", reference_number: "some reference_number", description: "some description", website_url: "https://www.website_url.com", foundation_date: ~D[2022-11-05]}
-  @update_attrs %{name: "some updated name", reference_number: "some updated reference_number", description: "some updated description", website_url: "https://www.updated_website_url.com", foundation_date: ~D[2022-11-06]}
-  @invalid_attrs %{name: nil, reference_number: nil, description: nil, website_url: nil, foundation_date: nil}
+  @create_attrs %{
+    name: "some name",
+    reference_number: "some reference_number",
+    description: "some description",
+    website_url: "https://www.website_url.com",
+    foundation_date: ~D[2022-11-05],
+  }
+  @update_attrs %{
+    name: "some updated name",
+    reference_number: "some updated reference_number",
+    description: "some updated description",
+    website_url: "https://www.updated_website_url.com",
+    foundation_date: ~D[2022-11-06]
+  }
+  @invalid_attrs %{
+    name: nil,
+    reference_number: nil,
+    description: nil,
+    website_url: nil,
+    foundation_date: nil
+  }
 
   setup do
     user = user_fixture()
@@ -41,7 +59,7 @@ defmodule SportywebWeb.ClubLiveTest do
   describe "New/Edit" do
     setup [:create_club]
 
-    test "saves new club", %{conn: conn, user: user} do
+    test "saves new club", %{conn: conn, user: user, club: club} do
       {:error, _} = live(conn, ~p"/clubs/new")
 
       conn = conn |> log_in_user(user)
@@ -57,7 +75,7 @@ defmodule SportywebWeb.ClubLiveTest do
         new_live
         |> form("#club-form", club: @create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/clubs")
+        |> follow_redirect(conn, ~p"/clubs/#{club}")
 
       assert html =~ "Verein erfolgreich erstellt"
       assert html =~ "some name"

@@ -9,7 +9,18 @@ defmodule Sportyweb.CalendarTest do
     import Sportyweb.CalendarFixtures
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{description: nil, location_description: nil, location_type: nil, maximum_age_in_years: nil, maximum_participants: nil, minimum_age_in_years: nil, minimum_participants: nil, name: nil, reference_number: nil, status: nil}
+    @invalid_attrs %{
+      description: nil,
+      location_description: nil,
+      location_type: nil,
+      maximum_age_in_years: nil,
+      maximum_participants: nil,
+      minimum_age_in_years: nil,
+      minimum_participants: nil,
+      name: nil,
+      reference_number: nil,
+      status: nil
+    }
 
     test "list_events/0 returns all events" do
       event = event_fixture()
@@ -23,7 +34,20 @@ defmodule Sportyweb.CalendarTest do
 
     test "create_event/1 with valid data creates a event" do
       club = club_fixture()
-      valid_attrs = %{club_id: club.id, description: "some description", location_description: "some location_description", location_type: "postal_address", maximum_age_in_years: 42, maximum_participants: 42, minimum_age_in_years: 42, minimum_participants: 42, name: "some name", reference_number: "some reference_number", status: "draft"}
+
+      valid_attrs = %{
+        club_id: club.id,
+        description: "some description",
+        location_description: "some location_description",
+        location_type: "postal_address",
+        maximum_age_in_years: 42,
+        maximum_participants: 42,
+        minimum_age_in_years: 42,
+        minimum_participants: 42,
+        name: "some name",
+        reference_number: "some reference_number",
+        status: "draft"
+      }
 
       assert {:ok, %Event{} = event} = Calendar.create_event(valid_attrs)
       assert event.description == "some description"
@@ -44,7 +68,19 @@ defmodule Sportyweb.CalendarTest do
 
     test "update_event/2 with valid data updates the event" do
       event = event_fixture()
-      update_attrs = %{description: "some updated description", location_description: "some updated location_description", location_type: "venue", maximum_age_in_years: 43, maximum_participants: 43, minimum_age_in_years: 43, minimum_participants: 43, name: "some updated name", reference_number: "some updated reference_number", status: "cancelled"}
+
+      update_attrs = %{
+        description: "some updated description",
+        location_description: "some updated location_description",
+        location_type: "venue",
+        maximum_age_in_years: 43,
+        maximum_participants: 43,
+        minimum_age_in_years: 43,
+        minimum_participants: 43,
+        name: "some updated name",
+        reference_number: "some updated reference_number",
+        status: "cancelled"
+      }
 
       assert {:ok, %Event{} = event} = Calendar.update_event(event, update_attrs)
       assert event.description == "some updated description"

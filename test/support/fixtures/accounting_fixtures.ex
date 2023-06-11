@@ -4,17 +4,22 @@ defmodule Sportyweb.AccountingFixtures do
   entities via the `Sportyweb.Accounting` context.
   """
 
+  import Sportyweb.LegalFixtures
+
   @doc """
   Generate a transaction.
   """
   def transaction_fixture(attrs \\ %{}) do
+    contract = contract_fixture()
+
     {:ok, transaction} =
       attrs
       |> Enum.into(%{
-        amount: 42,
-        creation_date: ~D[2023-06-04],
+        contract_id: contract.id,
         name: "some name",
-        payment_date: ~D[2023-06-04]
+        amount: Money.new(:EUR, 42),
+        creation_date: ~D[2023-06-01],
+        payment_date: ~D[2023-06-15]
       })
       |> Sportyweb.Accounting.create_transaction()
 

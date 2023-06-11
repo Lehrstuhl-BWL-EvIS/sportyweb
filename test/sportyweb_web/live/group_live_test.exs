@@ -7,9 +7,24 @@ defmodule SportywebWeb.GroupLiveTest do
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{name: "some name", reference_number: "some reference_number", description: "some description", creation_date: ~D[2022-11-05]}
-  @update_attrs %{name: "some updated name", reference_number: "some updated reference_number", description: "some updated description", creation_date: ~D[2022-11-06]}
-  @invalid_attrs %{name: nil, reference_number: nil, description: nil, creation_dateate: nil}
+  @create_attrs %{
+    name: "some name",
+    reference_number: "some reference_number",
+    description: "some description",
+    creation_date: ~D[2022-11-05]
+  }
+  @update_attrs %{
+    name: "some updated name",
+    reference_number: "some updated reference_number",
+    description: "some updated description",
+    creation_date: ~D[2022-11-06]
+  }
+  @invalid_attrs %{
+    name: nil,
+    reference_number: nil,
+    description: nil,
+    creation_date: nil
+  }
 
   setup do
     user = user_fixture()
@@ -31,6 +46,7 @@ defmodule SportywebWeb.GroupLiveTest do
       {:error, _} = live(conn, ~p"/groups")
 
       conn = conn |> log_in_user(user)
+
       {:ok, conn} =
         conn
         |> live(~p"/groups")
@@ -43,6 +59,7 @@ defmodule SportywebWeb.GroupLiveTest do
       {:error, _} = live(conn, ~p"/departments/#{group.department_id}/groups")
 
       conn = conn |> log_in_user(user)
+
       {:ok, conn} =
         conn
         |> live(~p"/departments/#{group.department_id}/groups")
@@ -66,8 +83,8 @@ defmodule SportywebWeb.GroupLiveTest do
       assert html =~ "Gruppe erstellen"
 
       assert new_live
-              |> form("#group-form", group: @invalid_attrs)
-              |> render_change() =~ "can&#39;t be blank"
+             |> form("#group-form", group: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         new_live

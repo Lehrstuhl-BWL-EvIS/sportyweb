@@ -8,9 +8,21 @@ defmodule SportywebWeb.VenueLiveTest do
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{description: "some description", name: "some name", reference_number: "some reference_number"}
-  @update_attrs %{description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
-  @invalid_attrs %{description: nil, name: nil, reference_number: nil}
+  @create_attrs %{
+    description: "some description",
+    name: "some name",
+    reference_number: "some reference_number"
+  }
+  @update_attrs %{
+    description: "some updated description",
+    name: "some updated name",
+    reference_number: "some updated reference_number"
+  }
+  @invalid_attrs %{
+    description: nil,
+    name: nil,
+    reference_number: nil
+  }
 
   setup do
     user = user_fixture()
@@ -32,6 +44,7 @@ defmodule SportywebWeb.VenueLiveTest do
       {:error, _} = live(conn, ~p"/venues")
 
       conn = conn |> log_in_user(user)
+
       {:ok, conn} =
         conn
         |> live(~p"/venues")
@@ -65,8 +78,8 @@ defmodule SportywebWeb.VenueLiveTest do
       assert html =~ "Standort erstellen"
 
       assert new_live
-              |> form("#venue-form", venue: @invalid_attrs)
-              |> render_change() =~ "can&#39;t be blank"
+             |> form("#venue-form", venue: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         new_live

@@ -8,9 +8,39 @@ defmodule SportywebWeb.EventLiveTest do
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{description: "some description", location_description: "some location_description", location_type: "no_info", maximum_age_in_years: 42, maximum_participants: 42, minimum_age_in_years: 42, minimum_participants: 42, name: "some name", reference_number: "some reference_number", status: "draft"}
-  @update_attrs %{description: "some updated description", location_description: "some updated location_description", location_type: "venue", maximum_age_in_years: 43, maximum_participants: 43, minimum_age_in_years: 43, minimum_participants: 43, name: "some updated name", reference_number: "some updated reference_number", status: "public"}
-  @invalid_attrs %{description: nil, location_description: nil, location_type: "no_info", maximum_age_in_years: nil, maximum_participants: nil, minimum_age_in_years: nil, minimum_participants: nil, name: nil, reference_number: nil, status: "draft"}
+  @create_attrs %{
+    description: "some description",
+    location_type: "no_info",
+    maximum_age_in_years: 42,
+    maximum_participants: 42,
+    minimum_age_in_years: 42,
+    minimum_participants: 42,
+    name: "some name",
+    reference_number: "some reference_number",
+    status: "draft"
+  }
+  @update_attrs %{
+    description: "some updated description",
+    location_type: "free_form",
+    maximum_age_in_years: 43,
+    maximum_participants: 43,
+    minimum_age_in_years: 43,
+    minimum_participants: 43,
+    name: "some updated name",
+    reference_number: "some updated reference_number",
+    status: "public"
+  }
+  @invalid_attrs %{
+    description: nil,
+    location_type: "no_info",
+    maximum_age_in_years: nil,
+    maximum_participants: nil,
+    minimum_age_in_years: nil,
+    minimum_participants: nil,
+    name: nil,
+    reference_number: nil,
+    status: "draft"
+  }
 
   setup do
     user = user_fixture()
@@ -32,6 +62,7 @@ defmodule SportywebWeb.EventLiveTest do
       {:error, _} = live(conn, ~p"/events")
 
       conn = conn |> log_in_user(user)
+
       {:ok, conn} =
         conn
         |> live(~p"/events")
@@ -65,8 +96,8 @@ defmodule SportywebWeb.EventLiveTest do
       assert html =~ "Veranstaltung erstellen"
 
       assert new_live
-              |> form("#event-form", event: @invalid_attrs)
-              |> render_change() =~ "can&#39;t be blank"
+             |> form("#event-form", event: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         new_live

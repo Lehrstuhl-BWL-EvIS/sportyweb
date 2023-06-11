@@ -5,6 +5,7 @@ defmodule Sportyweb.AssetFixtures do
   """
 
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.PolymorphicFixtures
 
   @doc """
   Generate a venue.
@@ -19,6 +20,10 @@ defmodule Sportyweb.AssetFixtures do
         name: "some name",
         reference_number: "some reference_number",
         description: "some description",
+        postal_addresses: [postal_address_attrs()],
+        emails: [email_attrs()],
+        phones: [phone_attrs()],
+        notes: [note_attrs()]
       })
       |> Sportyweb.Asset.create_venue()
 
@@ -42,6 +47,9 @@ defmodule Sportyweb.AssetFixtures do
         purchase_date: ~D[2022-11-05],
         commission_date: ~D[2022-11-10],
         decommission_date: ~D[2022-11-15],
+        emails: [email_attrs()],
+        phones: [phone_attrs()],
+        notes: [note_attrs()]
       })
       |> Sportyweb.Asset.create_equipment()
 

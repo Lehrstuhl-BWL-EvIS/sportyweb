@@ -7,9 +7,33 @@ defmodule SportywebWeb.EquipmentLiveTest do
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{commission_date: ~D[2022-11-10], decommission_date: ~D[2022-11-15], description: "some description", name: "some name", purchase_date: ~D[2022-11-05], reference_number: "some reference_number", serial_number: "some serial_number"}
-  @update_attrs %{commission_date: ~D[2022-11-11], decommission_date: ~D[2022-11-16], description: "some updated description", name: "some updated name", purchase_date: ~D[2022-11-06], reference_number: "some updated reference_number", serial_number: "some updated serial_number"}
-  @invalid_attrs %{commission_date: nil, decommission_date: nil, description: nil, name: nil, purchase_date: nil, reference_number: nil, serial_number: nil}
+  @create_attrs %{
+    commission_date: ~D[2022-11-10],
+    decommission_date: ~D[2022-11-15],
+    description: "some description",
+    name: "some name",
+    purchase_date: ~D[2022-11-05],
+    reference_number: "some reference_number",
+    serial_number: "some serial_number"
+  }
+  @update_attrs %{
+    commission_date: ~D[2022-11-11],
+    decommission_date: ~D[2022-11-16],
+    description: "some updated description",
+    name: "some updated name",
+    purchase_date: ~D[2022-11-06],
+    reference_number: "some updated reference_number",
+    serial_number: "some updated serial_number"
+  }
+  @invalid_attrs %{
+    commission_date: nil,
+    decommission_date: nil,
+    description: nil,
+    name: nil,
+    purchase_date: nil,
+    reference_number: nil,
+    serial_number: nil
+  }
 
   setup do
     user = user_fixture()
@@ -31,6 +55,7 @@ defmodule SportywebWeb.EquipmentLiveTest do
       {:error, _} = live(conn, ~p"/equipment")
 
       conn = conn |> log_in_user(user)
+
       {:ok, conn} =
         conn
         |> live(~p"/equipment")
@@ -43,6 +68,7 @@ defmodule SportywebWeb.EquipmentLiveTest do
       {:error, _} = live(conn, ~p"/venues/#{equipment.venue_id}/equipment")
 
       conn = conn |> log_in_user(user)
+
       {:ok, conn} =
         conn
         |> live(~p"/venues/#{equipment.venue_id}/equipment")
@@ -66,8 +92,8 @@ defmodule SportywebWeb.EquipmentLiveTest do
       assert html =~ "Equipment erstellen"
 
       assert new_live
-              |> form("#equipment-form", equipment: @invalid_attrs)
-              |> render_change() =~ "can&#39;t be blank"
+             |> form("#equipment-form", equipment: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         new_live

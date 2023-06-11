@@ -5,6 +5,7 @@ defmodule Sportyweb.CalendarFixtures do
   """
 
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.PolymorphicFixtures
 
   @doc """
   Generate a event.
@@ -20,12 +21,15 @@ defmodule Sportyweb.CalendarFixtures do
         reference_number: "some reference_number",
         status: "public",
         description: "some description",
-        minimum_participants: 0,
+        minimum_participants: 5,
         maximum_participants: 12,
-        minimum_age_in_years: 0,
-        maximum_age_in_years: 100,
-        location_type: "no_info",
-        location_description: "some location_description"
+        minimum_age_in_years: nil,
+        maximum_age_in_years: nil,
+        location_type: "free_form",
+        location_description: "some location_description",
+        emails: [email_attrs()],
+        phones: [phone_attrs()],
+        notes: [note_attrs()]
       })
       |> Sportyweb.Calendar.create_event()
 

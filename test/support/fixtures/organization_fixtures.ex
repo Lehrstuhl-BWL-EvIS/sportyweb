@@ -4,6 +4,8 @@ defmodule Sportyweb.OrganizationFixtures do
   entities via the `Sportyweb.Organization` context.
   """
 
+  import Sportyweb.PolymorphicFixtures
+
   @doc """
   Generate a unique club website_url.
   """
@@ -20,7 +22,11 @@ defmodule Sportyweb.OrganizationFixtures do
         reference_number: "some reference_number",
         description: "some description",
         website_url: unique_club_website_url(),
-        foundation_date: ~D[2022-11-05]
+        foundation_date: ~D[2022-11-05],
+        emails: [email_attrs()],
+        phones: [phone_attrs()],
+        financial_data: [financial_data_attrs()],
+        notes: [note_attrs()]
       })
       |> Sportyweb.Organization.create_club()
 
@@ -40,7 +46,10 @@ defmodule Sportyweb.OrganizationFixtures do
         name: "some name",
         reference_number: "some reference_number",
         description: "some description",
-        creation_date: ~D[2022-11-05]
+        creation_date: ~D[2022-11-05],
+        emails: [email_attrs()],
+        phones: [phone_attrs()],
+        notes: [note_attrs()]
       })
       |> Sportyweb.Organization.create_department()
 
@@ -60,7 +69,10 @@ defmodule Sportyweb.OrganizationFixtures do
         name: "some group name",
         reference_number: "some reference_number",
         description: "some description",
-        creation_date: ~D[2022-11-05]
+        creation_date: ~D[2022-11-05],
+        emails: [email_attrs()],
+        phones: [phone_attrs()],
+        notes: [note_attrs()]
       })
       |> Sportyweb.Organization.create_group()
 

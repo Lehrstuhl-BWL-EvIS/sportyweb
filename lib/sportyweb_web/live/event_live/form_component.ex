@@ -77,28 +77,30 @@ defmodule SportywebWeb.EventLive.FormComponent do
               </div>
 
               <%= if @location_type == "venue" do %>
-                <.inputs_for :let={venue} field={@form[:venues]}>
-                  <div class="col-span-12">
+                <div class="col-span-12">
+                  <.inputs_for :let={venue} field={@form[:venues]}>
                     <.input
                       field={venue[:id]}
                       type="select"
                       label="Standort"
                       options={Asset.list_venues(@event.club_id) |> Enum.map(&{&1.name, &1.id})}
                     />
-                  </div>
-                </.inputs_for>
+                  </.inputs_for>
+                </div>
               <% end %>
 
               <%= if @location_type == "postal_address" do %>
-                <.input_grid class="pt-6">
-                  <.inputs_for :let={postal_address} field={@form[:postal_addresses]}>
-                    <.live_component
-                      module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
-                      id={"postal_addresses_#{postal_address.index}"}
-                      postal_address={postal_address}
-                    />
-                  </.inputs_for>
-                </.input_grid>
+                <div class="col-span-12">
+                  <.input_grid>
+                    <.inputs_for :let={postal_address} field={@form[:postal_addresses]}>
+                      <.live_component
+                        module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
+                        id={"postal_addresses_#{postal_address.index}"}
+                        postal_address={postal_address}
+                      />
+                    </.inputs_for>
+                  </.input_grid>
+                </div>
               <% end %>
 
               <%= if @location_type == "free_form" do %>

@@ -9,11 +9,20 @@ defmodule Sportyweb.PersonalTest do
     import Sportyweb.PersonalFixtures
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{organization_name: nil, organization_type: nil, person_birthday: nil, person_first_name_1: nil, person_first_name_2: nil, person_gender: nil, person_last_name: nil, type: nil}
+    @invalid_attrs %{
+      organization_name: nil,
+      organization_type: nil,
+      person_birthday: nil,
+      person_first_name_1: nil,
+      person_first_name_2: nil,
+      person_gender: nil,
+      person_last_name: nil,
+      type: nil
+    }
 
     test "list_contacts/1 returns all contacts of a given club" do
       contact = contact_fixture()
-      assert Personal.list_contacts(contact.club_id) == [contact]
+      assert Personal.list_contacts(contact.club_id, [:emails, :financial_data, :notes, :phones, :postal_addresses]) == [contact]
     end
 
     test "list_contacts/2 returns all contacts of a given club with preloaded associations" do
@@ -27,7 +36,18 @@ defmodule Sportyweb.PersonalTest do
 
     test "create_contact/1 with valid data creates a contact" do
       club = club_fixture()
-      valid_attrs = %{club_id: club.id, organization_name: "some organization_name", organization_type: "club", person_birthday: ~D[2023-02-15], person_first_name_1: "some person_first_name_1", person_first_name_2: "some person_first_name_2", person_gender: "female", person_last_name: "some person_last_name", type: "person"}
+
+      valid_attrs = %{
+        club_id: club.id,
+        organization_name: "some organization_name",
+        organization_type: "club",
+        person_birthday: ~D[2023-02-15],
+        person_first_name_1: "some person_first_name_1",
+        person_first_name_2: "some person_first_name_2",
+        person_gender: "female",
+        person_last_name: "some person_last_name",
+        type: "person"
+      }
 
       assert {:ok, %Contact{} = contact} = Personal.create_contact(valid_attrs)
       assert contact.organization_name == "some organization_name"
@@ -46,7 +66,17 @@ defmodule Sportyweb.PersonalTest do
 
     test "update_contact/2 with valid data updates the contact" do
       contact = contact_fixture()
-      update_attrs = %{organization_name: "some updated organization_name", organization_type: "corporation", person_birthday: ~D[2023-02-16], person_first_name_1: "some updated person_first_name_1", person_first_name_2: "some updated person_first_name_2", person_gender: "male", person_last_name: "some updated person_last_name", type: "organization"}
+
+      update_attrs = %{
+        organization_name: "some updated organization_name",
+        organization_type: "corporation",
+        person_birthday: ~D[2023-02-16],
+        person_first_name_1: "some updated person_first_name_1",
+        person_first_name_2: "some updated person_first_name_2",
+        person_gender: "male",
+        person_last_name: "some updated person_last_name",
+        type: "organization"
+      }
 
       assert {:ok, %Contact{} = contact} = Personal.update_contact(contact, update_attrs)
       assert contact.organization_name == "some updated organization_name"
@@ -108,12 +138,16 @@ defmodule Sportyweb.PersonalTest do
       contact_group = contact_group_fixture()
       update_attrs = %{}
 
-      assert {:ok, %ContactGroup{} = contact_group} = Personal.update_contact_group(contact_group, update_attrs)
+      assert {:ok, %ContactGroup{} = contact_group} =
+               Personal.update_contact_group(contact_group, update_attrs)
     end
 
     test "update_contact_group/2 with invalid data returns error changeset" do
       contact_group = contact_group_fixture()
-      assert {:error, %Ecto.Changeset{}} = Personal.update_contact_group(contact_group, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Personal.update_contact_group(contact_group, @invalid_attrs)
+
       assert contact_group == Personal.get_contact_group!(contact_group.id)
     end
 

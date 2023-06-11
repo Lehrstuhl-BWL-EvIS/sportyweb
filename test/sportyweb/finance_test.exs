@@ -9,7 +9,23 @@ defmodule Sportyweb.FinanceTest do
     import Sportyweb.FinanceFixtures
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{admission_fee_in_eur: nil, admission_fee_in_eur_cent: nil, base_fee_in_eur: nil, base_fee_in_eur_cent: nil, commission_date: nil, archive_date: nil, description: nil, is_general: nil, is_for_contact_group_contacts_only: nil, is_recurring: nil, maximum_age_in_years: nil, minimum_age_in_years: nil, name: nil, reference_number: nil, type: nil}
+    @invalid_attrs %{
+      admission_fee_in_eur: nil,
+      admission_fee_in_eur_cent: nil,
+      base_fee_in_eur: nil,
+      base_fee_in_eur_cent: nil,
+      commission_date: nil,
+      archive_date: nil,
+      description: nil,
+      is_general: nil,
+      is_for_contact_group_contacts_only: nil,
+      is_recurring: nil,
+      maximum_age_in_years: nil,
+      minimum_age_in_years: nil,
+      name: nil,
+      reference_number: nil,
+      type: nil
+    }
 
     test "list_fees/0 returns all fees" do
       fee = fee_fixture()
@@ -23,7 +39,25 @@ defmodule Sportyweb.FinanceTest do
 
     test "create_fee/1 with valid data creates a fee" do
       club = club_fixture()
-      valid_attrs = %{club_id: club.id, admission_fee_in_eur: 15, admission_fee_in_eur_cent: 1500, base_fee_in_eur: 42, base_fee_in_eur_cent: 4200, commission_date: ~D[2023-02-24], archive_date: ~D[2023-02-24], description: "some description", is_general: true, is_for_contact_group_contacts_only: true, is_recurring: true, maximum_age_in_years: 42, minimum_age_in_years: 42, name: "some name", reference_number: "some reference_number", type: "club"}
+
+      valid_attrs = %{
+        club_id: club.id,
+        admission_fee_in_eur: 15,
+        admission_fee_in_eur_cent: 1500,
+        base_fee_in_eur: 42,
+        base_fee_in_eur_cent: 4200,
+        commission_date: ~D[2023-02-24],
+        archive_date: ~D[2023-02-24],
+        description: "some description",
+        is_general: true,
+        is_for_contact_group_contacts_only: true,
+        is_recurring: true,
+        maximum_age_in_years: 42,
+        minimum_age_in_years: 42,
+        name: "some name",
+        reference_number: "some reference_number",
+        type: "club"
+      }
 
       assert {:ok, %Fee{} = fee} = Finance.create_fee(valid_attrs)
       assert fee.admission_fee_in_eur_cent == 1500
@@ -47,7 +81,24 @@ defmodule Sportyweb.FinanceTest do
 
     test "update_fee/2 with valid data updates the fee" do
       fee = fee_fixture()
-      update_attrs = %{admission_fee_in_eur: 16, admission_fee_in_eur_cent: 1600, base_fee_in_eur: 43, base_fee_in_eur_cent: 4300, commission_date: ~D[2023-02-25], archive_date: ~D[2023-02-25], description: "some updated description", is_general: false, is_for_contact_group_contacts_only: false, is_recurring: false, maximum_age_in_years: 43, minimum_age_in_years: 43, name: "some updated name", reference_number: "some updated reference_number", type: "department"}
+
+      update_attrs = %{
+        admission_fee_in_eur: 16,
+        admission_fee_in_eur_cent: 1600,
+        base_fee_in_eur: 43,
+        base_fee_in_eur_cent: 4300,
+        commission_date: ~D[2023-02-25],
+        archive_date: ~D[2023-02-25],
+        description: "some updated description",
+        is_general: false,
+        is_for_contact_group_contacts_only: false,
+        is_recurring: false,
+        maximum_age_in_years: 43,
+        minimum_age_in_years: 43,
+        name: "some updated name",
+        reference_number: "some updated reference_number",
+        type: "department"
+      }
 
       assert {:ok, %Fee{} = fee} = Finance.update_fee(fee, update_attrs)
       assert fee.admission_fee_in_eur_cent == 1600
@@ -88,7 +139,14 @@ defmodule Sportyweb.FinanceTest do
 
     import Sportyweb.FinanceFixtures
 
-    @invalid_attrs %{archive_date: nil, commission_date: nil, description: nil, name: nil, reference_number: nil, value: nil}
+    @invalid_attrs %{
+      archive_date: nil,
+      commission_date: nil,
+      description: nil,
+      name: nil,
+      reference_number: nil,
+      value: nil
+    }
 
     test "list_subsidies/0 returns all subsidies" do
       subsidy = subsidy_fixture()
@@ -101,7 +159,14 @@ defmodule Sportyweb.FinanceTest do
     end
 
     test "create_subsidy/1 with valid data creates a subsidy" do
-      valid_attrs = %{archive_date: ~D[2023-05-29], commission_date: ~D[2023-05-29], description: "some description", name: "some name", reference_number: "some reference_number", value: 42}
+      valid_attrs = %{
+        archive_date: ~D[2023-05-29],
+        commission_date: ~D[2023-05-29],
+        description: "some description",
+        name: "some name",
+        reference_number: "some reference_number",
+        value: 42
+      }
 
       assert {:ok, %Subsidy{} = subsidy} = Finance.create_subsidy(valid_attrs)
       assert subsidy.archive_date == ~D[2023-05-29]
@@ -118,7 +183,15 @@ defmodule Sportyweb.FinanceTest do
 
     test "update_subsidy/2 with valid data updates the subsidy" do
       subsidy = subsidy_fixture()
-      update_attrs = %{archive_date: ~D[2023-05-30], commission_date: ~D[2023-05-30], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number", value: 43}
+
+      update_attrs = %{
+        archive_date: ~D[2023-05-30],
+        commission_date: ~D[2023-05-30],
+        description: "some updated description",
+        name: "some updated name",
+        reference_number: "some updated reference_number",
+        value: 43
+      }
 
       assert {:ok, %Subsidy{} = subsidy} = Finance.update_subsidy(subsidy, update_attrs)
       assert subsidy.archive_date == ~D[2023-05-30]

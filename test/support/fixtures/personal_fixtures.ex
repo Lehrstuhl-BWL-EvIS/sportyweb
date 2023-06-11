@@ -5,6 +5,7 @@ defmodule Sportyweb.PersonalFixtures do
   """
 
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.PolymorphicFixtures
 
   @doc """
   Generate a contact.
@@ -23,7 +24,12 @@ defmodule Sportyweb.PersonalFixtures do
         person_first_name_1: "some person_first_name_1",
         person_first_name_2: "some person_first_name_2",
         person_gender: "other",
-        person_birthday: ~D[2023-02-15]
+        person_birthday: ~D[2000-02-15],
+        postal_addresses: [postal_address_attrs()],
+        emails: [email_attrs()],
+        phones: [phone_attrs()],
+        financial_data: [financial_data_attrs()],
+        notes: [note_attrs()]
       })
       |> Sportyweb.Personal.create_contact()
 

@@ -5,6 +5,7 @@ defmodule Sportyweb.FinanceFixtures do
   """
 
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.PolymorphicFixtures
 
   @doc """
   Generate a fee.
@@ -21,16 +22,13 @@ defmodule Sportyweb.FinanceFixtures do
         name: "some name",
         reference_number: "some reference_number",
         description: "some description",
-        base_fee_in_eur: 42,
-        base_fee_in_eur_cent: 4200,
-        admission_fee_in_eur: 15,
-        admission_fee_in_eur_cent: 1500,
+        amount: Money.new(:EUR, 50),
+        amount_one_time: Money.new(:EUR, 10),
         is_for_contact_group_contacts_only: true,
-        is_recurring: true,
         minimum_age_in_years: 18,
         maximum_age_in_years: 50,
-        commission_date: ~D[2023-02-24],
-        archive_date: ~D[2023-02-24],
+        internal_events: [internal_event_attrs()],
+        notes: [note_attrs()]
       })
       |> Sportyweb.Finance.create_fee()
 
@@ -44,12 +42,12 @@ defmodule Sportyweb.FinanceFixtures do
     {:ok, subsidy} =
       attrs
       |> Enum.into(%{
-        archive_date: ~D[2023-05-29],
-        commission_date: ~D[2023-05-29],
-        description: "some description",
         name: "some name",
         reference_number: "some reference_number",
-        value: 42
+        description: "some description",
+        amount: Money.new(:EUR, 30),
+        internal_events: [internal_event_attrs()],
+        notes: [note_attrs()]
       })
       |> Sportyweb.Finance.create_subsidy()
 

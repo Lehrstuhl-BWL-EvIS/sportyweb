@@ -7,8 +7,18 @@ defmodule SportywebWeb.DepartmentLiveTest do
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{name: "some name", reference_number: "some reference_number", description: "some description", creation_date: ~D[2022-11-05]}
-  @update_attrs %{name: "some updated name", reference_number: "some updated reference_number", description: "some updated description", creation_date: ~D[2022-11-06]}
+  @create_attrs %{
+    name: "some name",
+    reference_number: "some reference_number",
+    description: "some description",
+    creation_date: ~D[2022-11-05]
+  }
+  @update_attrs %{
+    name: "some updated name",
+    reference_number: "some updated reference_number",
+    description: "some updated description",
+    creation_date: ~D[2022-11-06]
+  }
   @invalid_attrs %{name: nil, reference_number: nil, description: nil, creation_date: nil}
 
   setup do
@@ -31,6 +41,7 @@ defmodule SportywebWeb.DepartmentLiveTest do
       {:error, _} = live(conn, ~p"/departments")
 
       conn = conn |> log_in_user(user)
+
       {:ok, conn} =
         conn
         |> live(~p"/departments")
@@ -64,8 +75,8 @@ defmodule SportywebWeb.DepartmentLiveTest do
       assert html =~ "Abteilung erstellen"
 
       assert new_live
-              |> form("#department-form", department: @invalid_attrs)
-              |> render_change() =~ "can&#39;t be blank"
+             |> form("#department-form", department: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         new_live

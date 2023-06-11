@@ -8,7 +8,12 @@ defmodule Sportyweb.AccountingTest do
 
     import Sportyweb.AccountingFixtures
 
-    @invalid_attrs %{amount: nil, creation_date: nil, name: nil, payment_date: nil}
+    @invalid_attrs %{
+      amount: nil,
+      creation_date: nil,
+      name: nil,
+      payment_date: nil
+    }
 
     test "list_transactions/0 returns all transactions" do
       transaction = transaction_fixture()
@@ -21,10 +26,15 @@ defmodule Sportyweb.AccountingTest do
     end
 
     test "create_transaction/1 with valid data creates a transaction" do
-      valid_attrs = %{amount: 42, creation_date: ~D[2023-06-04], name: "some name", payment_date: ~D[2023-06-04]}
+      valid_attrs = %{
+        amount: Money.new(:EUR, 42),
+        creation_date: ~D[2023-06-04],
+        name: "some name",
+        payment_date: ~D[2023-06-04]
+      }
 
       assert {:ok, %Transaction{} = transaction} = Accounting.create_transaction(valid_attrs)
-      assert transaction.amount == 42
+      assert transaction.amount == Money.new(:EUR, 42)
       assert transaction.creation_date == ~D[2023-06-04]
       assert transaction.name == "some name"
       assert transaction.payment_date == ~D[2023-06-04]
@@ -36,9 +46,17 @@ defmodule Sportyweb.AccountingTest do
 
     test "update_transaction/2 with valid data updates the transaction" do
       transaction = transaction_fixture()
-      update_attrs = %{amount: 43, creation_date: ~D[2023-06-05], name: "some updated name", payment_date: ~D[2023-06-05]}
 
-      assert {:ok, %Transaction{} = transaction} = Accounting.update_transaction(transaction, update_attrs)
+      update_attrs = %{
+        amount: 43,
+        creation_date: ~D[2023-06-05],
+        name: "some updated name",
+        payment_date: ~D[2023-06-05]
+      }
+
+      assert {:ok, %Transaction{} = transaction} =
+               Accounting.update_transaction(transaction, update_attrs)
+
       assert transaction.amount == 43
       assert transaction.creation_date == ~D[2023-06-05]
       assert transaction.name == "some updated name"
@@ -47,7 +65,10 @@ defmodule Sportyweb.AccountingTest do
 
     test "update_transaction/2 with invalid data returns error changeset" do
       transaction = transaction_fixture()
-      assert {:error, %Ecto.Changeset{}} = Accounting.update_transaction(transaction, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Accounting.update_transaction(transaction, @invalid_attrs)
+
       assert transaction == Accounting.get_transaction!(transaction.id)
     end
 

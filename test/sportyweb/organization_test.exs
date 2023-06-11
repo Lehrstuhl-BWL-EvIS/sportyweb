@@ -8,7 +8,13 @@ defmodule Sportyweb.OrganizationTest do
 
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{name: nil, reference_number: nil, description: nil, website_url: nil, foundation_date: nil}
+    @invalid_attrs %{
+      name: nil,
+      reference_number: nil,
+      description: nil,
+      website_url: nil,
+      foundation_date: nil
+    }
 
     test "list_clubs/0 returns all clubs" do
       club = club_fixture()
@@ -25,11 +31,19 @@ defmodule Sportyweb.OrganizationTest do
       club_id = department.club_id
 
       assert %Club{} = Organization.get_club!(club_id, [:departments])
-      assert Organization.get_club!(club_id, [:departments]).departments |> Enum.at(0) == department
+
+      assert Organization.get_club!(club_id, [:departments]).departments |> Enum.at(0) ==
+               department
     end
 
     test "create_club/1 with valid data creates a club" do
-      valid_attrs = %{foundation_date: ~D[2022-11-05], description: "some description", name: "some name", reference_number: "some reference_number", website_url: "some website_url"}
+      valid_attrs = %{
+        foundation_date: ~D[2022-11-05],
+        description: "some description",
+        name: "some name",
+        reference_number: "some reference_number",
+        website_url: "some website_url"
+      }
 
       assert {:ok, %Club{} = club} = Organization.create_club(valid_attrs)
       assert club.foundation_date == ~D[2022-11-05]
@@ -45,7 +59,14 @@ defmodule Sportyweb.OrganizationTest do
 
     test "update_club/2 with valid data updates the club" do
       club = club_fixture()
-      update_attrs = %{foundation_date: ~D[2022-11-06], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number", website_url: "some updated website_url"}
+
+      update_attrs = %{
+        foundation_date: ~D[2022-11-06],
+        description: "some updated description",
+        name: "some updated name",
+        reference_number: "some updated reference_number",
+        website_url: "some updated website_url"
+      }
 
       assert {:ok, %Club{} = club} = Organization.update_club(club, update_attrs)
       assert club.foundation_date == ~D[2022-11-06]
@@ -107,7 +128,14 @@ defmodule Sportyweb.OrganizationTest do
 
     test "create_department/1 with valid data creates a department" do
       club = club_fixture()
-      valid_attrs = %{club_id: club.id, creation_date: ~D[2022-11-05], description: "some description", name: "some name", reference_number: "some reference_number"}
+
+      valid_attrs = %{
+        club_id: club.id,
+        creation_date: ~D[2022-11-05],
+        description: "some description",
+        name: "some name",
+        reference_number: "some reference_number"
+      }
 
       assert {:ok, %Department{} = department} = Organization.create_department(valid_attrs)
       assert department.creation_date == ~D[2022-11-05]
@@ -122,9 +150,17 @@ defmodule Sportyweb.OrganizationTest do
 
     test "update_department/2 with valid data updates the department" do
       department = department_fixture()
-      update_attrs = %{creation_date: ~D[2022-11-06], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
 
-      assert {:ok, %Department{} = department} = Organization.update_department(department, update_attrs)
+      update_attrs = %{
+        creation_date: ~D[2022-11-06],
+        description: "some updated description",
+        name: "some updated name",
+        reference_number: "some updated reference_number"
+      }
+
+      assert {:ok, %Department{} = department} =
+               Organization.update_department(department, update_attrs)
+
       assert department.creation_date == ~D[2022-11-06]
       assert department.description == "some updated description"
       assert department.name == "some updated name"
@@ -133,7 +169,10 @@ defmodule Sportyweb.OrganizationTest do
 
     test "update_department/2 with invalid data returns error changeset" do
       department = department_fixture()
-      assert {:error, %Ecto.Changeset{}} = Organization.update_department(department, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Organization.update_department(department, @invalid_attrs)
+
       assert department == Organization.get_department!(department.id)
     end
 
@@ -168,7 +207,14 @@ defmodule Sportyweb.OrganizationTest do
 
     test "create_group/1 with valid data creates a group" do
       department = department_fixture()
-      valid_attrs = %{department_id: department.id, creation_date: ~D[2023-02-11], description: "some description", name: "some name", reference_number: "some reference_number"}
+
+      valid_attrs = %{
+        department_id: department.id,
+        creation_date: ~D[2023-02-11],
+        description: "some description",
+        name: "some name",
+        reference_number: "some reference_number"
+      }
 
       assert {:ok, %Group{} = group} = Organization.create_group(valid_attrs)
       assert group.creation_date == ~D[2023-02-11]
@@ -183,7 +229,13 @@ defmodule Sportyweb.OrganizationTest do
 
     test "update_group/2 with valid data updates the group" do
       group = group_fixture()
-      update_attrs = %{creation_date: ~D[2023-02-12], description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
+
+      update_attrs = %{
+        creation_date: ~D[2023-02-12],
+        description: "some updated description",
+        name: "some updated name",
+        reference_number: "some updated reference_number"
+      }
 
       assert {:ok, %Group{} = group} = Organization.update_group(group, update_attrs)
       assert group.creation_date == ~D[2023-02-12]

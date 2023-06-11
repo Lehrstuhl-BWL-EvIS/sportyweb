@@ -9,7 +9,11 @@ defmodule Sportyweb.AssetTest do
     import Sportyweb.AssetFixtures
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{description: nil, name: nil, reference_number: nil}
+    @invalid_attrs %{
+      description: nil,
+      name: nil,
+      reference_number: nil
+    }
 
     test "list_venues/1 returns all venues of a given club" do
       venue = venue_fixture()
@@ -31,7 +35,13 @@ defmodule Sportyweb.AssetTest do
 
     test "create_venue/1 with valid data creates a venue" do
       club = club_fixture()
-      valid_attrs = %{club_id: club.id, description: "some description", name: "some name", reference_number: "some reference_number"}
+
+      valid_attrs = %{
+        club_id: club.id,
+        description: "some description",
+        name: "some name",
+        reference_number: "some reference_number"
+      }
 
       assert {:ok, %Venue{} = venue} = Asset.create_venue(valid_attrs)
       assert venue.description == "some description"
@@ -45,7 +55,12 @@ defmodule Sportyweb.AssetTest do
 
     test "update_venue/2 with valid data updates the venue" do
       venue = venue_fixture()
-      update_attrs = %{description: "some updated description", name: "some updated name", reference_number: "some updated reference_number"}
+
+      update_attrs = %{
+        description: "some updated description",
+        name: "some updated name",
+        reference_number: "some updated reference_number"
+      }
 
       assert {:ok, %Venue{} = venue} = Asset.update_venue(venue, update_attrs)
       assert venue.description == "some updated description"
@@ -76,7 +91,15 @@ defmodule Sportyweb.AssetTest do
 
     import Sportyweb.AssetFixtures
 
-    @invalid_attrs %{commission_date: nil, decommission_date: nil, description: nil, name: nil, purchase_date: nil, reference_number: nil, serial_number: nil}
+    @invalid_attrs %{
+      commission_date: nil,
+      decommission_date: nil,
+      description: nil,
+      name: nil,
+      purchase_date: nil,
+      reference_number: nil,
+      serial_number: nil
+    }
 
     test "list_equipment/0 returns all equipment" do
       equipment = equipment_fixture()
@@ -90,7 +113,17 @@ defmodule Sportyweb.AssetTest do
 
     test "create_equipment/1 with valid data creates a equipment" do
       venue = venue_fixture()
-      valid_attrs = %{venue_id: venue.id, commission_date: ~D[2023-02-14], decommission_date: ~D[2023-02-14], description: "some description", name: "some name", purchase_date: ~D[2023-02-14], reference_number: "some reference_number", serial_number: "some serial_number"}
+
+      valid_attrs = %{
+        venue_id: venue.id,
+        commission_date: ~D[2023-02-14],
+        decommission_date: ~D[2023-02-14],
+        description: "some description",
+        name: "some name",
+        purchase_date: ~D[2023-02-14],
+        reference_number: "some reference_number",
+        serial_number: "some serial_number"
+      }
 
       assert {:ok, %Equipment{} = equipment} = Asset.create_equipment(valid_attrs)
       assert equipment.commission_date == ~D[2023-02-14]
@@ -108,7 +141,16 @@ defmodule Sportyweb.AssetTest do
 
     test "update_equipment/2 with valid data updates the equipment" do
       equipment = equipment_fixture()
-      update_attrs = %{commission_date: ~D[2023-02-15], decommission_date: ~D[2023-02-15], description: "some updated description", name: "some updated name", purchase_date: ~D[2023-02-15], reference_number: "some updated reference_number", serial_number: "some updated serial_number"}
+
+      update_attrs = %{
+        commission_date: ~D[2023-02-15],
+        decommission_date: ~D[2023-02-15],
+        description: "some updated description",
+        name: "some updated name",
+        purchase_date: ~D[2023-02-15],
+        reference_number: "some updated reference_number",
+        serial_number: "some updated serial_number"
+      }
 
       assert {:ok, %Equipment{} = equipment} = Asset.update_equipment(equipment, update_attrs)
       assert equipment.commission_date == ~D[2023-02-15]
