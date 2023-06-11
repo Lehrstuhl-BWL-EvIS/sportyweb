@@ -225,6 +225,27 @@ defmodule SportywebWeb.CoreComponents do
   end
 
   @doc """
+  Renders a cancel button (which is technically not a button, but a link).
+
+  ## Examples
+
+      <.cancel_button navigate="...">Abbrechen</.cancel_button>
+
+  """
+  attr :navigate, :string, default: nil
+  attr :class, :string, default: nil
+
+  slot :inner_block, required: true
+
+  def cancel_button(assigns) do
+    ~H"""
+    <.link navigate={@navigate} class={["mx-2 py-1 px-1 text-sm font-semibold hover:underline", @class]}>
+      <%= render_slot(@inner_block) %>
+    </.link>
+    """
+  end
+
+  @doc """
   Renders a container for input_grid components and other elements.
   Adds horizontal separator lines.
 

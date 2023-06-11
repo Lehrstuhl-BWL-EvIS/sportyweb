@@ -92,9 +92,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
-              <.link navigate={@navigate} class="mx-2 py-1 px-1 text-sm font-semibold hover:underline">
-                Abbrechen
-              </.link>
+              <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
             <.button
                 :if={@equipment.id}

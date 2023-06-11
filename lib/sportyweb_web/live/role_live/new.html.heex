@@ -18,10 +18,8 @@
     <:actions>
       <div>
         <.button phx-disable-with="Nutzer wird hinzugefügt...">Hinzufügen</.button>
-        <.link navigate={~p"/clubs/#{@club.id}/roles"} class="mx-2 py-1 px-1 text-sm font-semibold hover:underline">
-          Abbrechen
-        </.link>
+        <.cancel_button navigate={~p"/clubs/#{@club.id}/roles"}>Abbrechen</.cancel_button>
       </div>
     </:actions>
   </.simple_form>
-</.card>  
+</.card>
