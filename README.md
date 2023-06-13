@@ -59,7 +59,7 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
     * Erlang (as of today we use: Erlang 25.0.4)
     * Elixir (as of today we use: Elixir 1.14.x)
     * PostgreSQL >=13 (as of today, we use: PostgreSQL 14.5)
-    * Phoenix (as of today, 1.6.11) - automatically installed via `mix deps.get`, see below
+    * Phoenix (as of today, 1.7.x) - automatically installed via `mix deps.get`, see below
   * We also recommend to use:
     * Visual Studio Code (as IDE and code editor, install the vscode-elixir extension and other you like)
 
