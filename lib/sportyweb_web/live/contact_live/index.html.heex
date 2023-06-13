@@ -11,7 +11,7 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@streams.contacts) do %>
+  <%= if Enum.any?(@streams.contacts.inserts) do %>
     <.table
       id="contacts"
       rows={@streams.contacts}

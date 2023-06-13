@@ -134,7 +134,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
     start_date = Date.to_string(get_field(changeset, :start_date))
     end_date   = Date.to_string(get_field(changeset, :end_date))
 
-    navigate = case type do
+    case type do
       "contact" ->
         case contact_id do
           nil -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/contact"

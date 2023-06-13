@@ -14,7 +14,7 @@
 <% end %>
 
 <.card>
-  <%= if Enum.any?(@streams.clubs) do %>
+  <%= if @streams.clubs do %>
     <.table
       id="clubs"
       rows={@streams.clubs}

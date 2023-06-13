@@ -3,7 +3,7 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@streams.transactions) do %>
+  <%= if Enum.any?(@streams.transactions.inserts) do %>
     <.table
       id="transactions"
       rows={@streams.transactions}

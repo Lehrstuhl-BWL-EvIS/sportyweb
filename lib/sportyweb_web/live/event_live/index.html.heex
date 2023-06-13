@@ -8,7 +8,7 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@streams.events) do %>
+  <%= if Enum.any?(@streams.events.inserts) do %>
     <.table
       id="events"
       rows={@streams.events}

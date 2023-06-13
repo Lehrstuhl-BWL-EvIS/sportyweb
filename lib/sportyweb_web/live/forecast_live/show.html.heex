@@ -32,7 +32,7 @@
     <%= @transactions_amount_sum %>.
   </p>
 
-  <%= if Enum.any?(@streams.transactions) do %>
+  <%= if Enum.any?(@streams.transactions.inserts) do %>
     <.table
       id="transactions"
       rows={@streams.transactions}

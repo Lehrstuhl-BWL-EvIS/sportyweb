@@ -65,7 +65,7 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@streams.groups) do %>
+  <%= if Enum.any?(@streams.groups.inserts) do %>
     <.table
       id="groups"
       rows={@streams.groups}
