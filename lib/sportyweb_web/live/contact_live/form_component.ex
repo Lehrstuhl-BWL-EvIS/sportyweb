@@ -82,7 +82,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                   </div>
 
                   <div class="col-span-12 md:col-span-6">
-                    <.input field={@form[:person_birthday]} type="date" label="Geburtstag" />
+                    <.input field={@form[:person_birthday]} type="date" label="Geburtsdatum" />
                   </div>
                 </.input_grid>
               <% end %>
