@@ -3,6 +3,7 @@ defmodule SportywebWeb.DepartmentLive.FeeNew do
 
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization
+  alias Sportyweb.Polymorphic.InternalEvent
   alias Sportyweb.Polymorphic.Note
 
   @impl true
@@ -52,6 +53,7 @@ defmodule SportywebWeb.DepartmentLive.FeeNew do
       is_general: false,
       type: type,
       departments: [department],
+      internal_events: [%InternalEvent{}],
       notes: [%Note{}]}
     )
     |> assign(:department, department)

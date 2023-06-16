@@ -3,6 +3,7 @@ defmodule SportywebWeb.VenueLive.FeeNew do
 
   alias Sportyweb.Asset
   alias Sportyweb.Finance.Fee
+  alias Sportyweb.Polymorphic.InternalEvent
   alias Sportyweb.Polymorphic.Note
 
   @impl true
@@ -52,6 +53,7 @@ defmodule SportywebWeb.VenueLive.FeeNew do
       is_general: false,
       type: type,
       venues: [venue],
+      internal_events: [%InternalEvent{}],
       notes: [%Note{}]}
     )
     |> assign(:venue, venue)

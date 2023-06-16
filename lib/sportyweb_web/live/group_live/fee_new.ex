@@ -3,6 +3,7 @@ defmodule SportywebWeb.GroupLive.FeeNew do
 
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization
+  alias Sportyweb.Polymorphic.InternalEvent
   alias Sportyweb.Polymorphic.Note
 
   @impl true
@@ -52,6 +53,7 @@ defmodule SportywebWeb.GroupLive.FeeNew do
       is_general: false,
       type: type,
       groups: [group],
+      internal_events: [%InternalEvent{}],
       notes: [%Note{}]}
     )
     |> assign(:group, group)
