@@ -58,6 +58,9 @@
         internal_events={@fee.internal_events}
       />
     </:item>
+    <:item title="Archiviert" :if={Fee.is_archived?(@fee)}>
+      <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
+    </:item>
     <:item title="Notizen">
       <.live_component
         module={SportywebWeb.PolymorphicLive.NotesShowComponent}

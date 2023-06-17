@@ -2,6 +2,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
   use SportywebWeb, :live_component
 
   alias Sportyweb.Finance
+  alias Sportyweb.Finance.Subsidy
 
   @impl true
   def render(assigns) do
@@ -57,6 +58,28 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
                 <.inputs_for :let={note} field={@form[:notes]}>
                   <.input field={note[:content]} type="textarea" />
                 </.inputs_for>
+              </div>
+            </.input_grid>
+
+            <.input_grid class="pt-6" :if={show_archive_message?(@subsidy)}>
+              <div class="col-span-12">
+                <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
+                  Dieser Zuschuss kann nicht gelöscht, sondern nur archiviert werden, denn:
+                  <ul class="list-disc pl-4 mb-3">
+                    <li :if={Enum.any?(@subsidy.fees)}>Er wird von <%= Enum.count(@subsidy.fees) %> Gebühren verwendet.</li>
+                  </ul>
+                  Zur Archivierung bitte das gewünschte Datum im Feld "Archiviert ab" eintragen und "Speichern" klicken.
+                </div>
+              </div>
+            </.input_grid>
+
+            <.input_grid class="pt-6" :if={@subsidy.id && Subsidy.is_archived?(@subsidy)}>
+              <div class="col-span-12">
+                <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
+                  Dieser Zuschuss ist derzeit archiviert.
+                  Wird das Datum im Feld "Archiviert ab" gelöscht, oder durch ein Zukünftiges ersetzt,
+                  lässt sich die Archivierung komplett bzw. temporär aufheben.
+                </div>
               </div>
             </.input_grid>
           </.input_grids>
@@ -140,5 +163,9 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
 
   defp show_delete_button?(subsidy) do
     subsidy.id && !Enum.any?(subsidy.fees)
+  end
+
+  defp show_archive_message?(subsidy) do
+    subsidy.id && Enum.any?(subsidy.fees) && !Subsidy.is_archived?(subsidy)
   end
 end

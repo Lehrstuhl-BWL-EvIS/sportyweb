@@ -122,14 +122,15 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               </div>
             </.input_grid>
 
-            <.input_grid class="pt-6" :if={show_archive_button?(@fee)}>
+            <.input_grid class="pt-6" :if={show_archive_message?(@fee)}>
               <div class="col-span-12">
                 <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
                   Diese Gebühr kann nicht gelöscht, sondern nur archiviert werden, denn:
-                  <ul class="list-disc pl-4">
+                  <ul class="list-disc pl-4 mb-3">
                     <li :if={Enum.any?(@fee.contracts)}>Sie wird in <%= Enum.count(@fee.contracts) %> Verträgen verwendet.</li>
                     <li :if={Enum.any?(@fee.ancestors)}>Sie dient <%= Enum.count(@fee.ancestors) %> anderen Gebühren als Nachfolger.</li>
                   </ul>
+                  Zur Archivierung bitte das gewünschte Datum im Feld "Archiviert ab" eintragen und "Speichern" klicken.
                 </div>
               </div>
             </.input_grid>
@@ -138,7 +139,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               <div class="col-span-12">
                 <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
                   Diese Gebühr ist derzeit archiviert.
-                  Wird das Datum im Feld "Archiviert ab" gelöscht oder durch ein Zukünftiges ersetzt,
+                  Wird das Datum im Feld "Archiviert ab" gelöscht, oder durch ein Zukünftiges ersetzt,
                   lässt sich die Archivierung komplett bzw. temporär aufheben.
                 </div>
               </div>
@@ -156,14 +157,6 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               phx-click={JS.push("delete", value: %{id: @fee.id})}
               data-confirm="Unwiderruflich löschen?">
               Löschen
-            </.button>
-            <.button
-              :if={show_archive_button?(@fee)}
-              class="bg-amber-700 hover:bg-amber-800"
-              phx-target={@myself}
-              phx-click={JS.push("archive", value: %{id: @fee.id})}
-              data-confirm="Archivieren?">
-              Archivieren
             </.button>
           </:actions>
         </.simple_form>
@@ -214,18 +207,6 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
   def handle_event("save", %{"fee" => fee_params}, socket) do
     save_fee(socket, socket.assigns.action, fee_params)
-  end
-
-  @impl true
-  def handle_event("archive", %{"id" => _id}, socket) do
-    # TODO: Archive via update_fee
-    # fee = Finance.get_fee!(id)
-    # {:ok, _} = Finance.archive_fee(fee)
-
-    {:noreply,
-     socket
-     |> put_flash(:info, "Gebühr erfolgreich archiviert")
-     |> push_navigate(to: socket.assigns.navigate)}
   end
 
   defp save_fee(socket, :edit, fee_params) do
@@ -314,7 +295,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
     fee.id && !(Enum.any?(fee.ancestors) || Enum.any?(fee.contracts))
   end
 
-  defp show_archive_button?(fee) do
+  defp show_archive_message?(fee) do
     fee.id && (Enum.any?(fee.ancestors) || Enum.any?(fee.contracts)) && !Fee.is_archived?(fee)
   end
 end

@@ -51,6 +51,7 @@ defmodule SportywebWeb.PolymorphicLive.InternalEventShowComponent do
                 <%= if internal_event.archive_date do %>
                   Das Archivierungsdatum wurde auf den <%= format_date_field_dmy(internal_event.archive_date) %>
                   festgelegt.
+                  Ab diesem Zeitpunkt ist keine weitere Verwendung mehr möglich und es findet keine weitere Abrechnung statt.
                 <% else %>
                   Derzeit ist keine Archivierungsdatum festgelegt, somit sind weder die Nutzung,
                   noch die daraus entstehenden Abrechnungen zeitlich begrenzt.

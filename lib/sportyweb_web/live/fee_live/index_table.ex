@@ -2,6 +2,8 @@ defmodule SportywebWeb.FeeLive.IndexTableComponent do
   use SportywebWeb, :live_component
   import SportywebWeb.CommonHelper
 
+  alias Sportyweb.Finance.Fee
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -13,6 +15,9 @@ defmodule SportywebWeb.FeeLive.IndexTableComponent do
       >
         <:col :let={fee} label="Name">
           <%= format_string_field(fee.name) %>
+          <%= if Fee.is_archived?(fee) do %>
+            <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
+          <% end %>
         </:col>
         <:col :let={fee} label="Ref.nr.">
           <%= format_string_field(fee.reference_number) %>

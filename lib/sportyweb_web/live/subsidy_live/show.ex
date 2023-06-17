@@ -2,6 +2,7 @@ defmodule SportywebWeb.SubsidyLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Finance
+  alias Sportyweb.Finance.Subsidy
 
   @impl true
   def mount(_params, _session, socket) do

@@ -16,6 +16,9 @@
     >
       <:col :let={{_id, subsidy}} label="Name">
         <%= format_string_field(subsidy.name) %>
+        <%= if Subsidy.is_archived?(subsidy) do %>
+          <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
+        <% end %>
       </:col>
       <:col :let={{_id, subsidy}} label="Ref.nr.">
         <%= format_string_field(subsidy.reference_number) %>

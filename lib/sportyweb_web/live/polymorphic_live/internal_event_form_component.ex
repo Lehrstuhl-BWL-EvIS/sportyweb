@@ -9,7 +9,7 @@ defmodule SportywebWeb.PolymorphicLive.InternalEventFormComponent do
     <div class="col-span-12">
       <.input_grid>
         <div class="col-span-12 md:col-span-6">
-          <.input field={@internal_event[:commission_date]} type="date" label="Verwendung ab" />
+          <.input field={@internal_event[:commission_date]} type="date" label="Startzeitpunkt" />
         </div>
 
         <div class="col-span-12 md:col-span-6">
