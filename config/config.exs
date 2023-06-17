@@ -40,8 +40,9 @@ config :sportyweb, Sportyweb.Mailer, adapter: Swoosh.Adapters.Local
 # Custom: Configures jobs for Quantum (cron-like scheduler)
 # https://github.com/quantum-elixir/quantum-core
 config :sportyweb, Sportyweb.Scheduler,
-  timezone: "Europe/Berlin",
-  jobs: []
+  jobs: [
+    {"@daily", {Sportyweb.Legal, :update_contract_fees_for_aged_contacts, []}}
+  ]
 
 # Configure esbuild (the version is required)
 config :esbuild,
