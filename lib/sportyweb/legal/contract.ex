@@ -6,7 +6,6 @@ defmodule Sportyweb.Legal.Contract do
   alias Sportyweb.Accounting.Transaction
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Legal.Contract
-  alias Sportyweb.Legal.ContractPause
   alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.Department
@@ -21,7 +20,6 @@ defmodule Sportyweb.Legal.Contract do
     belongs_to :club, Club
     belongs_to :contact, Contact
     belongs_to :fee, Fee
-    has_many :contract_pauses, ContractPause
     has_many :transactions, Transaction
     many_to_many :clubs, Club, join_through: ClubContract
     many_to_many :departments, Department, join_through: DepartmentContract
