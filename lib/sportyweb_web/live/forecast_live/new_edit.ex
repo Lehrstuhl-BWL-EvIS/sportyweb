@@ -36,7 +36,7 @@ defmodule SportywebWeb.ForecastLive.NewEdit do
     today = Date.utc_today()
 
     socket
-    |> assign(:page_title, "Vorschau erstellen")
+    |> assign(:page_title, "Prognose erstellen")
     |> assign(:forecast, %Forecast{
       start_date: today,
       end_date: today}

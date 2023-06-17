@@ -79,7 +79,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
                 (if @club_navigation_current_item == :forecasts, do: @classes_menu_item_active)
               ]}
             >
-              <span class="truncate">Vorschau</span>
+              <span class="truncate">Prognose</span>
             </.link>
           </li>
           <li>

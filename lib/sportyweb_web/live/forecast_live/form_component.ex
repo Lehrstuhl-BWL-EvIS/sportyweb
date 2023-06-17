@@ -28,7 +28,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
                 <.input
                   field={@form[:type]}
                   type="select"
-                  label="Vorschau für"
+                  label="Prognose für"
                   options={Forecast.get_valid_types}
                   phx-target={@myself}
                   phx-change="update_type"
@@ -71,7 +71,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
 
           <:actions>
             <div>
-              <.button phx-disable-with="Erstellen...">Vorschau erstellen</.button>
+              <.button phx-disable-with="Erstellen...">Prognose erstellen</.button>
             </div>
           </:actions>
         </.simple_form>

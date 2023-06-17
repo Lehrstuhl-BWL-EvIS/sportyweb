@@ -34,7 +34,7 @@ defmodule SportywebWeb.ForecastLive.Show do
       Accounting.forecast_transactions(:fee, all_contracts(socket), socket.assigns.start_date, socket.assigns.end_date)
 
     socket
-    |> assign(:page_title, "Vorschau: Alle Kontakte")
+    |> assign(:page_title, "Prognose: Alle Kontakte")
     |> assign(:transactions_amount_sum, transactions_amount_sum)
     |> stream(:transactions, transactions)
   end
@@ -46,7 +46,7 @@ defmodule SportywebWeb.ForecastLive.Show do
       Accounting.forecast_transactions(:fee, contact.contracts, socket.assigns.start_date, socket.assigns.end_date)
 
     socket
-    |> assign(:page_title, "Vorschau Kontakt: #{contact.name}")
+    |> assign(:page_title, "Prognose Kontakt: #{contact.name}")
     |> assign(:transactions_amount_sum, transactions_amount_sum)
     |> stream(:transactions, transactions)
   end
@@ -56,7 +56,7 @@ defmodule SportywebWeb.ForecastLive.Show do
       Accounting.forecast_transactions(:subsidy, all_contracts(socket), socket.assigns.start_date, socket.assigns.end_date)
 
     socket
-    |> assign(:page_title, "Vorschau: Alle Zuschüsse")
+    |> assign(:page_title, "Prognose: Alle Zuschüsse")
     |> assign(:transactions_amount_sum, transactions_amount_sum)
     |> stream(:transactions, transactions)
   end
@@ -76,7 +76,7 @@ defmodule SportywebWeb.ForecastLive.Show do
       Accounting.forecast_transactions(:subsidy, contracts, socket.assigns.start_date, socket.assigns.end_date)
 
     socket
-    |> assign(:page_title, "Vorschau Zuschuss: #{subsidy.name}")
+    |> assign(:page_title, "Prognose Zuschuss: #{subsidy.name}")
     |> assign(:transactions_amount_sum, transactions_amount_sum)
     |> stream(:transactions, transactions)
   end
