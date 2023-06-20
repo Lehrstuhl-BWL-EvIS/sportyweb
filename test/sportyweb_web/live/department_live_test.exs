@@ -19,7 +19,12 @@ defmodule SportywebWeb.DepartmentLiveTest do
     description: "some updated description",
     creation_date: ~D[2022-11-06]
   }
-  @invalid_attrs %{name: nil, reference_number: nil, description: nil, creation_date: nil}
+  @invalid_attrs %{
+    name: nil,
+    reference_number: nil,
+    description: nil,
+    creation_date: nil
+  }
 
   setup do
     user = user_fixture()
@@ -165,6 +170,43 @@ defmodule SportywebWeb.DepartmentLiveTest do
       assert html =~ "Abteilung:"
       assert html =~ department.name
       assert html =~ "Gruppen"
+    end
+  end
+
+  describe "FeeNew" do
+    setup [:create_department]
+
+    test "saves new department fee", %{conn: conn, user: user, department: department} do
+      {:error, _} = live(conn, ~p"/departments/#{department}/fees/new")
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, html} = live(conn, ~p"/departments/#{department}/fees/new")
+
+      assert html =~ "Spezifische Gebühr erstellen (Abteilung)"
+
+      assert new_live
+      |> form("#fee-form", fee: %{})
+      |> render_change() =~ "can&#39;t be blank"
+
+      create_attrs = %{
+        amount: "30 €",
+        amount_one_time: "10 €",
+        name: "some name",
+        internal_events: %{
+          "0" => %{
+            commission_date: ~D[2022-11-03]
+          }
+        }
+      }
+
+      {:ok, _, html} =
+        new_live
+        |> form("#fee-form", fee: create_attrs)
+        |> render_submit()
+        |> follow_redirect(conn, ~p"/departments/#{department}")
+
+      assert html =~ "Gebühr erfolgreich erstellt"
+      assert html =~ department.name
     end
   end
 end

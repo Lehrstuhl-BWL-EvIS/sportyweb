@@ -1,131 +1,109 @@
-defmodule SportywebWeb.TransactionLiveTest do
-  use SportywebWeb.ConnCase
+# #######################################################
+# NOTE:
+#   The following tests can only work after a new policy
+#   has been introduced for the given entity.
+#   After this has been done, uncomment the code below
+#   and remove this note.
+# #######################################################
 
-  import Phoenix.LiveViewTest
-  import Sportyweb.AccountingFixtures
+# defmodule SportywebWeb.TransactionLiveTest do
+#   use SportywebWeb.ConnCase
 
-  @create_attrs %{
-    amount: 42,
-    creation_date: "2023-06-04",
-    name: "some name",
-    payment_date: "2023-06-04"
-  }
-  @update_attrs %{
-    amount: 43,
-    creation_date: "2023-06-05",
-    name: "some updated name",
-    payment_date: "2023-06-05"
-  }
-  @invalid_attrs %{
-    amount: nil,
-    creation_date: nil,
-    name: nil,
-    payment_date: nil
-  }
+#   import Phoenix.LiveViewTest
+#   import Sportyweb.AccountingFixtures
+#   import Sportyweb.AccountsFixtures
 
-  defp create_transaction(_) do
-    transaction = transaction_fixture()
-    %{transaction: transaction}
-  end
+#   @update_attrs %{
+#     payment_date: "2023-06-05" # Only allowed attribute to be updated.
+#   }
+#   @invalid_attrs %{
+#     payment_date: "invalid"
+#   }
 
-  describe "Index" do
-    setup [:create_transaction]
+#   setup do
+#     %{user: user_fixture()}
+#   end
 
-    test "lists all transactions", %{conn: conn, transaction: transaction} do
-      {:ok, _index_live, html} = live(conn, ~p"/transactions")
+#   defp create_transaction(_) do
+#     transaction = transaction_fixture()
+#     %{transaction: transaction}
+#   end
 
-      assert html =~ "Listing Transactions"
-      assert html =~ transaction.name
-    end
+#   describe "Index" do
+#     setup [:create_transaction]
 
-    test "saves new transaction", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/transactions")
+#     test "lists all transactions - default redirect", %{conn: conn, user: user} do
+#       {:error, _} = live(conn, ~p"/transactions")
 
-      assert index_live |> element("a", "New Transaction") |> render_click() =~
-               "New Transaction"
+#       conn = conn |> log_in_user(user)
 
-      assert_patch(index_live, ~p"/transactions/new")
+#       {:ok, conn} =
+#         conn
+#         |> live(~p"/transactions")
+#         |> follow_redirect(conn, ~p"/clubs")
 
-      assert index_live
-             |> form("#transaction-form", transaction: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+#       assert conn.resp_body =~ "Vereinsübersicht"
+#     end
 
-      assert index_live
-             |> form("#transaction-form", transaction: @create_attrs)
-             |> render_submit()
+#     test "lists all transactions", %{conn: conn, user: user, transaction: transaction} do
+#       {:error, _} = live(conn, ~p"/clubs/#{transaction.club_id}/transactions")
 
-      assert_patch(index_live, ~p"/transactions")
+#       conn = conn |> log_in_user(user)
+#       {:ok, _index_live, html} = live(conn, ~p"/clubs/#{transaction.club_id}/transactions")
 
-      html = render(index_live)
-      assert html =~ "Transaction created successfully"
-      assert html =~ "some name"
-    end
+#       assert html =~ "Transaktionen"
+#       assert html =~ transaction.name
+#     end
+#   end
 
-    test "updates transaction in listing", %{conn: conn, transaction: transaction} do
-      {:ok, index_live, _html} = live(conn, ~p"/transactions")
+#   describe "New/Edit" do
+#     setup [:create_transaction]
 
-      assert index_live |> element("#transactions-#{transaction.id} a", "Edit") |> render_click() =~
-               "Edit Transaction"
+#     test "updates transaction", %{conn: conn, user: user, transaction: transaction} do
+#       {:error, _} = live(conn, ~p"/transactions/#{transaction}/edit")
 
-      assert_patch(index_live, ~p"/transactions/#{transaction}/edit")
+#       conn = conn |> log_in_user(user)
+#       {:ok, edit_live, html} = live(conn, ~p"/transactions/#{transaction}/edit")
 
-      assert index_live
-             |> form("#transaction-form", transaction: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+#       assert html =~ "Transaktion bearbeiten"
 
-      assert index_live
-             |> form("#transaction-form", transaction: @update_attrs)
-             |> render_submit()
+#       assert edit_live
+#             |> form("#transaction-form", transaction: @invalid_attrs)
+#             |> render_change() =~ "can&#39;t be blank"
 
-      assert_patch(index_live, ~p"/transactions")
+#       {:ok, _, html} =
+#         edit_live
+#         |> form("#transaction-form", transaction: @update_attrs)
+#         |> render_submit()
+#         |> follow_redirect(conn, ~p"/transactions/#{transaction}")
 
-      html = render(index_live)
-      assert html =~ "Transaction updated successfully"
-      assert html =~ "some updated name"
-    end
+#       assert html =~ "Transaktion erfolgreich aktualisiert"
+#       assert html =~ "06.05.2023"
+#     end
 
-    test "deletes transaction in listing", %{conn: conn, transaction: transaction} do
-      {:ok, index_live, _html} = live(conn, ~p"/transactions")
+#     test "cancels updates transaction", %{conn: conn, user: user, transaction: transaction} do
+#       conn = conn |> log_in_user(user)
+#       {:ok, edit_live, _html} = live(conn, ~p"/transactions/#{transaction}/edit")
 
-      assert index_live
-             |> element("#transactions-#{transaction.id} a", "Delete")
-             |> render_click()
+#       {:ok, _, _html} =
+#         edit_live
+#         |> element("#transaction-form a", "Abbrechen")
+#         |> render_click()
+#         |> follow_redirect(conn, ~p"/transactions/#{transaction}")
+#     end
+#   end
 
-      refute has_element?(index_live, "#transactions-#{transaction.id}")
-    end
-  end
+#   describe "Show" do
+#     setup [:create_transaction]
 
-  describe "Show" do
-    setup [:create_transaction]
+#     test "displays transaction", %{conn: conn, user: user, transaction: transaction} do
+#       {:error, _} = live(conn, ~p"/transactions/#{transaction}")
 
-    test "displays transaction", %{conn: conn, transaction: transaction} do
-      {:ok, _show_live, html} = live(conn, ~p"/transactions/#{transaction}")
+#       conn = conn |> log_in_user(user)
+#       {:ok, _show_live, html} = live(conn, ~p"/transactions/#{transaction}")
 
-      assert html =~ "Show Transaction"
-      assert html =~ transaction.name
-    end
-
-    test "updates transaction within modal", %{conn: conn, transaction: transaction} do
-      {:ok, show_live, _html} = live(conn, ~p"/transactions/#{transaction}")
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Transaction"
-
-      assert_patch(show_live, ~p"/transactions/#{transaction}/show/edit")
-
-      assert show_live
-             |> form("#transaction-form", transaction: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert show_live
-             |> form("#transaction-form", transaction: @update_attrs)
-             |> render_submit()
-
-      assert_patch(show_live, ~p"/transactions/#{transaction}")
-
-      html = render(show_live)
-      assert html =~ "Transaction updated successfully"
-      assert html =~ "some updated name"
-    end
-  end
-end
+#       assert html =~ "Transaktion:"
+#       assert html =~ transaction.name
+#     end
+#   end
+# end

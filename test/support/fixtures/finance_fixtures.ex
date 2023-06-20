@@ -39,9 +39,12 @@ defmodule Sportyweb.FinanceFixtures do
   Generate a subsidy.
   """
   def subsidy_fixture(attrs \\ %{}) do
+    club = club_fixture()
+
     {:ok, subsidy} =
       attrs
       |> Enum.into(%{
+        club_id: club.id,
         name: "some name",
         reference_number: "some reference_number",
         description: "some description",

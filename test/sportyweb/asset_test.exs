@@ -5,9 +5,12 @@ defmodule Sportyweb.AssetTest do
 
   describe "venues" do
     alias Sportyweb.Asset.Venue
+    alias Sportyweb.Asset.VenueFee
 
     import Sportyweb.AssetFixtures
+    import Sportyweb.FinanceFixtures
     import Sportyweb.OrganizationFixtures
+    import Sportyweb.PolymorphicFixtures
 
     @invalid_attrs %{
       description: nil,
@@ -17,20 +20,22 @@ defmodule Sportyweb.AssetTest do
 
     test "list_venues/1 returns all venues of a given club" do
       venue = venue_fixture()
-      assert Asset.list_venues(venue.club_id) == [venue]
+      assert List.first(Asset.list_venues(venue.club_id)).id == venue.id
     end
 
     test "list_venues/2 returns all venues of a given club with preloaded associations" do
-      equipment = equipment_fixture()
-      venue = Asset.get_venue!(equipment.venue_id)
-
-      venues = Asset.list_venues(venue.club_id, [:equipment])
-      assert List.first(venues).equipment == [equipment]
+      venue = venue_fixture()
+      assert Asset.list_venues(venue.club_id, [:emails, :notes, :phones, :postal_addresses]) == [venue]
     end
 
     test "get_venue!/1 returns the venue with given id" do
       venue = venue_fixture()
       assert Asset.get_venue!(venue.id).id == venue.id
+    end
+
+    test "get_venue!/2 returns the venue with given id and contains preloaded associations" do
+      venue = venue_fixture()
+      assert Asset.get_venue!(venue.id, [:emails, :notes, :phones, :postal_addresses]) == venue
     end
 
     test "create_venue/1 with valid data creates a venue" do
@@ -40,7 +45,11 @@ defmodule Sportyweb.AssetTest do
         club_id: club.id,
         description: "some description",
         name: "some name",
-        reference_number: "some reference_number"
+        reference_number: "some reference_number",
+        emails: [email_attrs()],
+        notes: [note_attrs()],
+        phones: [phone_attrs()],
+        postal_addresses: [postal_address_attrs()]
       }
 
       assert {:ok, %Venue{} = venue} = Asset.create_venue(valid_attrs)
@@ -84,12 +93,21 @@ defmodule Sportyweb.AssetTest do
       venue = venue_fixture()
       assert %Ecto.Changeset{} = Asset.change_venue(venue)
     end
+
+    test "create_venue_fee/2 with valid data" do
+      venue = venue_fixture()
+      fee = fee_fixture()
+      assert {:ok, %VenueFee{}} = Asset.create_venue_fee(venue, fee)
+    end
   end
 
   describe "equipment" do
     alias Sportyweb.Asset.Equipment
+    alias Sportyweb.Asset.EquipmentFee
 
     import Sportyweb.AssetFixtures
+    import Sportyweb.FinanceFixtures
+    import Sportyweb.PolymorphicFixtures
 
     @invalid_attrs %{
       commission_date: nil,
@@ -101,14 +119,24 @@ defmodule Sportyweb.AssetTest do
       serial_number: nil
     }
 
-    test "list_equipment/0 returns all equipment" do
+    test "list_equipment/1 returns all equipment of a given venue" do
       equipment = equipment_fixture()
-      assert Asset.list_equipment(equipment.venue_id) == [equipment]
+      assert List.first(Asset.list_equipment(equipment.venue_id)).id == equipment.id
+    end
+
+    test "list_equipment/2 returns all equipment of a given venue with preloaded associations" do
+      equipment = equipment_fixture()
+      assert Asset.list_equipment(equipment.venue_id, [:emails, :notes, :phones]) == [equipment]
     end
 
     test "get_equipment!/1 returns the equipment with given id" do
       equipment = equipment_fixture()
-      assert Asset.get_equipment!(equipment.id) == equipment
+      assert Asset.get_equipment!(equipment.id).id == equipment.id
+    end
+
+    test "get_equipment!/2 returns the equipment with given id and contains preloaded associations" do
+      equipment = equipment_fixture()
+      assert Asset.get_equipment!(equipment.id, [:emails, :notes, :phones]) == equipment
     end
 
     test "create_equipment/1 with valid data creates a equipment" do
@@ -122,7 +150,10 @@ defmodule Sportyweb.AssetTest do
         name: "some name",
         purchase_date: ~D[2023-02-14],
         reference_number: "some reference_number",
-        serial_number: "some serial_number"
+        serial_number: "some serial_number",
+        emails: [email_attrs()],
+        notes: [note_attrs()],
+        phones: [phone_attrs()]
       }
 
       assert {:ok, %Equipment{} = equipment} = Asset.create_equipment(valid_attrs)
@@ -165,7 +196,7 @@ defmodule Sportyweb.AssetTest do
     test "update_equipment/2 with invalid data returns error changeset" do
       equipment = equipment_fixture()
       assert {:error, %Ecto.Changeset{}} = Asset.update_equipment(equipment, @invalid_attrs)
-      assert equipment == Asset.get_equipment!(equipment.id)
+      assert equipment == Asset.get_equipment!(equipment.id, [:emails, :phones, :notes])
     end
 
     test "delete_equipment/1 deletes the equipment" do
@@ -177,6 +208,12 @@ defmodule Sportyweb.AssetTest do
     test "change_equipment/1 returns a equipment changeset" do
       equipment = equipment_fixture()
       assert %Ecto.Changeset{} = Asset.change_equipment(equipment)
+    end
+
+    test "create_equipment_fee/2 with valid data" do
+      equipment = equipment_fixture()
+      fee = fee_fixture()
+      assert {:ok, %EquipmentFee{}} = Asset.create_equipment_fee(equipment, fee)
     end
   end
 end

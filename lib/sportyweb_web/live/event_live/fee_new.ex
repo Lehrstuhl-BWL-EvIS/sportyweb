@@ -25,7 +25,7 @@ defmodule SportywebWeb.EventLive.FeeNew do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :club_navigation_current_item, :structure)}
+    {:ok, assign(socket, :club_navigation_current_item, :calendar)}
   end
 
   @impl true

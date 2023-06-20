@@ -5,13 +5,17 @@ defmodule SportywebWeb.VenueLiveTest do
   import Sportyweb.AccountsFixtures
   import Sportyweb.AssetFixtures
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.PolymorphicFixtures
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
   @create_attrs %{
     description: "some description",
     name: "some name",
-    reference_number: "some reference_number"
+    reference_number: "some reference_number",
+    postal_addresses: %{
+      "0" => postal_address_attrs()
+    }
   }
   @update_attrs %{
     description: "some updated description",
@@ -166,6 +170,43 @@ defmodule SportywebWeb.VenueLiveTest do
       {:ok, _show_live, html} = live(conn, ~p"/venues/#{venue}")
 
       assert html =~ "Standort:"
+      assert html =~ venue.name
+    end
+  end
+
+  describe "FeeNew" do
+    setup [:create_venue]
+
+    test "saves new venue fee", %{conn: conn, user: user, venue: venue} do
+      {:error, _} = live(conn, ~p"/venues/#{venue}/fees/new")
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, html} = live(conn, ~p"/venues/#{venue}/fees/new")
+
+      assert html =~ "Spezifische Gebühr erstellen (Standort)"
+
+      assert new_live
+      |> form("#fee-form", fee: %{})
+      |> render_change() =~ "can&#39;t be blank"
+
+      create_attrs = %{
+        amount: "30 €",
+        amount_one_time: "10 €",
+        name: "some name",
+        internal_events: %{
+          "0" => %{
+            commission_date: ~D[2022-11-03]
+          }
+        }
+      }
+
+      {:ok, _, html} =
+        new_live
+        |> form("#fee-form", fee: create_attrs)
+        |> render_submit()
+        |> follow_redirect(conn, ~p"/venues/#{venue}")
+
+      assert html =~ "Gebühr erfolgreich erstellt"
       assert html =~ venue.name
     end
   end

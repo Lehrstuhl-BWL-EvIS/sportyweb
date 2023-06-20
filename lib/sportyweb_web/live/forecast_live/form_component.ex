@@ -84,7 +84,6 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
   def update(%{forecast: forecast} = assigns, socket) do
     changeset = change(forecast)
 
-    # TODO: contact_options: Only list contacts with at least one membership contract. Can be archived!
     {:ok,
      socket
      |> assign(assigns)

@@ -176,6 +176,19 @@ defmodule Sportyweb.Asset do
   end
 
   @doc """
+  Returns a venues list of equipment. Preloads associations.
+
+  ## Examples
+
+      iex> list_equipment(1, [:venue])
+      [%Equipment{}, ...]
+
+  """
+  def list_equipment(venue_id, preloads) do
+    Repo.preload(list_equipment(venue_id), preloads)
+  end
+
+  @doc """
   Gets a single equipment.
 
   Raises `Ecto.NoResultsError` if the Equipment does not exist.

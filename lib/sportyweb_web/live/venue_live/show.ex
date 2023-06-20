@@ -11,7 +11,7 @@ defmodule SportywebWeb.VenueLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    venue = Asset.get_venue!(id, [:club, :emails, :equipment, :fees, :notes, :phones, :postal_addresses])
+    venue = Asset.get_venue!(id, [:club, :emails, :equipment, :notes, :phones, :postal_addresses, fees: :internal_events])
 
     {:noreply,
      socket

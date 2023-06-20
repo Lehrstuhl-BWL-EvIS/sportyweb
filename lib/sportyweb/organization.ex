@@ -347,6 +347,19 @@ defmodule Sportyweb.Organization do
   end
 
   @doc """
+  Returns a departments list of groups. Preloads associations.
+
+  ## Examples
+
+      iex> list_groups(1, [:department])
+      [%Group{}, ...]
+
+  """
+  def list_groups(department_id, preloads) do
+    Repo.preload(list_groups(department_id), preloads)
+  end
+
+  @doc """
   Gets a single group.
 
   Raises `Ecto.NoResultsError` if the Group does not exist.

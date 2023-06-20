@@ -8,12 +8,9 @@ defmodule Sportyweb.FinanceTest do
 
     import Sportyweb.FinanceFixtures
     import Sportyweb.OrganizationFixtures
+    import Sportyweb.PolymorphicFixtures
 
     @invalid_attrs %{
-      admission_fee_in_eur: nil,
-      admission_fee_in_eur_cent: nil,
-      base_fee_in_eur: nil,
-      base_fee_in_eur_cent: nil,
       commission_date: nil,
       archive_date: nil,
       description: nil,
@@ -27,14 +24,24 @@ defmodule Sportyweb.FinanceTest do
       type: nil
     }
 
-    test "list_fees/0 returns all fees" do
+    test "list_general_fees/2 returns all fees of a given club" do
       fee = fee_fixture()
-      assert Finance.list_general_fees(fee.club_id, "club") == [fee]
+      assert List.first(Finance.list_general_fees(fee.club_id, "club")).id == fee.id
+    end
+
+    test "list_general_fees/3 returns all fees of a given club with preloaded associations" do
+      fee = fee_fixture()
+      assert Finance.list_general_fees(fee.club_id, "club", [:internal_events, :notes]) == [fee]
     end
 
     test "get_fee!/1 returns the fee with given id" do
       fee = fee_fixture()
-      assert Finance.get_fee!(fee.id) == fee
+      assert Finance.get_fee!(fee.id).id == fee.id
+    end
+
+    test "get_fee!/2 returns the fee with given id and contains preloaded associations" do
+      fee = fee_fixture()
+      assert Finance.get_fee!(fee.id, [:internal_events, :notes]) == fee
     end
 
     test "create_fee/1 with valid data creates a fee" do
@@ -42,34 +49,28 @@ defmodule Sportyweb.FinanceTest do
 
       valid_attrs = %{
         club_id: club.id,
-        admission_fee_in_eur: 15,
-        admission_fee_in_eur_cent: 1500,
-        base_fee_in_eur: 42,
-        base_fee_in_eur_cent: 4200,
-        commission_date: ~D[2023-02-24],
-        archive_date: ~D[2023-02-24],
+        amount: "42 €",
+        amount_one_time: "15 €",
         description: "some description",
-        is_general: true,
         is_for_contact_group_contacts_only: true,
-        is_recurring: true,
-        maximum_age_in_years: 42,
-        minimum_age_in_years: 42,
+        is_general: true,
+        maximum_age_in_years: 25,
+        minimum_age_in_years: 15,
         name: "some name",
         reference_number: "some reference_number",
-        type: "club"
+        type: "club",
+        internal_events: [internal_event_attrs()],
+        notes: [note_attrs()]
       }
 
       assert {:ok, %Fee{} = fee} = Finance.create_fee(valid_attrs)
-      assert fee.admission_fee_in_eur_cent == 1500
-      assert fee.base_fee_in_eur_cent == 4200
-      assert fee.commission_date == ~D[2023-02-24]
-      assert fee.archive_date == ~D[2023-02-24]
+      assert fee.amount == Money.new(:EUR, 42)
+      assert fee.amount_one_time == Money.new(:EUR, 15)
       assert fee.description == "some description"
-      assert fee.is_general == true
       assert fee.is_for_contact_group_contacts_only == true
-      assert fee.is_recurring == true
-      assert fee.maximum_age_in_years == 42
-      assert fee.minimum_age_in_years == 42
+      assert fee.is_general == true
+      assert fee.maximum_age_in_years == 25
+      assert fee.minimum_age_in_years == 15
       assert fee.name == "some name"
       assert fee.reference_number == "some reference_number"
       assert fee.type == "club"
@@ -83,34 +84,26 @@ defmodule Sportyweb.FinanceTest do
       fee = fee_fixture()
 
       update_attrs = %{
-        admission_fee_in_eur: 16,
-        admission_fee_in_eur_cent: 1600,
-        base_fee_in_eur: 43,
-        base_fee_in_eur_cent: 4300,
-        commission_date: ~D[2023-02-25],
-        archive_date: ~D[2023-02-25],
+        amount: "50 €",
+        amount_one_time: "20 €",
         description: "some updated description",
-        is_general: false,
         is_for_contact_group_contacts_only: false,
-        is_recurring: false,
-        maximum_age_in_years: 43,
-        minimum_age_in_years: 43,
+        is_general: false,
+        maximum_age_in_years: 30,
+        minimum_age_in_years: 20,
         name: "some updated name",
         reference_number: "some updated reference_number",
         type: "department"
       }
 
       assert {:ok, %Fee{} = fee} = Finance.update_fee(fee, update_attrs)
-      assert fee.admission_fee_in_eur_cent == 1600
-      assert fee.base_fee_in_eur_cent == 4300
-      assert fee.commission_date == ~D[2023-02-25]
-      assert fee.archive_date == ~D[2023-02-25]
+      assert fee.amount == Money.new(:EUR, 50)
+      assert fee.amount_one_time == Money.new(:EUR, 20)
       assert fee.description == "some updated description"
-      assert fee.is_general == false
       assert fee.is_for_contact_group_contacts_only == false
-      assert fee.is_recurring == false
-      assert fee.maximum_age_in_years == 43
-      assert fee.minimum_age_in_years == 43
+      assert fee.is_general == false
+      assert fee.maximum_age_in_years == 30
+      assert fee.minimum_age_in_years == 20
       assert fee.name == "some updated name"
       assert fee.reference_number == "some updated reference_number"
       assert fee.type == "department"
@@ -119,7 +112,7 @@ defmodule Sportyweb.FinanceTest do
     test "update_fee/2 with invalid data returns error changeset" do
       fee = fee_fixture()
       assert {:error, %Ecto.Changeset{}} = Finance.update_fee(fee, @invalid_attrs)
-      assert fee == Finance.get_fee!(fee.id)
+      assert fee == Finance.get_fee!(fee.id, [:internal_events, :notes])
     end
 
     test "delete_fee/1 deletes the fee" do
@@ -138,43 +131,54 @@ defmodule Sportyweb.FinanceTest do
     alias Sportyweb.Finance.Subsidy
 
     import Sportyweb.FinanceFixtures
+    import Sportyweb.OrganizationFixtures
+    import Sportyweb.PolymorphicFixtures
 
     @invalid_attrs %{
-      archive_date: nil,
-      commission_date: nil,
+      amount: nil,
       description: nil,
       name: nil,
-      reference_number: nil,
-      value: nil
+      reference_number: nil
     }
 
-    test "list_subsidies/0 returns all subsidies" do
+    test "list_subsidies/1 returns all subsidies of a given club" do
       subsidy = subsidy_fixture()
-      assert Finance.list_subsidies() == [subsidy]
+      assert List.first(Finance.list_subsidies(subsidy.club_id)).id == subsidy.id
+    end
+
+    test "list_subsidies/2 returns all subsidies of a given club with preloaded associations" do
+      subsidy = subsidy_fixture()
+      assert Finance.list_subsidies(subsidy.club_id, [:notes, :internal_events]) == [subsidy]
     end
 
     test "get_subsidy!/1 returns the subsidy with given id" do
       subsidy = subsidy_fixture()
-      assert Finance.get_subsidy!(subsidy.id) == subsidy
+      assert Finance.get_subsidy!(subsidy.id).id == subsidy.id
+    end
+
+    test "get_subsidy!/2 returns the subsidy with given id and contains preloaded associations" do
+      subsidy = subsidy_fixture()
+      assert Finance.get_subsidy!(subsidy.id, [:notes, :internal_events]) == subsidy
     end
 
     test "create_subsidy/1 with valid data creates a subsidy" do
+      club = club_fixture()
+
       valid_attrs = %{
-        archive_date: ~D[2023-05-29],
-        commission_date: ~D[2023-05-29],
+        club_id: club.id,
+        amount: "42 €",
         description: "some description",
         name: "some name",
         reference_number: "some reference_number",
-        value: 42
+        internal_events: [internal_event_attrs()],
+        notes: [note_attrs()]
       }
 
       assert {:ok, %Subsidy{} = subsidy} = Finance.create_subsidy(valid_attrs)
-      assert subsidy.archive_date == ~D[2023-05-29]
-      assert subsidy.commission_date == ~D[2023-05-29]
+      assert subsidy.amount == Money.new(:EUR, 42)
       assert subsidy.description == "some description"
       assert subsidy.name == "some name"
       assert subsidy.reference_number == "some reference_number"
-      assert subsidy.value == 42
     end
 
     test "create_subsidy/1 with invalid data returns error changeset" do
@@ -185,27 +189,23 @@ defmodule Sportyweb.FinanceTest do
       subsidy = subsidy_fixture()
 
       update_attrs = %{
-        archive_date: ~D[2023-05-30],
-        commission_date: ~D[2023-05-30],
+        amount: "43 €",
         description: "some updated description",
         name: "some updated name",
-        reference_number: "some updated reference_number",
-        value: 43
+        reference_number: "some updated reference_number"
       }
 
       assert {:ok, %Subsidy{} = subsidy} = Finance.update_subsidy(subsidy, update_attrs)
-      assert subsidy.archive_date == ~D[2023-05-30]
-      assert subsidy.commission_date == ~D[2023-05-30]
+      assert subsidy.amount == Money.new(:EUR, 43)
       assert subsidy.description == "some updated description"
       assert subsidy.name == "some updated name"
       assert subsidy.reference_number == "some updated reference_number"
-      assert subsidy.value == 43
     end
 
     test "update_subsidy/2 with invalid data returns error changeset" do
       subsidy = subsidy_fixture()
       assert {:error, %Ecto.Changeset{}} = Finance.update_subsidy(subsidy, @invalid_attrs)
-      assert subsidy == Finance.get_subsidy!(subsidy.id)
+      assert subsidy == Finance.get_subsidy!(subsidy.id, [:internal_events, :notes])
     end
 
     test "delete_subsidy/1 deletes the subsidy" do

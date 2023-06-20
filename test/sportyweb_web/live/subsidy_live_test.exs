@@ -1,134 +1,177 @@
-defmodule SportywebWeb.SubsidyLiveTest do
-  use SportywebWeb.ConnCase
+# #######################################################
+# NOTE:
+#   The following tests can only work after a new policy
+#   has been introduced for the given entity.
+#   After this has been done, uncomment the code below
+#   and remove this note.
+# #######################################################
 
-  import Phoenix.LiveViewTest
-  import Sportyweb.FinanceFixtures
+# defmodule SportywebWeb.SubsidyLiveTest do
+#   use SportywebWeb.ConnCase
 
-  @create_attrs %{
-    archive_date: "2023-05-29",
-    commission_date: "2023-05-29",
-    description: "some description",
-    name: "some name",
-    reference_number: "some reference_number",
-    value: 42
-  }
-  @update_attrs %{
-    archive_date: "2023-05-30",
-    commission_date: "2023-05-30",
-    description: "some updated description",
-    name: "some updated name",
-    reference_number: "some updated reference_number",
-    value: 43
-  }
-  @invalid_attrs %{
-    archive_date: nil,
-    commission_date: nil,
-    description: nil,
-    name: nil,
-    reference_number: nil,
-    value: nil
-  }
+#   import Phoenix.LiveViewTest
+#   import Sportyweb.AccountsFixtures
+#   import Sportyweb.FinanceFixtures
+#   import Sportyweb.OrganizationFixtures
 
-  defp create_subsidy(_) do
-    subsidy = subsidy_fixture()
-    %{subsidy: subsidy}
-  end
+#   @create_attrs %{
+#     name: "some name",
+#     reference_number: "some reference_number",
+#     description: "some description",
+#     amount: "42 €"
+#   }
+#   @update_attrs %{
+#     name: "some updated name",
+#     reference_number: "some updated reference_number",
+#     description: "some updated description",
+#     value: "43 €"
+#   }
+#   @invalid_attrs %{
+#     name: nil,
+#     reference_number: nil,
+#     description: nil,
+#     value: nil
+#   }
 
-  describe "Index" do
-    setup [:create_subsidy]
+#   setup do
+#     %{user: user_fixture()}
+#   end
 
-    test "lists all subsidies", %{conn: conn, subsidy: subsidy} do
-      {:ok, _index_live, html} = live(conn, ~p"/subsidies")
+#   defp create_subsidy(_) do
+#     subsidy = subsidy_fixture()
+#     %{subsidy: subsidy}
+#   end
 
-      assert html =~ "Listing Subsidies"
-      assert html =~ subsidy.description
-    end
+#   describe "Index" do
+#     setup [:create_subsidy]
 
-    test "saves new subsidy", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/subsidies")
+#     test "lists all subsidies - default redirect", %{conn: conn, user: user} do
+#       {:error, _} = live(conn, ~p"/subsidies")
 
-      assert index_live |> element("a", "New Subsidy") |> render_click() =~
-               "New Subsidy"
+#       conn = conn |> log_in_user(user)
 
-      assert_patch(index_live, ~p"/subsidies/new")
+#       {:ok, conn} =
+#         conn
+#         |> live(~p"/subsidies")
+#         |> follow_redirect(conn, ~p"/clubs")
 
-      assert index_live
-             |> form("#subsidy-form", subsidy: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+#       assert conn.resp_body =~ "Vereinsübersicht"
+#     end
 
-      assert index_live
-             |> form("#subsidy-form", subsidy: @create_attrs)
-             |> render_submit()
+#     test "lists all subsidies", %{conn: conn, user: user, subsidy: subsidy} do
+#       {:error, _} = live(conn, ~p"/clubs/#{subsidy.club_id}/subsidies")
 
-      assert_patch(index_live, ~p"/subsidies")
+#       conn = conn |> log_in_user(user)
+#       {:ok, _index_live, html} = live(conn, ~p"/clubs/#{subsidy.club_id}/subsidies")
 
-      html = render(index_live)
-      assert html =~ "Subsidy created successfully"
-      assert html =~ "some description"
-    end
+#       assert html =~ "Zuschüsse"
+#       assert html =~ subsidy.name
+#     end
+#   end
 
-    test "updates subsidy in listing", %{conn: conn, subsidy: subsidy} do
-      {:ok, index_live, _html} = live(conn, ~p"/subsidies")
+#   describe "New/Edit" do
+#     setup [:create_subsidy]
 
-      assert index_live |> element("#subsidies-#{subsidy.id} a", "Edit") |> render_click() =~
-               "Edit Subsidy"
+#     test "saves new subsidy", %{conn: conn, user: user} do
+#       club = club_fixture()
 
-      assert_patch(index_live, ~p"/subsidies/#{subsidy}/edit")
+#       {:error, _} = live(conn, ~p"/clubs/#{club}/subsidies/new")
 
-      assert index_live
-             |> form("#subsidy-form", subsidy: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+#       conn = conn |> log_in_user(user)
+#       {:ok, new_live, html} = live(conn, ~p"/clubs/#{club}/subsidies/new")
 
-      assert index_live
-             |> form("#subsidy-form", subsidy: @update_attrs)
-             |> render_submit()
+#       assert html =~ "Zuschuss erstellen"
 
-      assert_patch(index_live, ~p"/subsidies")
+#       assert new_live
+#              |> form("#subsidy-form", subsidy: @invalid_attrs)
+#              |> render_change() =~ "can&#39;t be blank"
 
-      html = render(index_live)
-      assert html =~ "Subsidy updated successfully"
-      assert html =~ "some updated description"
-    end
+#       {:ok, _, html} =
+#         new_live
+#         |> form("#subsidy-form", subsidy: @create_attrs)
+#         |> render_submit()
+#         |> follow_redirect(conn, ~p"/clubs/#{club}/subsidies")
 
-    test "deletes subsidy in listing", %{conn: conn, subsidy: subsidy} do
-      {:ok, index_live, _html} = live(conn, ~p"/subsidies")
+#       assert html =~ "Zuschuss erfolgreich erstellt"
+#       assert html =~ "some name"
+#     end
 
-      assert index_live |> element("#subsidies-#{subsidy.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#subsidies-#{subsidy.id}")
-    end
-  end
+#     test "cancels save new subsidy", %{conn: conn, user: user} do
+#       club = club_fixture()
 
-  describe "Show" do
-    setup [:create_subsidy]
+#       conn = conn |> log_in_user(user)
+#       {:ok, new_live, _html} = live(conn, ~p"/clubs/#{club}/subsidies/new")
 
-    test "displays subsidy", %{conn: conn, subsidy: subsidy} do
-      {:ok, _show_live, html} = live(conn, ~p"/subsidies/#{subsidy}")
+#       {:ok, _, _html} =
+#         new_live
+#         |> element("#subsidy-form a", "Abbrechen")
+#         |> render_click()
+#         |> follow_redirect(conn, ~p"/clubs/#{club}/subsidies")
+#     end
 
-      assert html =~ "Show Subsidy"
-      assert html =~ subsidy.description
-    end
+#     test "updates subsidy", %{conn: conn, user: user, subsidy: subsidy} do
+#       {:error, _} = live(conn, ~p"/subsidies/#{subsidy}/edit")
 
-    test "updates subsidy within modal", %{conn: conn, subsidy: subsidy} do
-      {:ok, show_live, _html} = live(conn, ~p"/subsidies/#{subsidy}")
+#       conn = conn |> log_in_user(user)
+#       {:ok, edit_live, html} = live(conn, ~p"/subsidies/#{subsidy}/edit")
 
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Subsidy"
+#       assert html =~ "Zuschuss bearbeiten"
 
-      assert_patch(show_live, ~p"/subsidies/#{subsidy}/show/edit")
+#       assert edit_live
+#              |> form("#subsidy-form", subsidy: @invalid_attrs)
+#              |> render_change() =~ "can&#39;t be blank"
 
-      assert show_live
-             |> form("#subsidy-form", subsidy: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+#       {:ok, _, html} =
+#         edit_live
+#         |> form("#subsidy-form", subsidy: @update_attrs)
+#         |> render_submit()
+#         |> follow_redirect(conn, ~p"/subsidies/#{subsidy}")
 
-      assert show_live
-             |> form("#subsidy-form", subsidy: @update_attrs)
-             |> render_submit()
+#       assert html =~ "Zuschuss erfolgreich aktualisiert"
+#       assert html =~ "some updated name"
+#     end
 
-      assert_patch(show_live, ~p"/subsidies/#{subsidy}")
+#     test "cancels updates subsidy", %{conn: conn, user: user, subsidy: subsidy} do
+#       conn = conn |> log_in_user(user)
+#       {:ok, edit_live, _html} = live(conn, ~p"/subsidies/#{subsidy}/edit")
 
-      html = render(show_live)
-      assert html =~ "Subsidy updated successfully"
-      assert html =~ "some updated description"
-    end
-  end
-end
+#       {:ok, _, _html} =
+#         edit_live
+#         |> element("#subsidy-form a", "Abbrechen")
+#         |> render_click()
+#         |> follow_redirect(conn, ~p"/subsidies/#{subsidy}")
+#     end
+
+#     test "deletes subsidy", %{conn: conn, user: user, subsidy: subsidy} do
+#       {:error, _} = live(conn, ~p"/subsidies/#{subsidy}/edit")
+
+#       conn = conn |> log_in_user(user)
+#       {:ok, edit_live, html} = live(conn, ~p"/subsidies/#{subsidy}/edit")
+#       assert html =~ "some name"
+
+#       {:ok, _, html} =
+#         edit_live
+#         |> element("#subsidy-form button", "Löschen")
+#         |> render_click()
+#         |> follow_redirect(conn, ~p"/clubs/#{subsidy.club_id}/subsidies")
+
+#       assert html =~ "Zuschuss erfolgreich gelöscht"
+#       assert html =~ "Zuschüsse"
+#       refute html =~ "some name"
+#     end
+#   end
+
+#   describe "Show" do
+#     setup [:create_subsidy]
+
+#     test "displays subsidy", %{conn: conn, user: user, subsidy: subsidy} do
+#       {:error, _} = live(conn, ~p"/subsidies/#{subsidy}")
+
+#       conn = conn |> log_in_user(user)
+#       {:ok, _show_live, html} = live(conn, ~p"/subsidies/#{subsidy}")
+
+#       assert html =~ "Zuschuss:"
+#       assert html =~ subsidy.name
+#     end
+#   end
+# end

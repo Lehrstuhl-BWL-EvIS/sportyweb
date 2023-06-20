@@ -4,6 +4,7 @@ defmodule SportywebWeb.ClubLiveTest do
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
   import Sportyweb.OrganizationFixtures
+  import Sportyweb.PolymorphicFixtures
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
@@ -13,6 +14,9 @@ defmodule SportywebWeb.ClubLiveTest do
     description: "some description",
     website_url: "https://www.website_url.com",
     foundation_date: ~D[2022-11-05],
+    financial_data: %{
+      "0" => financial_data_attrs()
+    }
   }
   @update_attrs %{
     name: "some updated name",
@@ -59,7 +63,7 @@ defmodule SportywebWeb.ClubLiveTest do
   describe "New/Edit" do
     setup [:create_club]
 
-    test "saves new club", %{conn: conn, user: user, club: club} do
+    test "saves new club", %{conn: conn, user: user} do
       {:error, _} = live(conn, ~p"/clubs/new")
 
       conn = conn |> log_in_user(user)
@@ -75,7 +79,7 @@ defmodule SportywebWeb.ClubLiveTest do
         new_live
         |> form("#club-form", club: @create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/clubs/#{club}")
+        |> follow_redirect(conn, ~p"/clubs")
 
       assert html =~ "Verein erfolgreich erstellt"
       assert html =~ "some name"

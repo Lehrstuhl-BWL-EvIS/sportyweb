@@ -21,7 +21,7 @@ defmodule Sportyweb.Accounting.Transaction do
   @doc false
   def changeset(transaction, attrs) do
     transaction
-    |> cast(attrs, [:contract_id, :name, :amount, :creation_date])
+    |> cast(attrs, [:contract_id, :name, :amount, :creation_date, :payment_date])
     |> validate_required([:contract_id, :name, :amount, :creation_date])
     |> update_change(:name, &String.trim/1)
     |> validate_length(:name, max: 250)

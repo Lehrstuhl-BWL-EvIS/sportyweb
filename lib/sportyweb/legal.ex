@@ -133,7 +133,8 @@ defmodule Sportyweb.Legal do
         preload: [:contact, fee: fee]
       )
 
-    Repo.all(query)
+    contracts = Repo.all(query)
+    contracts
     |> Enum.each(fn contract ->
       fee = contract.fee
       contact_age = Contact.age_in_years(contract.contact)

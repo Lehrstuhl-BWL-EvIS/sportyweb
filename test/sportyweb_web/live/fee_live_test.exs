@@ -9,49 +9,43 @@ defmodule SportywebWeb.FeeLiveTest do
   import Sportyweb.RBAC.UserRoleFixtures
 
   @create_attrs %{
-    admission_fee_in_eur: 15,
-    admission_fee_in_eur_cent: 1500,
-    base_fee_in_eur: 42,
-    base_fee_in_eur_cent: 4200,
-    commission_date: "2023-02-24",
-    archive_date: "2023-02-24",
+    amount_one_time: "10 €",
+    amount: "30 €",
     description: "some description",
     is_for_contact_group_contacts_only: true,
-    is_recurring: true,
-    maximum_age_in_years: 42,
-    minimum_age_in_years: 42,
+    is_general: true,
+    maximum_age_in_years: 30,
+    minimum_age_in_years: 10,
     name: "some name",
-    reference_number: "some reference_number"
+    reference_number: "some reference_number",
+    type: "club",
+    internal_events: %{
+      "0" => %{
+        commission_date: ~D[2023-01-01],
+      }
+    }
   }
   @update_attrs %{
-    admission_fee_in_eur: 16,
-    admission_fee_in_eur_cent: 1600,
-    base_fee_in_eur: 43,
-    base_fee_in_eur_cent: 4300,
-    commission_date: "2023-02-25",
-    archive_date: "2023-02-25",
+    amount_one_time: "15 €",
+    amount: "40 €",
     description: "some updated description",
     is_for_contact_group_contacts_only: false,
-    is_recurring: false,
-    maximum_age_in_years: 43,
-    minimum_age_in_years: 43,
+    maximum_age_in_years: 40,
+    minimum_age_in_years: 20,
     name: "some updated name",
-    reference_number: "some updated reference_number"
+    reference_number: "some updated reference_number",
+    type: "club"
   }
   @invalid_attrs %{
-    admission_fee_in_eur: nil,
-    admission_fee_in_eur_cent: nil,
-    base_fee_in_eur: nil,
-    base_fee_in_eur_cent: nil,
-    commission_date: nil,
-    archive_date: nil,
+    amount_one_time: nil,
+    amount: nil,
     description: nil,
     is_for_contact_group_contacts_only: false,
-    is_recurring: false,
     maximum_age_in_years: nil,
     minimum_age_in_years: nil,
     name: nil,
-    reference_number: nil
+    reference_number: nil,
+    type: nil
   }
 
   setup do

@@ -59,7 +59,7 @@ defmodule Sportyweb.AccountsTest do
     end
 
     test "validates email and password when given" do
-      {:error, changeset} = Accounts.register_user(%{email: "not valid", password: "not valid"})
+      {:error, changeset} = Accounts.register_user(%{email: "not valid", password: "invalid"})
 
       assert %{
                email: ["Muss das @-Zeichen enthalten und keine Leerzeichen."],
@@ -262,7 +262,7 @@ defmodule Sportyweb.AccountsTest do
     test "validates password", %{user: user} do
       {:error, changeset} =
         Accounts.update_user_password(user, valid_user_password(), %{
-          password: "not valid",
+          password: "invalid",
           password_confirmation: "another"
         })
 
@@ -471,12 +471,12 @@ defmodule Sportyweb.AccountsTest do
     test "validates password", %{user: user} do
       {:error, changeset} =
         Accounts.reset_user_password(user, %{
-          password: "not valid",
-          password_confirmation: "another"
+          password: "invalid",
+          password_confirmation: "also invalid"
         })
 
       assert %{
-               #password: ["Muss mindestens 8-Zeichen lang sein."],
+               password: ["Muss mindestens 8-Zeichen lang sein."],
                password_confirmation: ["Passwörter stimmen nicht überein."]
              } = errors_on(changeset)
     end

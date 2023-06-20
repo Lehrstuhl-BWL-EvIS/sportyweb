@@ -59,8 +59,6 @@ defmodule Sportyweb.Finance do
 
   """
   def list_successor_fee_options(%Fee{} = fee, maximum_age_in_years) do
-    # TODOs: non-general, based on the "assigned" object & group_only
-
     if is_nil(maximum_age_in_years) do
       []
     else
@@ -103,8 +101,6 @@ defmodule Sportyweb.Finance do
 
   """
   def list_contract_fee_options(contract_object, contact_id) do
-    # TODO: group_only
-
     if is_nil(contact_id) || (is_binary(contact_id) && String.trim(contact_id) == "") do
       []
     else

@@ -8,6 +8,7 @@ defmodule Sportyweb.PersonalTest do
 
     import Sportyweb.PersonalFixtures
     import Sportyweb.OrganizationFixtures
+    import Sportyweb.PolymorphicFixtures
 
     @invalid_attrs %{
       organization_name: nil,
@@ -22,16 +23,22 @@ defmodule Sportyweb.PersonalTest do
 
     test "list_contacts/1 returns all contacts of a given club" do
       contact = contact_fixture()
-      assert Personal.list_contacts(contact.club_id, [:emails, :financial_data, :notes, :phones, :postal_addresses]) == [contact]
+      assert List.first(Personal.list_contacts(contact.club_id)).id == contact.id
     end
 
     test "list_contacts/2 returns all contacts of a given club with preloaded associations" do
-      # TODO
+      contact = contact_fixture()
+      assert Personal.list_contacts(contact.club_id, [:emails, :financial_data, :notes, :phones, :postal_addresses]) == [contact]
     end
 
     test "get_contact!/1 returns the contact with given id" do
       contact = contact_fixture()
-      assert Personal.get_contact!(contact.id) == contact
+      assert Personal.get_contact!(contact.id).id == contact.id
+    end
+
+    test "get_contact!/2 returns the contact with given id and contains preloaded associations" do
+      contact = contact_fixture()
+      assert Personal.get_contact!(contact.id, [:emails, :financial_data, :notes, :phones, :postal_addresses]) == contact
     end
 
     test "create_contact/1 with valid data creates a contact" do
@@ -46,7 +53,12 @@ defmodule Sportyweb.PersonalTest do
         person_first_name_2: "some person_first_name_2",
         person_gender: "female",
         person_last_name: "some person_last_name",
-        type: "person"
+        type: "person",
+        emails: [email_attrs()],
+        financial_data: [financial_data_attrs()],
+        notes: [note_attrs()],
+        phones: [phone_attrs()],
+        postal_addresses: [postal_address_attrs()]
       }
 
       assert {:ok, %Contact{} = contact} = Personal.create_contact(valid_attrs)
@@ -92,7 +104,8 @@ defmodule Sportyweb.PersonalTest do
     test "update_contact/2 with invalid data returns error changeset" do
       contact = contact_fixture()
       assert {:error, %Ecto.Changeset{}} = Personal.update_contact(contact, @invalid_attrs)
-      assert contact == Personal.get_contact!(contact.id)
+      assert contact ==
+        Personal.get_contact!(contact.id, [:emails, :financial_data, :phones, :notes, :postal_addresses])
     end
 
     test "delete_contact/1 deletes the contact" do
@@ -111,8 +124,9 @@ defmodule Sportyweb.PersonalTest do
     alias Sportyweb.Personal.ContactGroup
 
     import Sportyweb.PersonalFixtures
+    import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{}
+    @invalid_attrs %{club_id: nil}
 
     test "list_contact_groups/0 returns all contact_groups" do
       contact_group = contact_group_fixture()
@@ -125,9 +139,15 @@ defmodule Sportyweb.PersonalTest do
     end
 
     test "create_contact_group/1 with valid data creates a contact_group" do
-      valid_attrs = %{}
+      club = club_fixture()
+      contact = contact_fixture()
 
-      assert {:ok, %ContactGroup{} = contact_group} = Personal.create_contact_group(valid_attrs)
+      valid_attrs = %{
+        club_id: club.id,
+        contact_id: contact.id
+      }
+
+      assert {:ok, %ContactGroup{}} = Personal.create_contact_group(valid_attrs)
     end
 
     test "create_contact_group/1 with invalid data returns error changeset" do
@@ -138,8 +158,7 @@ defmodule Sportyweb.PersonalTest do
       contact_group = contact_group_fixture()
       update_attrs = %{}
 
-      assert {:ok, %ContactGroup{} = contact_group} =
-               Personal.update_contact_group(contact_group, update_attrs)
+      assert {:ok, %ContactGroup{}} = Personal.update_contact_group(contact_group, update_attrs)
     end
 
     test "update_contact_group/2 with invalid data returns error changeset" do

@@ -30,7 +30,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
           phx-submit="save"
         >
           <div class="hidden">
-            <.input field={@form[:type]} type="hidden" readonly />
+            <.input field={@form[:type]} type="text" readonly />
             <.input field={@form[:is_general]} type="checkbox" />
           </div>
 
@@ -195,7 +195,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
       # It is not optimal, because the assignment of new successor_fee_options
       # happens more often than it would with a separate handle_event function,
       # but at least the dynamic validation works (again) and doesn't confuse users.
-      # TODO: Link to docs. (Form Binding)
+      # https://hexdocs.pm/phoenix_live_view/form-bindings.html
       {:noreply,
        socket
        |> assign_form(changeset)

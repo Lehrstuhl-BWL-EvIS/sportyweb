@@ -140,6 +140,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
             <div>
               <%= if @step == 1 && @contact_type != "" do %>
                 <.button
+                  id="next-button"
                   type="button"
                   phx-target={@myself}
                   phx-click={JS.push("update_step", value: %{step: 2})}>

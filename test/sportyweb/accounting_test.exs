@@ -5,19 +5,30 @@ defmodule Sportyweb.AccountingTest do
 
   describe "transactions" do
     alias Sportyweb.Accounting.Transaction
+    alias Sportyweb.Legal
 
     import Sportyweb.AccountingFixtures
+    import Sportyweb.LegalFixtures
 
     @invalid_attrs %{
       amount: nil,
       creation_date: nil,
       name: nil,
-      payment_date: nil
+      payment_date: ""
     }
 
-    test "list_transactions/0 returns all transactions" do
+    test "list_transactions/1 returns all transactions of a given club" do
       transaction = transaction_fixture()
-      assert Accounting.list_transactions() == [transaction]
+      contract = Legal.get_contract!(transaction.contract_id)
+      assert Accounting.list_transactions(contract.club_id) == [transaction]
+    end
+
+    test "list_transactions/2 returns all contracts of a given club with preloaded associations" do
+      transaction = transaction_fixture()
+      contract = Legal.get_contract!(transaction.contract_id)
+
+      transactions = Accounting.list_transactions(contract.club_id, [:contract])
+      assert List.first(transactions).contract_id == contract.id
     end
 
     test "get_transaction!/1 returns the transaction with given id" do
@@ -25,9 +36,19 @@ defmodule Sportyweb.AccountingTest do
       assert Accounting.get_transaction!(transaction.id) == transaction
     end
 
+    test "get_transaction!/2 returns the contract with given id and contains a preloaded club" do
+      transaction = transaction_fixture()
+
+      assert %Transaction{} = Accounting.get_transaction!(transaction.id, [:contract])
+      assert Accounting.get_transaction!(transaction.id, [:contract]).contract.id == transaction.contract_id
+    end
+
     test "create_transaction/1 with valid data creates a transaction" do
+      contract = contract_fixture()
+
       valid_attrs = %{
-        amount: Money.new(:EUR, 42),
+        contract_id: contract.id,
+        amount: "42 €",
         creation_date: ~D[2023-06-04],
         name: "some name",
         payment_date: ~D[2023-06-04]
@@ -48,7 +69,7 @@ defmodule Sportyweb.AccountingTest do
       transaction = transaction_fixture()
 
       update_attrs = %{
-        amount: 43,
+        amount: "43 €",
         creation_date: ~D[2023-06-05],
         name: "some updated name",
         payment_date: ~D[2023-06-05]
@@ -57,7 +78,7 @@ defmodule Sportyweb.AccountingTest do
       assert {:ok, %Transaction{} = transaction} =
                Accounting.update_transaction(transaction, update_attrs)
 
-      assert transaction.amount == 43
+      assert transaction.amount == Money.new(:EUR, 43)
       assert transaction.creation_date == ~D[2023-06-05]
       assert transaction.name == "some updated name"
       assert transaction.payment_date == ~D[2023-06-05]

@@ -5,38 +5,36 @@ defmodule SportywebWeb.ContactLiveTest do
   import Sportyweb.AccountsFixtures
   import Sportyweb.OrganizationFixtures
   import Sportyweb.PersonalFixtures
+  import Sportyweb.PolymorphicFixtures
   import Sportyweb.RBAC.RoleFixtures
   import Sportyweb.RBAC.UserRoleFixtures
 
   @create_attrs %{
-    organization_name: "some organization_name",
-    organization_type: "club",
     person_birthday: ~D[2022-11-05],
     person_first_name_1: "some person_first_name_1",
     person_first_name_2: "some person_first_name_2",
     person_gender: "male",
     person_last_name: "some person_last_name",
-    type: "person"
+    financial_data: %{
+      "0" => financial_data_attrs()
+    },
+    postal_addresses: %{
+      "0" => postal_address_attrs()
+    }
   }
   @update_attrs %{
-    organization_name: "some updated organization_name",
-    organization_type: "corporation",
     person_birthday: ~D[2022-11-06],
     person_first_name_1: "some updated person_first_name_1",
-    person_first_name_2: "some updated person_first_name_2",
+    person_first_name_2: nil,
     person_gender: "female",
     person_last_name: "some updated person_last_name",
-    type: "organization"
   }
   @invalid_attrs %{
-    organization_name: nil,
-    organization_type: nil,
     person_birthday: nil,
     person_first_name_1: nil,
     person_first_name_2: nil,
     person_gender: nil,
     person_last_name: nil,
-    type: nil
   }
 
   setup do
@@ -92,6 +90,12 @@ defmodule SportywebWeb.ContactLiveTest do
 
       assert html =~ "Kontakt erstellen"
 
+      # Step 1: Click the "Weiter" Button the get to step 2.
+      new_live
+      |> element("#next-button", "Weiter")
+      |> render_click()
+
+      # Step 2: Fill the form with data.
       assert new_live
              |> form("#contact-form", contact: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
@@ -138,7 +142,7 @@ defmodule SportywebWeb.ContactLiveTest do
         |> follow_redirect(conn, ~p"/contacts/#{contact}")
 
       assert html =~ "Kontakt erfolgreich aktualisiert"
-      assert html =~ "some updated organization_name"
+      assert html =~ "some updated person_last_name"
     end
 
     test "cancels updates contact", %{conn: conn, user: user, contact: contact} do

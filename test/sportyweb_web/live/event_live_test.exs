@@ -187,4 +187,41 @@ defmodule SportywebWeb.EventLiveTest do
       assert html =~ event.name
     end
   end
+
+  describe "FeeNew" do
+    setup [:create_event]
+
+    test "saves new event fee", %{conn: conn, user: user, event: event} do
+      {:error, _} = live(conn, ~p"/events/#{event}/fees/new")
+
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, html} = live(conn, ~p"/events/#{event}/fees/new")
+
+      assert html =~ "Spezifische Gebühr erstellen (Veranstaltung)"
+
+      assert new_live
+      |> form("#fee-form", fee: %{})
+      |> render_change() =~ "can&#39;t be blank"
+
+      create_attrs = %{
+        amount: "30 €",
+        amount_one_time: "10 €",
+        name: "some name",
+        internal_events: %{
+          "0" => %{
+            commission_date: ~D[2022-11-03]
+          }
+        }
+      }
+
+      {:ok, _, html} =
+        new_live
+        |> form("#fee-form", fee: create_attrs)
+        |> render_submit()
+        |> follow_redirect(conn, ~p"/events/#{event}")
+
+      assert html =~ "Gebühr erfolgreich erstellt"
+      assert html =~ event.name
+    end
+  end
 end
