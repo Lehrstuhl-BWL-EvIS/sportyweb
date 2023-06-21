@@ -15,11 +15,16 @@
       <:col :let={{_id, transaction}} label="Betrag">
         <%= transaction.amount %>
       </:col>
-      <:col :let={{_id, transaction}} label="Erstellungsdatum">
+      <:col :let={{_id, transaction}} label="Erstellung">
         <%= format_date_field_dmy(transaction.creation_date) %>
       </:col>
-      <:col :let={{_id, transaction}} label="Zahlungsdatum">
+      <:col :let={{_id, transaction}} label="Zahlung">
         <%= format_date_field_dmy(transaction.payment_date) %>
+      </:col>
+      <:col :let={{_id, transaction}} label="Kontakt">
+        <.link navigate={~p"/contacts/#{transaction.contract.contact}"} class="text-indigo-600 hover:underline">
+          <%= format_string_field(transaction.contract.contact.name) %>
+        </.link>
       </:col>
 
       <:action :let={{_id, transaction}}>

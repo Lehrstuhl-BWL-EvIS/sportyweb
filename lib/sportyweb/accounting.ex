@@ -9,6 +9,7 @@ defmodule Sportyweb.Accounting do
   alias Sportyweb.Accounting.Transaction
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Finance.Subsidy
+  alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization
   alias Sportyweb.Polymorphic.InternalEvent
@@ -141,44 +142,72 @@ defmodule Sportyweb.Accounting do
     Transaction.changeset(transaction, attrs)
   end
 
-  # TODO: Add docs
-
+  @doc """
+  Returns a tuple, consisting of a list of transaction data and the calculated sum of their amounts.
+  """
   def forecast_transactions(type, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
-    get_transactions(type, contracts, start_date, end_date)
+    calculate_transactions_data(type, contracts, start_date, end_date)
   end
 
+  # Fallback, when there is no list of contracts.
   def forecast_transactions(:fee, _, %Date{} = _start_date, %Date{} = _end_date) do
     {[], Money.new(:EUR, 0)}
   end
 
-  def create_transactions(type, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
-    get_transactions(type, contracts, start_date, end_date)
+  def create_todays_transactions() do
+    today = Date.utc_today()
+    create_transactions(:fee, today)
+    create_transactions(:subsidy, today)
   end
 
-  defp get_transactions(type, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
+  @doc """
+  Creates transactions (in the datase), based on a list of transaction data.
+  Returns a tuple consisting of a list of transaction data and the calculated sum of their amounts.
+  """
+  def create_transactions(type, %Date{} = date) do
+    # Make sure all referenced fees are update to date, regarding the ages of contacts.
+    Sportyweb.Legal.update_contract_fees_for_aged_contacts()
+
+    contracts = Legal.list_all_contracts([:contact, fee: [:internal_events, subsidy: :internal_events]])
+    {transactions, transactions_amount_sum} = calculate_transactions_data(type, contracts, date, date)
+
+    # Create a transaction (that is persistet in the database) with the generated transactions data.
+    Enum.map(transactions, fn transaction ->
+      create_transaction(transaction)
+
+      # Update the contract to never calculate the amount_one_time of a referenced fee again.
+      if is_nil(transaction.contract.first_billing_date) do
+        Legal.update_contract(transaction.contract, %{first_billing_date: date})
+      end
+    end)
+
+    {transactions, transactions_amount_sum}
+  end
+
+  # Returns a tuple consisting of a list of transaction data and the calculated sum of their amounts.
+  defp calculate_transactions_data(type, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
     # Iterate over all days from start to end. It's possible that start_date == end_date.
     date_range = Date.range(start_date, end_date)
 
     # Calculating the occurrence_dates for each fee or subsidy and for the entire range of dates from start to end
     # only once via this function call and passing the result as a parameter to all subsequent functions, is much
     # faster than doing this calculation for every fee or subsidy and every day over and over again!
-    occurrence_dates = get_occurrence_dates(type, contracts, start_date, end_date)
+    occurrence_dates = calculate_occurrence_dates(type, contracts, start_date, end_date)
 
     transactions =
       date_range
       |> Enum.map(fn date ->
-        get_transactions(type, contracts, occurrence_dates, date)
+        calculate_transactions_data(type, contracts, occurrence_dates, date)
       end)
       |> List.flatten()
 
-    transactions_amount_sum = Enum.reduce(transactions, Money.new(:EUR, 0), fn transaction, acc ->
-      Money.add!(acc, transaction.amount)
-    end)
-
-    {transactions, transactions_amount_sum}
+    filtered_transactions = remove_duplicate_one_time_transactions(transactions)
+    filtered_transactions_amount_sum = calculate_transactions_amount_sum(transactions)
+    {filtered_transactions, filtered_transactions_amount_sum}
   end
 
-  defp get_transactions(:fee, [%Contract{} | _] = contracts, %{} = fees_occurrence_dates, %Date{} = date) do
+  # Calculates and returns a list of transaction data for fees of contracts for a certain date.
+  defp calculate_transactions_data(:fee, [%Contract{} | _] = contracts, %{} = fees_occurrence_dates, %Date{} = date) do
     contracts
     |> Enum.filter(fn contract ->
       if Contract.is_in_use?(contract, date) && Fee.is_in_use?(contract.fee, date) do
@@ -196,7 +225,8 @@ defmodule Sportyweb.Accounting do
           contract: contract,
           name: "Gebühr: #{contract.fee.name} - Grundbetrag",
           amount: contract.fee.amount,
-          creation_date: date
+          creation_date: date,
+          is_one_time: false
         }
       ]
 
@@ -209,12 +239,10 @@ defmodule Sportyweb.Accounting do
             contract: contract,
             name: "Gebühr: #{contract.fee.name} - Einmalzahlung",
             amount: contract.fee.amount_one_time,
-            creation_date: date
+            creation_date: date,
+            is_one_time: true
           }
         ]
-
-        # TODO: contract.first_billing_date setzen bei erster echter Abrechnung.
-
         transactions ++ transaction
       else
         transactions
@@ -222,7 +250,8 @@ defmodule Sportyweb.Accounting do
     end)
   end
 
-  defp get_transactions(:subsidy, [%Contract{} | _] = contracts, %{} = subsidies_occurrence_dates, %Date{} = date) do
+  # Calculates and returns a list of transaction data for subsides of contracts for a certain date.
+  defp calculate_transactions_data(:subsidy, [%Contract{} | _] = contracts, %{} = subsidies_occurrence_dates, %Date{} = date) do
     contracts
     |> Enum.filter(fn contract ->
       fee = contract.fee
@@ -240,12 +269,44 @@ defmodule Sportyweb.Accounting do
         contract: contract,
         name: "Zuschuss: #{contract.fee.subsidy.name}",
         amount: contract.fee.subsidy.amount,
-        creation_date: date
+        creation_date: date,
+        is_one_time: false
       }
     end)
   end
 
-  defp get_occurrence_dates(:fee, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
+  # The calculate_transactions_data function might return multiple transactions based on the amount_one_time of a fee.
+  # This is due to contract.first_billing_date (still) being nil - the contract has not yet been used for the creation
+  # of any transactions. Then, the calculate_transactions_data function creates (on purpose, because the function is not
+  # supposed to alter the contract!) multiple transactions which have to be reduced to just on with the following function.
+  defp remove_duplicate_one_time_transactions(transactions) do
+    Enum.reduce(transactions, {[], MapSet.new}, fn transaction, {filtered_transactions, seen_contract_ids} ->
+      case transaction do
+        %{is_one_time: true, contract_id: contract_id} ->
+          if MapSet.member?(seen_contract_ids, contract_id) do
+            {filtered_transactions, seen_contract_ids}
+          else
+            {filtered_transactions ++ [transaction], MapSet.put(seen_contract_ids, contract_id)}
+          end
+
+        %{is_one_time: false} ->
+          {filtered_transactions ++ [transaction], seen_contract_ids}
+
+        _ ->
+          {filtered_transactions, seen_contract_ids}
+      end
+    end)
+    |> elem(0)
+  end
+
+  defp calculate_transactions_amount_sum(transactions) do
+    Enum.reduce(transactions, Money.new(:EUR, 0), fn transaction, acc ->
+      Money.add!(acc, transaction.amount)
+    end)
+  end
+
+  # Calculates and returns a list of occurrences (dates) for fees of contracts in a range from start_date to end_date.
+  defp calculate_occurrence_dates(:fee, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
     # Get a list of all fees, some of them might be used by multiple contracts.
     fees = Enum.map(contracts, fn contract -> contract.fee end)
     # Filter out possible duplicates.
@@ -254,13 +315,14 @@ defmodule Sportyweb.Accounting do
     unique_fees
     |> Enum.map(fn fee ->
       internal_event = Enum.at(fee.internal_events, 0) # There must be an internal event, let it fail otherwise!
-      occurrence_dates = get_occurrence_dates(internal_event, start_date, end_date)
+      occurrence_dates = calculate_occurrence_dates(internal_event, start_date, end_date)
       {fee.id, occurrence_dates}
     end)
     |> Enum.into(%{})
   end
 
-  defp get_occurrence_dates(:subsidy, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
+  # Calculates and returns a list of occurrences (dates) for subsidies of contracts in a range from start_date to end_date.
+  defp calculate_occurrence_dates(:subsidy, [%Contract{} | _] = contracts, %Date{} = start_date, %Date{} = end_date) do
     # Get a list of all subsidies, some of them might be nil or used by multiple contracts (via fees).
     subsidies =
       contracts
@@ -272,13 +334,15 @@ defmodule Sportyweb.Accounting do
     unique_subsidies
     |> Enum.map(fn subsidy ->
       internal_event = Enum.at(subsidy.internal_events, 0) # There must be an internal event, let it fail otherwise!
-      occurrence_dates = get_occurrence_dates(internal_event, start_date, end_date)
+      occurrence_dates = calculate_occurrence_dates(internal_event, start_date, end_date)
       {subsidy.id, occurrence_dates}
     end)
     |> Enum.into(%{})
   end
 
-  defp get_occurrence_dates(%InternalEvent{} = internal_event, %Date{} = start_date, %Date{} = end_date) do
+  # Calculates and returns a list of occurrences (dates) in a range from start_date to end_date
+  # based on the data of an internal_event.
+  defp calculate_occurrence_dates(%InternalEvent{} = internal_event, %Date{} = start_date, %Date{} = end_date) do
     # "Cocktail", the date recurrence library in use doesn't natively support a yearly frequency.
     # Therefore, the interval might have to be converted from year to month via a multiplication by 12.
     interval = case internal_event.frequency do

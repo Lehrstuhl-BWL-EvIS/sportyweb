@@ -18,5 +18,10 @@
     <:item title="Zahlungsdatum">
       <%= format_date_field_dmy(@transaction.payment_date) %>
     </:item>
+    <:item title="Kontakt">
+      <.link navigate={~p"/contacts/#{@transaction.contract.contact}"} class="text-indigo-600 hover:underline">
+        <%= format_string_field(@transaction.contract.contact.name) %>
+      </.link>
+    </:item>
   </.list>
 </.card>

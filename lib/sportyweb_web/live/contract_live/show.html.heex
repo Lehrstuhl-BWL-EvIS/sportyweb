@@ -23,6 +23,9 @@
     <:item title="Vertragsbeginn">
       <%= format_date_field_dmy(@contract.start_date) %>
     </:item>
+    <:item title="Datum der ersten Abrechnung">
+      <%= format_date_field_dmy(@contract.first_billing_date) %>
+    </:item>
     <:item title="Kündigungsdatum">
       <%= format_date_field_dmy(@contract.termination_date) %>
     </:item>

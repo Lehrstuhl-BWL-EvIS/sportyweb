@@ -41,7 +41,7 @@ config :sportyweb, Sportyweb.Mailer, adapter: Swoosh.Adapters.Local
 # https://github.com/quantum-elixir/quantum-core
 config :sportyweb, Sportyweb.Scheduler,
   jobs: [
-    {"@daily", {Sportyweb.Legal, :update_contract_fees_for_aged_contacts, []}}
+    {"@daily", {Sportyweb.Accounting, :create_todays_transactions, []}}
   ]
 
 # Configure esbuild (the version is required)

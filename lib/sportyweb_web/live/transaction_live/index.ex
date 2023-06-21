@@ -19,7 +19,7 @@ defmodule SportywebWeb.TransactionLive.Index do
   end
 
   defp apply_action(socket, :index, %{"club_id" => club_id}) do
-    club = Organization.get_club!(club_id, [:transactions])
+    club = Organization.get_club!(club_id, [transactions: [contract: :contact]])
 
     socket
     |> assign(:page_title, "Transaktionen")

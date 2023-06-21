@@ -11,6 +11,21 @@ defmodule Sportyweb.Legal do
   alias Sportyweb.Personal.Contact
 
   @doc """
+  Returns a list of all contracts. Preloads associations.
+
+  ## Examples
+
+      iex> list_contracts([:contact])
+      [%Contract{}, ...]
+
+  """
+  def list_all_contracts(preloads) do
+    Contract
+    |> Repo.all()
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
   Returns a clubs list of contracts.
 
   ## Examples

@@ -1,5 +1,6 @@
 defmodule SportywebWeb.TransactionLive.FormComponent do
   use SportywebWeb, :live_component
+  import SportywebWeb.CommonHelper
 
   alias Sportyweb.Accounting
 
@@ -12,6 +13,22 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
       </.header>
 
       <.card>
+        <.list>
+          <:item title="Betrag">
+            <%= @transaction.amount %>
+          </:item>
+          <:item title="Erstellungsdatum">
+            <%= format_date_field_dmy(@transaction.creation_date) %>
+          </:item>
+          <:item title="Kontakt">
+            <.link navigate={~p"/contacts/#{@transaction.contract.contact}"} class="text-indigo-600 hover:underline">
+              <%= format_string_field(@transaction.contract.contact.name) %>
+            </.link>
+          </:item>
+        </.list>
+
+        <hr class="mt-12 mb-6">
+
         <.simple_form
           for={@form}
           id="transaction-form"
@@ -21,30 +38,17 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
         >
           <.input_grids>
             <.input_grid>
-              <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:name]} type="text" label="Name" />
-              </div>
-
               <div class="col-span-12">
-                <.input field={@form[:amount]} type="text" label="Betrag in Euro" />
-                <.input_description>Das €-Zeichen kann, muss aber nicht angegeben werden.</.input_description>
-              </div>
-            </.input_grid>
-
-            <.input_grid>
-              <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:creation_date]} type="date" label="Erstellungsdatum" />
-              </div>
-
-              <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:payment_date]} type="date" label="Zahlungsdatum" />
               </div>
             </.input_grid>
           </.input_grids>
 
           <:actions>
-            <.button phx-disable-with="Speichern...">Speichern</.button>
-            <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
+            <div>
+              <.button phx-disable-with="Speichern...">Speichern</.button>
+              <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
+            </div>
           </:actions>
         </.simple_form>
       </.card>
@@ -82,7 +86,7 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Transaction updated successfully")
-         |> push_patch(to: socket.assigns.patch)}
+         |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign_form(socket, changeset)}

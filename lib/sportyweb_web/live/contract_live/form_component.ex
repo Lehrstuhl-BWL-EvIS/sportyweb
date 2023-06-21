@@ -53,7 +53,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:start_date]} type="date" label="Startdatum" />
+                <.input field={@form[:start_date]} type="date" label="Vertragsbeginn" />
               </div>
             </.input_grid>
           </.input_grids>
