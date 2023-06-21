@@ -52,7 +52,7 @@
         notes={@contact.notes}
       />
     </:item>
-    <:item title="Mitglied" :if={Contact.has_active_membership_contract?(@contact)}>
+    <:item title="Aktives Mitglied" :if={Contact.has_active_membership_contract?(@contact)}>
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>
   </.list>
@@ -74,6 +74,9 @@
       </:col>
       <:col :let={{_id, contract}} label="Gebühr">
         <%= format_string_field(contract.fee.name) %>
+        <%= if Fee.is_archived?(contract.fee) do %>
+          <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
+        <% end %>
       </:col>
 
       <:action :let={{_id, contract}}>
