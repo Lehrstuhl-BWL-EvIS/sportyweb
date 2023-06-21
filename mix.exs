@@ -45,13 +45,13 @@ defmodule Sportyweb.MixProject do
       # Default Phoenix Dependencies
 
       {:argon2_elixir, "~> 3.1"}, # Don't use bcrypt_elixir!
-      {:phoenix, "~> 1.7.3"},
+      {:phoenix, "~> 1.7.6"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.19.0"},
+      {:phoenix_live_view, "~> 0.19.2"},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.0"},
       {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
