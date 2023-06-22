@@ -1,6 +1,7 @@
 defmodule SportywebWeb.TransactionLive.Index do
   use SportywebWeb, :live_view
 
+  alias Sportyweb.Accounting
   alias Sportyweb.Organization
 
   @impl true
@@ -19,11 +20,12 @@ defmodule SportywebWeb.TransactionLive.Index do
   end
 
   defp apply_action(socket, :index, %{"club_id" => club_id}) do
-    club = Organization.get_club!(club_id, [transactions: [contract: :contact]])
+    club = Organization.get_club!(club_id)
+    transactions = Accounting.list_transactions(club_id, [contract: :contact])
 
     socket
     |> assign(:page_title, "Transaktionen")
     |> assign(:club, club)
-    |> stream(:transactions, club.transactions)
+    |> stream(:transactions, transactions)
   end
 end

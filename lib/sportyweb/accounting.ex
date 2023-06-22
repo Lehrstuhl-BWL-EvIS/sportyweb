@@ -11,7 +11,6 @@ defmodule Sportyweb.Accounting do
   alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
-  alias Sportyweb.Organization
   alias Sportyweb.Polymorphic.InternalEvent
 
   @doc """
@@ -24,8 +23,17 @@ defmodule Sportyweb.Accounting do
 
   """
   def list_transactions(club_id) do
-    club = Organization.get_club!(club_id, [:transactions])
-    club.transactions
+    query =
+      from(
+        t in Transaction,
+        join: contract in assoc(t, :contract),
+        join: contact in assoc(contract, :contact),
+        join: club in assoc(contract, :club),
+        where: club.id == ^club_id,
+        order_by: [t.creation_date, t.name, contact.name]
+      )
+
+    Repo.all(query)
   end
 
   @doc """
@@ -172,7 +180,7 @@ defmodule Sportyweb.Accounting do
     {transactions, transactions_amount_sum} = calculate_transactions_data(type, contracts, date, date)
 
     # Create a transaction (that is persistet in the database) with the generated transactions data.
-    Enum.map(transactions, fn transaction ->
+    Enum.each(transactions, fn transaction ->
       create_transaction(transaction)
 
       # Update the contract to never calculate the amount_one_time of a referenced fee again.
@@ -280,7 +288,7 @@ defmodule Sportyweb.Accounting do
   # of any transactions. Then, the calculate_transactions_data function creates (on purpose, because the function is not
   # supposed to alter the contract!) multiple transactions which have to be reduced to just on with the following function.
   defp remove_duplicate_one_time_transactions(transactions) do
-    Enum.reduce(transactions, {[], MapSet.new}, fn transaction, {filtered_transactions, seen_contract_ids} ->
+    filtered_transactions = Enum.reduce(transactions, {[], MapSet.new}, fn transaction, {filtered_transactions, seen_contract_ids} ->
       case transaction do
         %{is_one_time: true, contract_id: contract_id} ->
           if MapSet.member?(seen_contract_ids, contract_id) do
@@ -296,7 +304,8 @@ defmodule Sportyweb.Accounting do
           {filtered_transactions, seen_contract_ids}
       end
     end)
-    |> elem(0)
+
+    filtered_transactions |> elem(0)
   end
 
   defp calculate_transactions_amount_sum(transactions) do
