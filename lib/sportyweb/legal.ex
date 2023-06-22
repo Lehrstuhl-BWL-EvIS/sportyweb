@@ -135,7 +135,7 @@ defmodule Sportyweb.Legal do
       {:ok, nil}
 
   """
-  def update_contract_fees_for_aged_contacts() do
+  def update_contract_fees_for_aged_contacts do
     query =
       from(
         c in Contract,

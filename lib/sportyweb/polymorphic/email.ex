@@ -17,6 +17,7 @@ defmodule Sportyweb.Polymorphic.Email do
       [key: "Privat", value: "private"],
       [key: "Arbeit", value: "work"],
       [key: "Zentrale", value: "organization"],
+      [key: "Verteiler", value: "distribution_list"],
       [key: "Andere", value: "other"]
     ]
   end

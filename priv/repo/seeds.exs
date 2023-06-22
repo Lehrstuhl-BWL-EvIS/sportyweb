@@ -79,7 +79,7 @@ defmodule Sportyweb.SeedHelper do
       is_recurring: true,
       commission_date: ~D[2020-01-01],
       archive_date: nil,
-      frequency: InternalEvent.get_valid_frequencies() |> Enum.map(fn frequency -> frequency[:value] end) |> Enum.random(),
+      frequency: "year",
       interval: 1
     }
   end
