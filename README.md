@@ -54,11 +54,11 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
 ### Prerequisites
 
   * You will need a current version of 
-    * git (we currently use 2.37.2) 
-    * gpg (GnuPG, we currently use 2.3.7)
-    * Erlang (as of today we use: Erlang 25.0.4)
-    * Elixir (as of today we use: Elixir 1.14.x)
-    * PostgreSQL >=13 (as of today, we use: PostgreSQL 14.5)
+    * git 
+    * gpg (GnuPG)
+    * Erlang 
+    * Elixir 
+    * PostgreSQL 14 
     * Phoenix (as of today, 1.7.x) - automatically installed via `mix deps.get`, see below
   * We also recommend to use:
     * Visual Studio Code (as IDE and code editor, install the vscode-elixir extension and other you like)
