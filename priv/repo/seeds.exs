@@ -120,11 +120,6 @@ if Mix.env() in [:dev] do
   })
 
   Accounts.register_user(%{
-    email: "marvin.biesenbach@studium.fernuni-hagen.de",
-    password: "MzU2OWY3NTQyNzI"
-  })
-
-  Accounts.register_user(%{
     email: "sven.christ@fernuni-hagen.de",
     password: "ZThjNWY2NTQ3OGQ"
   })
@@ -135,8 +130,8 @@ if Mix.env() in [:dev] do
   })
 
   Accounts.register_user(%{
-    email: "andrew.utley@studium.fernuni-hagen.de",
-    password: "MGI3MTNlMzczZjR"
+    email: "marco.sieler@studium.fernuni-hagen.de",
+    password: "X46jXj6JM6KKU3u"
   })
 
   Accounts.register_user(%{
