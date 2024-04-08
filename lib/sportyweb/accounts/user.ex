@@ -9,7 +9,7 @@ defmodule Sportyweb.Accounts.User do
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @min_password_length 8

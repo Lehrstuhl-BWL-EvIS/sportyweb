@@ -144,11 +144,11 @@ defmodule SportywebWeb.UserAuth do
       end
   """
   def on_mount(:mount_current_user, _params, session, socket) do
-    {:cont, mount_current_user(session, socket)}
+    {:cont, mount_current_user(socket, session)}
   end
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
-    socket = mount_current_user(session, socket)
+    socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
       {:cont, socket}
@@ -163,7 +163,7 @@ defmodule SportywebWeb.UserAuth do
   end
 
   def on_mount(:redirect_if_user_is_authenticated, _params, session, socket) do
-    socket = mount_current_user(session, socket)
+    socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
       {:halt, Phoenix.LiveView.redirect(socket, to: signed_in_path(socket))}
@@ -172,7 +172,7 @@ defmodule SportywebWeb.UserAuth do
     end
   end
 
-  defp mount_current_user(session, socket) do
+  defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       if user_token = session["user_token"] do
         Accounts.get_user_by_session_token(user_token)

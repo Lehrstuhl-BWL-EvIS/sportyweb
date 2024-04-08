@@ -16,11 +16,13 @@ config :ex_money,
   default_cldr_backend: Sportyweb.Cldr
 
 config :sportyweb,
-  ecto_repos: [Sportyweb.Repo]
+  ecto_repos: [Sportyweb.Repo],
+  generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
 config :sportyweb, SportywebWeb.Endpoint,
   url: [host: "localhost"],
+  adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: SportywebWeb.ErrorHTML, json: SportywebWeb.ErrorJSON],
     layout: false
@@ -47,7 +49,7 @@ config :sportyweb, Sportyweb.Scheduler,
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",
-  default: [
+  sportyweb: [
     args:
       ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
     cd: Path.expand("../assets", __DIR__),
@@ -57,7 +59,7 @@ config :esbuild,
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "3.2.4", # IMPORTANT NOTE: Versions > 3.2.4 break the coloring of buttons. Check after future upgrade!
-  default: [
+  sportyweb: [
     args: ~w(
       --config=tailwind.config.js
       --input=css/app.css
