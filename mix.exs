@@ -44,7 +44,8 @@ defmodule Sportyweb.MixProject do
       ###################################
       # Default Phoenix Dependencies
 
-      {:argon2_elixir, "~> 3.1"}, # Don't use bcrypt_elixir!
+      # Don't use bcrypt_elixir!
+      {:argon2_elixir, "~> 3.1"},
       {:phoenix, "~> 1.7.6"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
@@ -85,22 +86,22 @@ defmodule Sportyweb.MixProject do
       # Generates the documentation for the entire project
       # https://hexdocs.pm/ex_doc/readme.html
       # https://github.com/elixir-lang/ex_doc
-      {:ex_doc, "~> 0.29", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.31", only: :dev, runtime: false},
 
       # Elixir implementation of Money with Currency
       # https://hexdocs.pm/ex_money/readme.html
       # https://github.com/kipcole9/money
-      {:ex_money, "~> 5.13"},
+      {:ex_money, "~> 5.15"},
 
       # Money functions for the serialization of a money data type
       # https://hexdocs.pm/ex_money_sql/readme.html
       # https://github.com/kipcole9/money_sql
-      {:ex_money_sql, "~> 1.9"},
+      {:ex_money_sql, "~> 1.11"},
 
       # Generates fake data (primarily for the seed)
       # https://hexdocs.pm/faker/readme.html
       # https://github.com/elixirs/faker
-      {:faker, "~> 0.17", only: [:dev, :test]},
+      {:faker, "~> 0.18", only: [:dev, :test]},
 
       # Cron-like job scheduler for Elixir
       # https://hexdocs.pm/quantum/readme.html
