@@ -1,6 +1,6 @@
 # credo:disable-for-this-file Credo.Check.Design.DuplicatedCode
 defmodule SportywebWeb.Live.ClubLiveRbacTest do
-  use SportywebWeb.ConnCase
+  use SportywebWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures

@@ -1,5 +1,5 @@
 defmodule SportywebWeb.PageControllerTest do
-  use SportywebWeb.ConnCase
+  use SportywebWeb.ConnCase, async: true
 
   import Sportyweb.AccountsFixtures
 

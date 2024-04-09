@@ -1,5 +1,5 @@
 defmodule SportywebWeb.UserSettingsLiveTest do
-  use SportywebWeb.ConnCase
+  use SportywebWeb.ConnCase, async: true
 
   alias Sportyweb.Accounts
   import Phoenix.LiveViewTest

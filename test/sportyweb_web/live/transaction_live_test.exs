@@ -7,7 +7,7 @@
 # #######################################################
 
 # defmodule SportywebWeb.TransactionLiveTest do
-#   use SportywebWeb.ConnCase
+#   use SportywebWeb.ConnCase, async: true
 
 #   import Phoenix.LiveViewTest
 #   import Sportyweb.AccountingFixtures

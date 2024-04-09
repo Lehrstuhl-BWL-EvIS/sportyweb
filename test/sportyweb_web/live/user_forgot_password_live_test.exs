@@ -1,5 +1,5 @@
 defmodule SportywebWeb.UserForgotPasswordLiveTest do
-  use SportywebWeb.ConnCase
+  use SportywebWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
