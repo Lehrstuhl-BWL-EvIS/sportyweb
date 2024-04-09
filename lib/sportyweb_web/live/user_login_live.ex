@@ -15,12 +15,7 @@ defmodule SportywebWeb.UserLoginLive do
       </.header>
 
       <.card class="mt-8">
-        <.simple_form
-          for={@form}
-          id="login_form"
-          action={~p"/users/log_in"}
-          phx-update="ignore"
-        >
+        <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
           <.input_grids>
             <.input_grid>
               <div class="col-span-12">

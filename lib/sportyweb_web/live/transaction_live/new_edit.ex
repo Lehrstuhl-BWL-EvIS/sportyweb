@@ -13,7 +13,11 @@ defmodule SportywebWeb.TransactionLive.NewEdit do
         title={@page_title}
         action={@live_action}
         transaction={@transaction}
-        navigate={if @transaction.id, do: ~p"/transactions/#{@transaction}", else: ~p"/clubs/#{@club}/transactions"}
+        navigate={
+          if @transaction.id,
+            do: ~p"/transactions/#{@transaction}",
+            else: ~p"/clubs/#{@club}/transactions"
+        }
       />
     </div>
     """
@@ -30,7 +34,7 @@ defmodule SportywebWeb.TransactionLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    transaction = Accounting.get_transaction!(id, [contract: [:club, :contact]])
+    transaction = Accounting.get_transaction!(id, contract: [:club, :contact])
 
     socket
     |> assign(:page_title, "Transaktion bearbeiten")

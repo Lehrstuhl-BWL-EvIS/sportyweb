@@ -33,7 +33,7 @@ defmodule SportywebWeb.PolymorphicLive.InternalEventFormComponent do
               field={@internal_event[:frequency]}
               type="select"
               label="Frequenz"
-              options={InternalEvent.get_valid_frequencies}
+              options={InternalEvent.get_valid_frequencies()}
             />
           </div>
 
@@ -53,7 +53,14 @@ defmodule SportywebWeb.PolymorphicLive.InternalEventFormComponent do
   end
 
   @impl true
-  def update(%{internal_event: %{data: %Sportyweb.Polymorphic.InternalEvent{is_recurring: is_recurring}}} = assigns, socket) do
+  def update(
+        %{
+          internal_event: %{
+            data: %Sportyweb.Polymorphic.InternalEvent{is_recurring: is_recurring}
+          }
+        } = assigns,
+        socket
+      ) do
     # This function will be used if the params don't contain the type info, yet.
     # Then, the type value comes from the assigns instead.
     update_is_recurring(assigns, socket, is_recurring)

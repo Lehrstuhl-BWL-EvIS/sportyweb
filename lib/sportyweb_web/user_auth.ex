@@ -155,7 +155,10 @@ defmodule SportywebWeb.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "Sie müssen angemeldet sein, um auf diese Seite zugreifen zu können.")
+        |> Phoenix.LiveView.put_flash(
+          :error,
+          "Sie müssen angemeldet sein, um auf diese Seite zugreifen zu können."
+        )
         |> Phoenix.LiveView.redirect(to: ~p"/users/log_in")
 
       {:halt, socket}
@@ -230,7 +233,8 @@ defmodule SportywebWeb.UserAuth do
   """
   def clean_dummy_tokens(conn, _opts) do
     if user = Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de") do
-      Accounts.delete_dummy_tokens(user) #breaks functionality if timing_attack_dummy@sportyweb.de is not seeded/ inserted in database.
+      # breaks functionality if timing_attack_dummy@sportyweb.de is not seeded/ inserted in database.
+      Accounts.delete_dummy_tokens(user)
     end
 
     conn

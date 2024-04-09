@@ -1,5 +1,5 @@
 defmodule Sportyweb.AccountingTest do
-  use Sportyweb.DataCase
+  use Sportyweb.DataCase, async: true
 
   alias Sportyweb.Accounting
 
@@ -40,7 +40,9 @@ defmodule Sportyweb.AccountingTest do
       transaction = transaction_fixture()
 
       assert %Transaction{} = Accounting.get_transaction!(transaction.id, [:contract])
-      assert Accounting.get_transaction!(transaction.id, [:contract]).contract.id == transaction.contract_id
+
+      assert Accounting.get_transaction!(transaction.id, [:contract]).contract.id ==
+               transaction.contract_id
     end
 
     test "create_transaction/1 with valid data creates a transaction" do

@@ -64,30 +64,37 @@ defmodule Sportyweb.Finance.Fee do
   end
 
   def is_in_use?(%Fee{} = fee, %Date{} = date \\ Date.utc_today()) do
-    Enum.any?(fee.internal_events, fn internal_event -> InternalEvent.is_in_use?(internal_event, date) end)
+    Enum.any?(fee.internal_events, fn internal_event ->
+      InternalEvent.is_in_use?(internal_event, date)
+    end)
   end
 
   def is_archived?(%Fee{} = fee, %Date{} = date \\ Date.utc_today()) do
-    Enum.any?(fee.internal_events, fn internal_event -> InternalEvent.is_archived?(internal_event, date) end)
+    Enum.any?(fee.internal_events, fn internal_event ->
+      InternalEvent.is_archived?(internal_event, date)
+    end)
   end
 
   @doc false
   def changeset(fee, attrs) do
     fee
-    |> cast(attrs, [
-      :club_id,
-      :subsidy_id,
-      :successor_id,
-      :is_general,
-      :type,
-      :name,
-      :reference_number,
-      :description,
-      :amount,
-      :amount_one_time,
-      :is_for_contact_group_contacts_only,
-      :minimum_age_in_years,
-      :maximum_age_in_years],
+    |> cast(
+      attrs,
+      [
+        :club_id,
+        :subsidy_id,
+        :successor_id,
+        :is_general,
+        :type,
+        :name,
+        :reference_number,
+        :description,
+        :amount,
+        :amount_one_time,
+        :is_for_contact_group_contacts_only,
+        :minimum_age_in_years,
+        :maximum_age_in_years
+      ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:internal_events, required: true)
@@ -97,8 +104,8 @@ defmodule Sportyweb.Finance.Fee do
       :type,
       :name,
       :amount,
-      :amount_one_time]
-    )
+      :amount_one_time
+    ])
     |> validate_inclusion(
       :type,
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
@@ -111,9 +118,18 @@ defmodule Sportyweb.Finance.Fee do
     |> validate_length(:description, max: 20_000)
     |> validate_currency(:amount, :EUR)
     |> validate_currency(:amount_one_time, :EUR)
-    |> validate_number(:minimum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
-    |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
-    |> validate_numbers_order(:minimum_age_in_years, :maximum_age_in_years,
-      "Muss größer oder gleich \"Mindestalter\" sein!")
+    |> validate_number(:minimum_age_in_years,
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: 125
+    )
+    |> validate_number(:maximum_age_in_years,
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: 125
+    )
+    |> validate_numbers_order(
+      :minimum_age_in_years,
+      :maximum_age_in_years,
+      "Muss größer oder gleich \"Mindestalter\" sein!"
+    )
   end
 end

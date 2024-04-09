@@ -21,13 +21,16 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
             <%= format_date_field_dmy(@transaction.creation_date) %>
           </:item>
           <:item title="Kontakt">
-            <.link navigate={~p"/contacts/#{@transaction.contract.contact}"} class="text-indigo-600 hover:underline">
+            <.link
+              navigate={~p"/contacts/#{@transaction.contract.contact}"}
+              class="text-indigo-600 hover:underline"
+            >
               <%= format_string_field(@transaction.contract.contact.name) %>
             </.link>
           </:item>
         </.list>
 
-        <hr class="mt-12 mb-6">
+        <hr class="mt-12 mb-6" />
 
         <.simple_form
           for={@form}

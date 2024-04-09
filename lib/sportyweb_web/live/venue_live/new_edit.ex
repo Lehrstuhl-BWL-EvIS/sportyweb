@@ -55,8 +55,8 @@ defmodule SportywebWeb.VenueLive.NewEdit do
       postal_addresses: [%PostalAddress{}],
       emails: [%Email{}],
       phones: [%Phone{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
     |> assign(:club, club)
   end
 

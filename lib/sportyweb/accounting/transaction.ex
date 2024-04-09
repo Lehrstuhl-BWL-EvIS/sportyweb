@@ -26,7 +26,10 @@ defmodule Sportyweb.Accounting.Transaction do
     |> update_change(:name, &String.trim/1)
     |> validate_length(:name, max: 250)
     |> validate_currency(:amount, :EUR)
-    |> validate_dates_order(:creation_date, :payment_date,
-      "Muss zeitlich später als oder gleich \"Erstellungsdatum\" sein!")
+    |> validate_dates_order(
+      :creation_date,
+      :payment_date,
+      "Muss zeitlich später als oder gleich \"Erstellungsdatum\" sein!"
+    )
   end
 end

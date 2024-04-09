@@ -21,7 +21,7 @@ defmodule SportywebWeb.TransactionLive.Index do
 
   defp apply_action(socket, :index, %{"club_id" => club_id}) do
     club = Organization.get_club!(club_id)
-    transactions = Accounting.list_transactions(club_id, [contract: :contact])
+    transactions = Accounting.list_transactions(club_id, contract: :contact)
 
     socket
     |> assign(:page_title, "Transaktionen")

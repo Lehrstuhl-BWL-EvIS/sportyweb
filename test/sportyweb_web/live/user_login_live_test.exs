@@ -51,7 +51,8 @@ defmodule SportywebWeb.UserLoginLiveTest do
 
       conn = submit_form(form, conn)
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Ungültige E-Mail oder ungültiges Passwort."
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
+               "Ungültige E-Mail oder ungültiges Passwort."
 
       assert redirected_to(conn) == "/users/log_in"
     end

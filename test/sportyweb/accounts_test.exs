@@ -1,5 +1,5 @@
 defmodule Sportyweb.AccountsTest do
-  use Sportyweb.DataCase
+  use Sportyweb.DataCase, async: true
 
   alias Sportyweb.Accounts
 
@@ -138,7 +138,8 @@ defmodule Sportyweb.AccountsTest do
       {:error, changeset} =
         Accounts.apply_user_email(user, valid_user_password(), %{email: "not valid"})
 
-      assert %{email: ["Muss das @-Zeichen enthalten und keine Leerzeichen."]} = errors_on(changeset)
+      assert %{email: ["Muss das @-Zeichen enthalten und keine Leerzeichen."]} =
+               errors_on(changeset)
     end
 
     test "validates maximum value for email for security", %{user: user} do

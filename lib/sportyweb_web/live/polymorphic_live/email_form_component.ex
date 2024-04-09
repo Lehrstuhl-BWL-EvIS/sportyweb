@@ -13,12 +13,7 @@ defmodule SportywebWeb.PolymorphicLive.EmailFormComponent do
         </div>
 
         <div class="col-span-12 md:col-span-4">
-          <.input
-            field={@email[:type]}
-            type="select"
-            label="Art"
-            options={Email.get_valid_types}
-          />
+          <.input field={@email[:type]} type="select" label="Art" options={Email.get_valid_types()} />
         </div>
       </.input_grid>
     </div>

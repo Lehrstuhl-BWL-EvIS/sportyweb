@@ -117,9 +117,10 @@ defmodule SportywebWeb.ContractLive.FormComponent do
   end
 
   defp save_contract(socket, :new, contract_params) do
-    contract_params = Enum.into(contract_params, %{
-      "club_id" => socket.assigns.contract.club.id
-    })
+    contract_params =
+      Enum.into(contract_params, %{
+        "club_id" => socket.assigns.contract.club.id
+      })
 
     case Legal.create_contract(contract_params) do
       {:ok, contract} ->
@@ -146,7 +147,11 @@ defmodule SportywebWeb.ContractLive.FormComponent do
   end
 
   defp assign_fee_options(socket, contact_id) do
-    assign(socket, :fee_options, Finance.list_contract_fee_options(socket.assigns.contract_object, contact_id))
+    assign(
+      socket,
+      :fee_options,
+      Finance.list_contract_fee_options(socket.assigns.contract_object, contact_id)
+    )
   end
 
   defp create_association(contract, %Club{} = contract_object) do

@@ -27,7 +27,9 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
                     field={@form[:venue_id]}
                     type="select"
                     label="Standort"
-                    options={Asset.list_venues(@equipment.venue.club_id) |> Enum.map(&{&1.name, &1.id})}
+                    options={
+                      Asset.list_venues(@equipment.venue.club_id) |> Enum.map(&{&1.name, &1.id})
+                    }
                   />
                 </div>
               <% end %>
@@ -37,7 +39,11 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
               </div>
 
               <div class="col-span-12 md:col-span-3">
-                <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+                <.input
+                  field={@form[:reference_number]}
+                  type="text"
+                  label="Referenznummer (optional)"
+                />
               </div>
 
               <div class="col-span-12 md:col-span-3">
@@ -95,12 +101,13 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
             <.button
-                :if={@equipment.id}
-                class="bg-rose-700 hover:bg-rose-800"
-                phx-click={JS.push("delete", value: %{id: @equipment.id})}
-                data-confirm="Unwiderruflich löschen?">
-                Löschen
-              </.button>
+              :if={@equipment.id}
+              class="bg-rose-700 hover:bg-rose-800"
+              phx-click={JS.push("delete", value: %{id: @equipment.id})}
+              data-confirm="Unwiderruflich löschen?"
+            >
+              Löschen
+            </.button>
           </:actions>
         </.simple_form>
       </.card>
@@ -146,9 +153,10 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
   end
 
   defp save_equipment(socket, :new, equipment_params) do
-    equipment_params = Enum.into(equipment_params, %{
-      "venue_id" => socket.assigns.equipment.venue.id
-    })
+    equipment_params =
+      Enum.into(equipment_params, %{
+        "venue_id" => socket.assigns.equipment.venue.id
+      })
 
     case Asset.create_equipment(equipment_params) do
       {:ok, _equipment} ->

@@ -21,7 +21,9 @@ defmodule SportywebWeb.UserSettingsLiveTest do
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/users/log_in"
-      assert %{"error" => "Sie müssen angemeldet sein, um auf diese Seite zugreifen zu können."} = flash
+
+      assert %{"error" => "Sie müssen angemeldet sein, um auf diese Seite zugreifen zu können."} =
+               flash
     end
   end
 

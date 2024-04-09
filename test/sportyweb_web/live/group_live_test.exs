@@ -187,8 +187,8 @@ defmodule SportywebWeb.GroupLiveTest do
       assert html =~ "Spezifische Gebühr erstellen (Gruppe)"
 
       assert new_live
-      |> form("#fee-form", fee: %{})
-      |> render_change() =~ "can&#39;t be blank"
+             |> form("#fee-form", fee: %{})
+             |> render_change() =~ "can&#39;t be blank"
 
       create_attrs = %{
         amount: "30 €",

@@ -15,7 +15,9 @@ defmodule SportywebWeb.ClubLive.ContractNew do
         action={@live_action}
         contract={@contract}
         contract_object={@club}
-        navigate={if @contract.id, do: ~p"/contracts/#{@contract}", else: ~p"/clubs/#{@club}/contacts"}
+        navigate={
+          if @contract.id, do: ~p"/contracts/#{@contract}", else: ~p"/clubs/#{@club}/contacts"
+        }
       />
     </div>
     """
@@ -48,8 +50,8 @@ defmodule SportywebWeb.ClubLive.ContractNew do
       club_id: club.id,
       club: club,
       signing_date: Date.utc_today(),
-      clubs: [club]}
-    )
+      clubs: [club]
+    })
     |> assign(:club, club)
   end
 end

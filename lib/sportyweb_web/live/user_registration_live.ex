@@ -44,7 +44,9 @@ defmodule SportywebWeb.UserRegistrationLive do
           </.input_grids>
 
           <:actions>
-            <.button phx-disable-with="Konto wird erstellt..." class="w-full">Konto erstellen</.button>
+            <.button phx-disable-with="Konto wird erstellt..." class="w-full">
+              Konto erstellen
+            </.button>
           </:actions>
         </.simple_form>
       </.card>

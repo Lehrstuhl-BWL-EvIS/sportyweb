@@ -1,5 +1,5 @@
 defmodule Sportyweb.OrganizationTest do
-  use Sportyweb.DataCase
+  use Sportyweb.DataCase, async: true
 
   alias Sportyweb.Organization
 
@@ -126,7 +126,10 @@ defmodule Sportyweb.OrganizationTest do
 
     test "list_departments/2 returns all departments of a given club with preloaded data" do
       department = department_fixture()
-      assert Organization.list_departments(department.club_id, [:emails, :notes, :phones]) == [department]
+
+      assert Organization.list_departments(department.club_id, [:emails, :notes, :phones]) == [
+               department
+             ]
     end
 
     test "get_department!/1 returns the department with given id" do
@@ -206,7 +209,9 @@ defmodule Sportyweb.OrganizationTest do
     test "create_department_contract/2 with valid data" do
       department = department_fixture()
       contract = contract_fixture()
-      assert {:ok, %DepartmentContract{}} = Organization.create_department_contract(department, contract)
+
+      assert {:ok, %DepartmentContract{}} =
+               Organization.create_department_contract(department, contract)
     end
 
     test "create_department_fee/2 with valid data" do

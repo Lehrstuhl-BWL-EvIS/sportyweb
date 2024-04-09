@@ -37,10 +37,18 @@ defmodule SportywebWeb.UserForgotPasswordLive do
   def handle_event("send_email", %{"user" => %{"email" => email}}, socket) do
     if user = Accounts.get_user_by_email(email) do
       Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de")
-      Accounts.deliver_user_reset_password_instructions(user, &url(~p"/users/reset_password/#{&1}"))
+
+      Accounts.deliver_user_reset_password_instructions(
+        user,
+        &url(~p"/users/reset_password/#{&1}")
+      )
     else
       dummy = Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de")
-      Accounts.deliver_user_reset_password_instructions(dummy, &url(~p"/users/reset_password/#{&1}"))
+
+      Accounts.deliver_user_reset_password_instructions(
+        dummy,
+        &url(~p"/users/reset_password/#{&1}")
+      )
     end
 
     info =

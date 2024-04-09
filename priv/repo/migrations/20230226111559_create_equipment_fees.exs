@@ -4,7 +4,10 @@ defmodule Sportyweb.Repo.Migrations.CreateEquipmentFees do
   def change do
     create table(:equipment_fees, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :equipment_id, references(:equipment, on_delete: :delete_all, type: :binary_id), null: false
+
+      add :equipment_id, references(:equipment, on_delete: :delete_all, type: :binary_id),
+        null: false
+
       add :fee_id, references(:fees, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()

@@ -27,7 +27,11 @@ defmodule SportywebWeb.VenueLive.FormComponent do
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+                <.input
+                  field={@form[:reference_number]}
+                  type="text"
+                  label="Referenznummer (optional)"
+                />
               </div>
 
               <div class="col-span-12">
@@ -72,12 +76,17 @@ defmodule SportywebWeb.VenueLive.FormComponent do
               </div>
             </.input_grid>
 
-            <.input_grid class="pt-6" :if={!show_delete_button?(@venue)}>
+            <.input_grid :if={!show_delete_button?(@venue)} class="pt-6">
               <div class="col-span-12">
-                <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
+                <div
+                  class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative"
+                  role="alert"
+                >
                   Dieser Standort kann derzeit nicht gelöscht, da er als Hauptstandort des Vereins festgelegt wurde.
                   Wird dies im
-                  <.link navigate={~p"/clubs/#{@venue.club}/edit"} class="text-amber-900 underline">Verein</.link>
+                  <.link navigate={~p"/clubs/#{@venue.club}/edit"} class="text-amber-900 underline">
+                    Verein
+                  </.link>
                   geändert, kann im Anschluss eine Löschung dieses Standorts erfolgen.
                 </div>
               </div>
@@ -93,7 +102,8 @@ defmodule SportywebWeb.VenueLive.FormComponent do
               :if={show_delete_button?(@venue)}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @venue.id})}
-              data-confirm="Unwiderruflich löschen?">
+              data-confirm="Unwiderruflich löschen?"
+            >
               Löschen
             </.button>
           </:actions>
@@ -141,9 +151,10 @@ defmodule SportywebWeb.VenueLive.FormComponent do
   end
 
   defp save_venue(socket, :new, venue_params) do
-    venue_params = Enum.into(venue_params, %{
-      "club_id" => socket.assigns.venue.club.id
-    })
+    venue_params =
+      Enum.into(venue_params, %{
+        "club_id" => socket.assigns.venue.club.id
+      })
 
     case Asset.create_venue(venue_params) do
       {:ok, _venue} ->

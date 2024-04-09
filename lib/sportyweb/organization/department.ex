@@ -25,7 +25,8 @@ defmodule Sportyweb.Organization.Department do
     many_to_many :fees, Fee, join_through: DepartmentFee
     many_to_many :notes, Note, join_through: DepartmentNote
     many_to_many :phones, Phone, join_through: DepartmentPhone
-    has_many :contacts, through: [:contracts, :contact] # This line has to be below "many_to_many :contracts"!
+    # This line has to be below "many_to_many :contracts"!
+    has_many :contacts, through: [:contracts, :contact]
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""
@@ -38,12 +39,15 @@ defmodule Sportyweb.Organization.Department do
   @doc false
   def changeset(department, attrs) do
     department
-    |> cast(attrs, [
-      :club_id,
-      :name,
-      :reference_number,
-      :description,
-      :creation_date],
+    |> cast(
+      attrs,
+      [
+        :club_id,
+        :name,
+        :reference_number,
+        :description,
+        :creation_date
+      ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:emails, required: true)

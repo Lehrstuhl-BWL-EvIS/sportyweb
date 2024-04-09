@@ -27,7 +27,10 @@ defmodule SportywebWeb.GroupLive.FormComponent do
                     field={@form[:department_id]}
                     type="select"
                     label="Abteilung"
-                    options={Organization.list_departments(@group.department.club_id) |> Enum.map(&{&1.name, &1.id})}
+                    options={
+                      Organization.list_departments(@group.department.club_id)
+                      |> Enum.map(&{&1.name, &1.id})
+                    }
                   />
                 </div>
               </.input_grid>
@@ -39,7 +42,11 @@ defmodule SportywebWeb.GroupLive.FormComponent do
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+                <.input
+                  field={@form[:reference_number]}
+                  type="text"
+                  label="Referenznummer (optional)"
+                />
               </div>
 
               <div class="col-span-12">
@@ -85,12 +92,13 @@ defmodule SportywebWeb.GroupLive.FormComponent do
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
             <.button
-                :if={@group.id}
-                class="bg-rose-700 hover:bg-rose-800"
-                phx-click={JS.push("delete", value: %{id: @group.id})}
-                data-confirm="Unwiderruflich löschen?">
-                Löschen
-              </.button>
+              :if={@group.id}
+              class="bg-rose-700 hover:bg-rose-800"
+              phx-click={JS.push("delete", value: %{id: @group.id})}
+              data-confirm="Unwiderruflich löschen?"
+            >
+              Löschen
+            </.button>
           </:actions>
         </.simple_form>
       </.card>
@@ -136,9 +144,10 @@ defmodule SportywebWeb.GroupLive.FormComponent do
   end
 
   defp save_group(socket, :new, group_params) do
-    group_params = Enum.into(group_params, %{
-      "department_id" => socket.assigns.group.department.id
-    })
+    group_params =
+      Enum.into(group_params, %{
+        "department_id" => socket.assigns.group.department.id
+      })
 
     case Organization.create_group(group_params) do
       {:ok, _group} ->

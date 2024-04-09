@@ -33,7 +33,8 @@ defmodule Sportyweb.Polymorphic.Email do
     )
     |> update_change(:address, &String.trim/1)
     |> update_change(:address, &String.downcase/1)
-    |> validate_format(:address, ~r/^$|@/) # Empty or contains "@"
+    # Empty or contains "@"
+    |> validate_format(:address, ~r/^$|@/)
     |> validate_length(:address, max: 250)
   end
 end

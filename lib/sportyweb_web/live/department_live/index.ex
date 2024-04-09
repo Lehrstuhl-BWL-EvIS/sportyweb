@@ -19,7 +19,7 @@ defmodule SportywebWeb.DepartmentLive.Index do
   end
 
   defp apply_action(socket, :index, %{"club_id" => club_id}) do
-    club = Organization.get_club!(club_id, [departments: :groups])
+    club = Organization.get_club!(club_id, departments: :groups)
 
     socket
     |> assign(:page_title, "Abteilungen & Gruppen")

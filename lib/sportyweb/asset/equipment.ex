@@ -36,15 +36,18 @@ defmodule Sportyweb.Asset.Equipment do
   @doc false
   def changeset(equipment, attrs) do
     equipment
-    |> cast(attrs, [
-      :venue_id,
-      :name,
-      :reference_number,
-      :serial_number,
-      :description,
-      :purchase_date,
-      :commission_date,
-      :decommission_date],
+    |> cast(
+      attrs,
+      [
+        :venue_id,
+        :name,
+        :reference_number,
+        :serial_number,
+        :description,
+        :purchase_date,
+        :commission_date,
+        :decommission_date
+      ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:emails, required: true)
@@ -59,9 +62,15 @@ defmodule Sportyweb.Asset.Equipment do
     |> validate_length(:reference_number, max: 250)
     |> validate_length(:serial_number, max: 250)
     |> validate_length(:description, max: 20_000)
-    |> validate_dates_order(:purchase_date, :commission_date,
-      "Muss zeitlich später als oder gleich \"Gekauft am\" sein!")
-    |> validate_dates_order(:commission_date, :decommission_date,
-      "Muss zeitlich später als oder gleich \"Nutzung ab\" sein!")
+    |> validate_dates_order(
+      :purchase_date,
+      :commission_date,
+      "Muss zeitlich später als oder gleich \"Gekauft am\" sein!"
+    )
+    |> validate_dates_order(
+      :commission_date,
+      :decommission_date,
+      "Muss zeitlich später als oder gleich \"Nutzung ab\" sein!"
+    )
   end
 end

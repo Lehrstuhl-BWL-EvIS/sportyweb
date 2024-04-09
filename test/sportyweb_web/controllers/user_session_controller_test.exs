@@ -90,7 +90,9 @@ defmodule SportywebWeb.UserSessionControllerTest do
           "user" => %{"email" => "invalid@email.com", "password" => "invalid_password"}
         })
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Ungültige E-Mail oder ungültiges Passwort."
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
+               "Ungültige E-Mail oder ungültiges Passwort."
+
       assert redirected_to(conn) == ~p"/users/log_in"
     end
   end

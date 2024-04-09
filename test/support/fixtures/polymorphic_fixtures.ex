@@ -40,7 +40,7 @@ defmodule Sportyweb.PolymorphicFixtures do
       archive_date: nil,
       is_recurring: true,
       frequency: "year",
-      interval: 1,
+      interval: 1
     })
   end
 

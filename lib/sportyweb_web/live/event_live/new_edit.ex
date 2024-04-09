@@ -57,8 +57,8 @@ defmodule SportywebWeb.EventLive.NewEdit do
       postal_addresses: [%PostalAddress{}],
       emails: [%Email{}],
       phones: [%Phone{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
     |> assign(:club, club)
   end
 
@@ -68,8 +68,8 @@ defmodule SportywebWeb.EventLive.NewEdit do
     {:ok, _} = Calendar.delete_event(event)
 
     {:noreply,
-      socket
-      |> put_flash(:info, "Veranstaltung erfolgreich gelöscht")
-      |> push_navigate(to: "/clubs/#{event.club_id}/events")}
+     socket
+     |> put_flash(:info, "Veranstaltung erfolgreich gelöscht")
+     |> push_navigate(to: "/clubs/#{event.club_id}/events")}
   end
 end

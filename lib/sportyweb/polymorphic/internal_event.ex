@@ -33,7 +33,8 @@ defmodule Sportyweb.Polymorphic.InternalEvent do
 
   def is_in_use?(%InternalEvent{} = internal_event, %Date{} = date \\ Date.utc_today()) do
     Date.compare(date, internal_event.commission_date) != :lt &&
-    (is_nil(internal_event.archive_date) || Date.compare(date, internal_event.archive_date) == :lt)
+      (is_nil(internal_event.archive_date) ||
+         Date.compare(date, internal_event.archive_date) == :lt)
   end
 
   def is_archived?(%InternalEvent{} = internal_event, %Date{} = date \\ Date.utc_today()) do
@@ -43,17 +44,23 @@ defmodule Sportyweb.Polymorphic.InternalEvent do
   @doc false
   def changeset(internal_event, attrs) do
     internal_event
-    |> cast(attrs, [
-      :commission_date,
-      :archive_date,
-      :is_recurring,
-      :frequency,
-      :interval],
+    |> cast(
+      attrs,
+      [
+        :commission_date,
+        :archive_date,
+        :is_recurring,
+        :frequency,
+        :interval
+      ],
       empty_values: ["", nil]
     )
     |> validate_required([:commission_date])
-    |> validate_dates_order(:commission_date, :archive_date,
-      "Muss zeitlich später als oder gleich \"Verwendung ab\" sein!")
+    |> validate_dates_order(
+      :commission_date,
+      :archive_date,
+      "Muss zeitlich später als oder gleich \"Verwendung ab\" sein!"
+    )
     |> validate_inclusion(
       :frequency,
       get_valid_frequencies() |> Enum.map(fn frequency -> frequency[:value] end)
@@ -67,6 +74,7 @@ defmodule Sportyweb.Polymorphic.InternalEvent do
     case get_field(changeset, :is_recurring) do
       true ->
         changeset |> validate_required([:frequency, :interval])
+
       _ ->
         changeset
     end

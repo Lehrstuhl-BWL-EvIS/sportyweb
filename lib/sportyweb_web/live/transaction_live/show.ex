@@ -10,7 +10,7 @@ defmodule SportywebWeb.TransactionLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    transaction = Accounting.get_transaction!(id, [contract: [:club, :contact]])
+    transaction = Accounting.get_transaction!(id, contract: [:club, :contact])
 
     {:noreply,
      socket

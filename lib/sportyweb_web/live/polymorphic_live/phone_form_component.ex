@@ -13,12 +13,7 @@ defmodule SportywebWeb.PolymorphicLive.PhoneFormComponent do
         </div>
 
         <div class="col-span-12 md:col-span-4">
-          <.input
-            field={@phone[:type]}
-            type="select"
-            label="Art"
-            options={Phone.get_valid_types}
-          />
+          <.input field={@phone[:type]} type="select" label="Art" options={Phone.get_valid_types()} />
         </div>
       </.input_grid>
     </div>

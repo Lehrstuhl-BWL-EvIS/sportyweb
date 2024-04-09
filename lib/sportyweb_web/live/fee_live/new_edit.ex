@@ -37,18 +37,23 @@ defmodule SportywebWeb.FeeLive.NewEdit do
   defp apply_action(socket, :edit, %{"id" => id}) do
     fee = Finance.get_fee!(id, [:ancestors, :club, :contracts, :internal_events, :notes])
     fee_title = if fee.is_general, do: "Allgemeine", else: "Spezifische"
-    club_navigation_current_item = case fee.type do
-      "department" -> :structure
-      "group" -> :structure
-      "event" -> :calendar
-      "venue" -> :assets
-      "equipment" -> :assets
-      _ -> :fees
-    end
+
+    club_navigation_current_item =
+      case fee.type do
+        "department" -> :structure
+        "group" -> :structure
+        "event" -> :calendar
+        "venue" -> :assets
+        "equipment" -> :assets
+        _ -> :fees
+      end
 
     socket
     |> assign(:club_navigation_current_item, club_navigation_current_item)
-    |> assign(:page_title, "#{fee_title} Gebühr bearbeiten (#{get_key_for_value(Fee.get_valid_types, fee.type)})")
+    |> assign(
+      :page_title,
+      "#{fee_title} Gebühr bearbeiten (#{get_key_for_value(Fee.get_valid_types(), fee.type)})"
+    )
     |> assign(:fee, fee)
     |> assign(:club, fee.club)
   end
@@ -57,15 +62,18 @@ defmodule SportywebWeb.FeeLive.NewEdit do
     club = Organization.get_club!(club_id)
 
     socket
-    |> assign(:page_title, "Allgemeine Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types, type)})")
+    |> assign(
+      :page_title,
+      "Allgemeine Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types(), type)})"
+    )
     |> assign(:fee, %Fee{
       club_id: club.id,
       club: club,
       is_general: true,
       type: type,
       internal_events: [%InternalEvent{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
     |> assign(:club, club)
   end
 

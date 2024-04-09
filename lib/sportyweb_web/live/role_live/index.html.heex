@@ -8,7 +8,10 @@
 </.header>
 
 <div class="mt-5">
-  <.link navigate={~p"/clubs/#{@club.id}/roles/show"} class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700">
+  <.link
+    navigate={~p"/clubs/#{@club.id}/roles/show"}
+    class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+  >
     Rolleninformationen <.icon name="hero-arrow-long-right" class="w-6 h-6" />
   </.link>
 </div>
@@ -18,7 +21,11 @@
     <p>Noch besitzt niemand in diesem Verein eine Rolle.</p>
     <p class="text-red-500">Diese Nachricht sollten Sie nur als Sportyweb Administrator sehen.</p>
   <% else %>
-    <.table id="roles" rows={@roles} row_click={&JS.navigate(~p"/clubs/#{@club.id}/roles/#{&1}/edit")}>
+    <.table
+      id="roles"
+      rows={@roles}
+      row_click={&JS.navigate(~p"/clubs/#{@club.id}/roles/#{&1}/edit")}
+    >
       <:col :let={role} label="Mitarbeiter"><%= role.name %></:col>
       <:col :let={role} label="Rollen">
         <%= if String.length(role.clubroles) > 0 do %>

@@ -17,7 +17,11 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
         title={@page_title}
         action={@live_action}
         department={@department}
-        navigate={if @department.id, do: ~p"/departments/#{@department}", else: ~p"/clubs/#{@club}/departments"}
+        navigate={
+          if @department.id,
+            do: ~p"/departments/#{@department}",
+            else: ~p"/clubs/#{@club}/departments"
+        }
       />
     </div>
     """
@@ -52,8 +56,8 @@ defmodule SportywebWeb.DepartmentLive.NewEdit do
       club: club,
       emails: [%Email{}],
       phones: [%Phone{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
     |> assign(:club, club)
   end
 

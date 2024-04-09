@@ -1,5 +1,5 @@
 defmodule Sportyweb.PersonalTest do
-  use Sportyweb.DataCase
+  use Sportyweb.DataCase, async: true
 
   alias Sportyweb.Personal
 
@@ -28,7 +28,14 @@ defmodule Sportyweb.PersonalTest do
 
     test "list_contacts/2 returns all contacts of a given club with preloaded associations" do
       contact = contact_fixture()
-      assert Personal.list_contacts(contact.club_id, [:emails, :financial_data, :notes, :phones, :postal_addresses]) == [contact]
+
+      assert Personal.list_contacts(contact.club_id, [
+               :emails,
+               :financial_data,
+               :notes,
+               :phones,
+               :postal_addresses
+             ]) == [contact]
     end
 
     test "get_contact!/1 returns the contact with given id" do
@@ -38,7 +45,14 @@ defmodule Sportyweb.PersonalTest do
 
     test "get_contact!/2 returns the contact with given id and contains preloaded associations" do
       contact = contact_fixture()
-      assert Personal.get_contact!(contact.id, [:emails, :financial_data, :notes, :phones, :postal_addresses]) == contact
+
+      assert Personal.get_contact!(contact.id, [
+               :emails,
+               :financial_data,
+               :notes,
+               :phones,
+               :postal_addresses
+             ]) == contact
     end
 
     test "create_contact/1 with valid data creates a contact" do
@@ -104,8 +118,15 @@ defmodule Sportyweb.PersonalTest do
     test "update_contact/2 with invalid data returns error changeset" do
       contact = contact_fixture()
       assert {:error, %Ecto.Changeset{}} = Personal.update_contact(contact, @invalid_attrs)
+
       assert contact ==
-        Personal.get_contact!(contact.id, [:emails, :financial_data, :phones, :notes, :postal_addresses])
+               Personal.get_contact!(contact.id, [
+                 :emails,
+                 :financial_data,
+                 :phones,
+                 :notes,
+                 :postal_addresses
+               ])
     end
 
     test "delete_contact/1 deletes the contact" do

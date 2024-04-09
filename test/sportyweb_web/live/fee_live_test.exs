@@ -21,7 +21,7 @@ defmodule SportywebWeb.FeeLiveTest do
     type: "club",
     internal_events: %{
       "0" => %{
-        commission_date: ~D[2023-01-01],
+        commission_date: ~D[2023-01-01]
       }
     }
   }

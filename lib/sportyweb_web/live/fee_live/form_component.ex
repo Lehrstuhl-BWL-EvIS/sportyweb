@@ -41,7 +41,11 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+                <.input
+                  field={@form[:reference_number]}
+                  type="text"
+                  label="Referenznummer (optional)"
+                />
               </div>
 
               <div class="col-span-12">
@@ -52,12 +56,20 @@ defmodule SportywebWeb.FeeLive.FormComponent do
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:amount]} type="text" label="Grundbetrag in Euro" />
-                <.input_description>Das €-Zeichen kann, muss aber nicht angegeben werden.</.input_description>
+                <.input_description>
+                  Das €-Zeichen kann, muss aber nicht angegeben werden.
+                </.input_description>
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:amount_one_time]} type="text" label="Einmalzahlung (z.B. Aufnahmegebühr) in Euro" />
-                <.input_description>Das €-Zeichen kann, muss aber nicht angegeben werden.</.input_description>
+                <.input
+                  field={@form[:amount_one_time]}
+                  type="text"
+                  label="Einmalzahlung (z.B. Aufnahmegebühr) in Euro"
+                />
+                <.input_description>
+                  Das €-Zeichen kann, muss aber nicht angegeben werden.
+                </.input_description>
               </div>
             </.input_grid>
 
@@ -85,14 +97,24 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:minimum_age_in_years]} type="number" label="Mindestalter (optional)" min="0" />
+                <.input
+                  field={@form[:minimum_age_in_years]}
+                  type="number"
+                  label="Mindestalter (optional)"
+                  min="0"
+                />
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:maximum_age_in_years]} type="number" label="Höchstalter (optional)" min="0" />
+                <.input
+                  field={@form[:maximum_age_in_years]}
+                  type="number"
+                  label="Höchstalter (optional)"
+                  min="0"
+                />
               </div>
 
-              <div class="col-span-12" :if={Enum.any?(@successor_fee_options)}>
+              <div :if={Enum.any?(@successor_fee_options)} class="col-span-12">
                 <.input
                   field={@form[:successor_id]}
                   type="select"
@@ -122,22 +144,32 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               </div>
             </.input_grid>
 
-            <.input_grid class="pt-6" :if={show_archive_message?(@fee)}>
+            <.input_grid :if={show_archive_message?(@fee)} class="pt-6">
               <div class="col-span-12">
-                <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
+                <div
+                  class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative"
+                  role="alert"
+                >
                   Diese Gebühr kann nicht gelöscht, sondern nur archiviert werden, denn:
                   <ul class="list-disc pl-4 mb-3">
-                    <li :if={Enum.any?(@fee.contracts)}>Sie wird in <%= Enum.count(@fee.contracts) %> Verträgen verwendet.</li>
-                    <li :if={Enum.any?(@fee.ancestors)}>Sie dient <%= Enum.count(@fee.ancestors) %> anderen Gebühren als Nachfolger.</li>
+                    <li :if={Enum.any?(@fee.contracts)}>
+                      Sie wird in <%= Enum.count(@fee.contracts) %> Verträgen verwendet.
+                    </li>
+                    <li :if={Enum.any?(@fee.ancestors)}>
+                      Sie dient <%= Enum.count(@fee.ancestors) %> anderen Gebühren als Nachfolger.
+                    </li>
                   </ul>
                   Zur Archivierung bitte das gewünschte Datum im Feld "Archiviert ab" eintragen und "Speichern" klicken.
                 </div>
               </div>
             </.input_grid>
 
-            <.input_grid class="pt-6" :if={@fee.id && Fee.is_archived?(@fee)}>
+            <.input_grid :if={@fee.id && Fee.is_archived?(@fee)} class="pt-6">
               <div class="col-span-12">
-                <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
+                <div
+                  class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative"
+                  role="alert"
+                >
                   Diese Gebühr ist derzeit archiviert.
                   Wird das Datum im Feld "Archiviert ab" gelöscht, oder durch ein Zukünftiges ersetzt,
                   lässt sich die Archivierung komplett bzw. temporär aufheben.
@@ -155,7 +187,8 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               :if={show_delete_button?(@fee)}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @fee.id})}
-              data-confirm="Unwiderruflich löschen?">
+              data-confirm="Unwiderruflich löschen?"
+            >
               Löschen
             </.button>
           </:actions>
@@ -184,6 +217,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
       |> Map.put(:action, :validate)
 
     changed_maximum_age_in_years = get_change(changeset, :maximum_age_in_years)
+
     if changed_maximum_age_in_years do
       # Assigning new successor_fee_options should usually be done in a separate
       # handle_event function that gets called every time a change happens
@@ -223,9 +257,10 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   end
 
   defp save_fee(socket, :new, fee_params) do
-    fee_params = Enum.into(fee_params, %{
-      "club_id" => socket.assigns.fee.club.id
-    })
+    fee_params =
+      Enum.into(fee_params, %{
+        "club_id" => socket.assigns.fee.club.id
+      })
 
     case Finance.create_fee(fee_params) do
       {:ok, fee} ->
@@ -252,7 +287,11 @@ defmodule SportywebWeb.FeeLive.FormComponent do
   end
 
   defp assign_successor_fee_options(socket, fee, maximum_age_in_years) do
-    assign(socket, :successor_fee_options, Finance.list_successor_fee_options(fee, maximum_age_in_years))
+    assign(
+      socket,
+      :successor_fee_options,
+      Finance.list_successor_fee_options(fee, maximum_age_in_years)
+    )
   end
 
   defp create_association(fee, _) when fee.is_general do

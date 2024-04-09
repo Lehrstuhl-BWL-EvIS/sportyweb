@@ -17,7 +17,11 @@ defmodule SportywebWeb.PolymorphicLive.PostalAddressesFormComponent do
         </div>
 
         <div class="col-span-12">
-          <.input field={@postal_address[:street_additional_information]} type="text" label="Anschrift - Zusatzinformationen (optional)" />
+          <.input
+            field={@postal_address[:street_additional_information]}
+            type="text"
+            label="Anschrift - Zusatzinformationen (optional)"
+          />
         </div>
 
         <div class="col-span-12 md:col-span-4">
@@ -33,7 +37,7 @@ defmodule SportywebWeb.PolymorphicLive.PostalAddressesFormComponent do
             field={@postal_address[:country]}
             type="select"
             label="Land"
-            options={PostalAddress.get_valid_countries}
+            options={PostalAddress.get_valid_countries()}
             prompt="Bitte auswählen"
           />
         </div>

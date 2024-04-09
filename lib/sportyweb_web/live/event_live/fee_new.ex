@@ -46,7 +46,10 @@ defmodule SportywebWeb.EventLive.FeeNew do
     type = "event"
 
     socket
-    |> assign(:page_title, "Spezifische Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types, type)})")
+    |> assign(
+      :page_title,
+      "Spezifische Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types(), type)})"
+    )
     |> assign(:fee, %Fee{
       club_id: event.club.id,
       club: event.club,
@@ -54,8 +57,8 @@ defmodule SportywebWeb.EventLive.FeeNew do
       type: type,
       events: [event],
       internal_events: [%InternalEvent{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
     |> assign(:event, event)
     |> assign(:club, event.club)
   end

@@ -41,7 +41,8 @@ defmodule SportywebWeb.UserForgotPasswordLiveTest do
         |> render_submit()
         |> follow_redirect(conn, "/")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
+               "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
 
       assert Repo.get_by!(Accounts.UserToken, user_id: user.id).context ==
                "reset_password"
@@ -58,12 +59,13 @@ defmodule SportywebWeb.UserForgotPasswordLiveTest do
         |> render_submit()
         |> follow_redirect(conn, "/")
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
+               "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
+
       assert Accounts.UserToken |> Repo.all() |> Enum.count() == 1
     end
 
     test "clear dummy tokens", %{conn: conn} do
-
       valid_user = user_fixture()
       user_fixture(%{email: "timing_attack_dummy@sportyweb.de"})
 
@@ -76,10 +78,8 @@ defmodule SportywebWeb.UserForgotPasswordLiveTest do
         |> render_submit()
         |> follow_redirect(conn, "/")
 
-
       # generate and delete dummy tokens only
       Enum.map(1..250, fn _x ->
-
         # Uncomment to see token counts per run
         # count = Accounts.UserToken |> Repo.all() |> Enum.count()
         # IO.inspect("run #{x}, count: #{count}")
@@ -92,14 +92,13 @@ defmodule SportywebWeb.UserForgotPasswordLiveTest do
           |> render_submit()
           |> follow_redirect(conn, "/")
 
-        assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
-        assert Accounts.UserToken |> Repo.all() |> Enum.count() > 0
+        assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
+                 "Wenn sich Ihre E-Mail-Adresse in unserem System befindet"
 
-        end
-      )
+        assert Accounts.UserToken |> Repo.all() |> Enum.count() > 0
+      end)
 
       assert Accounts.UserToken |> Repo.all() |> Enum.count() < 200
-
     end
   end
 end

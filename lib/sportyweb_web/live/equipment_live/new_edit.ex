@@ -37,10 +37,10 @@ defmodule SportywebWeb.EquipmentLive.NewEdit do
     equipment = Asset.get_equipment!(id, [:emails, :phones, :notes, venue: :club])
 
     socket
-     |> assign(:page_title, "Equipment bearbeiten")
-     |> assign(:equipment, equipment)
-     |> assign(:venue, equipment.venue)
-     |> assign(:club, equipment.venue.club)
+    |> assign(:page_title, "Equipment bearbeiten")
+    |> assign(:equipment, equipment)
+    |> assign(:venue, equipment.venue)
+    |> assign(:club, equipment.venue.club)
   end
 
   defp apply_action(socket, :new, %{"venue_id" => venue_id}) do
@@ -53,8 +53,8 @@ defmodule SportywebWeb.EquipmentLive.NewEdit do
       venue: venue,
       emails: [%Email{}],
       phones: [%Phone{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
     |> assign(:venue, venue)
     |> assign(:club, venue.club)
   end

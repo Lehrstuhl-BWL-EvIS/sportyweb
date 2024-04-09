@@ -1,5 +1,5 @@
 defmodule Sportyweb.AssetTest do
-  use Sportyweb.DataCase
+  use Sportyweb.DataCase, async: true
 
   alias Sportyweb.Asset
 
@@ -25,7 +25,10 @@ defmodule Sportyweb.AssetTest do
 
     test "list_venues/2 returns all venues of a given club with preloaded associations" do
       venue = venue_fixture()
-      assert Asset.list_venues(venue.club_id, [:emails, :notes, :phones, :postal_addresses]) == [venue]
+
+      assert Asset.list_venues(venue.club_id, [:emails, :notes, :phones, :postal_addresses]) == [
+               venue
+             ]
     end
 
     test "get_venue!/1 returns the venue with given id" do

@@ -4,6 +4,7 @@ defmodule SportywebWeb.EquipmentLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
+
     """
   end
 

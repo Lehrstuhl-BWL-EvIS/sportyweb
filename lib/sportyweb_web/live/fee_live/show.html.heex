@@ -9,8 +9,8 @@
 
 <.card>
   <.list>
-    <:item title="Für" :if={@fee.is_general}>
-      <%= get_key_for_value(Fee.get_valid_types, @fee.type) %>
+    <:item :if={@fee.is_general} title="Für">
+      <%= get_key_for_value(Fee.get_valid_types(), @fee.type) %>
     </:item>
     <:item title="Referenznummer">
       <%= format_string_field(@fee.reference_number) %>
@@ -58,7 +58,7 @@
         internal_events={@fee.internal_events}
       />
     </:item>
-    <:item title="Archiviert" :if={Fee.is_archived?(@fee)}>
+    <:item :if={Fee.is_archived?(@fee)} title="Archiviert">
       <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
     </:item>
     <:item title="Notizen">

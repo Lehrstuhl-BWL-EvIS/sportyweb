@@ -19,6 +19,8 @@ defmodule Sportyweb.Personal.ContactPostalAddress do
     contact_postal_address
     |> cast(attrs, [:contact_id, :postal_address_id])
     |> validate_required([:contact_id, :postal_address_id])
-    |> unique_constraint(:postal_address_id, name: "contact_postal_addresses_postal_address_id_index")
+    |> unique_constraint(:postal_address_id,
+      name: "contact_postal_addresses_postal_address_id_index"
+    )
   end
 end

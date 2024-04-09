@@ -17,7 +17,10 @@ defmodule SportywebWeb.ContractLive.Show do
 
     {:noreply,
      socket
-     |> assign(:page_title, "Vertrag (#{get_key_for_value(Fee.get_valid_types, contract.fee.type)})")
+     |> assign(
+       :page_title,
+       "Vertrag (#{get_key_for_value(Fee.get_valid_types(), contract.fee.type)})"
+     )
      |> assign(:contract, contract)
      |> assign(:contract_object, contract_object)
      |> assign(:club, contract.club)}

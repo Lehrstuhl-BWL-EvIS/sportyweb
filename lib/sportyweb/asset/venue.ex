@@ -36,11 +36,14 @@ defmodule Sportyweb.Asset.Venue do
   @doc false
   def changeset(venue, attrs) do
     venue
-    |> cast(attrs, [
-      :club_id,
-      :name,
-      :reference_number,
-      :description],
+    |> cast(
+      attrs,
+      [
+        :club_id,
+        :name,
+        :reference_number,
+        :description
+      ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:emails, required: true)

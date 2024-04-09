@@ -37,7 +37,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
                   field={@form[:status]}
                   type="select"
                   label="Status"
-                  options={Event.get_valid_statuses}
+                  options={Event.get_valid_statuses()}
                 />
               </div>
 
@@ -48,21 +48,37 @@ defmodule SportywebWeb.EventLive.FormComponent do
 
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:minimum_participants]} type="number" label="Minimale Anzahl an Teilnehmern (optional)" />
+                <.input
+                  field={@form[:minimum_participants]}
+                  type="number"
+                  label="Minimale Anzahl an Teilnehmern (optional)"
+                />
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:maximum_participants]} type="number" label="Maximale Anzahl an Teilnehmern (optional)" />
+                <.input
+                  field={@form[:maximum_participants]}
+                  type="number"
+                  label="Maximale Anzahl an Teilnehmern (optional)"
+                />
               </div>
             </.input_grid>
 
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:minimum_age_in_years]} type="number" label="Mindestalter (optional)" />
+                <.input
+                  field={@form[:minimum_age_in_years]}
+                  type="number"
+                  label="Mindestalter (optional)"
+                />
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:maximum_age_in_years]} type="number" label="Höchstalter (optional)" />
+                <.input
+                  field={@form[:maximum_age_in_years]}
+                  type="number"
+                  label="Höchstalter (optional)"
+                />
               </div>
             </.input_grid>
 
@@ -72,7 +88,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
                   field={@form[:location_type]}
                   type="select"
                   label="Art des Veranstaltungsorts"
-                  options={Event.get_valid_location_types}
+                  options={Event.get_valid_location_types()}
                 />
               </div>
 
@@ -105,7 +121,11 @@ defmodule SportywebWeb.EventLive.FormComponent do
 
               <%= if @location_type == "free_form" do %>
                 <div class="col-span-12">
-                  <.input field={@form[:location_description]} type="textarea" label="Veranstaltungsort" />
+                  <.input
+                    field={@form[:location_description]}
+                    type="textarea"
+                    label="Veranstaltungsort"
+                  />
                 </div>
               <% end %>
             </.input_grid>
@@ -147,7 +167,8 @@ defmodule SportywebWeb.EventLive.FormComponent do
               :if={@event.id}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @event.id})}
-              data-confirm="Unwiderruflich löschen?">
+              data-confirm="Unwiderruflich löschen?"
+            >
               Löschen
             </.button>
           </:actions>
@@ -199,9 +220,10 @@ defmodule SportywebWeb.EventLive.FormComponent do
   end
 
   defp save_event(socket, :new, event_params) do
-    event_params = Enum.into(event_params, %{
-      "club_id" => socket.assigns.event.club.id
-    })
+    event_params =
+      Enum.into(event_params, %{
+        "club_id" => socket.assigns.event.club.id
+      })
 
     case Calendar.create_event(event_params) do
       {:ok, _event} ->

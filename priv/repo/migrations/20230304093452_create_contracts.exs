@@ -10,7 +10,10 @@ defmodule Sportyweb.Repo.Migrations.CreateContracts do
       add :termination_date, :date, null: true
       add :archive_date, :date, null: true
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
-      add :contact_id, references(:contacts, on_delete: :delete_all, type: :binary_id), null: false
+
+      add :contact_id, references(:contacts, on_delete: :delete_all, type: :binary_id),
+        null: false
+
       add :fee_id, references(:fees, on_delete: :restrict, type: :binary_id), null: false
 
       timestamps()

@@ -42,11 +42,14 @@ defmodule SportywebWeb.GroupLive.FeeNew do
   # There is no "edit" action in this LiveView because that gets handled in the default SportywebWeb.FeeLive.NewEdit
 
   defp apply_action(socket, :new, %{"id" => id}) do
-    group = Organization.get_group!(id, [department: :club])
+    group = Organization.get_group!(id, department: :club)
     type = "group"
 
     socket
-    |> assign(:page_title, "Spezifische Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types, type)})")
+    |> assign(
+      :page_title,
+      "Spezifische Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types(), type)})"
+    )
     |> assign(:fee, %Fee{
       club_id: group.department.club.id,
       club: group.department.club,
@@ -54,8 +57,8 @@ defmodule SportywebWeb.GroupLive.FeeNew do
       type: type,
       groups: [group],
       internal_events: [%InternalEvent{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
     |> assign(:group, group)
     |> assign(:club, group.department.club)
   end

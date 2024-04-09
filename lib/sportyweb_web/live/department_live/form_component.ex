@@ -26,7 +26,11 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+                <.input
+                  field={@form[:reference_number]}
+                  type="text"
+                  label="Referenznummer (optional)"
+                />
               </div>
 
               <div class="col-span-12">
@@ -75,7 +79,8 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
               :if={@department.id}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @department.id})}
-              data-confirm="Unwiderruflich löschen?">
+              data-confirm="Unwiderruflich löschen?"
+            >
               Löschen
             </.button>
           </:actions>
@@ -123,9 +128,10 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
   end
 
   defp save_department(socket, :new, department_params) do
-    department_params = Enum.into(department_params, %{
-      "club_id" => socket.assigns.department.club.id
-    })
+    department_params =
+      Enum.into(department_params, %{
+        "club_id" => socket.assigns.department.club.id
+      })
 
     case Organization.create_department(department_params) do
       {:ok, _department} ->

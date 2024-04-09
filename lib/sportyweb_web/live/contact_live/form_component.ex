@@ -34,7 +34,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                     field={@form[:type]}
                     type="select"
                     label="Art"
-                    options={Contact.get_valid_types}
+                    options={Contact.get_valid_types()}
                   />
                 </div>
               </.input_grid>
@@ -52,7 +52,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                       field={@form[:organization_type]}
                       type="select"
                       label="Organisationstyp"
-                      options={Contact.get_valid_organization_types}
+                      options={Contact.get_valid_organization_types()}
                       prompt="Bitte auswählen"
                     />
                   </div>
@@ -68,7 +68,11 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                   </div>
 
                   <div class="col-span-12 md:col-span-4">
-                    <.input field={@form[:person_first_name_2]} type="text" label="2. Vorname (optional)" />
+                    <.input
+                      field={@form[:person_first_name_2]}
+                      type="text"
+                      label="2. Vorname (optional)"
+                    />
                   </div>
 
                   <div class="col-span-12 md:col-span-6">
@@ -76,7 +80,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                       field={@form[:person_gender]}
                       type="select"
                       label="Geschlecht"
-                      options={Contact.get_valid_genders}
+                      options={Contact.get_valid_genders()}
                       prompt="Bitte auswählen"
                     />
                   </div>
@@ -143,7 +147,8 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                   id="next-button"
                   type="button"
                   phx-target={@myself}
-                  phx-click={JS.push("update_step", value: %{step: 2})}>
+                  phx-click={JS.push("update_step", value: %{step: 2})}
+                >
                   Weiter
                 </.button>
               <% end %>
@@ -158,7 +163,8 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               :if={@contact.id}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @contact.id})}
-              data-confirm="Unwiderruflich löschen?">
+              data-confirm="Unwiderruflich löschen?"
+            >
               Löschen
             </.button>
           </:actions>
@@ -172,11 +178,13 @@ defmodule SportywebWeb.ContactLive.FormComponent do
   def update(%{contact: contact} = assigns, socket) do
     changeset = Personal.change_contact(contact)
 
-    step = if !is_nil(contact.id) || get_field(changeset, :step) == 1 && get_field(changeset, :type) != "" do
-      2
-    else
-      1
-    end
+    step =
+      if !is_nil(contact.id) ||
+           (get_field(changeset, :step) == 1 && get_field(changeset, :type) != "") do
+        2
+      else
+        1
+      end
 
     {:ok,
      socket
@@ -222,9 +230,10 @@ defmodule SportywebWeb.ContactLive.FormComponent do
   end
 
   defp save_contact(socket, :new, contact_params) do
-    contact_params = Enum.into(contact_params, %{
-      "club_id" => socket.assigns.contact.club.id
-    })
+    contact_params =
+      Enum.into(contact_params, %{
+        "club_id" => socket.assigns.contact.club.id
+      })
 
     case Personal.create_contact(contact_params) do
       {:ok, _contact} ->

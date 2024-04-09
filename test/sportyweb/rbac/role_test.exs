@@ -1,5 +1,5 @@
 defmodule Sportyweb.RBAC.RoleTest do
-  use Sportyweb.DataCase
+  use Sportyweb.DataCase, async: true
 
   alias Sportyweb.RBAC.Role
 
@@ -77,7 +77,9 @@ defmodule Sportyweb.RBAC.RoleTest do
     test "create_application_role/1 with valid data creates a application_role" do
       valid_attrs = %{name: "some name"}
 
-      assert {:ok, %ApplicationRole{} = application_role} = Role.create_application_role(valid_attrs)
+      assert {:ok, %ApplicationRole{} = application_role} =
+               Role.create_application_role(valid_attrs)
+
       assert application_role.name == "some name"
     end
 
@@ -89,13 +91,18 @@ defmodule Sportyweb.RBAC.RoleTest do
       application_role = application_role_fixture()
       update_attrs = %{name: "some updated name"}
 
-      assert {:ok, %ApplicationRole{} = application_role} = Role.update_application_role(application_role, update_attrs)
+      assert {:ok, %ApplicationRole{} = application_role} =
+               Role.update_application_role(application_role, update_attrs)
+
       assert application_role.name == "some updated name"
     end
 
     test "update_application_role/2 with invalid data returns error changeset" do
       application_role = application_role_fixture()
-      assert {:error, %Ecto.Changeset{}} = Role.update_application_role(application_role, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Role.update_application_role(application_role, @invalid_attrs)
+
       assert application_role == Role.get_application_role!(application_role.id)
     end
 
@@ -143,13 +150,18 @@ defmodule Sportyweb.RBAC.RoleTest do
       department_role = department_role_fixture()
       update_attrs = %{name: "some updated name"}
 
-      assert {:ok, %DepartmentRole{} = department_role} = Role.update_department_role(department_role, update_attrs)
+      assert {:ok, %DepartmentRole{} = department_role} =
+               Role.update_department_role(department_role, update_attrs)
+
       assert department_role.name == "some updated name"
     end
 
     test "update_department_role/2 with invalid data returns error changeset" do
       department_role = department_role_fixture()
-      assert {:error, %Ecto.Changeset{}} = Role.update_department_role(department_role, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Role.update_department_role(department_role, @invalid_attrs)
+
       assert department_role == Role.get_department_role!(department_role.id)
     end
 

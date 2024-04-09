@@ -184,7 +184,6 @@ defmodule SportywebWeb.EquipmentLiveTest do
     end
   end
 
-
   describe "FeeNew" do
     setup [:create_equipment]
 
@@ -197,8 +196,8 @@ defmodule SportywebWeb.EquipmentLiveTest do
       assert html =~ "Spezifische Gebühr erstellen (Equipment)"
 
       assert new_live
-      |> form("#fee-form", fee: %{})
-      |> render_change() =~ "can&#39;t be blank"
+             |> form("#fee-form", fee: %{})
+             |> render_change() =~ "can&#39;t be blank"
 
       create_attrs = %{
         amount: "30 €",

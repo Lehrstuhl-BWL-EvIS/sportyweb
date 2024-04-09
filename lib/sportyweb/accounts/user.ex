@@ -14,6 +14,7 @@ defmodule Sportyweb.Accounts.User do
 
   @min_password_length 8
   def min_password_length, do: @min_password_length
+
   @doc """
   A user changeset for registration.
 
@@ -47,7 +48,9 @@ defmodule Sportyweb.Accounts.User do
   defp validate_email(changeset, opts) do
     changeset
     |> validate_required([:email])
-    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "Muss das @-Zeichen enthalten und keine Leerzeichen.")
+    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/,
+      message: "Muss das @-Zeichen enthalten und keine Leerzeichen."
+    )
     |> validate_length(:email, max: 160)
     |> maybe_validate_unique_email(opts)
   end
@@ -55,7 +58,10 @@ defmodule Sportyweb.Accounts.User do
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: @min_password_length, message: "Muss mindestens 8-Zeichen lang sein.")
+    |> validate_length(:password,
+      min: @min_password_length,
+      message: "Muss mindestens 8-Zeichen lang sein."
+    )
     |> validate_length(:password, max: 64, message: "Darf höchstens 64-Zeichen lang sein.")
     |> maybe_hash_password(opts)
   end

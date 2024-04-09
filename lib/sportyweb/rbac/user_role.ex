@@ -25,11 +25,12 @@ defmodule Sportyweb.RBAC.UserRole do
   Returns list of userclubroles of the club.
   """
   def list_clubs_userclubroles(club_id) do
-    query = from ucr in UserClubRole,
-      where: ucr.club_id == ^club_id,
-      join: u in assoc(ucr, :user),
-      join: cr in assoc(ucr, :clubrole),
-      preload: [user: u, clubrole: cr]
+    query =
+      from ucr in UserClubRole,
+        where: ucr.club_id == ^club_id,
+        join: u in assoc(ucr, :user),
+        join: cr in assoc(ucr, :clubrole),
+        preload: [user: u, clubrole: cr]
 
     Repo.all(query)
   end
@@ -39,29 +40,32 @@ defmodule Sportyweb.RBAC.UserRole do
   """
 
   def list_users_clubroles_in_a_club(user_id, club_id) do
-    query = from ucr in UserClubRole,
-      where: ucr.club_id == ^club_id,
-      where: ucr.user_id == ^user_id,
-      join: cr in assoc(ucr, :clubrole),
-      preload: [clubrole: cr]
+    query =
+      from ucr in UserClubRole,
+        where: ucr.club_id == ^club_id,
+        where: ucr.user_id == ^user_id,
+        join: cr in assoc(ucr, :clubrole),
+        preload: [clubrole: cr]
 
     Repo.all(query)
   end
 
   def list_users_in_a_club(club_id) do
-    query = from ucr in UserClubRole,
-      where: ucr.club_id == ^club_id,
-      join: u in assoc(ucr, :user),
-      preload: [user: u]
+    query =
+      from ucr in UserClubRole,
+        where: ucr.club_id == ^club_id,
+        join: u in assoc(ucr, :user),
+        preload: [user: u]
 
     Repo.all(query)
   end
 
   def list_users_club_associations(user_id) do
-    query = from ucr in UserClubRole,
-      where: ucr.user_id == ^user_id,
-      join: c in assoc(ucr, :club),
-      preload: [club: c]
+    query =
+      from ucr in UserClubRole,
+        where: ucr.user_id == ^user_id,
+        join: c in assoc(ucr, :club),
+        preload: [club: c]
 
     Repo.all(query)
   end
@@ -83,12 +87,13 @@ defmodule Sportyweb.RBAC.UserRole do
   def get_user_club_role!(id), do: Repo.get!(UserClubRole, id)
 
   def get_user_club_role_preload(id) do
-    query = from ucr in UserClubRole,
-      where: ucr.id == ^id,
-      join: u in assoc(ucr, :user),
-      join: c in assoc(ucr, :club),
-      join: cr in assoc(ucr, :clubrole),
-      preload: [user: u, club: c, clubrole: cr]
+    query =
+      from ucr in UserClubRole,
+        where: ucr.id == ^id,
+        join: u in assoc(ucr, :user),
+        join: c in assoc(ucr, :club),
+        join: cr in assoc(ucr, :clubrole),
+        preload: [user: u, club: c, clubrole: cr]
 
     Repo.all(query)
   end
@@ -175,13 +180,13 @@ defmodule Sportyweb.RBAC.UserRole do
   end
 
   def list_users_applicationroles(user) do
-    query = from uar in UserApplicationRole,
-      where: uar.user_id == ^user.id,
-      join: ar in assoc(uar, :applicationrole),
-      preload: [applicationrole: ar]
+    query =
+      from uar in UserApplicationRole,
+        where: uar.user_id == ^user.id,
+        join: ar in assoc(uar, :applicationrole),
+        preload: [applicationrole: ar]
 
     Repo.all(query)
-
   end
 
   @doc """
@@ -284,12 +289,13 @@ defmodule Sportyweb.RBAC.UserRole do
   Returns list of userclubroles of the club.
   """
   def list_userdepartmentroles_by_department(dept_id) do
-    query = from udr in UserDepartmentRole,
-      where: udr.department_id == ^dept_id,
-      join: u in assoc(udr, :user),
-      join: d in assoc(udr, :department),
-      join: dr in assoc(udr, :departmentrole),
-      preload: [user: u, department: d, departmentrole: dr]
+    query =
+      from udr in UserDepartmentRole,
+        where: udr.department_id == ^dept_id,
+        join: u in assoc(udr, :user),
+        join: d in assoc(udr, :department),
+        join: dr in assoc(udr, :departmentrole),
+        preload: [user: u, department: d, departmentrole: dr]
 
     Repo.all(query)
   end
@@ -298,12 +304,13 @@ defmodule Sportyweb.RBAC.UserRole do
   Returns list of userclubroles of the club.
   """
   def list_users_departmentroles_in_a_department(user_id, dept_id) do
-    query = from udr in UserDepartmentRole,
-      where: udr.department_id == ^dept_id,
-      where: udr.user_id == ^user_id,
-      join: d in assoc(udr, :department),
-      join: dr in assoc(udr, :departmentrole),
-      preload: [department: d, departmentrole: dr]
+    query =
+      from udr in UserDepartmentRole,
+        where: udr.department_id == ^dept_id,
+        where: udr.user_id == ^user_id,
+        join: d in assoc(udr, :department),
+        join: dr in assoc(udr, :departmentrole),
+        preload: [department: d, departmentrole: dr]
 
     Repo.all(query)
   end
@@ -328,10 +335,11 @@ defmodule Sportyweb.RBAC.UserRole do
   Gets a single user_department_role by its references
   """
   def get_user_department_role_by_references(user_id, department_id, departmentrole_id) do
-    query = from udr in UserDepartmentRole,
-      where: udr.user_id == ^user_id,
-      where: udr.department_id == ^department_id,
-      where: udr.departmentrole_id == ^departmentrole_id
+    query =
+      from udr in UserDepartmentRole,
+        where: udr.user_id == ^user_id,
+        where: udr.department_id == ^department_id,
+        where: udr.departmentrole_id == ^departmentrole_id
 
     query
     |> Repo.all()

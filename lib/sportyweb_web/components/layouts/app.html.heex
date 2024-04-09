@@ -6,13 +6,13 @@
         <div class="flex items-center">
           <.link navigate={~p"/clubs"} class="flex items-center">
             <svg viewBox="0 0 80 140" fill="#374151" stroke="black" stroke-width=".5" class="h-12">
-              <path d="M60 30 l-13-13 l13-13 l13 13 z"/>
-              <path d="M40 30 v16 l-16,16 v-16 z"/>
-              <path d="M40 30 h40 l-40,40 z"/>
-              <path d="M55 95 v-40 l-40,40 z"/>
-              <path d="M55 76 v40 l20,-20 z"/>
-              <path d="M55 115 v20 l-10,-10 z"/>
-              <path d="M16 94 h-14 v14 z"/>
+              <path d="M60 30 l-13-13 l13-13 l13 13 z" />
+              <path d="M40 30 v16 l-16,16 v-16 z" />
+              <path d="M40 30 h40 l-40,40 z" />
+              <path d="M55 95 v-40 l-40,40 z" />
+              <path d="M55 76 v40 l20,-20 z" />
+              <path d="M55 115 v20 l-10,-10 z" />
+              <path d="M16 94 h-14 v14 z" />
             </svg>
 
             <span class="ml-3 text-xl font-bold text-zinc-700">Sportyweb</span>
@@ -27,7 +27,8 @@
               class="flex rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               phx-click={JS.toggle(to: "#mobile-menu")}
               phx-click-away={JS.hide(to: "#mobile-menu")}
-              aria-expanded="false">
+              aria-expanded="false"
+            >
               <span class="sr-only">Open menu</span>
               <span class="flex justify-center items-center h-8 w-8 rounded-full font-bold text-white bg-zinc-800">
                 <%= @current_user.email |> String.slice(0, 1) %>
@@ -43,17 +44,30 @@
                   type="button"
                   class="flex rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   id="user-menu-button"
-                  phx-click={JS.toggle(to: "#profile-menu", in: {"ease-out duration-100", "opacity-0 scale-95", "opacity-100 scale-100"}, out: {"ease-out duration-75", "opacity-100 scale-100", "opacity-0 scale-95"})}
-                  phx-click-away={JS.hide(to: "#profile-menu", transition: {"ease-out duration-75", "opacity-100 scale-100", "opacity-0 scale-95"})}
+                  phx-click={
+                    JS.toggle(
+                      to: "#profile-menu",
+                      in:
+                        {"ease-out duration-100", "opacity-0 scale-95", "opacity-100 scale-100"},
+                      out: {"ease-out duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                    )
+                  }
+                  phx-click-away={
+                    JS.hide(
+                      to: "#profile-menu",
+                      transition:
+                        {"ease-out duration-75", "opacity-100 scale-100", "opacity-0 scale-95"}
+                    )
+                  }
                   aria-expanded="false"
-                  aria-haspopup="true">
+                  aria-haspopup="true"
+                >
                   <span class="sr-only">Open menu</span>
                   <span class="flex justify-center items-center h-8 w-8 rounded-full font-bold text-white bg-zinc-800">
                     <%= @current_user.email |> String.slice(0, 1) %>
                   </span>
                 </button>
               </div>
-
               <!-- Desktop dropdown menu, show/hide based on menu state. -->
               <div
                 class="hidden absolute right-0 z-10 mt-2 w-72 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
@@ -61,14 +75,28 @@
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="user-menu-button"
-                tabindex="-1">
-                <div class="px-4 pt-2 pb-3 text-sm font-medium text-zinc-800 truncate"><%= @current_user.email %></div>
+                tabindex="-1"
+              >
+                <div class="px-4 pt-2 pb-3 text-sm font-medium text-zinc-800 truncate">
+                  <%= @current_user.email %>
+                </div>
 
-                <.link navigate={~p"/users/settings"} class="block hover:bg-zinc-100 px-4 py-2 text-sm text-zinc-700" role="menuitem" tabindex="-1">
+                <.link
+                  navigate={~p"/users/settings"}
+                  class="block hover:bg-zinc-100 px-4 py-2 text-sm text-zinc-700"
+                  role="menuitem"
+                  tabindex="-1"
+                >
                   Profil bearbeiten
                 </.link>
 
-                <.link href={~p"/users/log_out"} method="delete" class="block hover:bg-zinc-100 px-4 py-2 text-sm text-zinc-700" role="menuitem" tabindex="-1">
+                <.link
+                  href={~p"/users/log_out"}
+                  method="delete"
+                  class="block hover:bg-zinc-100 px-4 py-2 text-sm text-zinc-700"
+                  role="menuitem"
+                  tabindex="-1"
+                >
                   Abmelden
                 </.link>
               </div>
@@ -96,15 +124,24 @@
 
         <div class="border-t border-zinc-200 px-2 sm:px-4 py-4">
           <div class="mx-auto max-w-3xl">
-            <div class="px-4 text-base font-medium text-zinc-800 truncate"><%= @current_user.email %></div>
+            <div class="px-4 text-base font-medium text-zinc-800 truncate">
+              <%= @current_user.email %>
+            </div>
           </div>
 
           <div class="mx-auto max-w-3xl space-y-1 mt-4">
-            <.link navigate={~p"/users/settings"} class="block rounded-md px-4 py-2 text-base font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900">
+            <.link
+              navigate={~p"/users/settings"}
+              class="block rounded-md px-4 py-2 text-base font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
+            >
               Profil bearbeiten
             </.link>
 
-            <.link href={~p"/users/log_out"} method="delete" class="block rounded-md px-4 py-2 text-base font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900">
+            <.link
+              href={~p"/users/log_out"}
+              method="delete"
+              class="block rounded-md px-4 py-2 text-base font-medium text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900"
+            >
               Abmelden
             </.link>
           </div>
@@ -125,7 +162,6 @@
           />
         </div>
       <% end %>
-
       <!-- Set the col-span classes based on whether a user is logged in, in which case the navigation (sidebar) is visible. -->
       <main class={"lg:block #{if show_club_navigation(assigns), do: 'lg:col-span-9', else: 'lg:col-span-12'}"}>
         <div>

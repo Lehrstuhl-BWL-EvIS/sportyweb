@@ -7,7 +7,9 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "postal_addresses" do
-    has_many :financial_data, FinancialData, foreign_key: :invoice_recipient_postal_address_id, references: :id
+    has_many :financial_data, FinancialData,
+      foreign_key: :invoice_recipient_postal_address_id,
+      references: :id
 
     field :street, :string, default: ""
     field :street_number, :string, default: ""
@@ -31,14 +33,17 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
   @doc false
   def changeset(postal_address, attrs) do
     postal_address
-    |> cast(attrs, [
-      :street,
-      :street_number,
-      :street_additional_information,
-      :zipcode,
-      :city,
-      :country,
-      :is_main],
+    |> cast(
+      attrs,
+      [
+        :street,
+        :street_number,
+        :street_additional_information,
+        :zipcode,
+        :city,
+        :country,
+        :is_main
+      ],
       empty_values: ["", nil]
     )
     |> validate_required([
@@ -46,8 +51,8 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
       :street_number,
       :zipcode,
       :city,
-      :country]
-    )
+      :country
+    ])
     |> update_change(:street, &String.trim/1)
     |> update_change(:street_number, &String.trim/1)
     |> update_change(:street_additional_information, &String.trim/1)

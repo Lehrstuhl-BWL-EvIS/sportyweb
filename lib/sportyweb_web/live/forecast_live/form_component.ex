@@ -29,7 +29,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
                   field={@form[:type]}
                   type="select"
                   label="Prognose für"
-                  options={Forecast.get_valid_types}
+                  options={Forecast.get_valid_types()}
                   phx-target={@myself}
                   phx-change="update_type"
                 />
@@ -126,24 +126,30 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
   end
 
   defp get_navigate(socket, %Ecto.Changeset{} = changeset) do
-    club_id    = socket.assigns.club.id
-    type       = get_field(changeset, :type)
+    club_id = socket.assigns.club.id
+    type = get_field(changeset, :type)
     contact_id = get_field(changeset, :contact_id)
     subsidy_id = get_field(changeset, :subsidy_id)
     start_date = Date.to_string(get_field(changeset, :start_date))
-    end_date   = Date.to_string(get_field(changeset, :end_date))
+    end_date = Date.to_string(get_field(changeset, :end_date))
 
     case type do
       "contact" ->
         case contact_id do
-          nil -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/contact"
-          _   -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/contact/#{contact_id}"
+          nil ->
+            ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/contact"
+
+          _ ->
+            ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/contact/#{contact_id}"
         end
 
       "subsidy" ->
         case subsidy_id do
-          nil -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy"
-          _   -> ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy/#{subsidy_id}"
+          nil ->
+            ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy"
+
+          _ ->
+            ~p"/clubs/#{club_id}/forecasts/start/#{start_date}/end/#{end_date}/subsidy/#{subsidy_id}"
         end
     end
   end

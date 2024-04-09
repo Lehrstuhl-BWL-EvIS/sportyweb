@@ -39,8 +39,8 @@ defmodule SportywebWeb.ForecastLive.NewEdit do
     |> assign(:page_title, "Prognose erstellen")
     |> assign(:forecast, %Forecast{
       start_date: today,
-      end_date: today}
-    )
+      end_date: today
+    })
     |> assign(:club, club)
   end
 end

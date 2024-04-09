@@ -32,7 +32,8 @@ defmodule Sportyweb.Organization.Club do
     has_many :departments, Department, preload_order: [asc: :name]
     has_many :events, Event
     has_many :subsidies, Subsidy, preload_order: [asc: :name]
-    has_many :transactions, through: [:all_contracts, :transactions] # This line has to be below "has_many :all_contracts"!
+    # This line has to be below "has_many :all_contracts"!
+    has_many :transactions, through: [:all_contracts, :transactions]
     has_many :venues, Venue, preload_order: [asc: :name]
     many_to_many :contracts, Contract, join_through: ClubContract
     many_to_many :emails, Email, join_through: ClubEmail
@@ -56,13 +57,16 @@ defmodule Sportyweb.Organization.Club do
   @doc false
   def changeset(club, attrs) do
     club
-    |> cast(attrs, [
-      :venue_id,
-      :name,
-      :reference_number,
-      :description,
-      :website_url,
-      :foundation_date],
+    |> cast(
+      attrs,
+      [
+        :venue_id,
+        :name,
+        :reference_number,
+        :description,
+        :website_url,
+        :foundation_date
+      ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:emails, required: true)

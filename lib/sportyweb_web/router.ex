@@ -67,17 +67,17 @@ defmodule SportywebWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{SportywebWeb.UserAuth, :ensure_authenticated}] do
-
       # Users
 
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
-
     end
 
     live_session :rbac,
-      on_mount: [{SportywebWeb.UserAuth, :ensure_authenticated}, {Sportyweb.RBAC.Policy, :permissions}] do
-
+      on_mount: [
+        {SportywebWeb.UserAuth, :ensure_authenticated},
+        {Sportyweb.RBAC.Policy, :permissions}
+      ] do
       # Clubs (Root element)
 
       live "/clubs", ClubLive.Index, :index
@@ -175,10 +175,21 @@ defmodule SportywebWeb.Router do
 
       live "/clubs/:club_id/forecasts", ForecastLive.NewEdit, :new
 
-      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/contact", ForecastLive.Show, :show_contacts_all
-      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/contact/:contact_id", ForecastLive.Show, :show_contacts_single
-      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/subsidy", ForecastLive.Show, :show_subsidies_all
-      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/subsidy/:subsidy_id", ForecastLive.Show, :show_subsidies_single
+      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/contact",
+           ForecastLive.Show,
+           :show_contacts_all
+
+      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/contact/:contact_id",
+           ForecastLive.Show,
+           :show_contacts_single
+
+      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/subsidy",
+           ForecastLive.Show,
+           :show_subsidies_all
+
+      live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/subsidy/:subsidy_id",
+           ForecastLive.Show,
+           :show_subsidies_single
 
       # Contracts (Polymorphic)
 
@@ -200,9 +211,11 @@ defmodule SportywebWeb.Router do
       # Fees (Polymorphic)
 
       live "/fees", FeeLive.Index, :index_root
-      live "/clubs/:club_id/fees", FeeLive.Index, :index # General fees
+      # General fees
+      live "/clubs/:club_id/fees", FeeLive.Index, :index
 
-      live "/clubs/:club_id/fees/new/:type", FeeLive.NewEdit, :new # General fees
+      # General fees
+      live "/clubs/:club_id/fees/new/:type", FeeLive.NewEdit, :new
       live "/fees/:id/edit", FeeLive.NewEdit, :edit
 
       live "/fees/:id", FeeLive.Show, :show
