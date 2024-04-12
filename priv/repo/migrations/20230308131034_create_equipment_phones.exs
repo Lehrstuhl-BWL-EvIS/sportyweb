@@ -4,7 +4,10 @@ defmodule Sportyweb.Repo.Migrations.CreateEquipmentPhones do
   def change do
     create table(:equipment_phones, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :equipment_id, references(:equipment, on_delete: :delete_all, type: :binary_id), null: false
+
+      add :equipment_id, references(:equipment, on_delete: :delete_all, type: :binary_id),
+        null: false
+
       add :phone_id, references(:phones, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()

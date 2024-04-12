@@ -23,7 +23,8 @@ defmodule Sportyweb.Organization.Group do
     many_to_many :fees, Fee, join_through: GroupFee
     many_to_many :notes, Note, join_through: GroupNote
     many_to_many :phones, Phone, join_through: GroupPhone
-    has_many :contacts, through: [:contracts, :contact] # This line has to be below "many_to_many :contracts"!
+    # This line has to be below "many_to_many :contracts"!
+    has_many :contacts, through: [:contracts, :contact]
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""
@@ -36,12 +37,15 @@ defmodule Sportyweb.Organization.Group do
   @doc false
   def changeset(group, attrs) do
     group
-    |> cast(attrs, [
-      :department_id,
-      :name,
-      :reference_number,
-      :description,
-      :creation_date],
+    |> cast(
+      attrs,
+      [
+        :department_id,
+        :name,
+        :reference_number,
+        :description,
+        :creation_date
+      ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:emails, required: true)

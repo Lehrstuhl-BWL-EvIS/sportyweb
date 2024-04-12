@@ -69,9 +69,12 @@ defmodule Sportyweb.Finance do
           where: f.club_id == ^fee.club_id,
           where: f.type == ^fee.type,
           where: f.is_general == true,
-          where: is_nil(f.minimum_age_in_years) or f.minimum_age_in_years - 1 <= ^maximum_age_in_years,
+          where:
+            is_nil(f.minimum_age_in_years) or f.minimum_age_in_years - 1 <= ^maximum_age_in_years,
           where: is_nil(f.maximum_age_in_years) or f.maximum_age_in_years > ^maximum_age_in_years,
-          where: is_nil(internal_events.archive_date) or internal_events.archive_date > ^Date.utc_today(),
+          where:
+            is_nil(internal_events.archive_date) or
+              internal_events.archive_date > ^Date.utc_today(),
           order_by: f.name
         )
 
@@ -79,10 +82,11 @@ defmodule Sportyweb.Finance do
       # fee.id is nil for new, not yet persisted fees.
       # This would lead to an error when executing the where clause with "!=".
       # The case statement avoid this and only extends the query if fee.id is not nil.
-      query = case fee.id do
-        nil -> query
-        _ -> from(f in query, where: f.id != ^fee.id)
-      end
+      query =
+        case fee.id do
+          nil -> query
+          _ -> from(f in query, where: f.id != ^fee.id)
+        end
 
       Repo.all(query)
     end
@@ -109,14 +113,16 @@ defmodule Sportyweb.Finance do
       # The following code determines which type of entity the contract_object is.
       # Based on that, it returns the corresponding fee type, which will be used
       # to only select matching fees.
-      fee_type = case contract_object do
-        %Club{} -> "club"
-        %Department{} -> "department"
-        %Group{} -> "group"
-      end
+      fee_type =
+        case contract_object do
+          %Club{} -> "club"
+          %Department{} -> "department"
+          %Group{} -> "group"
+        end
 
       # Only clubs don't have specific (non-general) fees.
-      specific_fee_ids = if fee_type == "club", do: [], else: Enum.map(contract_object.fees, fn fee -> fee.id end)
+      specific_fee_ids =
+        if fee_type == "club", do: [], else: Enum.map(contract_object.fees, fn fee -> fee.id end)
 
       query =
         from(
@@ -125,21 +131,27 @@ defmodule Sportyweb.Finance do
           where: f.club_id == ^contact.club_id,
           where: f.type == ^fee_type,
           where: f.is_general == true or f.id in ^specific_fee_ids,
-          where: is_nil(internal_events.archive_date) or internal_events.archive_date > ^Date.utc_today(),
+          where:
+            is_nil(internal_events.archive_date) or
+              internal_events.archive_date > ^Date.utc_today(),
           order_by: f.name
         )
 
       # The age restriction only plays a role for persons
-      query = if Contact.is_person?(contact) do
-        contact_age_in_years = Contact.age_in_years(contact)
-        from(
-          f in query,
-          where: is_nil(f.minimum_age_in_years) or f.minimum_age_in_years <= ^contact_age_in_years,
-          where: is_nil(f.maximum_age_in_years) or f.maximum_age_in_years >= ^contact_age_in_years
-        )
-      else
-        query
-      end
+      query =
+        if Contact.is_person?(contact) do
+          contact_age_in_years = Contact.age_in_years(contact)
+
+          from(
+            f in query,
+            where:
+              is_nil(f.minimum_age_in_years) or f.minimum_age_in_years <= ^contact_age_in_years,
+            where:
+              is_nil(f.maximum_age_in_years) or f.maximum_age_in_years >= ^contact_age_in_years
+          )
+        else
+          query
+        end
 
       Repo.all(query)
     end

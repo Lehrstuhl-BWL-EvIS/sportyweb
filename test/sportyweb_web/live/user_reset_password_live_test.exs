@@ -1,5 +1,5 @@
 defmodule SportywebWeb.UserResetPasswordLiveTest do
-  use SportywebWeb.ConnCase
+  use SportywebWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
@@ -28,7 +28,9 @@ defmodule SportywebWeb.UserResetPasswordLiveTest do
       {:error, {:redirect, to}} = live(conn, ~p"/users/reset_password/invalid")
 
       assert to == %{
-               flash: %{"error" => "Der Link zum Ändern des Passworts ist falsch oder abgelaufen."},
+               flash: %{
+                 "error" => "Der Link zum Ändern des Passworts ist falsch oder abgelaufen."
+               },
                to: ~p"/"
              }
     end

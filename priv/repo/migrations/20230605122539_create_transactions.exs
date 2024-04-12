@@ -8,7 +8,9 @@ defmodule Sportyweb.Repo.Migrations.CreateTransactions do
       add :amount, :money_with_currency
       add :creation_date, :date, null: false
       add :payment_date, :date, null: true
-      add :contract_id, references(:contracts, on_delete: :delete_all, type: :binary_id), null: false
+
+      add :contract_id, references(:contracts, on_delete: :delete_all, type: :binary_id),
+        null: false
 
       timestamps()
     end

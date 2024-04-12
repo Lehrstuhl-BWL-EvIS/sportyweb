@@ -71,18 +71,21 @@ defmodule Sportyweb.Calendar.Event do
   @doc false
   def changeset(event, attrs) do
     event
-    |> cast(attrs, [
-      :club_id,
-      :name,
-      :reference_number,
-      :status,
-      :description,
-      :minimum_participants,
-      :maximum_participants,
-      :minimum_age_in_years,
-      :maximum_age_in_years,
-      :location_type,
-      :location_description],
+    |> cast(
+      attrs,
+      [
+        :club_id,
+        :name,
+        :reference_number,
+        :status,
+        :description,
+        :minimum_participants,
+        :maximum_participants,
+        :minimum_age_in_years,
+        :maximum_age_in_years,
+        :location_type,
+        :location_description
+      ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:departments, required: false)
@@ -95,8 +98,8 @@ defmodule Sportyweb.Calendar.Event do
       :club_id,
       :name,
       :status,
-      :location_type]
-    )
+      :location_type
+    ])
     |> update_change(:name, &String.trim/1)
     |> update_change(:reference_number, &String.trim/1)
     |> update_change(:description, &String.trim/1)
@@ -107,14 +110,32 @@ defmodule Sportyweb.Calendar.Event do
       :status,
       get_valid_statuses() |> Enum.map(fn status -> status[:value] end)
     )
-    |> validate_number(:minimum_participants, greater_than_or_equal_to: 0, less_than_or_equal_to: 100_000)
-    |> validate_number(:maximum_participants, greater_than_or_equal_to: 0, less_than_or_equal_to: 100_000)
-    |> validate_number(:minimum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
-    |> validate_number(:maximum_age_in_years, greater_than_or_equal_to: 0, less_than_or_equal_to: 125)
-    |> validate_numbers_order(:minimum_participants, :maximum_participants,
-      "Muss größer oder gleich \"Minimale Anzahl an Teilnehmern\" sein!")
-    |> validate_numbers_order(:minimum_age_in_years, :maximum_age_in_years,
-      "Muss größer oder gleich \"Mindestalter\" sein!")
+    |> validate_number(:minimum_participants,
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: 100_000
+    )
+    |> validate_number(:maximum_participants,
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: 100_000
+    )
+    |> validate_number(:minimum_age_in_years,
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: 125
+    )
+    |> validate_number(:maximum_age_in_years,
+      greater_than_or_equal_to: 0,
+      less_than_or_equal_to: 125
+    )
+    |> validate_numbers_order(
+      :minimum_participants,
+      :maximum_participants,
+      "Muss größer oder gleich \"Minimale Anzahl an Teilnehmern\" sein!"
+    )
+    |> validate_numbers_order(
+      :minimum_age_in_years,
+      :maximum_age_in_years,
+      "Muss größer oder gleich \"Mindestalter\" sein!"
+    )
     |> validate_inclusion(
       :location_type,
       get_valid_location_types() |> Enum.map(fn location_type -> location_type[:value] end)
@@ -128,10 +149,13 @@ defmodule Sportyweb.Calendar.Event do
     case get_field(changeset, :location_type) do
       "venue" ->
         changeset |> cast_assoc(:venues, required: true)
+
       "postal_address" ->
         changeset |> cast_assoc(:postal_addresses, required: true)
+
       "free_form" ->
         changeset |> validate_required([:location_description])
+
       _ ->
         changeset
     end

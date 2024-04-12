@@ -20,7 +20,7 @@ defmodule SportywebWeb.SubsidyLive.Index do
   end
 
   defp apply_action(socket, :index, %{"club_id" => club_id}) do
-    club = Organization.get_club!(club_id, [subsidies: :internal_events])
+    club = Organization.get_club!(club_id, subsidies: :internal_events)
 
     socket
     |> assign(:page_title, "Zuschüsse")

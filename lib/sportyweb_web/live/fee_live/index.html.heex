@@ -28,7 +28,12 @@
   </.header>
 
   <.card>
-    <% assigns = assign(assigns, :fees, Finance.list_general_fees(@club.id, type[:value], [:internal_events])) %>
+    <% assigns =
+      assign(
+        assigns,
+        :fees,
+        Finance.list_general_fees(@club.id, type[:value], [:internal_events])
+      ) %>
     <%= if Enum.any?(@fees) do %>
       <.live_component
         module={SportywebWeb.FeeLive.IndexTableComponent}

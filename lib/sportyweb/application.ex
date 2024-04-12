@@ -8,20 +8,16 @@ defmodule Sportyweb.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Start the Telemetry supervisor
       SportywebWeb.Telemetry,
-      # Start the Ecto repository
       Sportyweb.Repo,
-      # Start the PubSub system
+      {DNSCluster, query: Application.get_env(:sportyweb, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Sportyweb.PubSub},
-      # Start Finch
+      # Start the Finch HTTP client for sending emails
       {Finch, name: Sportyweb.Finch},
-      # Start the Endpoint (http/https)
-      SportywebWeb.Endpoint,
       # Start a worker by calling: Sportyweb.Worker.start_link(arg)
-      # {Sportyweb.Worker, arg}
-      # Start the cron-like scheduler
-      Sportyweb.Scheduler
+      # {Sportyweb.Worker, arg},
+      # Start to serve requests, typically the last entry
+      SportywebWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

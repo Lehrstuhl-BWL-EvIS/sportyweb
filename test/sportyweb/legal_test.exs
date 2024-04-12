@@ -1,5 +1,5 @@
 defmodule Sportyweb.LegalTest do
-  use Sportyweb.DataCase
+  use Sportyweb.DataCase, async: true
 
   alias Sportyweb.Legal
 
@@ -47,6 +47,7 @@ defmodule Sportyweb.LegalTest do
       club = club_fixture()
       contact = contact_fixture()
       fee = fee_fixture()
+
       valid_attrs = %{
         club_id: club.id,
         contact_id: contact.id,

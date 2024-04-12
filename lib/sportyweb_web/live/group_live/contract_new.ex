@@ -49,8 +49,8 @@ defmodule SportywebWeb.GroupLive.ContractNew do
       club_id: club.id,
       club: club,
       signing_date: Date.utc_today(),
-      groups: [group]}
-    )
+      groups: [group]
+    })
     |> assign(:group, group)
     |> assign(:department, group.department)
     |> assign(:club, club)

@@ -1,5 +1,5 @@
 defmodule SportywebWeb.EventLiveTest do
-  use SportywebWeb.ConnCase
+  use SportywebWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
@@ -200,8 +200,8 @@ defmodule SportywebWeb.EventLiveTest do
       assert html =~ "Spezifische Gebühr erstellen (Veranstaltung)"
 
       assert new_live
-      |> form("#fee-form", fee: %{})
-      |> render_change() =~ "can&#39;t be blank"
+             |> form("#fee-form", fee: %{})
+             |> render_change() =~ "can&#39;t be blank"
 
       create_attrs = %{
         amount: "30 €",

@@ -84,8 +84,8 @@ defmodule Sportyweb.Accounts do
   Have a user registered in order to be added to a club.
   """
   def register_user_for_club(email, club, info_url_fun) do
-    len = User.min_password_length
-    temp_password = len |> :crypto.strong_rand_bytes() |> Base.encode64 |> binary_part(0, len)
+    len = User.min_password_length()
+    temp_password = len |> :crypto.strong_rand_bytes() |> Base.encode64() |> binary_part(0, len)
     {:ok, %User{} = user} = register_user(%{email: email, password: temp_password})
 
     deliver_user_initial_password_instructions(user, club, info_url_fun)
@@ -167,7 +167,7 @@ defmodule Sportyweb.Accounts do
 
     Ecto.Multi.new()
     |> Ecto.Multi.update(:user, changeset)
-    |> Ecto.Multi.delete_all(:tokens, UserToken.user_and_contexts_query(user, [context]))
+    |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, [context]))
   end
 
   @doc ~S"""
@@ -220,7 +220,7 @@ defmodule Sportyweb.Accounts do
 
     Ecto.Multi.new()
     |> Ecto.Multi.update(:user, changeset)
-    |> Ecto.Multi.delete_all(:tokens, UserToken.user_and_contexts_query(user, :all))
+    |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, :all))
     |> Repo.transaction()
     |> case do
       {:ok, %{user: user}} -> {:ok, user}
@@ -251,7 +251,7 @@ defmodule Sportyweb.Accounts do
   Deletes the signed token with the given context.
   """
   def delete_user_session_token(token) do
-    Repo.delete_all(UserToken.token_and_context_query(token, "session"))
+    Repo.delete_all(UserToken.by_token_and_context_query(token, "session"))
     :ok
   end
 
@@ -299,7 +299,7 @@ defmodule Sportyweb.Accounts do
   defp confirm_user_multi(user) do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:user, User.confirm_changeset(user))
-    |> Ecto.Multi.delete_all(:tokens, UserToken.user_and_contexts_query(user, ["confirm"]))
+    |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, ["confirm"]))
   end
 
   ## Reset password
@@ -323,13 +323,16 @@ defmodule Sportyweb.Accounts do
   ## Initial password for user registered by another user
 
   def deliver_user_initial_password_instructions(%User{} = user, club, reset_password_url_fun)
-    when is_function(reset_password_url_fun, 1) do
+      when is_function(reset_password_url_fun, 1) do
     {encoded_token, user_token} = UserToken.build_email_token(user, "reset_password")
     Repo.insert!(user_token)
-    UserNotifier.deliver_info_of_being_added_to_club(user, club, reset_password_url_fun.(encoded_token))
+
+    UserNotifier.deliver_info_of_being_added_to_club(
+      user,
+      club,
+      reset_password_url_fun.(encoded_token)
+    )
   end
-
-
 
   @doc """
   Gets the user by reset password token.
@@ -367,7 +370,7 @@ defmodule Sportyweb.Accounts do
   def reset_user_password(user, attrs) do
     Ecto.Multi.new()
     |> Ecto.Multi.update(:user, User.password_changeset(user, attrs))
-    |> Ecto.Multi.delete_all(:tokens, UserToken.user_and_contexts_query(user, :all))
+    |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, :all))
     |> Repo.transaction()
     |> case do
       {:ok, %{user: user}} -> {:ok, user}
@@ -389,8 +392,8 @@ defmodule Sportyweb.Accounts do
   end
 
   def delete_dummy_tokens(dummy) do
-    query = dummy |> UserToken.user_and_contexts_query(:all)
-    count = query |> Repo.all() |> Enum.count
+    query = dummy |> UserToken.by_user_and_contexts_query(:all)
+    count = query |> Repo.all() |> Enum.count()
 
     if count > :rand.uniform(200) do
       Repo.delete_all(query)
@@ -399,5 +402,4 @@ defmodule Sportyweb.Accounts do
       :counting
     end
   end
-
 end

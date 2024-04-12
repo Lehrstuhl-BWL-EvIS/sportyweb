@@ -35,7 +35,8 @@ defmodule Sportyweb.Polymorphic.Phone do
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
     )
     |> update_change(:number, &String.trim/1)
-    |> validate_format(:number, ~r/^$|^[0-9\s\/\(\)\+\-]/) # Empty or contains valid chars
+    # Empty or contains valid chars
+    |> validate_format(:number, ~r/^$|^[0-9\s\/\(\)\+\-]/)
     |> validate_length(:number, max: 250)
   end
 end

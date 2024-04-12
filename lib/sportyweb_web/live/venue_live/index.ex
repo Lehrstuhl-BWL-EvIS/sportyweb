@@ -20,7 +20,7 @@ defmodule SportywebWeb.VenueLive.Index do
   end
 
   defp apply_action(socket, :index, %{"club_id" => club_id}) do
-    club = Organization.get_club!(club_id, [venues: :equipment])
+    club = Organization.get_club!(club_id, venues: :equipment)
 
     socket
     |> assign(:page_title, "Standorte & Equipment")

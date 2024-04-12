@@ -51,8 +51,8 @@ defmodule SportywebWeb.SubsidyLive.NewEdit do
       club_id: club.id,
       club: club,
       internal_events: [%InternalEvent{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
     |> assign(:club, club)
   end
 

@@ -9,7 +9,6 @@ defmodule Sportyweb.RBAC.UserRole.UserDepartmentRole do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "userdepartmentroles" do
-
     belongs_to :user, User
     belongs_to :department, Department
     belongs_to :departmentrole, DepartmentRole

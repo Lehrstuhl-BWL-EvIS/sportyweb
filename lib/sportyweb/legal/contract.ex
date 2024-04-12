@@ -36,7 +36,7 @@ defmodule Sportyweb.Legal.Contract do
 
   def is_in_use?(%Contract{} = contract, %Date{} = date \\ Date.utc_today()) do
     Date.compare(date, contract.start_date) != :lt &&
-    (is_nil(contract.archive_date) || Date.compare(date, contract.archive_date) == :lt)
+      (is_nil(contract.archive_date) || Date.compare(date, contract.archive_date) == :lt)
   end
 
   def is_archived?(%Contract{} = contract, %Date{} = date \\ Date.utc_today()) do
@@ -59,10 +59,13 @@ defmodule Sportyweb.Legal.Contract do
     cond do
       is_list(contract.clubs) && Enum.any?(contract.clubs) ->
         Enum.at(contract.clubs, 0)
+
       is_list(contract.departments) && Enum.any?(contract.departments) ->
         Enum.at(contract.departments, 0)
+
       is_list(contract.groups) && Enum.any?(contract.groups) ->
         Enum.at(contract.groups, 0)
+
       true ->
         nil
     end
@@ -71,15 +74,18 @@ defmodule Sportyweb.Legal.Contract do
   @doc false
   def changeset(contract, attrs) do
     contract
-    |> cast(attrs, [
-      :club_id,
-      :contact_id,
-      :fee_id,
-      :signing_date,
-      :first_billing_date,
-      :start_date,
-      :termination_date,
-      :archive_date],
+    |> cast(
+      attrs,
+      [
+        :club_id,
+        :contact_id,
+        :fee_id,
+        :signing_date,
+        :first_billing_date,
+        :start_date,
+        :termination_date,
+        :archive_date
+      ],
       empty_values: ["", nil]
     )
     |> validate_required([
@@ -87,13 +93,22 @@ defmodule Sportyweb.Legal.Contract do
       :contact_id,
       :fee_id,
       :signing_date,
-      :start_date]
+      :start_date
+    ])
+    |> validate_dates_order(
+      :signing_date,
+      :start_date,
+      "Muss zeitlich später als oder gleich \"Unterzeichnungsdatum\" sein!"
     )
-    |> validate_dates_order(:signing_date, :start_date,
-      "Muss zeitlich später als oder gleich \"Unterzeichnungsdatum\" sein!")
-    |> validate_dates_order(:start_date, :termination_date,
-      "Muss zeitlich später als oder gleich \"Vertragsbeginn\" sein!")
-    |> validate_dates_order(:termination_date, :archive_date,
-      "Muss zeitlich später als oder gleich \"Kündigungsdatum\" sein!")
+    |> validate_dates_order(
+      :start_date,
+      :termination_date,
+      "Muss zeitlich später als oder gleich \"Vertragsbeginn\" sein!"
+    )
+    |> validate_dates_order(
+      :termination_date,
+      :archive_date,
+      "Muss zeitlich später als oder gleich \"Kündigungsdatum\" sein!"
+    )
   end
 end

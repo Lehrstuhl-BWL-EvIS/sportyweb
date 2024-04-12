@@ -19,6 +19,8 @@ defmodule Sportyweb.Calendar.EventPostalAddress do
     event_postal_address
     |> cast(attrs, [:event_id, :postal_address_id])
     |> validate_required([:event_id, :postal_address_id])
-    |> unique_constraint(:postal_address_id, name: "event_postal_addresses_postal_address_id_index")
+    |> unique_constraint(:postal_address_id,
+      name: "event_postal_addresses_postal_address_id_index"
+    )
   end
 end

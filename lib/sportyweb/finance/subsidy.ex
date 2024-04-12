@@ -28,22 +28,29 @@ defmodule Sportyweb.Finance.Subsidy do
   end
 
   def is_in_use?(%Subsidy{} = subsidy, %Date{} = date \\ Date.utc_today()) do
-    Enum.any?(subsidy.internal_events, fn internal_event -> InternalEvent.is_in_use?(internal_event, date) end)
+    Enum.any?(subsidy.internal_events, fn internal_event ->
+      InternalEvent.is_in_use?(internal_event, date)
+    end)
   end
 
   def is_archived?(%Subsidy{} = subsidy, %Date{} = date \\ Date.utc_today()) do
-    Enum.any?(subsidy.internal_events, fn internal_event -> InternalEvent.is_archived?(internal_event, date) end)
+    Enum.any?(subsidy.internal_events, fn internal_event ->
+      InternalEvent.is_archived?(internal_event, date)
+    end)
   end
 
   @doc false
   def changeset(subsidy, attrs) do
     subsidy
-    |> cast(attrs, [
-      :club_id,
-      :name,
-      :reference_number,
-      :description,
-      :amount],
+    |> cast(
+      attrs,
+      [
+        :club_id,
+        :name,
+        :reference_number,
+        :description,
+        :amount
+      ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:internal_events, required: true)
@@ -51,8 +58,8 @@ defmodule Sportyweb.Finance.Subsidy do
     |> validate_required([
       :club_id,
       :name,
-      :amount]
-    )
+      :amount
+    ])
     |> update_change(:name, &String.trim/1)
     |> update_change(:reference_number, &String.trim/1)
     |> update_change(:description, &String.trim/1)

@@ -75,7 +75,12 @@ defmodule SportywebWeb.UserSettingsLive do
             <.input_grids>
               <.input_grid>
                 <div class="col-span-12">
-                  <.input field={@password_form[:password]} type="password" label="Neues Passwort" required />
+                  <.input
+                    field={@password_form[:password]}
+                    type="password"
+                    label="Neues Passwort"
+                    required
+                  />
                 </div>
 
                 <div class="col-span-12">
@@ -117,7 +122,11 @@ defmodule SportywebWeb.UserSettingsLive do
           put_flash(socket, :info, "E-Mail-Adresse erfolgreich geändert.")
 
         :error ->
-          put_flash(socket, :error, "Der Link zur Änderung der E-Mail-Adresse ist falsch oder abgelaufen.")
+          put_flash(
+            socket,
+            :error,
+            "Der Link zur Änderung der E-Mail-Adresse ist falsch oder abgelaufen."
+          )
       end
 
     {:ok, push_navigate(socket, to: ~p"/users/settings")}
@@ -141,10 +150,14 @@ defmodule SportywebWeb.UserSettingsLive do
   end
 
   def handle_event("send_instructions", _, socket) do
-      Accounts.deliver_user_confirmation_instructions(socket.assigns.current_user, &url(~p"/users/confirm/#{&1}"))
-      info = "Ein Link zur Bestätigung Ihrer E-Mail-Adresse wurde an die bekannte Adresse gesendet."
+    Accounts.deliver_user_confirmation_instructions(
+      socket.assigns.current_user,
+      &url(~p"/users/confirm/#{&1}")
+    )
 
-      {:noreply, socket |> put_flash(:info, info)}
+    info = "Ein Link zur Bestätigung Ihrer E-Mail-Adresse wurde an die bekannte Adresse gesendet."
+
+    {:noreply, socket |> put_flash(:info, info)}
   end
 
   def handle_event("validate_email", params, socket) do
@@ -171,7 +184,9 @@ defmodule SportywebWeb.UserSettingsLive do
           &url(~p"/users/settings/confirm_email/#{&1}")
         )
 
-        info = "Ein Link zur Bestätigung Ihrer neuen E-Mail-Adresse wurde an die neue Adresse gesendet."
+        info =
+          "Ein Link zur Bestätigung Ihrer neuen E-Mail-Adresse wurde an die neue Adresse gesendet."
+
         {:noreply, socket |> put_flash(:info, info) |> assign(email_form_current_password: nil)}
 
       {:error, changeset} ->

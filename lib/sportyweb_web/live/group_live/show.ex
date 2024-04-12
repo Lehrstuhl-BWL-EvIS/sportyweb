@@ -10,7 +10,15 @@ defmodule SportywebWeb.GroupLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    group = Organization.get_group!(id, [:contacts, :emails, :notes, :phones, department: :club, fees: :internal_events])
+    group =
+      Organization.get_group!(id, [
+        :contacts,
+        :emails,
+        :notes,
+        :phones,
+        department: :club,
+        fees: :internal_events
+      ])
 
     {:noreply,
      socket

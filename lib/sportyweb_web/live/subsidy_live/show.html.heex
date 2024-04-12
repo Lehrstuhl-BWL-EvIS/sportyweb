@@ -25,7 +25,7 @@
         internal_events={@subsidy.internal_events}
       />
     </:item>
-    <:item title="Archiviert" :if={Subsidy.is_archived?(@subsidy)}>
+    <:item :if={Subsidy.is_archived?(@subsidy)} title="Archiviert">
       <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
     </:item>
     <:item title="Notizen">

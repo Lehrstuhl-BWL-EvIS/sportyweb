@@ -58,12 +58,13 @@ defmodule SportywebWeb.CommonHelper do
 
   """
   def format_struct_list(list, attribute) do
-    csv = list
-    |> Enum.filter(fn element ->
-      value = Map.get(element, attribute)
-      !is_nil(value) && value != ""
-    end)
-    |> Enum.map_join(", ", fn element -> Map.get(element, attribute) end)
+    csv =
+      list
+      |> Enum.filter(fn element ->
+        value = Map.get(element, attribute)
+        !is_nil(value) && value != ""
+      end)
+      |> Enum.map_join(", ", fn element -> Map.get(element, attribute) end)
 
     if String.trim(csv) != "" do
       csv
@@ -88,7 +89,7 @@ defmodule SportywebWeb.CommonHelper do
   def get_key_for_value(data, value) do
     case Enum.find(data, fn element -> element[:value] == value end) do
       [{:key, key} | _] -> key
-      _                 -> "-"
+      _ -> "-"
     end
   end
 end

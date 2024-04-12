@@ -144,18 +144,21 @@ defmodule SportywebWeb.UserAuth do
       end
   """
   def on_mount(:mount_current_user, _params, session, socket) do
-    {:cont, mount_current_user(session, socket)}
+    {:cont, mount_current_user(socket, session)}
   end
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
-    socket = mount_current_user(session, socket)
+    socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
       {:cont, socket}
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "Sie müssen angemeldet sein, um auf diese Seite zugreifen zu können.")
+        |> Phoenix.LiveView.put_flash(
+          :error,
+          "Sie müssen angemeldet sein, um auf diese Seite zugreifen zu können."
+        )
         |> Phoenix.LiveView.redirect(to: ~p"/users/log_in")
 
       {:halt, socket}
@@ -163,7 +166,7 @@ defmodule SportywebWeb.UserAuth do
   end
 
   def on_mount(:redirect_if_user_is_authenticated, _params, session, socket) do
-    socket = mount_current_user(session, socket)
+    socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
       {:halt, Phoenix.LiveView.redirect(socket, to: signed_in_path(socket))}
@@ -172,7 +175,7 @@ defmodule SportywebWeb.UserAuth do
     end
   end
 
-  defp mount_current_user(session, socket) do
+  defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       if user_token = session["user_token"] do
         Accounts.get_user_by_session_token(user_token)
@@ -230,7 +233,8 @@ defmodule SportywebWeb.UserAuth do
   """
   def clean_dummy_tokens(conn, _opts) do
     if user = Accounts.get_user_by_email("timing_attack_dummy@sportyweb.de") do
-      Accounts.delete_dummy_tokens(user) #breaks functionality if timing_attack_dummy@sportyweb.de is not seeded/ inserted in database.
+      # breaks functionality if timing_attack_dummy@sportyweb.de is not seeded/ inserted in database.
+      Accounts.delete_dummy_tokens(user)
     end
 
     conn

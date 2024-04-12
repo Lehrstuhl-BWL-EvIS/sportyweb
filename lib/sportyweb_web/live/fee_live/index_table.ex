@@ -8,11 +8,7 @@ defmodule SportywebWeb.FeeLive.IndexTableComponent do
   def render(assigns) do
     ~H"""
     <div>
-      <.table
-        id="fees"
-        rows={@fees}
-        row_click={&JS.navigate(~p"/fees/#{&1}")}
-      >
+      <.table id="fees" rows={@fees} row_click={&JS.navigate(~p"/fees/#{&1}")}>
         <:col :let={fee} label="Name">
           <%= format_string_field(fee.name) %>
           <%= if Fee.is_archived?(fee) do %>

@@ -49,8 +49,8 @@ defmodule SportywebWeb.ClubLive.NewEdit do
       emails: [%Email{}],
       phones: [%Phone{}],
       financial_data: [%FinancialData{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
   end
 
   @impl true

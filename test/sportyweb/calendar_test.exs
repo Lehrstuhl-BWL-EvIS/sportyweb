@@ -1,5 +1,5 @@
 defmodule Sportyweb.CalendarTest do
-  use Sportyweb.DataCase
+  use Sportyweb.DataCase, async: true
 
   alias Sportyweb.Calendar
 

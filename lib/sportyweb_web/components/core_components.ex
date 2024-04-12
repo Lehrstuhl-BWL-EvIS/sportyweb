@@ -2,9 +2,9 @@ defmodule SportywebWeb.CoreComponents do
   @moduledoc """
   Provides core UI components.
 
-  At the first glance, this module may seem daunting, but its goal is
-  to provide some core building blocks in your application, such modals,
-  tables, and forms. The components are mostly markup and well documented
+  At first glance, this module may seem daunting, but its goal is to provide
+  core building blocks for your application, such as modals, tables, and
+  forms. The components consist mostly of markup and are well-documented
   with doc strings and declarative assigns. You may customize and style
   them in any way you want, based on your application growth and needs.
 
@@ -97,7 +97,7 @@ defmodule SportywebWeb.CoreComponents do
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:info} phx-mounted={show("#flash")}>Willkommen zurück!</.flash>
   """
-  attr :id, :string, default: "flash", doc: "the optional id of flash container"
+  attr :id, :string, doc: "the optional id of flash container"
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :title, :string, default: nil
   attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
@@ -106,6 +106,8 @@ defmodule SportywebWeb.CoreComponents do
   slot :inner_block, doc: "the optional inner block that renders the flash message"
 
   def flash(assigns) do
+    assigns = assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
+
     ~H"""
     <div
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
@@ -140,21 +142,37 @@ defmodule SportywebWeb.CoreComponents do
       <.flash_group flash={@flash} />
   """
   attr :flash, :map, required: true, doc: "the map of flash messages"
+  attr :id, :string, default: "flash-group", doc: "the optional id of flash container"
 
   def flash_group(assigns) do
     ~H"""
-    <.flash kind={:info} title="Success!" flash={@flash} />
-    <.flash kind={:error} title="Error!" flash={@flash} />
-    <.flash
-      id="disconnected"
-      kind={:error}
-      title="We can't find the internet"
-      phx-disconnected={show("#disconnected")}
-      phx-connected={hide("#disconnected")}
-      hidden
-    >
-      Attempting to reconnect <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
-    </.flash>
+    <div id={@id}>
+      <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
+      <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
+      <.flash
+        id="client-error"
+        kind={:error}
+        title={gettext("We can't find the internet")}
+        phx-disconnected={show(".phx-client-error #client-error")}
+        phx-connected={hide("#client-error")}
+        hidden
+      >
+        <%= gettext("Attempting to reconnect") %>
+        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+      </.flash>
+
+      <.flash
+        id="server-error"
+        kind={:error}
+        title={gettext("Something went wrong!")}
+        phx-disconnected={show(".phx-server-error #server-error")}
+        phx-connected={hide("#server-error")}
+        hidden
+      >
+        <%= gettext("Hang in there while we get back on track") %>
+        <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
+      </.flash>
+    </div>
     """
   end
 
@@ -239,7 +257,10 @@ defmodule SportywebWeb.CoreComponents do
 
   def cancel_button(assigns) do
     ~H"""
-    <.link navigate={@navigate} class={["mx-2 py-1 px-1 text-sm font-semibold hover:underline", @class]}>
+    <.link
+      navigate={@navigate}
+      class={["mx-2 py-1 px-1 text-sm font-semibold hover:underline", @class]}
+    >
       <%= render_slot(@inner_block) %>
     </.link>
     """
@@ -319,9 +340,22 @@ defmodule SportywebWeb.CoreComponents do
   @doc """
   Renders an input with label and error messages.
 
-  A `%Phoenix.HTML.Form{}` and field name may be passed to the input
-  to build input names and error messages, or all the attributes and
-  errors may be passed explicitly.
+  A `Phoenix.HTML.FormField` may be passed as argument,
+  which is used to retrieve the input name, id, and values.
+  Otherwise all attributes may be passed explicitly.
+
+  ## Types
+
+  This function accepts all HTML input types, considering that:
+
+    * You may also set `type="select"` to render a `<select>` tag
+
+    * `type="checkbox"` is used exclusively to render boolean values
+
+    * For live file uploads, see `Phoenix.Component.live_file_input/1`
+
+  See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
+  for more information.
 
   ## Examples
 
@@ -362,9 +396,11 @@ defmodule SportywebWeb.CoreComponents do
     |> input()
   end
 
-  def input(%{type: "checkbox", value: value} = assigns) do
+  def input(%{type: "checkbox"} = assigns) do
     assigns =
-      assign_new(assigns, :checked, fn -> Phoenix.HTML.Form.normalize_value("checkbox", value) end)
+      assign_new(assigns, :checked, fn ->
+        Phoenix.HTML.Form.normalize_value("checkbox", assigns[:value])
+      end)
 
     ~H"""
     <div phx-feedback-for={@name}>
@@ -526,18 +562,32 @@ defmodule SportywebWeb.CoreComponents do
   slot :actions
 
   def header(assigns) do
-    assigns = assign(assigns, :default_header_classes, "font-bold leading-8 tracking-[0.015em] text-zinc-800")
+    assigns =
+      assign(
+        assigns,
+        :default_header_classes,
+        "font-bold leading-8 tracking-[0.015em] text-zinc-800"
+      )
 
     ~H"""
-    <header class={["flex flex-wrap md:flex-nowrap items-center justify-between gap-x-8 gap-y-2 mb-3 min-h-[40px] px-4 sm:px-0", @class]}>
+    <header class={[
+      "flex flex-wrap md:flex-nowrap items-center justify-between gap-x-8 gap-y-2 mb-3 min-h-[40px] px-4 sm:px-0",
+      @class
+    ]}>
       <div class="flex-grow">
         <%= case @level do %>
-          <% "1" -> %> <h1 class={["text-3xl", @default_header_classes]}><%= render_slot(@inner_block) %></h1>
-          <% "2" -> %> <h2 class={["text-2xl", @default_header_classes]}><%= render_slot(@inner_block) %></h2>
-          <% "3" -> %> <h3 class={["text-xl",  @default_header_classes]}><%= render_slot(@inner_block) %></h3>
-          <% "4" -> %> <h4 class={["text-lg",  @default_header_classes]}><%= render_slot(@inner_block) %></h4>
-          <% "5" -> %> <h5 class={["text-md",  @default_header_classes]}><%= render_slot(@inner_block) %></h5>
-          <% _   -> %> <h6 class={["text-sm",  @default_header_classes]}><%= render_slot(@inner_block) %></h6>
+          <% "1" -> %>
+            <h1 class={["text-3xl", @default_header_classes]}><%= render_slot(@inner_block) %></h1>
+          <% "2" -> %>
+            <h2 class={["text-2xl", @default_header_classes]}><%= render_slot(@inner_block) %></h2>
+          <% "3" -> %>
+            <h3 class={["text-xl", @default_header_classes]}><%= render_slot(@inner_block) %></h3>
+          <% "4" -> %>
+            <h4 class={["text-lg", @default_header_classes]}><%= render_slot(@inner_block) %></h4>
+          <% "5" -> %>
+            <h5 class={["text-md", @default_header_classes]}><%= render_slot(@inner_block) %></h5>
+          <% _   -> %>
+            <h6 class={["text-sm", @default_header_classes]}><%= render_slot(@inner_block) %></h6>
         <% end %>
 
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
@@ -608,8 +658,10 @@ defmodule SportywebWeb.CoreComponents do
       <table class="w-[40rem] sm:w-full">
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="p-0 pr-6 pb-4 font-normal"><%= col[:label] %></th>
-            <th class="relative p-0 pb-4"><span class="sr-only"><%= gettext("Actions") %></span></th>
+            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th :if={@action != []} class="relative p-0 pb-4">
+              <span class="sr-only"><%= gettext("Actions") %></span>
+            </th>
           </tr>
         </thead>
         <tbody
@@ -706,14 +758,14 @@ defmodule SportywebWeb.CoreComponents do
   Renders a [Heroicon](https://heroicons.com).
 
   Heroicons come in three styles – outline, solid, and mini.
-  By default, the outline style is used, but solid an mini may
+  By default, the outline style is used, but solid and mini may
   be applied by using the `-solid` and `-mini` suffix.
 
   You can customize the size and colors of the icons by setting
   width, height, and background color classes.
 
-  Icons are extracted from your `assets/vendor/heroicons` directory and bundled
-  within your compiled app.css by the plugin in your `assets/tailwind.config.js`.
+  Icons are extracted from the `deps/heroicons` directory and bundled within
+  your compiled app.css by the plugin in your `assets/tailwind.config.js`.
 
   ## Examples
 

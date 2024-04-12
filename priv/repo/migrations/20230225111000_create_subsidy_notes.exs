@@ -4,7 +4,10 @@ defmodule Sportyweb.Repo.Migrations.CreateSubsidyNotes do
   def change do
     create table(:subsidy_notes, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :subsidy_id, references(:subsidies, on_delete: :delete_all, type: :binary_id), null: false
+
+      add :subsidy_id, references(:subsidies, on_delete: :delete_all, type: :binary_id),
+        null: false
+
       add :note_id, references(:notes, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()

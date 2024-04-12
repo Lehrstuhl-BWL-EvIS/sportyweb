@@ -7,7 +7,8 @@ defmodule SportywebWeb.RoleLive.New do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :club_navigation_current_item, :authorization), temporary_assigns: [changeset: nil]}
+    {:ok, assign(socket, :club_navigation_current_item, :authorization),
+     temporary_assigns: [changeset: nil]}
   end
 
   @impl true
@@ -32,15 +33,23 @@ defmodule SportywebWeb.RoleLive.New do
   def handle_event("add", %{"user" => %{"email" => email}}, socket) do
     user = email |> maybe_create_user(socket)
 
-    {:noreply, socket
-      |> put_flash(:info, "Vergib dem Nutzer eine Rolle um ihn dem Verein hinzuzufügen.")
-      |> push_navigate(to: ~p"/clubs/#{socket.assigns.club.id}/roles/#{user.id}/edit")}
+    {:noreply,
+     socket
+     |> put_flash(:info, "Vergib dem Nutzer eine Rolle um ihn dem Verein hinzuzufügen.")
+     |> push_navigate(to: ~p"/clubs/#{socket.assigns.club.id}/roles/#{user.id}/edit")}
   end
 
   defp maybe_create_user(email, socket) do
     case Accounts.get_user_by_email(email) do
-      %User{} = user -> user
-      _ -> Accounts.register_user_for_club(email, socket.assigns.club, &url(~p"/users/reset_password/#{&1}"))
+      %User{} = user ->
+        user
+
+      _ ->
+        Accounts.register_user_for_club(
+          email,
+          socket.assigns.club,
+          &url(~p"/users/reset_password/#{&1}")
+        )
     end
   end
 

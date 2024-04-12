@@ -97,22 +97,27 @@ defmodule Sportyweb.Personal.Contact do
   end
 
   def has_active_membership_contract?(%Contact{} = contact) do
-    Enum.any?(contact.contracts, fn contract -> Contract.is_in_use?(contract, Date.utc_today()) end)
+    Enum.any?(contact.contracts, fn contract ->
+      Contract.is_in_use?(contract, Date.utc_today())
+    end)
   end
 
   @doc false
   def changeset(contact, attrs) do
     contact
-    |> cast(attrs, [
-      :club_id,
-      :type,
-      :organization_name,
-      :organization_type,
-      :person_last_name,
-      :person_first_name_1,
-      :person_first_name_2,
-      :person_gender,
-      :person_birthday],
+    |> cast(
+      attrs,
+      [
+        :club_id,
+        :type,
+        :organization_name,
+        :organization_type,
+        :person_last_name,
+        :person_first_name_1,
+        :person_first_name_2,
+        :person_gender,
+        :person_birthday
+      ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:contact_groups, required: false)
@@ -136,7 +141,8 @@ defmodule Sportyweb.Personal.Contact do
     )
     |> validate_inclusion(
       :organization_type,
-      get_valid_organization_types() |> Enum.map(fn organization_type -> organization_type[:value] end)
+      get_valid_organization_types()
+      |> Enum.map(fn organization_type -> organization_type[:value] end)
     )
     |> validate_inclusion(
       :person_gender,
@@ -151,8 +157,16 @@ defmodule Sportyweb.Personal.Contact do
     case get_field(changeset, :type) do
       "organization" ->
         changeset |> validate_required([:organization_name, :organization_type])
+
       "person" ->
-        changeset |> validate_required([:person_last_name, :person_first_name_1, :person_gender, :person_birthday])
+        changeset
+        |> validate_required([
+          :person_last_name,
+          :person_first_name_1,
+          :person_gender,
+          :person_birthday
+        ])
+
       _ ->
         changeset
     end
@@ -162,17 +176,20 @@ defmodule Sportyweb.Personal.Contact do
     # The "name" field is only set internally and its content is based on
     # the contact type and the content of (multiple) other fields.
 
-    name = case get_field(changeset, :type) do
-      "organization" ->
-        get_field(changeset, :organization_name)
-      "person" ->
-        person_last_name    = get_field(changeset, :person_last_name)
-        person_first_name_1 = get_field(changeset, :person_first_name_1)
-        person_first_name_2 = get_field(changeset, :person_first_name_2)
-        "#{person_last_name}, #{person_first_name_1} #{person_first_name_2}"
-      _ ->
-        ""
-    end
+    name =
+      case get_field(changeset, :type) do
+        "organization" ->
+          get_field(changeset, :organization_name)
+
+        "person" ->
+          person_last_name = get_field(changeset, :person_last_name)
+          person_first_name_1 = get_field(changeset, :person_first_name_1)
+          person_first_name_2 = get_field(changeset, :person_first_name_2)
+          "#{person_last_name}, #{person_first_name_1} #{person_first_name_2}"
+
+        _ ->
+          ""
+      end
 
     changeset |> Ecto.Changeset.change(name: String.trim(name))
   end

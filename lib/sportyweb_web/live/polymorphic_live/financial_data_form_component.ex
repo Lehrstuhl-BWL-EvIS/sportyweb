@@ -13,7 +13,7 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataFormComponent do
             field={@financial_data[:type]}
             type="select"
             label="Zahlungsart"
-            options={FinancialData.get_valid_types}
+            options={FinancialData.get_valid_types()}
             phx-target={@myself}
             phx-change="update_type"
           />
@@ -21,7 +21,11 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataFormComponent do
 
         <%= if @type == "direct_debit" do %>
           <div class="col-span-12 md:col-span-7">
-            <.input field={@financial_data[:direct_debit_account_holder]} type="text" label="Kontoinhaber" />
+            <.input
+              field={@financial_data[:direct_debit_account_holder]}
+              type="text"
+              label="Kontoinhaber"
+            />
           </div>
 
           <div class="col-span-12 md:col-span-5">
@@ -29,13 +33,21 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataFormComponent do
           </div>
 
           <div class="col-span-12">
-            <.input field={@financial_data[:direct_debit_institute]} type="text" label="Name des Instituts" />
+            <.input
+              field={@financial_data[:direct_debit_institute]}
+              type="text"
+              label="Name des Instituts"
+            />
           </div>
         <% end %>
 
         <%= if @type == "invoice" do %>
           <div class="col-span-12">
-            <.input field={@financial_data[:invoice_recipient]} type="text" label="Rechnungsempfänger" />
+            <.input
+              field={@financial_data[:invoice_recipient]}
+              type="text"
+              label="Rechnungsempfänger"
+            />
           </div>
 
           <div class="col-span-12">
@@ -58,7 +70,10 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataFormComponent do
   end
 
   @impl true
-  def update(%{financial_data: %{data: %Sportyweb.Polymorphic.FinancialData{type: type}}} = assigns, socket) do
+  def update(
+        %{financial_data: %{data: %Sportyweb.Polymorphic.FinancialData{type: type}}} = assigns,
+        socket
+      ) do
     # This function will be used if the params don't contain the type info, yet.
     # Then, the type value comes from the assigns instead.
     update_type(assigns, socket, type)

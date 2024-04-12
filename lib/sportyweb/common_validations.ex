@@ -20,7 +20,8 @@ defmodule SportywebWeb.CommonValidations do
     field_1_date_value = get_field(changeset, field_1)
     field_2_date_value = get_field(changeset, field_2)
 
-    if field_1_date_value && field_2_date_value && Date.compare(field_2_date_value, field_1_date_value) == :lt do
+    if field_1_date_value && field_2_date_value &&
+         Date.compare(field_2_date_value, field_1_date_value) == :lt do
       changeset
       |> add_error(field_2, message)
     else
@@ -69,6 +70,7 @@ defmodule SportywebWeb.CommonValidations do
   """
   def validate_currency(changeset, field, currency) do
     amount = get_field(changeset, field)
+
     if amount && Map.get(amount, :currency) != currency do
       changeset
       |> add_error(field, "The currency is unknown or not supported")

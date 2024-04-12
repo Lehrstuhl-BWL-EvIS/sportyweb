@@ -54,11 +54,12 @@ defmodule Sportyweb.Personal do
   def list_contract_contact_options(contract, contract_object) do
     # Get all the ids of contacts that have an active contract with the contract_object.
     # These contacts won't appear in the select input as an option for the new contract.
-    exclude_contact_ids = Enum.map(contract_object.contracts, fn contract ->
-      if !Contract.is_archived?(contract, Date.utc_today()) do
-        contract.contact_id
-      end
-    end)
+    exclude_contact_ids =
+      Enum.map(contract_object.contracts, fn contract ->
+        if !Contract.is_archived?(contract, Date.utc_today()) do
+          contract.contact_id
+        end
+      end)
 
     query =
       from(

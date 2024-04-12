@@ -1,5 +1,5 @@
 defmodule Sportyweb.FinanceTest do
-  use Sportyweb.DataCase
+  use Sportyweb.DataCase, async: true
 
   alias Sportyweb.Finance
 

@@ -37,7 +37,15 @@ defmodule SportywebWeb.ContactLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    contact = Personal.get_contact!(id, [:club, :emails, :financial_data, :phones, :postal_addresses, :notes])
+    contact =
+      Personal.get_contact!(id, [
+        :club,
+        :emails,
+        :financial_data,
+        :phones,
+        :postal_addresses,
+        :notes
+      ])
 
     socket
     |> assign(:page_title, "Kontakt bearbeiten")
@@ -57,8 +65,8 @@ defmodule SportywebWeb.ContactLive.NewEdit do
       emails: [%Email{}],
       phones: [%Phone{}],
       financial_data: [%FinancialData{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
     |> assign(:club, club)
   end
 

@@ -5,7 +5,10 @@ defmodule Sportyweb.Repo.Migrations.CreateFeeInternalEvents do
     create table(:fee_internal_events, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :fee_id, references(:fees, on_delete: :delete_all, type: :binary_id), null: false
-      add :internal_event_id, references(:internal_events, on_delete: :delete_all, type: :binary_id), null: false
+
+      add :internal_event_id,
+          references(:internal_events, on_delete: :delete_all, type: :binary_id),
+          null: false
 
       timestamps()
     end

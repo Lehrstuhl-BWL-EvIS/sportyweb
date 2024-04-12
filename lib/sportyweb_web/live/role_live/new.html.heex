@@ -4,17 +4,16 @@
 </.header>
 
 <.card class="mt-8 max-w-mx">
-  <.simple_form
-    for={@form}
-    id="add_user_form"
-    phx-submit="add"
-    phx-change="validate"
-    as={:user}
-  >
+  <.simple_form for={@form} id="add_user_form" phx-submit="add" phx-change="validate" as={:user}>
     <.error :if={@form.errors[:email] != nil}>
       Bitte überprüfen Sie ihre Eingaben.
     </.error>
-    <.input field={@form[:email]} type="email" label="Bitte geben Sie die Email des hinzuzufügenden Nutzers ein" required />
+    <.input
+      field={@form[:email]}
+      type="email"
+      label="Bitte geben Sie die Email des hinzuzufügenden Nutzers ein"
+      required
+    />
     <:actions>
       <div>
         <.button phx-disable-with="Nutzer wird hinzugefügt...">Hinzufügen</.button>

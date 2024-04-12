@@ -22,14 +22,27 @@ defmodule Sportyweb.Finance.Forecast do
   @doc false
   def changeset(forecast, attrs) do
     forecast
-    |> cast(attrs, [
-      :type, :contact_id, :subsidy_id, :start_date, :end_date],
+    |> cast(
+      attrs,
+      [
+        :type,
+        :contact_id,
+        :subsidy_id,
+        :start_date,
+        :end_date
+      ],
       empty_values: ["", nil]
     )
     |> validate_required([:type, :start_date, :end_date])
-    |> validate_dates_order(:current_date, :start_date,
-      "Startzeitpunkt darf nicht in der Vergangenheit liegen!")
-    |> validate_dates_order(:start_date, :end_date,
-      "Muss zeitlich später als oder gleich \"Von\" sein!")
+    |> validate_dates_order(
+      :current_date,
+      :start_date,
+      "Startzeitpunkt darf nicht in der Vergangenheit liegen!"
+    )
+    |> validate_dates_order(
+      :start_date,
+      :end_date,
+      "Muss zeitlich später als oder gleich \"Von\" sein!"
+    )
   end
 end

@@ -27,7 +27,11 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+                <.input
+                  field={@form[:reference_number]}
+                  type="text"
+                  label="Referenznummer (optional)"
+                />
               </div>
 
               <div class="col-span-12">
@@ -38,7 +42,9 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
             <.input_grid class="pt-6">
               <div class="col-span-12">
                 <.input field={@form[:amount]} type="text" label="Betrag in Euro" />
-                <.input_description>Das €-Zeichen kann, muss aber nicht angegeben werden.</.input_description>
+                <.input_description>
+                  Das €-Zeichen kann, muss aber nicht angegeben werden.
+                </.input_description>
               </div>
             </.input_grid>
 
@@ -61,21 +67,29 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
               </div>
             </.input_grid>
 
-            <.input_grid class="pt-6" :if={show_archive_message?(@subsidy)}>
+            <.input_grid :if={show_archive_message?(@subsidy)} class="pt-6">
               <div class="col-span-12">
-                <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
+                <div
+                  class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative"
+                  role="alert"
+                >
                   Dieser Zuschuss kann nicht gelöscht, sondern nur archiviert werden, denn:
                   <ul class="list-disc pl-4 mb-3">
-                    <li :if={Enum.any?(@subsidy.fees)}>Er wird von <%= Enum.count(@subsidy.fees) %> Gebühren verwendet.</li>
+                    <li :if={Enum.any?(@subsidy.fees)}>
+                      Er wird von <%= Enum.count(@subsidy.fees) %> Gebühren verwendet.
+                    </li>
                   </ul>
                   Zur Archivierung bitte das gewünschte Datum im Feld "Archiviert ab" eintragen und "Speichern" klicken.
                 </div>
               </div>
             </.input_grid>
 
-            <.input_grid class="pt-6" :if={@subsidy.id && Subsidy.is_archived?(@subsidy)}>
+            <.input_grid :if={@subsidy.id && Subsidy.is_archived?(@subsidy)} class="pt-6">
               <div class="col-span-12">
-                <div class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative" role="alert">
+                <div
+                  class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative"
+                  role="alert"
+                >
                   Dieser Zuschuss ist derzeit archiviert.
                   Wird das Datum im Feld "Archiviert ab" gelöscht, oder durch ein Zukünftiges ersetzt,
                   lässt sich die Archivierung komplett bzw. temporär aufheben.
@@ -93,7 +107,8 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
               :if={show_delete_button?(@subsidy)}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @subsidy.id})}
-              data-confirm="Unwiderruflich löschen?">
+              data-confirm="Unwiderruflich löschen?"
+            >
               Löschen
             </.button>
           </:actions>
@@ -141,9 +156,10 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
   end
 
   defp save_subsidy(socket, :new, subsidy_params) do
-    subsidy_params = Enum.into(subsidy_params, %{
-      "club_id" => socket.assigns.subsidy.club.id
-    })
+    subsidy_params =
+      Enum.into(subsidy_params, %{
+        "club_id" => socket.assigns.subsidy.club.id
+      })
 
     case Finance.create_subsidy(subsidy_params) do
       {:ok, _subsidy} ->

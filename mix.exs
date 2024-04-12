@@ -5,7 +5,7 @@ defmodule Sportyweb.MixProject do
     [
       app: :sportyweb,
       version: "0.3.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.16",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -44,25 +44,34 @@ defmodule Sportyweb.MixProject do
       ###################################
       # Default Phoenix Dependencies
 
-      {:argon2_elixir, "~> 3.1"}, # Don't use bcrypt_elixir!
-      {:phoenix, "~> 1.7.6"},
+      # Don't use bcrypt_elixir!
+      {:argon2_elixir, "~> 3.1"},
+      {:phoenix, "~> 1.7.12"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
-      {:phoenix_html, "~> 3.3"},
+      {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.19.2"},
+      {:phoenix_live_view, "~> 0.20.14"},
       {:floki, ">= 0.30.0", only: :test},
-      {:phoenix_live_dashboard, "~> 0.8.0"},
-      {:esbuild, "~> 0.7", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.2.0", runtime: Mix.env() == :dev},
-      {:swoosh, "~> 1.3"},
+      {:phoenix_live_dashboard, "~> 0.8.3"},
+      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+      {:heroicons,
+       github: "tailwindlabs/heroicons",
+       tag: "v2.1.1",
+       sparse: "optimized",
+       app: false,
+       compile: false,
+       depth: 1},
+      {:swoosh, "~> 1.5"},
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 0.6"},
-      {:telemetry_poller, "~> 1.0"},
+      {:telemetry_poller, "~> 1.1"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
-      {:plug_cowboy, "~> 2.5"},
+      {:dns_cluster, "~> 0.1.1"},
+      {:bandit, "~> 1.2"},
 
       ###################################
       # Custom Dependencies
@@ -85,22 +94,22 @@ defmodule Sportyweb.MixProject do
       # Generates the documentation for the entire project
       # https://hexdocs.pm/ex_doc/readme.html
       # https://github.com/elixir-lang/ex_doc
-      {:ex_doc, "~> 0.29", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.32", only: :dev, runtime: false},
 
       # Elixir implementation of Money with Currency
       # https://hexdocs.pm/ex_money/readme.html
       # https://github.com/kipcole9/money
-      {:ex_money, "~> 5.13"},
+      {:ex_money, "~> 5.15"},
 
       # Money functions for the serialization of a money data type
       # https://hexdocs.pm/ex_money_sql/readme.html
       # https://github.com/kipcole9/money_sql
-      {:ex_money_sql, "~> 1.9"},
+      {:ex_money_sql, "~> 1.11"},
 
       # Generates fake data (primarily for the seed)
       # https://hexdocs.pm/faker/readme.html
       # https://github.com/elixirs/faker
-      {:faker, "~> 0.17", only: [:dev, :test]},
+      {:faker, "~> 0.18", only: [:dev, :test]},
 
       # Cron-like job scheduler for Elixir
       # https://hexdocs.pm/quantum/readme.html
@@ -127,8 +136,12 @@ defmodule Sportyweb.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind default", "esbuild default"],
-      "assets.deploy": ["tailwind default --minify", "esbuild default --minify", "phx.digest"]
+      "assets.build": ["tailwind sportyweb", "esbuild sportyweb"],
+      "assets.deploy": [
+        "tailwind sportyweb --minify",
+        "esbuild sportyweb --minify",
+        "phx.digest"
+      ]
     ]
   end
 end

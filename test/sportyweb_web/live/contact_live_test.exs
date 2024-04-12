@@ -1,5 +1,5 @@
 defmodule SportywebWeb.ContactLiveTest do
-  use SportywebWeb.ConnCase
+  use SportywebWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
@@ -27,14 +27,14 @@ defmodule SportywebWeb.ContactLiveTest do
     person_first_name_1: "some updated person_first_name_1",
     person_first_name_2: nil,
     person_gender: "female",
-    person_last_name: "some updated person_last_name",
+    person_last_name: "some updated person_last_name"
   }
   @invalid_attrs %{
     person_birthday: nil,
     person_first_name_1: nil,
     person_first_name_2: nil,
     person_gender: nil,
-    person_last_name: nil,
+    person_last_name: nil
   }
 
   setup do

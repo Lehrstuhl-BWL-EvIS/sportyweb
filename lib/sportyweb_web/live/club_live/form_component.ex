@@ -26,7 +26,11 @@ defmodule SportywebWeb.ClubLive.FormComponent do
               </div>
 
               <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:reference_number]} type="text" label="Referenznummer (optional)" />
+                <.input
+                  field={@form[:reference_number]}
+                  type="text"
+                  label="Referenznummer (optional)"
+                />
               </div>
 
               <div class="col-span-12">
@@ -42,7 +46,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
               </div>
             </.input_grid>
 
-            <.input_grid class="pt-6" :if={@club.id && Enum.any?(@club.venues)}>
+            <.input_grid :if={@club.id && Enum.any?(@club.venues)} class="pt-6">
               <div class="col-span-12">
                 <.input
                   field={@form[:venue_id]}
@@ -101,7 +105,8 @@ defmodule SportywebWeb.ClubLive.FormComponent do
               :if={@club.id}
               class="bg-rose-700 hover:bg-rose-800"
               phx-click={JS.push("delete", value: %{id: @club.id})}
-              data-confirm="Unwiderruflich löschen?">
+              data-confirm="Unwiderruflich löschen?"
+            >
               Löschen
             </.button>
           </:actions>

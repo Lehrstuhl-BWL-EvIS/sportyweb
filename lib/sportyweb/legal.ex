@@ -149,6 +149,7 @@ defmodule Sportyweb.Legal do
       )
 
     contracts = Repo.all(query)
+
     contracts
     |> Enum.each(fn contract ->
       fee = contract.fee

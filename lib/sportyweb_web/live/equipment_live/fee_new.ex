@@ -42,11 +42,14 @@ defmodule SportywebWeb.EquipmentLive.FeeNew do
   # There is no "edit" action in this LiveView because that gets handled in the default SportywebWeb.FeeLive.NewEdit
 
   defp apply_action(socket, :new, %{"id" => id}) do
-    equipment = Asset.get_equipment!(id, [venue: :club])
+    equipment = Asset.get_equipment!(id, venue: :club)
     type = "equipment"
 
     socket
-    |> assign(:page_title, "Spezifische Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types, type)})")
+    |> assign(
+      :page_title,
+      "Spezifische Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types(), type)})"
+    )
     |> assign(:fee, %Fee{
       club_id: equipment.venue.club.id,
       club: equipment.venue.club,
@@ -54,8 +57,8 @@ defmodule SportywebWeb.EquipmentLive.FeeNew do
       type: type,
       equipment: [equipment],
       internal_events: [%InternalEvent{}],
-      notes: [%Note{}]}
-    )
+      notes: [%Note{}]
+    })
     |> assign(:equipment, equipment)
     |> assign(:club, equipment.venue.club)
   end

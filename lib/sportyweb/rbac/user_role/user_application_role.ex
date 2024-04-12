@@ -8,7 +8,6 @@ defmodule Sportyweb.RBAC.UserRole.UserApplicationRole do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "userapplicationroles" do
-
     belongs_to :user, User
     belongs_to :applicationrole, ApplicationRole
 

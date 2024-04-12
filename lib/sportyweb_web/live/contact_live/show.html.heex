@@ -10,20 +10,19 @@
 <.card>
   <.list>
     <:item title="Art">
-      <%= get_key_for_value(Contact.get_valid_types, @contact.type) %>
+      <%= get_key_for_value(Contact.get_valid_types(), @contact.type) %>
     </:item>
     <:item title="Name">
       <%= format_string_field(@contact.name) %>
     </:item>
-    <:item title="Organisationstyp" :if={Contact.is_organization?(@contact)}>
-      <%= get_key_for_value(Contact.get_valid_organization_types, @contact.organization_type) %>
+    <:item :if={Contact.is_organization?(@contact)} title="Organisationstyp">
+      <%= get_key_for_value(Contact.get_valid_organization_types(), @contact.organization_type) %>
     </:item>
-    <:item title="Geschlecht" :if={Contact.is_person?(@contact)}>
-      <%= get_key_for_value(Contact.get_valid_genders, @contact.person_gender) %>
+    <:item :if={Contact.is_person?(@contact)} title="Geschlecht">
+      <%= get_key_for_value(Contact.get_valid_genders(), @contact.person_gender) %>
     </:item>
-    <:item title="Geburtsdatum" :if={Contact.is_person?(@contact)}>
-      <%= format_date_field_dmy(@contact.person_birthday) %>
-      - <%= Contact.age_in_years(@contact) %> Jahre
+    <:item :if={Contact.is_person?(@contact)} title="Geburtsdatum">
+      <%= format_date_field_dmy(@contact.person_birthday) %> - <%= Contact.age_in_years(@contact) %> Jahre
     </:item>
     <:item title="Adresse">
       <.live_component
@@ -52,7 +51,7 @@
         notes={@contact.notes}
       />
     </:item>
-    <:item title="Aktives Mitglied" :if={Contact.has_active_membership_contract?(@contact)}>
+    <:item :if={Contact.has_active_membership_contract?(@contact)} title="Aktives Mitglied">
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>
   </.list>

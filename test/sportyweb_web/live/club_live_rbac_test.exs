@@ -1,6 +1,6 @@
 # credo:disable-for-this-file Credo.Check.Design.DuplicatedCode
 defmodule SportywebWeb.Live.ClubLiveRbacTest do
-  use SportywebWeb.ConnCase
+  use SportywebWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
@@ -9,30 +9,49 @@ defmodule SportywebWeb.Live.ClubLiveRbacTest do
   import Sportyweb.RBAC.UserRoleFixtures
 
   setup do
-    #Users
+    # Users
     user_app_admin = user_fixture()
     user_club_admin = user_fixture()
     user_club_role = user_fixture()
     user_club_department_admin = user_fixture()
     user_other = user_fixture()
 
-    #ApplicationRoles
+    # ApplicationRoles
     applicationrole = application_role_fixture()
-    user_application_role_fixture(%{user_id: user_app_admin.id, applicationrole_id: applicationrole.id})
 
-    #Clubs
+    user_application_role_fixture(%{
+      user_id: user_app_admin.id,
+      applicationrole_id: applicationrole.id
+    })
+
+    # Clubs
     department = department_fixture()
     club = department.club_id |> Sportyweb.Organization.get_club!()
 
-    #ClubRoles
+    # ClubRoles
     clubrole_admin = club_role_fixture(%{name: "Vereinsadministration"})
-    user_club_role_fixture(%{user_id: user_club_admin.id, club_id: club.id, clubrole_id: clubrole_admin.id})
+
+    user_club_role_fixture(%{
+      user_id: user_club_admin.id,
+      club_id: club.id,
+      clubrole_id: clubrole_admin.id
+    })
 
     clubrole_role = club_role_fixture(%{name: "Rollenverwaltung"})
-    user_club_role_fixture(%{user_id: user_club_role.id, club_id: club.id, clubrole_id: clubrole_role.id})
+
+    user_club_role_fixture(%{
+      user_id: user_club_role.id,
+      club_id: club.id,
+      clubrole_id: clubrole_role.id
+    })
 
     deparmentrole_dept_lead = department_role_fixture(%{name: "Abteilungsleiter"})
-    user_department_role_fixture(%{user_id: user_club_department_admin.id, department_id: department.id, departmentrole_id: deparmentrole_dept_lead.id})
+
+    user_department_role_fixture(%{
+      user_id: user_club_department_admin.id,
+      department_id: department.id,
+      departmentrole_id: deparmentrole_dept_lead.id
+    })
 
     %{
       user_app_admin: user_app_admin,
@@ -40,7 +59,7 @@ defmodule SportywebWeb.Live.ClubLiveRbacTest do
       user_club_role: user_club_role,
       user_club_department_admin: user_club_department_admin,
       user_other: user_other,
-      club: club,
+      club: club
     }
   end
 
@@ -56,7 +75,7 @@ defmodule SportywebWeb.Live.ClubLiveRbacTest do
       {:error, _} = live(conn, ~p"/clubs/new")
 
       conn = conn |> log_in_user(user)
-      {:error, {:live_redirect , %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/new")
+      {:error, {:live_redirect, %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/new")
 
       assert msg =~ "Zugriff verweigert."
     end
@@ -65,7 +84,7 @@ defmodule SportywebWeb.Live.ClubLiveRbacTest do
       {:error, _} = live(conn, ~p"/clubs/new")
 
       conn = conn |> log_in_user(user)
-      {:error, {:live_redirect , %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/new")
+      {:error, {:live_redirect, %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/new")
 
       assert msg =~ "Zugriff verweigert."
     end
@@ -74,7 +93,7 @@ defmodule SportywebWeb.Live.ClubLiveRbacTest do
       {:error, _} = live(conn, ~p"/clubs/new")
 
       conn = conn |> log_in_user(user)
-      {:error, {:live_redirect , %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/new")
+      {:error, {:live_redirect, %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/new")
 
       assert msg =~ "Zugriff verweigert."
     end
@@ -83,7 +102,7 @@ defmodule SportywebWeb.Live.ClubLiveRbacTest do
       {:error, _} = live(conn, ~p"/clubs/new")
 
       conn = conn |> log_in_user(user)
-      {:error, {:live_redirect , %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/new")
+      {:error, {:live_redirect, %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/new")
 
       assert msg =~ "Zugriff verweigert."
     end
@@ -108,16 +127,24 @@ defmodule SportywebWeb.Live.ClubLiveRbacTest do
       {:error, _} = live(conn, ~p"/clubs/#{club.id}/edit")
 
       conn = conn |> log_in_user(user)
-      {:error, {:live_redirect , %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/#{club.id}/edit")
+
+      {:error, {:live_redirect, %{flash: %{"error" => msg}, to: _}}} =
+        live(conn, ~p"/clubs/#{club.id}/edit")
 
       assert msg =~ "Zugriff verweigert."
     end
 
-    test "edit club as department_lead", %{conn: conn, user_club_department_admin: user, club: club} do
+    test "edit club as department_lead", %{
+      conn: conn,
+      user_club_department_admin: user,
+      club: club
+    } do
       {:error, _} = live(conn, ~p"/clubs/#{club.id}/edit")
 
       conn = conn |> log_in_user(user)
-      {:error, {:live_redirect , %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/#{club.id}/edit")
+
+      {:error, {:live_redirect, %{flash: %{"error" => msg}, to: _}}} =
+        live(conn, ~p"/clubs/#{club.id}/edit")
 
       assert msg =~ "Zugriff verweigert."
     end
@@ -126,7 +153,9 @@ defmodule SportywebWeb.Live.ClubLiveRbacTest do
       {:error, _} = live(conn, ~p"/clubs/#{club.id}/edit")
 
       conn = conn |> log_in_user(user)
-      {:error, {:live_redirect , %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/#{club.id}/edit")
+
+      {:error, {:live_redirect, %{flash: %{"error" => msg}, to: _}}} =
+        live(conn, ~p"/clubs/#{club.id}/edit")
 
       assert msg =~ "Zugriff verweigert."
     end
@@ -154,7 +183,11 @@ defmodule SportywebWeb.Live.ClubLiveRbacTest do
       {:ok, _live, _html} = live(conn, ~p"/clubs/#{club.id}")
     end
 
-    test "show club as department_lead", %{conn: conn, user_club_department_admin: user, club: club} do
+    test "show club as department_lead", %{
+      conn: conn,
+      user_club_department_admin: user,
+      club: club
+    } do
       {:error, _} = live(conn, ~p"/clubs/#{club.id}")
 
       conn = conn |> log_in_user(user)
@@ -165,7 +198,9 @@ defmodule SportywebWeb.Live.ClubLiveRbacTest do
       {:error, _} = live(conn, ~p"/clubs/#{club.id}")
 
       conn = conn |> log_in_user(user)
-      {:error, {:live_redirect , %{flash: %{"error" => msg}, to: _}}} = live(conn, ~p"/clubs/#{club.id}")
+
+      {:error, {:live_redirect, %{flash: %{"error" => msg}, to: _}}} =
+        live(conn, ~p"/clubs/#{club.id}")
 
       assert msg =~ "Zugriff verweigert."
     end

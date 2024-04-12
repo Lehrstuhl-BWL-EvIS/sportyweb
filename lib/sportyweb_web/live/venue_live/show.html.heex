@@ -9,7 +9,7 @@
 
 <.card>
   <.list>
-    <:item title="Hauptstandort" :if={Club.is_main_venue?(@club, @venue)}>
+    <:item :if={Club.is_main_venue?(@club, @venue)} title="Hauptstandort">
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>
     <:item title="Referenznummer">
