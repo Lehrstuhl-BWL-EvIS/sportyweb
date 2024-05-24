@@ -538,7 +538,7 @@ defmodule SportywebWeb.CoreComponents do
   @doc """
   Renders a header with title.
 
-    ## Examples
+  ## Examples
 
       <.header>
         Title

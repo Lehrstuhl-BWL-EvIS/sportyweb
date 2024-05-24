@@ -40,7 +40,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
           ]}
         >
           <.icon name="hero-calendar" class={@classes_icon} />
-          <span class="truncate">Kalender</span>
+          <span class="truncate">Veranstaltungen</span>
         </.link>
 
         <.link

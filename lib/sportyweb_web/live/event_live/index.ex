@@ -23,7 +23,7 @@ defmodule SportywebWeb.EventLive.Index do
     club = Organization.get_club!(club_id, [:events])
 
     socket
-    |> assign(:page_title, "Kalender")
+    |> assign(:page_title, "Veranstaltungen")
     |> assign(:club, club)
     |> stream(:events, club.events)
   end

@@ -77,7 +77,7 @@ defmodule SportywebWeb.EventLiveTest do
       conn = conn |> log_in_user(user)
       {:ok, _index_live, html} = live(conn, ~p"/clubs/#{event.club_id}/events")
 
-      assert html =~ "Kalender"
+      assert html =~ "Veranstaltungen"
       assert html =~ event.name
     end
   end
@@ -169,7 +169,7 @@ defmodule SportywebWeb.EventLiveTest do
         |> follow_redirect(conn, ~p"/clubs/#{event.club_id}/events")
 
       assert html =~ "Veranstaltung erfolgreich gelöscht"
-      assert html =~ "Kalender"
+      assert html =~ "Veranstaltungen"
       refute html =~ "some name"
     end
   end
