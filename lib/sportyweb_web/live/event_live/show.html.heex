@@ -31,15 +31,15 @@
       <%= format_integer_field(@event.maximum_age_in_years) %>
     </:item>
     <:item title="Veranstaltungsort">
-      <%= if @event.location_type == "no_info" do %>
+      <%= if @event.venue_type == "no_info" do %>
         -
       <% end %>
 
-      <%= if @event.location_type == "venue" do %>
-        <%= format_struct_list(@event.venues, :name) %>
+      <%= if @event.venue_type == "location" do %>
+        <%= format_struct_list(@event.locations, :name) %>
       <% end %>
 
-      <%= if @event.location_type == "postal_address" do %>
+      <%= if @event.venue_type == "postal_address" do %>
         <.live_component
           module={SportywebWeb.PolymorphicLive.PostalAddressShowComponent}
           id="postal_addresses"
@@ -47,8 +47,8 @@
         />
       <% end %>
 
-      <%= if @event.location_type == "free_form" do %>
-        <%= format_string_field(@event.location_description) %>
+      <%= if @event.venue_type == "free_form" do %>
+        <%= format_string_field(@event.venue_description) %>
       <% end %>
     </:item>
     <:item title="E-Mail">

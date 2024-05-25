@@ -17,7 +17,9 @@ defmodule SportywebWeb.EquipmentLive.NewEdit do
         title={@page_title}
         action={@live_action}
         equipment={@equipment}
-        navigate={if @equipment.id, do: ~p"/equipment/#{@equipment}", else: ~p"/venues/#{@venue}"}
+        navigate={
+          if @equipment.id, do: ~p"/equipment/#{@equipment}", else: ~p"/locations/#{@location}"
+        }
       />
     </div>
     """
@@ -34,29 +36,29 @@ defmodule SportywebWeb.EquipmentLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    equipment = Asset.get_equipment!(id, [:emails, :phones, :notes, venue: :club])
+    equipment = Asset.get_equipment!(id, [:emails, :phones, :notes, location: :club])
 
     socket
     |> assign(:page_title, "Equipment bearbeiten")
     |> assign(:equipment, equipment)
-    |> assign(:venue, equipment.venue)
-    |> assign(:club, equipment.venue.club)
+    |> assign(:location, equipment.location)
+    |> assign(:club, equipment.location.club)
   end
 
-  defp apply_action(socket, :new, %{"venue_id" => venue_id}) do
-    venue = Asset.get_venue!(venue_id, [:club])
+  defp apply_action(socket, :new, %{"location_id" => location_id}) do
+    location = Asset.get_location!(location_id, [:club])
 
     socket
     |> assign(:page_title, "Equipment erstellen")
     |> assign(:equipment, %Equipment{
-      venue_id: venue.id,
-      venue: venue,
+      location_id: location.id,
+      location: location,
       emails: [%Email{}],
       phones: [%Phone{}],
       notes: [%Note{}]
     })
-    |> assign(:venue, venue)
-    |> assign(:club, venue.club)
+    |> assign(:location, location)
+    |> assign(:club, location.club)
   end
 
   @impl true
@@ -67,6 +69,6 @@ defmodule SportywebWeb.EquipmentLive.NewEdit do
     {:noreply,
      socket
      |> put_flash(:info, "Equipment erfolgreich gelöscht")
-     |> push_navigate(to: "/venues/#{equipment.venue_id}")}
+     |> push_navigate(to: "/locations/#{equipment.location_id}")}
   end
 end

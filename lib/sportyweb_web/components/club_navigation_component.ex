@@ -66,7 +66,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
         </.link>
 
         <.link
-          navigate={~p"/clubs/#{@club}/venues"}
+          navigate={~p"/clubs/#{@club}/locations"}
           class={[
             @classes_menu_item,
             if(@club_navigation_current_item == :assets, do: @classes_menu_item_active)

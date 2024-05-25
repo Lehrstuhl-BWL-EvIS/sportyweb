@@ -2,7 +2,7 @@ defmodule Sportyweb.Organization.Club do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Sportyweb.Asset.Venue
+  alias Sportyweb.Asset.Location
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Finance.Subsidy
@@ -24,7 +24,7 @@ defmodule Sportyweb.Organization.Club do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "clubs" do
-    belongs_to :venue, Venue
+    belongs_to :location, Location
     has_many :all_contracts, Contract
     has_many :all_fees, Fee
     has_many :contacts, Contact, preload_order: [asc: :name]
@@ -34,7 +34,7 @@ defmodule Sportyweb.Organization.Club do
     has_many :subsidies, Subsidy, preload_order: [asc: :name]
     # This line has to be below "has_many :all_contracts"!
     has_many :transactions, through: [:all_contracts, :transactions]
-    has_many :venues, Venue, preload_order: [asc: :name]
+    has_many :locations, Location, preload_order: [asc: :name]
     many_to_many :contracts, Contract, join_through: ClubContract
     many_to_many :emails, Email, join_through: ClubEmail
     many_to_many :financial_data, FinancialData, join_through: ClubFinancialData
@@ -50,8 +50,8 @@ defmodule Sportyweb.Organization.Club do
     timestamps()
   end
 
-  def is_main_venue?(%Club{} = club, %Venue{} = venue) do
-    club.venue_id == venue.id
+  def is_main_location?(%Club{} = club, %Location{} = location) do
+    club.location_id == location.id
   end
 
   @doc false
@@ -60,7 +60,7 @@ defmodule Sportyweb.Organization.Club do
     |> cast(
       attrs,
       [
-        :venue_id,
+        :location_id,
         :name,
         :reference_number,
         :description,

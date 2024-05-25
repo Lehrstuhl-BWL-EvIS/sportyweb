@@ -16,7 +16,7 @@ alias Sportyweb.Accounts
 alias Sportyweb.Accounts.User
 alias Sportyweb.Asset
 alias Sportyweb.Asset.Equipment
-alias Sportyweb.Asset.Venue
+alias Sportyweb.Asset.Location
 alias Sportyweb.Calendar.Event
 alias Sportyweb.Finance
 alias Sportyweb.Finance.Fee
@@ -970,11 +970,11 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
       end
     end
 
-    # Venues
+    # Locations
 
     for i <- 0..Enum.random(3..7) do
-      venue =
-        Repo.insert!(%Venue{
+      location =
+        Repo.insert!(%Location{
           club_id: club.id,
           name: if(i == 0, do: "Zentrale", else: "Standort #{i + 1}"),
           reference_number: String.pad_leading("#{i + 1}", 3, "0"),
@@ -985,15 +985,15 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
           notes: [Sportyweb.SeedHelper.get_random_note()]
         })
 
-      if i == 0, do: Organization.update_club(club, %{venue_id: venue.id})
+      if i == 0, do: Organization.update_club(club, %{location_id: location.id})
 
-      # Fees: Specific - Venue
+      # Fees: Specific - Location
 
       Repo.insert!(%Fee{
         club_id: club.id,
         is_general: false,
-        type: "venue",
-        name: "Spez. Standortmiete #{venue.reference_number}",
+        type: "location",
+        name: "Spez. Standortmiete #{location.reference_number}",
         reference_number: Sportyweb.SeedHelper.get_random_string(3),
         description: "",
         amount: Money.new(:EUR, Enum.random(10..150)),
@@ -1003,7 +1003,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
         maximum_age_in_years: nil,
         internal_events: [Sportyweb.SeedHelper.get_random_internal_event()],
         notes: [%Note{}],
-        venues: [venue]
+        locations: [location]
       })
 
       # Equipment
@@ -1011,7 +1011,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
       for _j <- 0..Enum.random(1..30) do
         equipment =
           Repo.insert!(%Equipment{
-            venue_id: venue.id,
+            location_id: location.id,
             name: Faker.Commerce.product_name(),
             reference_number: Sportyweb.SeedHelper.get_random_string(5),
             serial_number: Sportyweb.SeedHelper.get_random_string(15),
@@ -1051,7 +1051,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 
     # Events
 
-    venues = Asset.list_venues(club.id)
+    locations = Asset.list_locations(club.id)
 
     for _i <- 0..Enum.random(10..30) do
       event =
@@ -1065,12 +1065,12 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
           maximum_participants: Enum.random(3..40),
           minimum_age_in_years: 0,
           maximum_age_in_years: Enum.random(5..100),
-          location_type:
-            Event.get_valid_location_types()
-            |> Enum.map(fn location_type -> location_type[:value] end)
+          venue_type:
+            Event.get_valid_venue_types()
+            |> Enum.map(fn venue_type -> venue_type[:value] end)
             |> Enum.random(),
-          location_description: if(:rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
-          venues: [venues |> Enum.random()],
+          venue_description: if(:rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: ""),
+          locations: [locations |> Enum.random()],
           postal_addresses: [Sportyweb.SeedHelper.get_random_postal_address()],
           emails: [Sportyweb.SeedHelper.get_random_email()],
           phones: [Sportyweb.SeedHelper.get_random_phone()],

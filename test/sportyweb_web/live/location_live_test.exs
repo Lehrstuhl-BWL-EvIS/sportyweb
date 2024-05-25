@@ -1,4 +1,4 @@
-defmodule SportywebWeb.VenueLiveTest do
+defmodule SportywebWeb.LocationLiveTest do
   use SportywebWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
@@ -36,123 +36,123 @@ defmodule SportywebWeb.VenueLiveTest do
     %{user: user}
   end
 
-  defp create_venue(_) do
-    venue = venue_fixture()
-    %{venue: venue}
+  defp create_location(_) do
+    location = location_fixture()
+    %{location: location}
   end
 
   describe "Index" do
-    setup [:create_venue]
+    setup [:create_location]
 
-    test "lists all venues - default redirect", %{conn: conn, user: user} do
-      {:error, _} = live(conn, ~p"/venues")
+    test "lists all locations - default redirect", %{conn: conn, user: user} do
+      {:error, _} = live(conn, ~p"/locations")
 
       conn = conn |> log_in_user(user)
 
       {:ok, conn} =
         conn
-        |> live(~p"/venues")
+        |> live(~p"/locations")
         |> follow_redirect(conn, ~p"/clubs")
 
       assert conn.resp_body =~ "Vereinsübersicht"
     end
 
-    test "lists all venues", %{conn: conn, user: user, venue: venue} do
-      {:error, _} = live(conn, ~p"/clubs/#{venue.club_id}/venues")
+    test "lists all locations", %{conn: conn, user: user, location: location} do
+      {:error, _} = live(conn, ~p"/clubs/#{location.club_id}/locations")
 
       conn = conn |> log_in_user(user)
-      {:ok, _index_live, html} = live(conn, ~p"/clubs/#{venue.club_id}/venues")
+      {:ok, _index_live, html} = live(conn, ~p"/clubs/#{location.club_id}/locations")
 
       assert html =~ "Standorte"
-      assert html =~ venue.name
+      assert html =~ location.name
     end
   end
 
   describe "New/Edit" do
-    setup [:create_venue]
+    setup [:create_location]
 
-    test "saves new venue", %{conn: conn, user: user} do
+    test "saves new location", %{conn: conn, user: user} do
       club = club_fixture()
 
-      {:error, _} = live(conn, ~p"/clubs/#{club}/venues/new")
+      {:error, _} = live(conn, ~p"/clubs/#{club}/locations/new")
 
       conn = conn |> log_in_user(user)
-      {:ok, new_live, html} = live(conn, ~p"/clubs/#{club}/venues/new")
+      {:ok, new_live, html} = live(conn, ~p"/clubs/#{club}/locations/new")
 
       assert html =~ "Standort erstellen"
 
       assert new_live
-             |> form("#venue-form", venue: @invalid_attrs)
+             |> form("#location-form", location: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         new_live
-        |> form("#venue-form", venue: @create_attrs)
+        |> form("#location-form", location: @create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/clubs/#{club}/venues")
+        |> follow_redirect(conn, ~p"/clubs/#{club}/locations")
 
       assert html =~ "Standort erfolgreich erstellt"
       assert html =~ "some name"
     end
 
-    test "cancels save new venue", %{conn: conn, user: user} do
+    test "cancels save new location", %{conn: conn, user: user} do
       club = club_fixture()
 
       conn = conn |> log_in_user(user)
-      {:ok, new_live, _html} = live(conn, ~p"/clubs/#{club}/venues/new")
+      {:ok, new_live, _html} = live(conn, ~p"/clubs/#{club}/locations/new")
 
       {:ok, _, _html} =
         new_live
-        |> element("#venue-form a", "Abbrechen")
+        |> element("#location-form a", "Abbrechen")
         |> render_click()
-        |> follow_redirect(conn, ~p"/clubs/#{club}/venues")
+        |> follow_redirect(conn, ~p"/clubs/#{club}/locations")
     end
 
-    test "updates venue", %{conn: conn, user: user, venue: venue} do
-      {:error, _} = live(conn, ~p"/venues/#{venue}/edit")
+    test "updates location", %{conn: conn, user: user, location: location} do
+      {:error, _} = live(conn, ~p"/locations/#{location}/edit")
 
       conn = conn |> log_in_user(user)
-      {:ok, edit_live, html} = live(conn, ~p"/venues/#{venue}/edit")
+      {:ok, edit_live, html} = live(conn, ~p"/locations/#{location}/edit")
 
       assert html =~ "Standort bearbeiten"
 
       assert edit_live
-             |> form("#venue-form", venue: @invalid_attrs)
+             |> form("#location-form", location: @invalid_attrs)
              |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         edit_live
-        |> form("#venue-form", venue: @update_attrs)
+        |> form("#location-form", location: @update_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/venues/#{venue}")
+        |> follow_redirect(conn, ~p"/locations/#{location}")
 
       assert html =~ "Standort erfolgreich aktualisiert"
       assert html =~ "some updated name"
     end
 
-    test "cancels updates venue", %{conn: conn, user: user, venue: venue} do
+    test "cancels updates location", %{conn: conn, user: user, location: location} do
       conn = conn |> log_in_user(user)
-      {:ok, edit_live, _html} = live(conn, ~p"/venues/#{venue}/edit")
+      {:ok, edit_live, _html} = live(conn, ~p"/locations/#{location}/edit")
 
       {:ok, _, _html} =
         edit_live
-        |> element("#venue-form a", "Abbrechen")
+        |> element("#location-form a", "Abbrechen")
         |> render_click()
-        |> follow_redirect(conn, ~p"/venues/#{venue}")
+        |> follow_redirect(conn, ~p"/locations/#{location}")
     end
 
-    test "deletes venue", %{conn: conn, user: user, venue: venue} do
-      {:error, _} = live(conn, ~p"/venues/#{venue}/edit")
+    test "deletes location", %{conn: conn, user: user, location: location} do
+      {:error, _} = live(conn, ~p"/locations/#{location}/edit")
 
       conn = conn |> log_in_user(user)
-      {:ok, edit_live, html} = live(conn, ~p"/venues/#{venue}/edit")
+      {:ok, edit_live, html} = live(conn, ~p"/locations/#{location}/edit")
       assert html =~ "some name"
 
       {:ok, _, html} =
         edit_live
-        |> element("#venue-form button", "Löschen")
+        |> element("#location-form button", "Löschen")
         |> render_click()
-        |> follow_redirect(conn, ~p"/clubs/#{venue.club_id}/venues")
+        |> follow_redirect(conn, ~p"/clubs/#{location.club_id}/locations")
 
       assert html =~ "Standort erfolgreich gelöscht"
       assert html =~ "Standorte"
@@ -161,27 +161,27 @@ defmodule SportywebWeb.VenueLiveTest do
   end
 
   describe "Show" do
-    setup [:create_venue]
+    setup [:create_location]
 
-    test "displays venue", %{conn: conn, user: user, venue: venue} do
-      {:error, _} = live(conn, ~p"/venues/#{venue}")
+    test "displays location", %{conn: conn, user: user, location: location} do
+      {:error, _} = live(conn, ~p"/locations/#{location}")
 
       conn = conn |> log_in_user(user)
-      {:ok, _show_live, html} = live(conn, ~p"/venues/#{venue}")
+      {:ok, _show_live, html} = live(conn, ~p"/locations/#{location}")
 
       assert html =~ "Standort:"
-      assert html =~ venue.name
+      assert html =~ location.name
     end
   end
 
   describe "FeeNew" do
-    setup [:create_venue]
+    setup [:create_location]
 
-    test "saves new venue fee", %{conn: conn, user: user, venue: venue} do
-      {:error, _} = live(conn, ~p"/venues/#{venue}/fees/new")
+    test "saves new location fee", %{conn: conn, user: user, location: location} do
+      {:error, _} = live(conn, ~p"/locations/#{location}/fees/new")
 
       conn = conn |> log_in_user(user)
-      {:ok, new_live, html} = live(conn, ~p"/venues/#{venue}/fees/new")
+      {:ok, new_live, html} = live(conn, ~p"/locations/#{location}/fees/new")
 
       assert html =~ "Spezifische Gebühr erstellen (Standort)"
 
@@ -204,10 +204,10 @@ defmodule SportywebWeb.VenueLiveTest do
         new_live
         |> form("#fee-form", fee: create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/venues/#{venue}")
+        |> follow_redirect(conn, ~p"/locations/#{location}")
 
       assert html =~ "Gebühr erfolgreich erstellt"
-      assert html =~ venue.name
+      assert html =~ location.name
     end
   end
 end

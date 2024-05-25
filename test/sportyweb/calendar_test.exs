@@ -14,7 +14,7 @@ defmodule Sportyweb.CalendarTest do
 
     @invalid_attrs %{
       description: nil,
-      location_type: nil,
+      venue_type: nil,
       maximum_age_in_years: 5,
       maximum_participants: "",
       minimum_age_in_years: 80,
@@ -50,7 +50,7 @@ defmodule Sportyweb.CalendarTest do
       valid_attrs = %{
         club_id: club.id,
         description: "some description",
-        location_type: "no_info",
+        venue_type: "no_info",
         maximum_age_in_years: 65,
         maximum_participants: 15,
         minimum_age_in_years: 18,
@@ -65,7 +65,7 @@ defmodule Sportyweb.CalendarTest do
 
       assert {:ok, %Event{} = event} = Calendar.create_event(valid_attrs)
       assert event.description == "some description"
-      assert event.location_type == "no_info"
+      assert event.venue_type == "no_info"
       assert event.maximum_age_in_years == 65
       assert event.maximum_participants == 15
       assert event.minimum_age_in_years == 18

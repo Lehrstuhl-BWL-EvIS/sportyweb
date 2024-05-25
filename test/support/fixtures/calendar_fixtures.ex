@@ -25,8 +25,8 @@ defmodule Sportyweb.CalendarFixtures do
         maximum_participants: 12,
         minimum_age_in_years: nil,
         maximum_age_in_years: nil,
-        location_type: "free_form",
-        location_description: "some location_description",
+        venue_type: "free_form",
+        venue_description: "some venue_description",
         emails: [email_attrs()],
         phones: [phone_attrs()],
         notes: [note_attrs()]

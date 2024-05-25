@@ -43,7 +43,7 @@ defmodule SportywebWeb.FeeLive.NewEdit do
         "department" -> :structure
         "group" -> :structure
         "event" -> :calendar
-        "venue" -> :assets
+        "location" -> :assets
         "equipment" -> :assets
         _ -> :fees
       end

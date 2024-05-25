@@ -8,12 +8,12 @@ defmodule Sportyweb.AssetFixtures do
   import Sportyweb.PolymorphicFixtures
 
   @doc """
-  Generate a venue.
+  Generate a location.
   """
-  def venue_fixture(attrs \\ %{}) do
+  def location_fixture(attrs \\ %{}) do
     club = club_fixture()
 
-    {:ok, venue} =
+    {:ok, location} =
       attrs
       |> Enum.into(%{
         club_id: club.id,
@@ -25,21 +25,21 @@ defmodule Sportyweb.AssetFixtures do
         phones: [phone_attrs()],
         notes: [note_attrs()]
       })
-      |> Sportyweb.Asset.create_venue()
+      |> Sportyweb.Asset.create_location()
 
-    venue
+    location
   end
 
   @doc """
   Generate a equipment.
   """
   def equipment_fixture(attrs \\ %{}) do
-    venue = venue_fixture()
+    location = location_fixture()
 
     {:ok, equipment} =
       attrs
       |> Enum.into(%{
-        venue_id: venue.id,
+        location_id: location.id,
         name: "some name",
         reference_number: "some reference_number",
         serial_number: "some serial_number",

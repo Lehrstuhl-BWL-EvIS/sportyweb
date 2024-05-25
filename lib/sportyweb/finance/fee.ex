@@ -5,8 +5,8 @@ defmodule Sportyweb.Finance.Fee do
 
   alias Sportyweb.Asset.Equipment
   alias Sportyweb.Asset.EquipmentFee
-  alias Sportyweb.Asset.Venue
-  alias Sportyweb.Asset.VenueFee
+  alias Sportyweb.Asset.Location
+  alias Sportyweb.Asset.LocationFee
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Calendar.EventFee
   alias Sportyweb.Finance.Fee
@@ -36,7 +36,7 @@ defmodule Sportyweb.Finance.Fee do
     many_to_many :groups, Group, join_through: GroupFee
     many_to_many :internal_events, InternalEvent, join_through: FeeInternalEvent
     many_to_many :notes, Note, join_through: FeeNote
-    many_to_many :venues, Venue, join_through: VenueFee
+    many_to_many :locations, Location, join_through: LocationFee
 
     field :is_general, :boolean, default: false
     field :type, :string, default: ""
@@ -58,7 +58,7 @@ defmodule Sportyweb.Finance.Fee do
       [key: "Abteilung", value: "department"],
       [key: "Gruppe", value: "group"],
       [key: "Veranstaltung", value: "event"],
-      [key: "Standort", value: "venue"],
+      [key: "Standort", value: "location"],
       [key: "Equipment", value: "equipment"]
     ]
   end

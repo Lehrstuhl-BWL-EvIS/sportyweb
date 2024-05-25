@@ -1,8 +1,8 @@
-defmodule Sportyweb.Repo.Migrations.CreateVenues do
+defmodule Sportyweb.Repo.Migrations.CreateLocations do
   use Ecto.Migration
 
   def change do
-    create table(:venues, primary_key: false) do
+    create table(:locations, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :name, :string, null: false
       add :reference_number, :string, null: false
@@ -12,7 +12,7 @@ defmodule Sportyweb.Repo.Migrations.CreateVenues do
       timestamps()
     end
 
-    create index(:venues, [:club_id])
-    create unique_index(:venues, [:club_id, :name])
+    create index(:locations, [:club_id])
+    create unique_index(:locations, [:club_id, :name])
   end
 end

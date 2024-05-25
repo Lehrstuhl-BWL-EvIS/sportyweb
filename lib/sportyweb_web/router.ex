@@ -145,25 +145,25 @@ defmodule SportywebWeb.Router do
 
       live "/contacts/:id", ContactLive.Show, :show
 
-      # Venues (Each belongs to a club)
+      # Locations (Each belongs to a club)
 
-      live "/venues", VenueLive.Index, :index_root
-      live "/clubs/:club_id/venues", VenueLive.Index, :index
+      live "/locations", LocationLive.Index, :index_root
+      live "/clubs/:club_id/locations", LocationLive.Index, :index
 
-      live "/clubs/:club_id/venues/new", VenueLive.NewEdit, :new
-      live "/venues/:id/edit", VenueLive.NewEdit, :edit
+      live "/clubs/:club_id/locations/new", LocationLive.NewEdit, :new
+      live "/locations/:id/edit", LocationLive.NewEdit, :edit
 
-      live "/venues/:id", VenueLive.Show, :show
+      live "/locations/:id", LocationLive.Show, :show
 
-      live "/venues/:id/fees", VenueLive.FeeNew, :index
-      live "/venues/:id/fees/new", VenueLive.FeeNew, :new
+      live "/locations/:id/fees", LocationLive.FeeNew, :index
+      live "/locations/:id/fees/new", LocationLive.FeeNew, :new
 
-      # Equipment (Each belongs to a venue)
+      # Equipment (Each belongs to a location)
 
       live "/equipment", EquipmentLive.Index, :index_root
-      live "/venues/:venue_id/equipment", EquipmentLive.Index, :index
+      live "/locations/:location_id/equipment", EquipmentLive.Index, :index
 
-      live "/venues/:venue_id/equipment/new", EquipmentLive.NewEdit, :new
+      live "/locations/:location_id/equipment/new", EquipmentLive.NewEdit, :new
       live "/equipment/:id/edit", EquipmentLive.NewEdit, :edit
 
       live "/equipment/:id", EquipmentLive.Show, :show

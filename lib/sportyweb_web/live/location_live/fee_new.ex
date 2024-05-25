@@ -1,4 +1,4 @@
-defmodule SportywebWeb.VenueLive.FeeNew do
+defmodule SportywebWeb.LocationLive.FeeNew do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Asset
@@ -16,8 +16,8 @@ defmodule SportywebWeb.VenueLive.FeeNew do
         title={@page_title}
         action={@live_action}
         fee={@fee}
-        fee_object={@venue}
-        navigate={if @fee.id, do: ~p"/fees/#{@fee}", else: ~p"/venues/#{@venue}"}
+        fee_object={@location}
+        navigate={if @fee.id, do: ~p"/fees/#{@fee}", else: ~p"/locations/#{@location}"}
       />
     </div>
     """
@@ -36,14 +36,14 @@ defmodule SportywebWeb.VenueLive.FeeNew do
   defp apply_action(socket, :index, %{"id" => id}) do
     # If the route behind this function should be more than a redirect in the future, put it in its own "Index"-LiveView!
     socket
-    |> push_navigate(to: ~p"/venues/#{id}")
+    |> push_navigate(to: ~p"/locations/#{id}")
   end
 
   # There is no "edit" action in this LiveView because that gets handled in the default SportywebWeb.FeeLive.NewEdit
 
   defp apply_action(socket, :new, %{"id" => id}) do
-    venue = Asset.get_venue!(id, [:club])
-    type = "venue"
+    location = Asset.get_location!(id, [:club])
+    type = "location"
 
     socket
     |> assign(
@@ -51,15 +51,15 @@ defmodule SportywebWeb.VenueLive.FeeNew do
       "Spezifische Gebühr erstellen (#{get_key_for_value(Fee.get_valid_types(), type)})"
     )
     |> assign(:fee, %Fee{
-      club_id: venue.club.id,
-      club: venue.club,
+      club_id: location.club.id,
+      club: location.club,
       is_general: false,
       type: type,
-      venues: [venue],
+      locations: [location],
       internal_events: [%InternalEvent{}],
       notes: [%Note{}]
     })
-    |> assign(:venue, venue)
-    |> assign(:club, venue.club)
+    |> assign(:location, location)
+    |> assign(:club, location.club)
   end
 end

@@ -23,8 +23,8 @@ defmodule SportywebWeb.EquipmentLive.Index do
     |> redirect(to: "/clubs")
   end
 
-  defp apply_action(socket, :index, %{"venue_id" => venue_id}) do
+  defp apply_action(socket, :index, %{"location_id" => location_id}) do
     socket
-    |> redirect(to: "/venues/#{venue_id}")
+    |> redirect(to: "/locations/#{location_id}")
   end
 end

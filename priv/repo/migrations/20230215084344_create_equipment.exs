@@ -11,11 +11,13 @@ defmodule Sportyweb.Repo.Migrations.CreateEquipment do
       add :purchase_date, :date, null: true
       add :commission_date, :date, null: true
       add :decommission_date, :date, null: true
-      add :venue_id, references(:venues, on_delete: :delete_all, type: :binary_id), null: false
+
+      add :location_id, references(:locations, on_delete: :delete_all, type: :binary_id),
+        null: false
 
       timestamps()
     end
 
-    create index(:equipment, [:venue_id])
+    create index(:equipment, [:location_id])
   end
 end

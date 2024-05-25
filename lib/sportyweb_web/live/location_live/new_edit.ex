@@ -1,8 +1,8 @@
-defmodule SportywebWeb.VenueLive.NewEdit do
+defmodule SportywebWeb.LocationLive.NewEdit do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Asset
-  alias Sportyweb.Asset.Venue
+  alias Sportyweb.Asset.Location
   alias Sportyweb.Organization
   alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.Note
@@ -14,12 +14,14 @@ defmodule SportywebWeb.VenueLive.NewEdit do
     ~H"""
     <div>
       <.live_component
-        module={SportywebWeb.VenueLive.FormComponent}
-        id={@venue.id || :new}
+        module={SportywebWeb.LocationLive.FormComponent}
+        id={@location.id || :new}
         title={@page_title}
         action={@live_action}
-        venue={@venue}
-        navigate={if @venue.id, do: ~p"/venues/#{@venue}", else: ~p"/clubs/#{@club}/venues"}
+        location={@location}
+        navigate={
+          if @location.id, do: ~p"/locations/#{@location}", else: ~p"/clubs/#{@club}/locations"
+        }
       />
     </div>
     """
@@ -36,12 +38,12 @@ defmodule SportywebWeb.VenueLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    venue = Asset.get_venue!(id, [:club, :emails, :phones, :postal_addresses, :notes])
+    location = Asset.get_location!(id, [:club, :emails, :phones, :postal_addresses, :notes])
 
     socket
     |> assign(:page_title, "Standort bearbeiten")
-    |> assign(:venue, venue)
-    |> assign(:club, venue.club)
+    |> assign(:location, location)
+    |> assign(:club, location.club)
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
@@ -49,7 +51,7 @@ defmodule SportywebWeb.VenueLive.NewEdit do
 
     socket
     |> assign(:page_title, "Standort erstellen")
-    |> assign(:venue, %Venue{
+    |> assign(:location, %Location{
       club_id: club.id,
       club: club,
       postal_addresses: [%PostalAddress{}],
@@ -62,12 +64,12 @@ defmodule SportywebWeb.VenueLive.NewEdit do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    venue = Asset.get_venue!(id)
-    {:ok, _} = Asset.delete_venue(venue)
+    location = Asset.get_location!(id)
+    {:ok, _} = Asset.delete_location(location)
 
     {:noreply,
      socket
      |> put_flash(:info, "Standort erfolgreich gelöscht")
-     |> push_navigate(to: "/clubs/#{venue.club_id}/venues")}
+     |> push_navigate(to: "/clubs/#{location.club_id}/locations")}
   end
 end

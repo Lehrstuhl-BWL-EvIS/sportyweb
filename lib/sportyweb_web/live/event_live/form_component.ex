@@ -85,27 +85,27 @@ defmodule SportywebWeb.EventLive.FormComponent do
             <.input_grid class="pt-6">
               <div class="col-span-12">
                 <.input
-                  field={@form[:location_type]}
+                  field={@form[:venue_type]}
                   type="select"
                   label="Art des Veranstaltungsorts"
-                  options={Event.get_valid_location_types()}
+                  options={Event.get_valid_venue_types()}
                 />
               </div>
 
-              <%= if @location_type == "venue" do %>
+              <%= if @venue_type == "location" do %>
                 <div class="col-span-12">
-                  <.inputs_for :let={venue} field={@form[:venues]}>
+                  <.inputs_for :let={location} field={@form[:locations]}>
                     <.input
-                      field={venue[:id]}
+                      field={location[:id]}
                       type="select"
                       label="Standort"
-                      options={Asset.list_venues(@event.club_id) |> Enum.map(&{&1.name, &1.id})}
+                      options={Asset.list_locations(@event.club_id) |> Enum.map(&{&1.name, &1.id})}
                     />
                   </.inputs_for>
                 </div>
               <% end %>
 
-              <%= if @location_type == "postal_address" do %>
+              <%= if @venue_type == "postal_address" do %>
                 <div class="col-span-12">
                   <.input_grid>
                     <.inputs_for :let={postal_address} field={@form[:postal_addresses]}>
@@ -119,13 +119,9 @@ defmodule SportywebWeb.EventLive.FormComponent do
                 </div>
               <% end %>
 
-              <%= if @location_type == "free_form" do %>
+              <%= if @venue_type == "free_form" do %>
                 <div class="col-span-12">
-                  <.input
-                    field={@form[:location_description]}
-                    type="textarea"
-                    label="Veranstaltungsort"
-                  />
+                  <.input field={@form[:venue_description]} type="textarea" label="Veranstaltungsort" />
                 </div>
               <% end %>
             </.input_grid>
@@ -185,7 +181,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
     {:ok,
      socket
      |> assign(assigns)
-     |> assign(:location_type, event.location_type)
+     |> assign(:venue_type, event.venue_type)
      |> assign_form(changeset)}
   end
 
@@ -198,7 +194,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
 
     {:noreply,
      socket
-     |> assign(:location_type, get_field(changeset, :location_type))
+     |> assign(:venue_type, get_field(changeset, :venue_type))
      |> assign_form(changeset)}
   end
 

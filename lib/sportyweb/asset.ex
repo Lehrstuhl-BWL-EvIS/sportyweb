@@ -8,153 +8,153 @@ defmodule Sportyweb.Asset do
 
   alias Sportyweb.Asset.Equipment
   alias Sportyweb.Asset.EquipmentFee
-  alias Sportyweb.Asset.Venue
-  alias Sportyweb.Asset.VenueFee
+  alias Sportyweb.Asset.Location
+  alias Sportyweb.Asset.LocationFee
   alias Sportyweb.Finance.Fee
 
   @doc """
-  Returns a clubs list of venues.
+  Returns a clubs list of locations.
 
   ## Examples
 
-      iex> list_venues(1)
-      [%Venue{}, ...]
+      iex> list_locations(1)
+      [%Location{}, ...]
 
   """
-  def list_venues(club_id) do
-    query = from(v in Venue, where: v.club_id == ^club_id, order_by: v.name)
+  def list_locations(club_id) do
+    query = from(v in Location, where: v.club_id == ^club_id, order_by: v.name)
     Repo.all(query)
   end
 
   @doc """
-  Returns a clubs list of venues. Preloads associations.
+  Returns a clubs list of locations. Preloads associations.
 
   ## Examples
 
-      iex> list_venues(1, [:equipment])
-      [%Venue{}, ...]
+      iex> list_locations(1, [:equipment])
+      [%Location{}, ...]
 
   """
-  def list_venues(club_id, preloads) do
-    Repo.preload(list_venues(club_id), preloads)
+  def list_locations(club_id, preloads) do
+    Repo.preload(list_locations(club_id), preloads)
   end
 
   @doc """
-  Gets a single venue.
+  Gets a single location.
 
-  Raises `Ecto.NoResultsError` if the Venue does not exist.
+  Raises `Ecto.NoResultsError` if the Location does not exist.
 
   ## Examples
 
-      iex> get_venue!(123)
-      %Venue{}
+      iex> get_location!(123)
+      %Location{}
 
-      iex> get_venue!(456)
+      iex> get_location!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_venue!(id), do: Repo.get!(Venue, id)
+  def get_location!(id), do: Repo.get!(Location, id)
 
   @doc """
-  Gets a single venue. Preloads associations.
+  Gets a single location. Preloads associations.
 
-  Raises `Ecto.NoResultsError` if the Venue does not exist.
+  Raises `Ecto.NoResultsError` if the Location does not exist.
 
   ## Examples
 
-      iex> get_venue!(123, [:club])
-      %Venue{}
+      iex> get_location!(123, [:club])
+      %Location{}
 
-      iex> get_venue!(456, [:club])
+      iex> get_location!(456, [:club])
       ** (Ecto.NoResultsError)
 
   """
-  def get_venue!(id, preloads) do
-    Venue
+  def get_location!(id, preloads) do
+    Location
     |> Repo.get!(id)
     |> Repo.preload(preloads)
   end
 
   @doc """
-  Creates a venue.
+  Creates a location.
 
   ## Examples
 
-      iex> create_venue(%{field: value})
-      {:ok, %Venue{}}
+      iex> create_location(%{field: value})
+      {:ok, %Location{}}
 
-      iex> create_venue(%{field: bad_value})
+      iex> create_location(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_venue(attrs \\ %{}) do
-    %Venue{}
-    |> Venue.changeset(attrs)
+  def create_location(attrs \\ %{}) do
+    %Location{}
+    |> Location.changeset(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Updates a venue.
+  Updates a location.
 
   ## Examples
 
-      iex> update_venue(venue, %{field: new_value})
-      {:ok, %Venue{}}
+      iex> update_location(location, %{field: new_value})
+      {:ok, %Location{}}
 
-      iex> update_venue(venue, %{field: bad_value})
+      iex> update_location(location, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_venue(%Venue{} = venue, attrs) do
-    venue
-    |> Venue.changeset(attrs)
+  def update_location(%Location{} = location, attrs) do
+    location
+    |> Location.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a venue.
+  Deletes a location.
 
   ## Examples
 
-      iex> delete_venue(venue)
-      {:ok, %Venue{}}
+      iex> delete_location(location)
+      {:ok, %Location{}}
 
-      iex> delete_venue(venue)
+      iex> delete_location(location)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_venue(%Venue{} = venue) do
-    Repo.delete(venue)
+  def delete_location(%Location{} = location) do
+    Repo.delete(location)
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking venue changes.
+  Returns an `%Ecto.Changeset{}` for tracking location changes.
 
   ## Examples
 
-      iex> change_venue(venue)
-      %Ecto.Changeset{data: %Venue{}}
+      iex> change_location(location)
+      %Ecto.Changeset{data: %Location{}}
 
   """
-  def change_venue(%Venue{} = venue, attrs \\ %{}) do
-    Venue.changeset(venue, attrs)
+  def change_location(%Location{} = location, attrs \\ %{}) do
+    Location.changeset(location, attrs)
   end
 
   @doc """
-  Creates a venue_fee (many_to_many).
+  Creates a location_fee (many_to_many).
 
   ## Examples
 
-      iex> create_venue_fee(venue, fee)
-      {:ok, %VenueFee{}}
+      iex> create_location_fee(location, fee)
+      {:ok, %LocationFee{}}
 
-      iex> create_venue_fee(venue, fee)
+      iex> create_location_fee(location, fee)
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_venue_fee(%Venue{} = venue, %Fee{} = fee) do
-    Repo.insert(%VenueFee{
-      venue_id: venue.id,
+  def create_location_fee(%Location{} = location, %Fee{} = fee) do
+    Repo.insert(%LocationFee{
+      location_id: location.id,
       fee_id: fee.id
     })
   end
@@ -162,7 +162,7 @@ defmodule Sportyweb.Asset do
   alias Sportyweb.Asset.Equipment
 
   @doc """
-  Returns a venues list of equipment.
+  Returns a locations list of equipment.
 
   ## Examples
 
@@ -170,22 +170,22 @@ defmodule Sportyweb.Asset do
       [%Equipment{}, ...]
 
   """
-  def list_equipment(venue_id) do
-    query = from(e in Equipment, where: e.venue_id == ^venue_id, order_by: e.name)
+  def list_equipment(location_id) do
+    query = from(e in Equipment, where: e.location_id == ^location_id, order_by: e.name)
     Repo.all(query)
   end
 
   @doc """
-  Returns a venues list of equipment. Preloads associations.
+  Returns a locations list of equipment. Preloads associations.
 
   ## Examples
 
-      iex> list_equipment(1, [:venue])
+      iex> list_equipment(1, [:location])
       [%Equipment{}, ...]
 
   """
-  def list_equipment(venue_id, preloads) do
-    Repo.preload(list_equipment(venue_id), preloads)
+  def list_equipment(location_id, preloads) do
+    Repo.preload(list_equipment(location_id), preloads)
   end
 
   @doc """
@@ -211,10 +211,10 @@ defmodule Sportyweb.Asset do
 
   ## Examples
 
-      iex> get_equipment!(123, [:venue])
+      iex> get_equipment!(123, [:location])
       %Department{}
 
-      iex> get_equipment!(456, [:venue])
+      iex> get_equipment!(456, [:location])
       ** (Ecto.NoResultsError)
 
   """

@@ -1,12 +1,12 @@
 # CHANGELOG
 
-## 0.4.0 (2023-06-23)
+## 0.4.0 (2024-05-24)
 
 - Added subsystem to manage fees
 - Added first rudimentary foundation for a subsystem to manage contacts/memberships
 - Added first rudimentary foundation for a subsystem to manage finances
 - Added more seed data
-- Migrated to Phoenix 1.7.6 & LiveView 0.19.2
+- Migrated to Phoenix 1.7.1 & LiveView 0.20.14
 - Improved code reuse by implementing multiple LiveView components.
 - Added Entities:
     - ContactGroup
@@ -15,6 +15,7 @@
     - Subsidy
     - Transaction
     - Lots of Join-Tables
+- Renamed Entity: "Venue" -> "Location"
 - Added CoreComponents: input_description, cancel_button
 - Dependencies:
     - Added "Quantum" for schedulung jobs

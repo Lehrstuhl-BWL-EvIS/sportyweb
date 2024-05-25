@@ -50,7 +50,7 @@ defmodule Sportyweb.RBAC.Policy do
       when view in [
              :ClubLive,
              :RoleLive,
-             :VenueLive,
+             :LocationLive,
              :EventLive,
              :ContactLive,
              :FeeLive
@@ -84,12 +84,12 @@ defmodule Sportyweb.RBAC.Policy do
   end
 
   def permit?(user, action, :EquipmentLive = view, params) do
-    venue_id =
-      if Map.has_key?(params, "venue_id"),
-        do: params["venue_id"],
+    location_id =
+      if Map.has_key?(params, "location_id"),
+        do: params["location_id"],
         else: params["id"] |> get_associated_id(view)
 
-    club_id = venue_id |> Asset.get_venue!() |> Map.get(:club_id)
+    club_id = location_id |> Asset.get_location!() |> Map.get(:club_id)
     is_allowed?(user.id, action, club_id, view)
   end
 
@@ -155,8 +155,8 @@ defmodule Sportyweb.RBAC.Policy do
       :GroupLive -> id |> Organization.get_group!() |> Map.get(:department_id)
       :EventLive -> id |> Calendar.get_event!() |> Map.get(:club_id)
       :ContactLive -> id |> Personal.get_contact!() |> Map.get(:club_id)
-      :VenueLive -> id |> Asset.get_venue!() |> Map.get(:club_id)
-      :EquipmentLive -> id |> Asset.get_equipment!() |> Map.get(:venue_id)
+      :LocationLive -> id |> Asset.get_location!() |> Map.get(:club_id)
+      :EquipmentLive -> id |> Asset.get_equipment!() |> Map.get(:location_id)
       :FeeLive -> id |> Finance.get_fee!() |> Map.get(:club_id)
     end
   end
@@ -170,7 +170,9 @@ defmodule Sportyweb.RBAC.Policy do
   defp error_redirect(:index, _view, %{"department_id" => department_id}),
     do: ~p"/departments/#{department_id}/"
 
-  defp error_redirect(:index, _view, %{"venue_id" => venue_id}), do: ~p"/venues/#{venue_id}/"
+  defp error_redirect(:index, _view, %{"location_id" => location_id}),
+    do: ~p"/locations/#{location_id}/"
+
   defp error_redirect(:edit, view, params), do: get_redirect_path_edit(view, params)
 
   defp error_redirect(action, view, params) when action in [:new, :show],
@@ -183,7 +185,7 @@ defmodule Sportyweb.RBAC.Policy do
 
     case view do
       :GroupLive -> get_redirect_path_new_show(view, %{"department_id" => associated_id})
-      :EquipmentLive -> get_redirect_path_new_show(view, %{"venue_id" => associated_id})
+      :EquipmentLive -> get_redirect_path_new_show(view, %{"location_id" => associated_id})
       _ -> get_redirect_path_new_show(view, %{"club_id" => associated_id})
     end
   end
@@ -194,7 +196,7 @@ defmodule Sportyweb.RBAC.Policy do
       :DepartmentLive -> ~p"/clubs/#{club_id}/departments/"
       :EventLive -> ~p"/clubs/#{club_id}/events/"
       :ContactLive -> ~p"/clubs/#{club_id}/contacts"
-      :VenueLive -> ~p"/clubs/#{club_id}/venues/"
+      :LocationLive -> ~p"/clubs/#{club_id}/locations/"
       :FeeLive -> ~p"/clubs/#{club_id}/fees/"
     end
   end
@@ -202,8 +204,8 @@ defmodule Sportyweb.RBAC.Policy do
   defp get_redirect_path_new_show(:GroupLive, %{"department_id" => department_id}),
     do: ~p"/departments/#{department_id}/groups/"
 
-  defp get_redirect_path_new_show(:EquipmentLive, %{"venue_id" => venue_id}),
-    do: ~p"/venues/#{venue_id}/equipment/"
+  defp get_redirect_path_new_show(:EquipmentLive, %{"location_id" => location_id}),
+    do: ~p"/locations/#{location_id}/equipment/"
 
   defp get_redirect_path_edit(view, %{"id" => id}) do
     case view do
@@ -212,7 +214,7 @@ defmodule Sportyweb.RBAC.Policy do
       :GroupLive -> ~p"/groups/#{id}/"
       :EventLive -> ~p"/events/#{id}/"
       :ContactLive -> ~p"/contacts/#{id}/"
-      :VenueLive -> ~p"/venues/#{id}/"
+      :LocationLive -> ~p"/locations/#{id}/"
       :EquipmentLive -> ~p"/equipment/#{id}/"
       :FeeLive -> ~p"/fees/#{id}/"
     end

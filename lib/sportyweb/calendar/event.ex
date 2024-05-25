@@ -4,7 +4,7 @@ defmodule Sportyweb.Calendar.Event do
   import SportywebWeb.CommonValidations
 
   alias Sportyweb.Asset.Equipment
-  alias Sportyweb.Asset.Venue
+  alias Sportyweb.Asset.Location
   alias Sportyweb.Calendar.EventDepartment
   alias Sportyweb.Calendar.EventEmail
   alias Sportyweb.Calendar.EventEquipment
@@ -13,7 +13,7 @@ defmodule Sportyweb.Calendar.Event do
   alias Sportyweb.Calendar.EventNote
   alias Sportyweb.Calendar.EventPhone
   alias Sportyweb.Calendar.EventPostalAddress
-  alias Sportyweb.Calendar.EventVenue
+  alias Sportyweb.Calendar.EventLocation
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.Department
@@ -35,7 +35,7 @@ defmodule Sportyweb.Calendar.Event do
     many_to_many :notes, Note, join_through: EventNote
     many_to_many :phones, Phone, join_through: EventPhone
     many_to_many :postal_addresses, PostalAddress, join_through: EventPostalAddress
-    many_to_many :venues, Venue, join_through: EventVenue
+    many_to_many :locations, Location, join_through: EventLocation
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""
@@ -45,8 +45,8 @@ defmodule Sportyweb.Calendar.Event do
     field :maximum_participants, :integer, default: nil
     field :minimum_age_in_years, :integer, default: nil
     field :maximum_age_in_years, :integer, default: nil
-    field :location_type, :string, default: ""
-    field :location_description, :string, default: ""
+    field :venue_type, :string, default: ""
+    field :venue_description, :string, default: ""
 
     timestamps()
   end
@@ -59,10 +59,9 @@ defmodule Sportyweb.Calendar.Event do
     ]
   end
 
-  def get_valid_location_types do
+  def get_valid_venue_types do
     [
       [key: "Keine Angabe", value: "no_info"],
-      [key: "Standort", value: "venue"],
       [key: "Adresse", value: "postal_address"],
       [key: "Freifeld", value: "free_form"]
     ]
@@ -83,8 +82,8 @@ defmodule Sportyweb.Calendar.Event do
         :maximum_participants,
         :minimum_age_in_years,
         :maximum_age_in_years,
-        :location_type,
-        :location_description
+        :venue_type,
+        :venue_description
       ],
       empty_values: ["", nil]
     )
@@ -98,7 +97,7 @@ defmodule Sportyweb.Calendar.Event do
       :club_id,
       :name,
       :status,
-      :location_type
+      :venue_type
     ])
     |> update_change(:name, &String.trim/1)
     |> update_change(:reference_number, &String.trim/1)
@@ -137,24 +136,24 @@ defmodule Sportyweb.Calendar.Event do
       "Muss größer oder gleich \"Mindestalter\" sein!"
     )
     |> validate_inclusion(
-      :location_type,
-      get_valid_location_types() |> Enum.map(fn location_type -> location_type[:value] end)
+      :venue_type,
+      get_valid_venue_types() |> Enum.map(fn venue_type -> venue_type[:value] end)
     )
-    |> validate_required_location_type_condition()
-    |> validate_length(:location_description, max: 20_000)
+    |> validate_required_venue_type_condition()
+    |> validate_length(:venue_description, max: 20_000)
   end
 
-  defp validate_required_location_type_condition(%Ecto.Changeset{} = changeset) do
-    # Some fields are only required if the location_type has a certain value.
-    case get_field(changeset, :location_type) do
-      "venue" ->
-        changeset |> cast_assoc(:venues, required: true)
+  defp validate_required_venue_type_condition(%Ecto.Changeset{} = changeset) do
+    # Some fields are only required if the venue_type has a certain value.
+    case get_field(changeset, :venue_type) do
+      "location" ->
+        changeset |> cast_assoc(:locations, required: true)
 
       "postal_address" ->
         changeset |> cast_assoc(:postal_addresses, required: true)
 
       "free_form" ->
-        changeset |> validate_required([:location_description])
+        changeset |> validate_required([:venue_description])
 
       _ ->
         changeset

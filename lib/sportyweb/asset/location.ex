@@ -1,13 +1,13 @@
-defmodule Sportyweb.Asset.Venue do
+defmodule Sportyweb.Asset.Location do
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Sportyweb.Asset.Equipment
-  alias Sportyweb.Asset.VenueEmail
-  alias Sportyweb.Asset.VenueFee
-  alias Sportyweb.Asset.VenueNote
-  alias Sportyweb.Asset.VenuePhone
-  alias Sportyweb.Asset.VenuePostalAddress
+  alias Sportyweb.Asset.LocationEmail
+  alias Sportyweb.Asset.LocationFee
+  alias Sportyweb.Asset.LocationNote
+  alias Sportyweb.Asset.LocationPhone
+  alias Sportyweb.Asset.LocationPostalAddress
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Organization.Club
   alias Sportyweb.Polymorphic.Email
@@ -17,14 +17,14 @@ defmodule Sportyweb.Asset.Venue do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "venues" do
+  schema "locations" do
     belongs_to :club, Club
     has_many :equipment, Equipment, preload_order: [asc: :name]
-    many_to_many :emails, Email, join_through: VenueEmail
-    many_to_many :fees, Fee, join_through: VenueFee
-    many_to_many :notes, Note, join_through: VenueNote
-    many_to_many :phones, Phone, join_through: VenuePhone
-    many_to_many :postal_addresses, PostalAddress, join_through: VenuePostalAddress
+    many_to_many :emails, Email, join_through: LocationEmail
+    many_to_many :fees, Fee, join_through: LocationFee
+    many_to_many :notes, Note, join_through: LocationNote
+    many_to_many :phones, Phone, join_through: LocationPhone
+    many_to_many :postal_addresses, PostalAddress, join_through: LocationPostalAddress
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""
@@ -34,8 +34,8 @@ defmodule Sportyweb.Asset.Venue do
   end
 
   @doc false
-  def changeset(venue, attrs) do
-    venue
+  def changeset(location, attrs) do
+    location
     |> cast(
       attrs,
       [
@@ -59,7 +59,7 @@ defmodule Sportyweb.Asset.Venue do
     |> validate_length(:description, max: 20_000)
     |> unique_constraint(
       :name,
-      name: "venues_club_id_name_index",
+      name: "locations_club_id_name_index",
       message: "Name bereits vergeben!"
     )
   end

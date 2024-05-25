@@ -4,7 +4,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
   alias Sportyweb.Asset
   alias Sportyweb.Asset.Equipment
-  alias Sportyweb.Asset.Venue
+  alias Sportyweb.Asset.Location
   alias Sportyweb.Calendar
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Finance
@@ -319,8 +319,8 @@ defmodule SportywebWeb.FeeLive.FormComponent do
     {:ok, fee}
   end
 
-  defp create_association(fee, %Venue{} = fee_object) do
-    Asset.create_venue_fee(fee_object, fee)
+  defp create_association(fee, %Location{} = fee_object) do
+    Asset.create_location_fee(fee_object, fee)
     {:ok, fee}
   end
 

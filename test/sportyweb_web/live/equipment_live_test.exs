@@ -65,14 +65,14 @@ defmodule SportywebWeb.EquipmentLiveTest do
     end
 
     test "lists all equipment - redirect", %{conn: conn, user: user, equipment: equipment} do
-      {:error, _} = live(conn, ~p"/venues/#{equipment.venue_id}/equipment")
+      {:error, _} = live(conn, ~p"/locations/#{equipment.location_id}/equipment")
 
       conn = conn |> log_in_user(user)
 
       {:ok, conn} =
         conn
-        |> live(~p"/venues/#{equipment.venue_id}/equipment")
-        |> follow_redirect(conn, ~p"/venues/#{equipment.venue_id}")
+        |> live(~p"/locations/#{equipment.location_id}/equipment")
+        |> follow_redirect(conn, ~p"/locations/#{equipment.location_id}")
 
       assert conn.resp_body =~ "Standort:"
     end
@@ -82,12 +82,12 @@ defmodule SportywebWeb.EquipmentLiveTest do
     setup [:create_equipment]
 
     test "saves new equipment", %{conn: conn, user: user} do
-      venue = venue_fixture()
+      location = location_fixture()
 
-      {:error, _} = live(conn, ~p"/venues/#{venue}/equipment/new")
+      {:error, _} = live(conn, ~p"/locations/#{location}/equipment/new")
 
       conn = conn |> log_in_user(user)
-      {:ok, new_live, html} = live(conn, ~p"/venues/#{venue}/equipment/new")
+      {:ok, new_live, html} = live(conn, ~p"/locations/#{location}/equipment/new")
 
       assert html =~ "Equipment erstellen"
 
@@ -99,23 +99,23 @@ defmodule SportywebWeb.EquipmentLiveTest do
         new_live
         |> form("#equipment-form", equipment: @create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/venues/#{venue}")
+        |> follow_redirect(conn, ~p"/locations/#{location}")
 
       assert html =~ "Equipment erfolgreich erstellt"
       assert html =~ "some name"
     end
 
     test "cancels save new equipment", %{conn: conn, user: user} do
-      venue = venue_fixture()
+      location = location_fixture()
 
       conn = conn |> log_in_user(user)
-      {:ok, new_live, _html} = live(conn, ~p"/venues/#{venue}/equipment/new")
+      {:ok, new_live, _html} = live(conn, ~p"/locations/#{location}/equipment/new")
 
       {:ok, _, _html} =
         new_live
         |> element("#equipment-form a", "Abbrechen")
         |> render_click()
-        |> follow_redirect(conn, ~p"/venues/#{venue}")
+        |> follow_redirect(conn, ~p"/locations/#{location}")
     end
 
     test "updates equipment", %{conn: conn, user: user, equipment: equipment} do
@@ -162,7 +162,7 @@ defmodule SportywebWeb.EquipmentLiveTest do
         edit_live
         |> element("#equipment-form button", "Löschen")
         |> render_click()
-        |> follow_redirect(conn, ~p"/venues/#{equipment.venue_id}")
+        |> follow_redirect(conn, ~p"/locations/#{equipment.location_id}")
 
       assert html =~ "Equipment erfolgreich gelöscht"
       assert html =~ "Equipment"

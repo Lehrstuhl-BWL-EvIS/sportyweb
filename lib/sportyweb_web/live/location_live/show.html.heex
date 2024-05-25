@@ -1,7 +1,7 @@
 <.header>
   <%= @page_title %>
   <:actions>
-    <.link navigate={~p"/venues/#{@venue}/edit"}>
+    <.link navigate={~p"/locations/#{@location}/edit"}>
       <.button>Standort bearbeiten</.button>
     </.link>
   </:actions>
@@ -9,33 +9,33 @@
 
 <.card>
   <.list>
-    <:item :if={Club.is_main_venue?(@club, @venue)} title="Hauptstandort">
+    <:item :if={Club.is_main_location?(@club, @location)} title="Hauptstandort">
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>
     <:item title="Referenznummer">
-      <%= format_string_field(@venue.reference_number) %>
+      <%= format_string_field(@location.reference_number) %>
     </:item>
     <:item title="Beschreibung">
-      <%= format_string_field(@venue.description) %>
+      <%= format_string_field(@location.description) %>
     </:item>
     <:item title="Adresse">
       <.live_component
         module={SportywebWeb.PolymorphicLive.PostalAddressShowComponent}
         id="postal_addresses"
-        postal_addresses={@venue.postal_addresses}
+        postal_addresses={@location.postal_addresses}
       />
     </:item>
     <:item title="E-Mail">
-      <%= format_struct_list(@venue.emails, :address) %>
+      <%= format_struct_list(@location.emails, :address) %>
     </:item>
     <:item title="Telefon">
-      <%= format_struct_list(@venue.phones, :number) %>
+      <%= format_struct_list(@location.phones, :number) %>
     </:item>
     <:item title="Notizen">
       <.live_component
         module={SportywebWeb.PolymorphicLive.NotesShowComponent}
         id="notes"
-        notes={@venue.notes}
+        notes={@location.notes}
       />
     </:item>
   </.list>
@@ -44,18 +44,18 @@
 <.header level="2" class="mt-12">
   Gebühren
   <:actions>
-    <.link navigate={~p"/venues/#{@venue}/fees/new"}>
+    <.link navigate={~p"/locations/#{@location}/fees/new"}>
       <.button>Standortspezifische Gebühr erstellen</.button>
     </.link>
   </:actions>
 </.header>
 
 <.card>
-  <%= if Enum.any?(@venue.fees) do %>
+  <%= if Enum.any?(@location.fees) do %>
     <.live_component
       module={SportywebWeb.FeeLive.IndexTableComponent}
       id="fees-table"
-      fees={@venue.fees}
+      fees={@location.fees}
     />
   <% else %>
     <p>Bisher wurde noch keine standortspezifische Gebühr erstellt.</p>
@@ -65,7 +65,7 @@
 <.header level="2" class="mt-12">
   Equipment
   <:actions>
-    <.link navigate={~p"/venues/#{@venue}/equipment/new"}>
+    <.link navigate={~p"/locations/#{@location}/equipment/new"}>
       <.button>Equipment erstellen</.button>
     </.link>
   </:actions>

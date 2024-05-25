@@ -29,7 +29,7 @@ defmodule SportywebWeb.FeeLive.Show do
         "department" -> :structure
         "group" -> :structure
         "event" -> :calendar
-        "venue" -> :assets
+        "location" -> :assets
         "equipment" -> :assets
         _ -> :fees
       end

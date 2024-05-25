@@ -1,4 +1,4 @@
-defmodule SportywebWeb.VenueLive.Show do
+defmodule SportywebWeb.LocationLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Asset
@@ -11,8 +11,8 @@ defmodule SportywebWeb.VenueLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    venue =
-      Asset.get_venue!(id, [
+    location =
+      Asset.get_location!(id, [
         :club,
         :emails,
         :equipment,
@@ -24,9 +24,9 @@ defmodule SportywebWeb.VenueLive.Show do
 
     {:noreply,
      socket
-     |> assign(:page_title, "Standort: #{venue.name}")
-     |> assign(:venue, venue)
-     |> assign(:club, venue.club)
-     |> stream(:equipment, venue.equipment)}
+     |> assign(:page_title, "Standort: #{location.name}")
+     |> assign(:location, location)
+     |> assign(:club, location.club)
+     |> stream(:equipment, location.equipment)}
   end
 end

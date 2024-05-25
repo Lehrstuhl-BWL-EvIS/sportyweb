@@ -12,8 +12,8 @@ defmodule Sportyweb.Repo.Migrations.CreateEvents do
       add :maximum_participants, :integer, null: true
       add :minimum_age_in_years, :integer, null: true
       add :maximum_age_in_years, :integer, null: true
-      add :location_type, :string, null: false
-      add :location_description, :text, null: false
+      add :venue_type, :string, null: false
+      add :venue_description, :text, null: false
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps()

@@ -28,9 +28,9 @@
       <%= format_date_field_dmy(@club.foundation_date) %>
     </:item>
     <:item title="Hauptstandort">
-      <%= if @club.venue do %>
-        <.link navigate={~p"/venues/#{@club.venue}"} class="text-indigo-600 hover:underline">
-          <%= format_string_field(@club.venue.name) %>
+      <%= if @club.location do %>
+        <.link navigate={~p"/locations/#{@club.location}"} class="text-indigo-600 hover:underline">
+          <%= format_string_field(@club.location.name) %>
         </.link>
       <% else %>
         -

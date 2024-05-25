@@ -46,13 +46,13 @@ defmodule SportywebWeb.ClubLive.FormComponent do
               </div>
             </.input_grid>
 
-            <.input_grid :if={@club.id && Enum.any?(@club.venues)} class="pt-6">
+            <.input_grid :if={@club.id && Enum.any?(@club.locations)} class="pt-6">
               <div class="col-span-12">
                 <.input
-                  field={@form[:venue_id]}
+                  field={@form[:location_id]}
                   type="select"
                   label="Hauptstandort (optional)"
-                  options={@club.venues |> Enum.map(&{&1.name, &1.id})}
+                  options={@club.locations |> Enum.map(&{&1.name, &1.id})}
                   prompt="Bitte auswählen"
                 />
               </div>

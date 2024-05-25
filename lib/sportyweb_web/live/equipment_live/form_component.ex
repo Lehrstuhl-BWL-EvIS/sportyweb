@@ -24,11 +24,11 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
               <%= if @equipment.id do %>
                 <div class="col-span-12">
                   <.input
-                    field={@form[:venue_id]}
+                    field={@form[:location_id]}
                     type="select"
                     label="Standort"
                     options={
-                      Asset.list_venues(@equipment.venue.club_id) |> Enum.map(&{&1.name, &1.id})
+                      Asset.list_locations(@equipment.location.club_id) |> Enum.map(&{&1.name, &1.id})
                     }
                   />
                 </div>
@@ -155,7 +155,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
   defp save_equipment(socket, :new, equipment_params) do
     equipment_params =
       Enum.into(equipment_params, %{
-        "venue_id" => socket.assigns.equipment.venue.id
+        "location_id" => socket.assigns.equipment.location.id
       })
 
     case Asset.create_equipment(equipment_params) do

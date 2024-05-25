@@ -10,7 +10,7 @@ defmodule SportywebWeb.EventLiveTest do
 
   @create_attrs %{
     description: "some description",
-    location_type: "no_info",
+    venue_type: "no_info",
     maximum_age_in_years: 42,
     maximum_participants: 42,
     minimum_age_in_years: 42,
@@ -21,7 +21,7 @@ defmodule SportywebWeb.EventLiveTest do
   }
   @update_attrs %{
     description: "some updated description",
-    location_type: "free_form",
+    venue_type: "free_form",
     maximum_age_in_years: 43,
     maximum_participants: 43,
     minimum_age_in_years: 43,
@@ -32,7 +32,7 @@ defmodule SportywebWeb.EventLiveTest do
   }
   @invalid_attrs %{
     description: nil,
-    location_type: "no_info",
+    venue_type: "no_info",
     maximum_age_in_years: nil,
     maximum_participants: nil,
     minimum_age_in_years: nil,

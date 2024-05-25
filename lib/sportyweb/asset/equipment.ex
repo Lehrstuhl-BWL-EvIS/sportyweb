@@ -7,7 +7,7 @@ defmodule Sportyweb.Asset.Equipment do
   alias Sportyweb.Asset.EquipmentFee
   alias Sportyweb.Asset.EquipmentNote
   alias Sportyweb.Asset.EquipmentPhone
-  alias Sportyweb.Asset.Venue
+  alias Sportyweb.Asset.Location
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.Note
@@ -16,7 +16,7 @@ defmodule Sportyweb.Asset.Equipment do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "equipment" do
-    belongs_to :venue, Venue
+    belongs_to :location, Location
     many_to_many :emails, Email, join_through: EquipmentEmail
     many_to_many :fees, Fee, join_through: EquipmentFee
     many_to_many :notes, Note, join_through: EquipmentNote
@@ -39,7 +39,7 @@ defmodule Sportyweb.Asset.Equipment do
     |> cast(
       attrs,
       [
-        :venue_id,
+        :location_id,
         :name,
         :reference_number,
         :serial_number,
@@ -53,7 +53,7 @@ defmodule Sportyweb.Asset.Equipment do
     |> cast_assoc(:emails, required: true)
     |> cast_assoc(:notes, required: true)
     |> cast_assoc(:phones, required: true)
-    |> validate_required([:venue_id, :name])
+    |> validate_required([:location_id, :name])
     |> update_change(:name, &String.trim/1)
     |> update_change(:reference_number, &String.trim/1)
     |> update_change(:serial_number, &String.trim/1)

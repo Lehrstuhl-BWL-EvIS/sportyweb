@@ -3,9 +3,9 @@ defmodule Sportyweb.AssetTest do
 
   alias Sportyweb.Asset
 
-  describe "venues" do
-    alias Sportyweb.Asset.Venue
-    alias Sportyweb.Asset.VenueFee
+  describe "locations" do
+    alias Sportyweb.Asset.Location
+    alias Sportyweb.Asset.LocationFee
 
     import Sportyweb.AssetFixtures
     import Sportyweb.FinanceFixtures
@@ -18,30 +18,33 @@ defmodule Sportyweb.AssetTest do
       reference_number: nil
     }
 
-    test "list_venues/1 returns all venues of a given club" do
-      venue = venue_fixture()
-      assert List.first(Asset.list_venues(venue.club_id)).id == venue.id
+    test "list_locations/1 returns all locations of a given club" do
+      location = location_fixture()
+      assert List.first(Asset.list_locations(location.club_id)).id == location.id
     end
 
-    test "list_venues/2 returns all venues of a given club with preloaded associations" do
-      venue = venue_fixture()
+    test "list_locations/2 returns all locations of a given club with preloaded associations" do
+      location = location_fixture()
 
-      assert Asset.list_venues(venue.club_id, [:emails, :notes, :phones, :postal_addresses]) == [
-               venue
-             ]
+      assert Asset.list_locations(location.club_id, [:emails, :notes, :phones, :postal_addresses]) ==
+               [
+                 location
+               ]
     end
 
-    test "get_venue!/1 returns the venue with given id" do
-      venue = venue_fixture()
-      assert Asset.get_venue!(venue.id).id == venue.id
+    test "get_location!/1 returns the location with given id" do
+      location = location_fixture()
+      assert Asset.get_location!(location.id).id == location.id
     end
 
-    test "get_venue!/2 returns the venue with given id and contains preloaded associations" do
-      venue = venue_fixture()
-      assert Asset.get_venue!(venue.id, [:emails, :notes, :phones, :postal_addresses]) == venue
+    test "get_location!/2 returns the location with given id and contains preloaded associations" do
+      location = location_fixture()
+
+      assert Asset.get_location!(location.id, [:emails, :notes, :phones, :postal_addresses]) ==
+               location
     end
 
-    test "create_venue/1 with valid data creates a venue" do
+    test "create_location/1 with valid data creates a location" do
       club = club_fixture()
 
       valid_attrs = %{
@@ -55,18 +58,18 @@ defmodule Sportyweb.AssetTest do
         postal_addresses: [postal_address_attrs()]
       }
 
-      assert {:ok, %Venue{} = venue} = Asset.create_venue(valid_attrs)
-      assert venue.description == "some description"
-      assert venue.name == "some name"
-      assert venue.reference_number == "some reference_number"
+      assert {:ok, %Location{} = location} = Asset.create_location(valid_attrs)
+      assert location.description == "some description"
+      assert location.name == "some name"
+      assert location.reference_number == "some reference_number"
     end
 
-    test "create_venue/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Asset.create_venue(@invalid_attrs)
+    test "create_location/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Asset.create_location(@invalid_attrs)
     end
 
-    test "update_venue/2 with valid data updates the venue" do
-      venue = venue_fixture()
+    test "update_location/2 with valid data updates the location" do
+      location = location_fixture()
 
       update_attrs = %{
         description: "some updated description",
@@ -74,33 +77,33 @@ defmodule Sportyweb.AssetTest do
         reference_number: "some updated reference_number"
       }
 
-      assert {:ok, %Venue{} = venue} = Asset.update_venue(venue, update_attrs)
-      assert venue.description == "some updated description"
-      assert venue.name == "some updated name"
-      assert venue.reference_number == "some updated reference_number"
+      assert {:ok, %Location{} = location} = Asset.update_location(location, update_attrs)
+      assert location.description == "some updated description"
+      assert location.name == "some updated name"
+      assert location.reference_number == "some updated reference_number"
     end
 
-    test "update_venue/2 with invalid data returns error changeset" do
-      venue = venue_fixture()
-      assert {:error, %Ecto.Changeset{}} = Asset.update_venue(venue, @invalid_attrs)
-      assert venue.id == Asset.get_venue!(venue.id).id
+    test "update_location/2 with invalid data returns error changeset" do
+      location = location_fixture()
+      assert {:error, %Ecto.Changeset{}} = Asset.update_location(location, @invalid_attrs)
+      assert location.id == Asset.get_location!(location.id).id
     end
 
-    test "delete_venue/1 deletes the venue" do
-      venue = venue_fixture()
-      assert {:ok, %Venue{}} = Asset.delete_venue(venue)
-      assert_raise Ecto.NoResultsError, fn -> Asset.get_venue!(venue.id) end
+    test "delete_location/1 deletes the location" do
+      location = location_fixture()
+      assert {:ok, %Location{}} = Asset.delete_location(location)
+      assert_raise Ecto.NoResultsError, fn -> Asset.get_location!(location.id) end
     end
 
-    test "change_venue/1 returns a venue changeset" do
-      venue = venue_fixture()
-      assert %Ecto.Changeset{} = Asset.change_venue(venue)
+    test "change_location/1 returns a location changeset" do
+      location = location_fixture()
+      assert %Ecto.Changeset{} = Asset.change_location(location)
     end
 
-    test "create_venue_fee/2 with valid data" do
-      venue = venue_fixture()
+    test "create_location_fee/2 with valid data" do
+      location = location_fixture()
       fee = fee_fixture()
-      assert {:ok, %VenueFee{}} = Asset.create_venue_fee(venue, fee)
+      assert {:ok, %LocationFee{}} = Asset.create_location_fee(location, fee)
     end
   end
 
@@ -122,14 +125,17 @@ defmodule Sportyweb.AssetTest do
       serial_number: nil
     }
 
-    test "list_equipment/1 returns all equipment of a given venue" do
+    test "list_equipment/1 returns all equipment of a given location" do
       equipment = equipment_fixture()
-      assert List.first(Asset.list_equipment(equipment.venue_id)).id == equipment.id
+      assert List.first(Asset.list_equipment(equipment.location_id)).id == equipment.id
     end
 
-    test "list_equipment/2 returns all equipment of a given venue with preloaded associations" do
+    test "list_equipment/2 returns all equipment of a given location with preloaded associations" do
       equipment = equipment_fixture()
-      assert Asset.list_equipment(equipment.venue_id, [:emails, :notes, :phones]) == [equipment]
+
+      assert Asset.list_equipment(equipment.location_id, [:emails, :notes, :phones]) == [
+               equipment
+             ]
     end
 
     test "get_equipment!/1 returns the equipment with given id" do
@@ -143,10 +149,10 @@ defmodule Sportyweb.AssetTest do
     end
 
     test "create_equipment/1 with valid data creates a equipment" do
-      venue = venue_fixture()
+      location = location_fixture()
 
       valid_attrs = %{
-        venue_id: venue.id,
+        location_id: location.id,
         commission_date: ~D[2023-02-14],
         decommission_date: ~D[2023-02-14],
         description: "some description",

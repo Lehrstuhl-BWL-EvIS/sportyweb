@@ -1,4 +1,4 @@
-defmodule SportywebWeb.VenueLive.FormComponent do
+defmodule SportywebWeb.LocationLive.FormComponent do
   use SportywebWeb, :live_component
 
   alias Sportyweb.Asset
@@ -15,7 +15,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
       <.card>
         <.simple_form
           for={@form}
-          id="venue-form"
+          id="location-form"
           phx-target={@myself}
           phx-change="validate"
           phx-submit="save"
@@ -76,7 +76,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
               </div>
             </.input_grid>
 
-            <.input_grid :if={!show_delete_button?(@venue)} class="pt-6">
+            <.input_grid :if={@location.id && !show_delete_button?(@location)} class="pt-6">
               <div class="col-span-12">
                 <div
                   class="bg-amber-100 border border-amber-400 text-amber-800 px-4 py-3 rounded relative"
@@ -84,7 +84,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
                 >
                   Dieser Standort kann derzeit nicht gelöscht, da er als Hauptstandort des Vereins festgelegt wurde.
                   Wird dies im
-                  <.link navigate={~p"/clubs/#{@venue.club}/edit"} class="text-amber-900 underline">
+                  <.link navigate={~p"/clubs/#{@location.club}/edit"} class="text-amber-900 underline">
                     Verein
                   </.link>
                   geändert, kann im Anschluss eine Löschung dieses Standorts erfolgen.
@@ -99,9 +99,9 @@ defmodule SportywebWeb.VenueLive.FormComponent do
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
             <.button
-              :if={show_delete_button?(@venue)}
+              :if={show_delete_button?(@location)}
               class="bg-rose-700 hover:bg-rose-800"
-              phx-click={JS.push("delete", value: %{id: @venue.id})}
+              phx-click={JS.push("delete", value: %{id: @location.id})}
               data-confirm="Unwiderruflich löschen?"
             >
               Löschen
@@ -114,8 +114,8 @@ defmodule SportywebWeb.VenueLive.FormComponent do
   end
 
   @impl true
-  def update(%{venue: venue} = assigns, socket) do
-    changeset = Asset.change_venue(venue)
+  def update(%{location: location} = assigns, socket) do
+    changeset = Asset.change_location(location)
 
     {:ok,
      socket
@@ -124,22 +124,22 @@ defmodule SportywebWeb.VenueLive.FormComponent do
   end
 
   @impl true
-  def handle_event("validate", %{"venue" => venue_params}, socket) do
+  def handle_event("validate", %{"location" => location_params}, socket) do
     changeset =
-      socket.assigns.venue
-      |> Asset.change_venue(venue_params)
+      socket.assigns.location
+      |> Asset.change_location(location_params)
       |> Map.put(:action, :validate)
 
     {:noreply, assign_form(socket, changeset)}
   end
 
-  def handle_event("save", %{"venue" => venue_params}, socket) do
-    save_venue(socket, socket.assigns.action, venue_params)
+  def handle_event("save", %{"location" => location_params}, socket) do
+    save_location(socket, socket.assigns.action, location_params)
   end
 
-  defp save_venue(socket, :edit, venue_params) do
-    case Asset.update_venue(socket.assigns.venue, venue_params) do
-      {:ok, _venue} ->
+  defp save_location(socket, :edit, location_params) do
+    case Asset.update_location(socket.assigns.location, location_params) do
+      {:ok, _location} ->
         {:noreply,
          socket
          |> put_flash(:info, "Standort erfolgreich aktualisiert")
@@ -150,14 +150,14 @@ defmodule SportywebWeb.VenueLive.FormComponent do
     end
   end
 
-  defp save_venue(socket, :new, venue_params) do
-    venue_params =
-      Enum.into(venue_params, %{
-        "club_id" => socket.assigns.venue.club.id
+  defp save_location(socket, :new, location_params) do
+    location_params =
+      Enum.into(location_params, %{
+        "club_id" => socket.assigns.location.club.id
       })
 
-    case Asset.create_venue(venue_params) do
-      {:ok, _venue} ->
+    case Asset.create_location(location_params) do
+      {:ok, _location} ->
         {:noreply,
          socket
          |> put_flash(:info, "Standort erfolgreich erstellt")
@@ -172,7 +172,7 @@ defmodule SportywebWeb.VenueLive.FormComponent do
     assign(socket, :form, to_form(changeset))
   end
 
-  defp show_delete_button?(venue) do
-    venue.id && !Club.is_main_venue?(venue.club, venue)
+  defp show_delete_button?(location) do
+    location.id && !Club.is_main_location?(location.club, location)
   end
 end
