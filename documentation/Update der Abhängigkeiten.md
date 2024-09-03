@@ -1,3 +1,4 @@
+# Update der Abhängigkeiten
 
 Jedes Phoenix-Projekt setzt sich aus diversen Abhängigkeiten, die in der [`mix.exs`](../mix.exs)-Datei definiert sind, zusammen - so auch Sportyweb.
 Dies sind einerseits Elixir-Bibliotheken auf die jedes ["frisch generierte"](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.New.html) Phoenix-Projekt schon von Beginn an aufbaut und anderseits solche, die nachträglich individuell hinzugefügt wurden.
