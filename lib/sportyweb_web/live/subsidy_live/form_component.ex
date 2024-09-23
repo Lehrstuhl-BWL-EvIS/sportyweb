@@ -120,22 +120,18 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
 
   @impl true
   def update(%{subsidy: subsidy} = assigns, socket) do
-    changeset = Finance.change_subsidy(subsidy)
-
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_new(:form, fn ->
+       to_form(Finance.change_subsidy(subsidy))
+     end)}
   end
 
   @impl true
   def handle_event("validate", %{"subsidy" => subsidy_params}, socket) do
-    changeset =
-      socket.assigns.subsidy
-      |> Finance.change_subsidy(subsidy_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_form(socket, changeset)}
+    changeset = Finance.change_subsidy(socket.assigns.subsidy, subsidy_params)
+    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"subsidy" => subsidy_params}, socket) do
@@ -151,7 +147,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -169,12 +165,8 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 
   defp show_delete_button?(subsidy) do

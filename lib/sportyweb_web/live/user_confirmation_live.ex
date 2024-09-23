@@ -10,7 +10,7 @@ defmodule SportywebWeb.UserConfirmationLive do
 
       <.card class="mt-8">
         <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
-          <.input field={@form[:token]} type="hidden" />
+          <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
           <:actions>
             <.button phx-disable-with="Bestätige..." class="w-full">Mein Konto bestätigen</.button>
           </:actions>

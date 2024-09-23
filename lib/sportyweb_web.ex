@@ -54,6 +54,7 @@ defmodule SportywebWeb do
       use Phoenix.LiveView,
         layout: {SportywebWeb.Layouts, :app}
 
+      # Custom, do not remove!
       import SportywebWeb.CommonHelper
 
       unquote(html_helpers())
@@ -107,7 +108,7 @@ defmodule SportywebWeb do
   end
 
   @doc """
-  When used, dispatch to the appropriate controller/view/etc.
+  When used, dispatch to the appropriate controller/live_view/etc.
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])

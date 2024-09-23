@@ -4,7 +4,6 @@ defmodule SportywebWeb.GroupLive.Index do
   @impl true
   def render(assigns) do
     ~H"""
-
     """
   end
 

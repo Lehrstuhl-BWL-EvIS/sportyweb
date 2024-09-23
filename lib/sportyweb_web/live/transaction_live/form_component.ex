@@ -61,22 +61,18 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
 
   @impl true
   def update(%{transaction: transaction} = assigns, socket) do
-    changeset = Accounting.change_transaction(transaction)
-
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_new(:form, fn ->
+       to_form(Accounting.change_transaction(transaction))
+     end)}
   end
 
   @impl true
   def handle_event("validate", %{"transaction" => transaction_params}, socket) do
-    changeset =
-      socket.assigns.transaction
-      |> Accounting.change_transaction(transaction_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_form(socket, changeset)}
+    changeset = Accounting.change_transaction(socket.assigns.transaction, transaction_params)
+    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"transaction" => transaction_params}, socket) do
@@ -92,11 +88,7 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 end

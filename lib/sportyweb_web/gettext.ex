@@ -20,5 +20,5 @@ defmodule SportywebWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :sportyweb
+  use Gettext.Backend, otp_app: :sportyweb
 end

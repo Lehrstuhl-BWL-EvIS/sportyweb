@@ -117,22 +117,18 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
 
   @impl true
   def update(%{equipment: equipment} = assigns, socket) do
-    changeset = Asset.change_equipment(equipment)
-
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_new(:form, fn ->
+       to_form(Asset.change_equipment(equipment))
+     end)}
   end
 
   @impl true
   def handle_event("validate", %{"equipment" => equipment_params}, socket) do
-    changeset =
-      socket.assigns.equipment
-      |> Asset.change_equipment(equipment_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_form(socket, changeset)}
+    changeset = Asset.change_equipment(socket.assigns.equipment, equipment_params)
+    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"equipment" => equipment_params}, socket) do
@@ -148,7 +144,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -166,11 +162,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 end

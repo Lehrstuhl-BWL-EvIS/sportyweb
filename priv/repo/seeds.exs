@@ -128,13 +128,8 @@ if Mix.env() in [:dev] do
   })
 
   Accounts.register_user(%{
-    email: "bastian.kres@krewast.de",
+    email: "bastian.kres@fernuni-hagen.de",
     password: "MzU0MmJiZWI4ZmN"
-  })
-
-  Accounts.register_user(%{
-    email: "marco.sieler@studium.fernuni-hagen.de",
-    password: "X46jXj6JM6KKU3u"
   })
 
   Accounts.register_user(%{

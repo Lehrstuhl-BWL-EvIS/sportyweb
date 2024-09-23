@@ -176,26 +176,23 @@ defmodule SportywebWeb.EventLive.FormComponent do
 
   @impl true
   def update(%{event: event} = assigns, socket) do
-    changeset = Calendar.change_event(event)
-
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:venue_type, event.venue_type)
-     |> assign_form(changeset)}
+     |> assign_new(:form, fn ->
+       to_form(Calendar.change_event(event))
+     end)}
   end
 
   @impl true
   def handle_event("validate", %{"event" => event_params}, socket) do
-    changeset =
-      socket.assigns.event
-      |> Calendar.change_event(event_params)
-      |> Map.put(:action, :validate)
+    changeset = Calendar.change_event(socket.assigns.event, event_params)
 
     {:noreply,
      socket
      |> assign(:venue_type, get_field(changeset, :venue_type))
-     |> assign_form(changeset)}
+     |> assign(form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"event" => event_params}, socket) do
@@ -211,7 +208,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -229,11 +226,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 end

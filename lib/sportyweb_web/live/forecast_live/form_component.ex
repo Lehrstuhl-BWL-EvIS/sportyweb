@@ -82,15 +82,15 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
 
   @impl true
   def update(%{forecast: forecast} = assigns, socket) do
-    changeset = change(forecast)
-
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:type, forecast.type)
      |> assign(:contact_options, Personal.list_contacts(assigns.club.id))
      |> assign(:subsidy_options, Finance.list_subsidies(assigns.club.id))
-     |> assign_form(changeset)}
+     |> assign_new(:form, fn ->
+       to_form(change(forecast))
+     end)}
   end
 
   @impl true
@@ -100,7 +100,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
       |> Forecast.changeset(forecast_params)
       |> Map.put(:action, :validate)
 
-    {:noreply, assign_form(socket, changeset)}
+    {:noreply, assign(socket, form: to_form(changeset))}
   end
 
   @impl true
@@ -117,12 +117,8 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
     if changeset.valid? do
       {:noreply, push_navigate(socket, to: get_navigate(socket, changeset))}
     else
-      {:noreply, assign_form(socket, changeset)}
+      {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 
   defp get_navigate(socket, %Ecto.Changeset{} = changeset) do

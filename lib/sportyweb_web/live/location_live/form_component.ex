@@ -115,22 +115,18 @@ defmodule SportywebWeb.LocationLive.FormComponent do
 
   @impl true
   def update(%{location: location} = assigns, socket) do
-    changeset = Asset.change_location(location)
-
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_new(:form, fn ->
+       to_form(Asset.change_location(location))
+     end)}
   end
 
   @impl true
   def handle_event("validate", %{"location" => location_params}, socket) do
-    changeset =
-      socket.assigns.location
-      |> Asset.change_location(location_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_form(socket, changeset)}
+    changeset = Asset.change_location(socket.assigns.location, location_params)
+    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"location" => location_params}, socket) do
@@ -146,7 +142,7 @@ defmodule SportywebWeb.LocationLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -164,12 +160,8 @@ defmodule SportywebWeb.LocationLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 
   defp show_delete_button?(location) do

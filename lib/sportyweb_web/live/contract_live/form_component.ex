@@ -72,26 +72,22 @@ defmodule SportywebWeb.ContractLive.FormComponent do
 
   @impl true
   def update(%{contract: contract} = assigns, socket) do
-    changeset = Legal.change_contract(contract)
-
     contact_options = Personal.list_contract_contact_options(contract, assigns.contract_object)
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:contact_options, contact_options)
-     |> assign_form(changeset)
+     |> assign_new(:form, fn ->
+       to_form(Legal.change_contract(contract))
+     end)
      |> assign_fee_options(nil)}
   end
 
   @impl true
   def handle_event("validate", %{"contract" => contract_params}, socket) do
-    changeset =
-      socket.assigns.contract
-      |> Legal.change_contract(contract_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_form(socket, changeset)}
+    changeset = Legal.change_contract(socket.assigns.contract, contract_params)
+    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"contract" => contract_params}, socket) do
@@ -112,7 +108,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -138,12 +134,8 @@ defmodule SportywebWeb.ContractLive.FormComponent do
         end
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 
   defp assign_fee_options(socket, contact_id) do

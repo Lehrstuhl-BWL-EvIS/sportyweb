@@ -22,7 +22,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
           phx-submit="save"
         >
           <div class="hidden">
-            <.input field={@form[:type]} type="hidden" readonly />
+            <input field={@form[:type].value} type="hidden" readonly />
           </div>
 
           <.input_grids>
@@ -191,20 +191,19 @@ defmodule SportywebWeb.ContactLive.FormComponent do
      |> assign(assigns)
      |> assign(:step, step)
      |> assign(:contact_type, contact.type)
-     |> assign_form(changeset)}
+     |> assign_new(:form, fn ->
+       to_form(changeset)
+     end)}
   end
 
   @impl true
   def handle_event("validate", %{"contact" => contact_params}, socket) do
-    changeset =
-      socket.assigns.contact
-      |> Personal.change_contact(contact_params)
-      |> Map.put(:action, :validate)
+    changeset = Personal.change_contact(socket.assigns.contact, contact_params)
 
     {:noreply,
      socket
      |> assign(:contact_type, get_field(changeset, :type))
-     |> assign_form(changeset)}
+     |> assign(form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"contact" => contact_params}, socket) do
@@ -225,7 +224,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -243,11 +242,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 end

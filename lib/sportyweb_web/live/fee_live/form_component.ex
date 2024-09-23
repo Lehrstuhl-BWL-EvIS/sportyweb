@@ -200,21 +200,18 @@ defmodule SportywebWeb.FeeLive.FormComponent do
 
   @impl true
   def update(%{fee: fee} = assigns, socket) do
-    changeset = Finance.change_fee(fee)
-
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)
+     |> assign_new(:form, fn ->
+       to_form(Finance.change_fee(fee))
+     end)
      |> assign_successor_fee_options(fee, fee.maximum_age_in_years)}
   end
 
   @impl true
   def handle_event("validate", %{"fee" => fee_params}, socket) do
-    changeset =
-      socket.assigns.fee
-      |> Finance.change_fee(fee_params)
-      |> Map.put(:action, :validate)
+    changeset = Finance.change_fee(socket.assigns.fee, fee_params)
 
     changed_maximum_age_in_years = get_change(changeset, :maximum_age_in_years)
 
@@ -232,10 +229,10 @@ defmodule SportywebWeb.FeeLive.FormComponent do
       # https://hexdocs.pm/phoenix_live_view/form-bindings.html
       {:noreply,
        socket
-       |> assign_form(changeset)
+       |> assign(form: to_form(changeset, action: :validate))
        |> assign_successor_fee_options(socket.assigns.fee, changed_maximum_age_in_years)}
     else
-      {:noreply, assign_form(socket, changeset)}
+      {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
     end
   end
 
@@ -252,7 +249,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -278,12 +275,8 @@ defmodule SportywebWeb.FeeLive.FormComponent do
         end
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 
   defp assign_successor_fee_options(socket, fee, maximum_age_in_years) do

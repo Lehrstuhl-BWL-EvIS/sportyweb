@@ -108,22 +108,18 @@ defmodule SportywebWeb.GroupLive.FormComponent do
 
   @impl true
   def update(%{group: group} = assigns, socket) do
-    changeset = Organization.change_group(group)
-
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_new(:form, fn ->
+       to_form(Organization.change_group(group))
+     end)}
   end
 
   @impl true
   def handle_event("validate", %{"group" => group_params}, socket) do
-    changeset =
-      socket.assigns.group
-      |> Organization.change_group(group_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_form(socket, changeset)}
+    changeset = Organization.change_group(socket.assigns.group, group_params)
+    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"group" => group_params}, socket) do
@@ -139,7 +135,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -157,11 +153,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 end

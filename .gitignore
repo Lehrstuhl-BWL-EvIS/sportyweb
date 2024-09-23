@@ -148,11 +148,11 @@ erl_crash.dump
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
 
-# Ignore package tarball (built via "mix hex.build").
-sportyweb-*.tar
-
 # Temporary files, for example, from tests.
 /tmp/
+
+# Ignore package tarball (built via "mix hex.build").
+sportyweb-*.tar
 
 
 # ##################################################

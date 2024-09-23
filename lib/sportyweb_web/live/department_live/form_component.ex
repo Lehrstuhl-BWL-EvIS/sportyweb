@@ -92,22 +92,18 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
 
   @impl true
   def update(%{department: department} = assigns, socket) do
-    changeset = Organization.change_department(department)
-
     {:ok,
      socket
      |> assign(assigns)
-     |> assign_form(changeset)}
+     |> assign_new(:form, fn ->
+       to_form(Organization.change_department(department))
+     end)}
   end
 
   @impl true
   def handle_event("validate", %{"department" => department_params}, socket) do
-    changeset =
-      socket.assigns.department
-      |> Organization.change_department(department_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply, assign_form(socket, changeset)}
+    changeset = Organization.change_department(socket.assigns.department, department_params)
+    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
   def handle_event("save", %{"department" => department_params}, socket) do
@@ -123,7 +119,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -141,11 +137,7 @@ defmodule SportywebWeb.DepartmentLive.FormComponent do
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
   end
 end

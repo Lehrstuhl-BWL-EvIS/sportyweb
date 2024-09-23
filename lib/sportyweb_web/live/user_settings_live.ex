@@ -69,7 +69,12 @@ defmodule SportywebWeb.UserSettingsLive do
             phx-trigger-action={@trigger_submit}
           >
             <div class="hidden">
-              <.input field={@password_form[:email]} type="hidden" value={@current_email} />
+              <input
+                name={@password_form[:email].name}
+                type="hidden"
+                id="hidden_user_email"
+                value={@current_email}
+              />
             </div>
 
             <.input_grids>

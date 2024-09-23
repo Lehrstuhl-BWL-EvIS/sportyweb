@@ -163,7 +163,7 @@
         </div>
       <% end %>
       <!-- Set the col-span classes based on whether a user is logged in, in which case the navigation (sidebar) is visible. -->
-      <main class={"lg:block #{if show_club_navigation(assigns), do: 'lg:col-span-9', else: 'lg:col-span-12'}"}>
+      <main class={"lg:block #{if show_club_navigation(assigns), do: ~c"lg:col-span-9", else: ~c"lg:col-span-12"}"}>
         <div>
           <.flash_group flash={@flash} />
           <%= @inner_content %>
