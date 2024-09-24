@@ -30,7 +30,7 @@ defmodule Sportyweb.RBAC.Policy do
   end
 
   defp get_live_view(view),
-    do: view |> Kernel.inspect() |> String.split(".") |> Enum.at(1) |> String.to_atom()
+    do: view |> Kernel.inspect() |> String.split(".") |> Enum.at(1) |> String.to_existing_atom()
 
   # <--- Policy check for application admins ---> #
   def is_application_admin_or_tester(user) do
