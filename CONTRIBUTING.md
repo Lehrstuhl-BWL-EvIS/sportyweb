@@ -45,10 +45,10 @@ Begründete Abweichungen von den nachfolgend geschilderten Abläufen sind natür
 
 Um an Sportyweb mitzuwirken, muss das Projekt auf dem lokalen System zum Laufen gebracht werden.
 Dafür notwendig sind die Programmiersprachen [Erlang](https://www.erlang.org/) und [Elixir](https://elixir-lang.org/) (Elixir basiert auf Erlang, deshalb diese Abhängigkeit), sowie das Datenbanksystem [PostgreSQL](https://www.postgresql.org/).
-Eine Installationsanleitung mit der Angabe der jeweils notwendigen Version ist in der [README](https://gitlab.com/fuhevis/sportyweb/-/blob/development/README.md)-Datei zu finden, wobei spezifische Unterschiede bzgl.
+Eine Installationsanleitung mit der Angabe der jeweils notwendigen Version ist in der [README](https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/blob/development/README.md)-Datei zu finden, wobei spezifische Unterschiede bzgl.
 des eingesetzten Betriebssystems zu beachten sind.
 
-Die notwendigen Informationen zur Konfiguration der PostgreSQL-Datenbank für die Entwicklungsumgebung sind ebenfalls in der README, aber auch in folgender Datei hinterlegt: <https://gitlab.com/fuhevis/sportyweb/-/blob/development/config/dev.exs>
+Die notwendigen Informationen zur Konfiguration der PostgreSQL-Datenbank für die Entwicklungsumgebung sind ebenfalls in der README, aber auch in folgender Datei hinterlegt: <https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/blob/development/config/dev.exs>
 
 Außerdem notwendig sind die Installation und Konfiguration von Git und GPG, um verifizierte Commits zu erstellen.
 Auch hier ist die entsprechende Anleitung der README-Datei zu entnehmen.
@@ -56,11 +56,11 @@ Auch hier ist die entsprechende Anleitung der README-Datei zu entnehmen.
 Das Sportyweb-Projekt kann mit `git clone` in einen beliebigen Unterordner auf dem eigenen System gepackt werden:
 
 ```bash
-git clone git@gitlab.com:fuhevis/sportyweb.git
+git clone git@github.com:Lehrstuhl-BWL-EvIS/sportyweb.git
 ```
 
-Im Stammverzeichnis des Projekts befindet sich das [`setup-dev-env.sh`](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skript.
-Wird dieses ausgeführt (Anleitung hierzu in der Datei selbst), installiert es automatisch alle für Sportyweb notwendigen Abhängigkeiten, kümmert sich um das korrekte Setup der Datenbank und initialisiert diese mit ersten Beispieldaten aus der [seed.exs](https://gitlab.com/fuhevis/sportyweb/-/blob/development/priv/repo/seeds.exs)-Datei.
+Im Stammverzeichnis des Projekts befindet sich das [`setup-dev-env.sh`](https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/blob/development/setup-dev-env.sh) Skript.
+Wird dieses ausgeführt (Anleitung hierzu in der Datei selbst), installiert es automatisch alle für Sportyweb notwendigen Abhängigkeiten, kümmert sich um das korrekte Setup der Datenbank und initialisiert diese mit ersten Beispieldaten aus der [seed.exs](https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/blob/development/priv/repo/seeds.exs)-Datei.
 Außerdem erzeugt es dynamisch die aktuellste Version der Projektdokumentation, sowie ein Entity Relationship Diagram der Datenbank.
 
 ```bash
@@ -177,7 +177,7 @@ Dies betrifft die Context-Dateien.
 
 Weitere Details in den Kapiteln [Context](#context) und [Tests](#tests).
 
-Nachdem der Generator die beschriebenen Dateien erzeugt hat, bittet er noch um die manuelle Erweiterung der [router.ex](https://gitlab.com/fuhevis/sportyweb/-/blob/development/lib/sportyweb_web/router.ex)-Datei:
+Nachdem der Generator die beschriebenen Dateien erzeugt hat, bittet er noch um die manuelle Erweiterung der [router.ex](https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/blob/development/lib/sportyweb_web/router.ex)-Datei:
 
 ```bash
 Add the live routes to your browser scope in lib/sportyweb_web/router.ex:
@@ -194,7 +194,7 @@ Die fünf angegebenen Routes sind zunächst ohne Anpassungen innerhalb des Berei
 
 Weitere Details im [Router](#router)-Kapitel.
 
-Wenn bei der anschließenden Ausführung des [`setup-dev-env.sh`](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skripts keine Fehler auftreten und sich auch der lokale Server starten lässt, hat die Erzeugung geklappt.
+Wenn bei der anschließenden Ausführung des [`setup-dev-env.sh`](https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/blob/development/setup-dev-env.sh) Skripts keine Fehler auftreten und sich auch der lokale Server starten lässt, hat die Erzeugung geklappt.
 
 ```bash
 ./setup-dev-env.sh
@@ -208,7 +208,7 @@ So entsteht ein klarer, funktionierender Startpunkt an den jederzeit zurückgeke
 
 ## Router (LiveView)
 
-In der [router.ex](https://gitlab.com/fuhevis/sportyweb/-/blob/development/lib/sportyweb_web/router.ex)-Datei werden die von der Applikation zur Verfügung gestellten Endpunkte definiert und mit Components und deren Funktionen verknüpft.
+In der [router.ex](https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/blob/development/lib/sportyweb_web/router.ex)-Datei werden die von der Applikation zur Verfügung gestellten Endpunkte definiert und mit Components und deren Funktionen verknüpft.
 Jede dieser Route-Definitionen besteht dabei aus mehreren Teilen, auf die nachfolgend genauer eingegangen werden soll.
 
 Grundlegend wichtig für das Verständnis dieses Kapitels ist, dass durch den Einsatz von [LiveViews](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html) die Route-Definitionen, anders als bei einem „klassischen“ Phoenix-Projekt, nicht mit einem der bekannten [HTTP-Verben](https://en.wikipedia.org/wiki/Representational_state_transfer) (`get`, `post`, `put`, `patch`, `delete`, ...) beginnen, sondern mit `live`.
@@ -273,7 +273,7 @@ Die Nutzung von Migrations hat diverse Vorteile:
 - **Unabhängigkeit:** Auch wenn es klar definierte SQL-Standards gibt, weichen selbst sehr weit verbreitete Datenbanksysteme - häufig aus historischen Gründen - davon ab. Deshalb wäre die Erstellung von SQL-Befehlen (egal ob manuell oder automatisiert durch Generatoren) zu einem gewissen Grad immer datenbankspezifisch. In Elixir geschriebene Migrations sind hingegen unabhängig vom eingesetzten Datenbanksystem, solange es sich um ein von [Ecto](https://hexdocs.pm/phoenix/ecto.html) unterstütztes handelt.
 - **Umkehrbarkeit:** Mithilfe der Rollback-Funktion ([`mix ecto.rollback`](https://hexdocs.pm/ecto_sql/Mix.Tasks.Ecto.Rollback.html)) lassen sich durchgeführte Migrations rückgängig machen, falls es z.B. in der Produktionsumgebung nach einem Update zu unerwarteten Problemen kommen sollte.
 
-Alle Migrations sind im Ordner [`priv/repo/migrations`](https://gitlab.com/fuhevis/sportyweb/-/tree/development/priv/repo/migrations) zu finden, wobei die dortige „echte“ Departments-Migration vom nachfolgenden, vereinfachten Beispiel durch eine höhere Anzahl an Attributen abweicht.
+Alle Migrations sind im Ordner [`priv/repo/migrations`](https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/tree/development/priv/repo/migrations) zu finden, wobei die dortige „echte“ Departments-Migration vom nachfolgenden, vereinfachten Beispiel durch eine höhere Anzahl an Attributen abweicht.
 
 Jede Migration-Datei hat einen Dateinamen welcher das Erstellungsdatum enthält, wodurch eine Ausführung in der richtigen (da häufig aufeinander aufbauenden) Reihenfolge möglich wird.
 Migrations werden immer nur ein einziges Mal angewendet, weshalb nachträgliche Änderungen keine Auswirkungen auf bestehende, aber durchaus auf neu erstellte Datenbanken haben.
@@ -281,7 +281,7 @@ Deshalb wird eigentlich dringend von späteren Anpassungen abgeraten, ABER:
 
 > **Festlegung:**
 > Da es während des initialen Entwicklungsprozesses viele Änderungen am Datenbankschema geben wird und bisher noch keine durchgängig laufende Produktionsumgebung existiert, sollen, um eine sehr große und damit unübersichtliche Menge vieler kleiner Migrations zu vermeiden, bestehende Migrations von existierenden Entitäten nachträglich angepasst und erweitert werden.
-> Um diese Änderungen wirksam zu übernehmen, muss die lokale Datenbank neu aufgesetzt werden, was durch die Ausführung des [`setup-dev-env.sh`](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skripts aber vollkommen unkompliziert und schnell möglich ist.
+> Um diese Änderungen wirksam zu übernehmen, muss die lokale Datenbank neu aufgesetzt werden, was durch die Ausführung des [`setup-dev-env.sh`](https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/blob/development/setup-dev-env.sh) Skripts aber vollkommen unkompliziert und schnell möglich ist.
 
 &nbsp;
 
@@ -382,7 +382,7 @@ TODO:
 - Eher nicht für als Grundlage für Tests gedacht, sondern als Abbildung "realer" Umgebungen für die Nutzung während der Entwicklung.
 - Änderungen würden die Tests brechen lassen --> Nicht der Sinn der Seed
 - Konzeption von Testdaten über Fixtures und deren Anpassungen (folgendes Kapitel)
-- https://gitlab.com/fuhevis/sportyweb/-/blob/development/priv/repo/seeds.exs
+- https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/blob/development/priv/repo/seeds.exs
 
 
 &nbsp;
@@ -422,7 +422,7 @@ TODO:
 
 Diese Checkliste soll als Anhaltspunkt vor der Erstellung von Commits dienen.
 Da sie recht umfangreich ist, muss nicht die komplette Liste vor jedem Commit im eigenen Entwicklungsbranch genau befolgt werden.
-**Allerdings gilt es, wirklich alle Punkte vor einem Merge in den gemeinsamen Development-Branch und vor allem vor dem Push eines solchen Merges zu Gitlab abzuarbeiten!**
+**Allerdings gilt es, wirklich alle Punkte vor einem Merge in den gemeinsamen Development-Branch und vor allem vor dem Push eines solchen Merges zu GitHub abzuarbeiten!**
 Nur so kann eine durchgängig funktionsfähige und qualitativ hochwertige Codebasis mit geringem Frustrationspotential entstehen.
 
 - **Git**
@@ -444,6 +444,6 @@ Nur so kann eine durchgängig funktionsfähige und qualitativ hochwertige Codeba
 - **Dokumentation**
   - [ ] TODO: Ergänzen nach Erstellung des obigen Kapitels
 - **Setup Skript**
-  - [ ] Läuft das [`setup-dev-env.sh`](https://gitlab.com/fuhevis/sportyweb/-/blob/development/setup-dev-env.sh) Skript weiterhin erfolgreich durch und quittiert mit „Done“? (Wichtig um zu testen, ob alle Migrations weiterhin mit einer neu erstellen Datenbank funktionieren und der Import der Seed-Datei klappt.)
+  - [ ] Läuft das [`setup-dev-env.sh`](https://github.com/Lehrstuhl-BWL-EvIS/sportyweb/blob/development/setup-dev-env.sh) Skript weiterhin erfolgreich durch und quittiert mit „Done“? (Wichtig um zu testen, ob alle Migrations weiterhin mit einer neu erstellen Datenbank funktionieren und der Import der Seed-Datei klappt.)
 - **Server**
   - [ ] Lässt sich der lokale Server mit `mix phx.server` starten (wenn er aktuell läuft: stoppen und neu starten!) und ist die Applikation unter <http://localhost:4000> erreichbar?

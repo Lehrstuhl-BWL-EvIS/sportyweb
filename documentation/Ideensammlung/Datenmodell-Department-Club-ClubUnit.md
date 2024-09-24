@@ -3,7 +3,7 @@ title: Sportyweb - Conceptual data model (ER diagram) of Sportyweb data manageme
 language: yaml
 license:
 Copyright (C) 2022­–2023 Sportyweb Team 
-https://gitlab.com/fuhevis/sportyweb
+https://github.com/Lehrstuhl-BWL-EvIS/sportyweb
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
