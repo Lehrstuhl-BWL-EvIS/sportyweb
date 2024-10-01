@@ -7,7 +7,7 @@ defmodule Sportyweb.Repo.Migrations.CreateGroupPhones do
       add :group_id, references(:groups, on_delete: :delete_all, type: :binary_id), null: false
       add :phone_id, references(:phones, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:group_phones, [:group_id])

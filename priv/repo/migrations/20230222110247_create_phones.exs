@@ -8,7 +8,7 @@ defmodule Sportyweb.Repo.Migrations.CreatePhones do
       add :number, :string, null: false
       add :is_main, :boolean, null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
   end
 end

@@ -16,7 +16,7 @@ defmodule Sportyweb.Repo.Migrations.CreateFinancialData do
           references(:postal_addresses, on_delete: :nilify_all, type: :binary_id),
           null: true
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:financial_data, [:invoice_recipient_postal_address_id])

@@ -10,7 +10,7 @@ defmodule Sportyweb.Repo.Migrations.CreateInternalEvents do
       add :frequency, :string, null: true
       add :interval, :integer, null: true
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
   end
 end

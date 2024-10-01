@@ -10,7 +10,7 @@ defmodule Sportyweb.Repo.Migrations.CreateUserapplicationroles do
           references(:applicationroles, on_delete: :delete_all, type: :binary_id),
           null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:userapplicationroles, [:user_id])

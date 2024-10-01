@@ -10,7 +10,7 @@ defmodule Sportyweb.Repo.Migrations.CreateClubs do
       add :website_url, :string, null: false
       add :foundation_date, :date, null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
   end
 end

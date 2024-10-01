@@ -16,7 +16,7 @@ defmodule Sportyweb.Repo.Migrations.CreateEvents do
       add :venue_description, :text, null: false
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:events, [:club_id])

@@ -10,7 +10,7 @@ defmodule Sportyweb.Repo.Migrations.CreateEquipmentNotes do
 
       add :note_id, references(:notes, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:equipment_notes, [:equipment_id])

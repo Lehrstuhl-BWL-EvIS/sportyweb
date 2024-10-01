@@ -8,8 +8,8 @@ defmodule Sportyweb.Repo.Migrations.CreateUsersAuthTables do
       add :id, :binary_id, primary_key: true
       add :email, :citext, null: false
       add :hashed_password, :string, null: false
-      add :confirmed_at, :naive_datetime
-      timestamps()
+      add :confirmed_at, :utc_datetime
+      timestamps(type: :utc_datetime)
     end
 
     create unique_index(:users, [:email])
@@ -20,7 +20,7 @@ defmodule Sportyweb.Repo.Migrations.CreateUsersAuthTables do
       add :token, :binary, null: false
       add :context, :string, null: false
       add :sent_to, :string
-      timestamps(updated_at: false)
+      timestamps(type: :utc_datetime, updated_at: false)
     end
 
     create index(:users_tokens, [:user_id])

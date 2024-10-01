@@ -13,7 +13,7 @@ defmodule Sportyweb.Repo.Migrations.CreateUserdepartmentroles do
           references(:departmentroles, on_delete: :delete_all, type: :binary_id),
           null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:userdepartmentroles, [:user_id])

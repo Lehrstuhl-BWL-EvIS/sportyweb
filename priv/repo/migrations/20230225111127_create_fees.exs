@@ -18,7 +18,7 @@ defmodule Sportyweb.Repo.Migrations.CreateFees do
       add :subsidy_id, references(:subsidies, on_delete: :restrict, type: :binary_id), null: true
       add :successor_id, references(:fees, on_delete: :restrict, type: :binary_id), null: true
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:fees, [:club_id])

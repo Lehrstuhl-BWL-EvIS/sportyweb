@@ -16,7 +16,7 @@ defmodule Sportyweb.Repo.Migrations.CreateContracts do
 
       add :fee_id, references(:fees, on_delete: :restrict, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:contracts, [:club_id])

@@ -10,7 +10,7 @@ defmodule Sportyweb.Repo.Migrations.CreateUserclubroles do
       add :clubrole_id, references(:clubroles, on_delete: :delete_all, type: :binary_id),
         null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:userclubroles, [:user_id])

@@ -7,7 +7,7 @@ defmodule Sportyweb.Repo.Migrations.CreateFeeNotes do
       add :fee_id, references(:fees, on_delete: :delete_all, type: :binary_id), null: false
       add :note_id, references(:notes, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:fee_notes, [:fee_id])

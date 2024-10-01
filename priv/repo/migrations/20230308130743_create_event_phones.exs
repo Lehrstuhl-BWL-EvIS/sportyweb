@@ -7,7 +7,7 @@ defmodule Sportyweb.Repo.Migrations.CreateEventPhones do
       add :event_id, references(:events, on_delete: :delete_all, type: :binary_id), null: false
       add :phone_id, references(:phones, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:event_phones, [:event_id])

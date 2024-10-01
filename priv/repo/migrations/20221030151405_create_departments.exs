@@ -10,7 +10,7 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartments do
       add :creation_date, :date, null: false
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:departments, [:club_id])

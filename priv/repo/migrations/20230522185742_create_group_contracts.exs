@@ -9,7 +9,7 @@ defmodule Sportyweb.Repo.Migrations.CreateGroupContracts do
       add :contract_id, references(:contracts, on_delete: :delete_all, type: :binary_id),
         null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:group_contracts, [:group_id])

@@ -7,7 +7,7 @@ defmodule Sportyweb.Repo.Migrations.CreateGroupFees do
       add :group_id, references(:groups, on_delete: :delete_all, type: :binary_id), null: false
       add :fee_id, references(:fees, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:group_fees, [:group_id])

@@ -6,7 +6,7 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartmentroles do
       add :id, :binary_id, primary_key: true
       add :name, :string
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create unique_index(:departmentroles, [:name])

@@ -6,7 +6,7 @@ defmodule Sportyweb.Repo.Migrations.CreateNotes do
       add :id, :binary_id, primary_key: true
       add :content, :text, null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
   end
 end

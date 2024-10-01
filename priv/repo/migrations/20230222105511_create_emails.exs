@@ -8,7 +8,7 @@ defmodule Sportyweb.Repo.Migrations.CreateEmails do
       add :address, :string, null: false
       add :is_main, :boolean, null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
   end
 end

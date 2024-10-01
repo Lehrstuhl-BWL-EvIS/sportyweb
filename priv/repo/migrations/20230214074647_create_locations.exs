@@ -9,7 +9,7 @@ defmodule Sportyweb.Repo.Migrations.CreateLocations do
       add :description, :text, null: false
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:locations, [:club_id])

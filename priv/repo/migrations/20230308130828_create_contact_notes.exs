@@ -10,7 +10,7 @@ defmodule Sportyweb.Repo.Migrations.CreateContactNotes do
 
       add :note_id, references(:notes, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:contact_notes, [:contact_id])

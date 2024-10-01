@@ -10,7 +10,7 @@ defmodule Sportyweb.Repo.Migrations.CreateClubFinancialData do
           references(:financial_data, on_delete: :delete_all, type: :binary_id),
           null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:club_financial_data, [:club_id])

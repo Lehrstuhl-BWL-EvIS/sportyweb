@@ -12,7 +12,7 @@ defmodule Sportyweb.Repo.Migrations.CreateSubsidyInternalEvents do
           references(:internal_events, on_delete: :delete_all, type: :binary_id),
           null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:subsidy_internal_events, [:subsidy_id])

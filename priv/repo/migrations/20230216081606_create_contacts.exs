@@ -15,7 +15,7 @@ defmodule Sportyweb.Repo.Migrations.CreateContacts do
       add :person_birthday, :date, null: true
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:contacts, [:club_id])

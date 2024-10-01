@@ -7,7 +7,7 @@ defmodule Sportyweb.Repo.Migrations.CreateEventNotes do
       add :event_id, references(:events, on_delete: :delete_all, type: :binary_id), null: false
       add :note_id, references(:notes, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:event_notes, [:event_id])

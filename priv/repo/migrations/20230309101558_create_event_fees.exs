@@ -7,7 +7,7 @@ defmodule Sportyweb.Repo.Migrations.CreateEventFees do
       add :event_id, references(:events, on_delete: :delete_all, type: :binary_id), null: false
       add :fee_id, references(:fees, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:event_fees, [:event_id])

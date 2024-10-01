@@ -10,7 +10,7 @@ defmodule Sportyweb.Repo.Migrations.CreateLocationEmails do
 
       add :email_id, references(:emails, on_delete: :delete_all, type: :binary_id), null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:location_emails, [:location_id])

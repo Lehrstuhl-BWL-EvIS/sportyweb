@@ -12,7 +12,7 @@ defmodule Sportyweb.Repo.Migrations.CreateContactPostalAddresses do
           references(:postal_addresses, on_delete: :delete_all, type: :binary_id),
           null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:contact_postal_addresses, [:contact_id])

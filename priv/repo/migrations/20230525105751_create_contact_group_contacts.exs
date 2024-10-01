@@ -12,7 +12,7 @@ defmodule Sportyweb.Repo.Migrations.CreateContactGroupContacts do
       add :contact_id, references(:contacts, on_delete: :delete_all, type: :binary_id),
         null: false
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:contact_group_contacts, [:contact_group_id])
