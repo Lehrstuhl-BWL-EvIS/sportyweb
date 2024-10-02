@@ -15,7 +15,7 @@ defmodule Sportyweb.Accounting.Transaction do
     field :creation_date, :date, default: nil
     field :payment_date, :date, default: nil
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

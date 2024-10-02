@@ -40,7 +40,7 @@ defmodule Sportyweb.Personal.Contact do
     field :person_gender, :string, default: ""
     field :person_birthday, :date, default: nil
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def get_valid_types do

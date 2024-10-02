@@ -11,7 +11,7 @@ defmodule Sportyweb.Asset.LocationEmail do
     belongs_to :location, Location
     belongs_to :email, Email
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

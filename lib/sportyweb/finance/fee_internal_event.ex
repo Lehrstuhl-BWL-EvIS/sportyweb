@@ -11,7 +11,7 @@ defmodule Sportyweb.Finance.FeeInternalEvent do
     belongs_to :fee, Fee
     belongs_to :internal_event, InternalEvent
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.ClubFinancialData do
     belongs_to :club, Club
     belongs_to :financial_data, FinancialData
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

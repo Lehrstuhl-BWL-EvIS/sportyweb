@@ -11,7 +11,7 @@ defmodule Sportyweb.Calendar.EventFee do
     belongs_to :event, Event
     belongs_to :fee, Fee
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

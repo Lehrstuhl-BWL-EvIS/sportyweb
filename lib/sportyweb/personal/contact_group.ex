@@ -12,7 +12,7 @@ defmodule Sportyweb.Personal.ContactGroup do
     belongs_to :club, Club
     many_to_many :contacts, Contact, join_through: ContactGroupContact
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

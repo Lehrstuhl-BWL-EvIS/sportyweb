@@ -30,7 +30,7 @@ defmodule Sportyweb.Asset.Equipment do
     field :commission_date, :date, default: nil
     field :decommission_date, :date, default: nil
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

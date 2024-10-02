@@ -288,7 +288,7 @@ Deshalb wird eigentlich dringend von späteren Anpassungen abgeraten, ABER:
 TODO: Erklärung notwendige Anpassungen/Erweiterungen (Teil 2)
 
 - Sicherstellung der Integrität: Error auf DB-Ebene, deshalb nachfolgend im Schema zusätzliche Validierungen
-- timestamps()
+- timestamps(type: :utc_datetime)
 - null: false
 - Defaults
 - on_delete (speziell bei Join-Tabellen)

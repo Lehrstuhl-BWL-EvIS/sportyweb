@@ -21,7 +21,7 @@ defmodule Sportyweb.Polymorphic.InternalEvent do
     field :frequency, :string, default: "year"
     field :interval, :integer, default: 1
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def get_valid_frequencies do

@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.ClubNote do
     belongs_to :club, Club
     belongs_to :note, Note
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

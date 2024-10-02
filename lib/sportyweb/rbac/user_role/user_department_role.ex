@@ -13,7 +13,7 @@ defmodule Sportyweb.RBAC.UserRole.UserDepartmentRole do
     belongs_to :department, Department
     belongs_to :departmentrole, DepartmentRole
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

@@ -33,7 +33,7 @@ defmodule Sportyweb.Organization.Department do
     field :description, :string, default: ""
     field :creation_date, :date, default: nil
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

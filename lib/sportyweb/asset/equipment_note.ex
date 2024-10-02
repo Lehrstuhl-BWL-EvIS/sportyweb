@@ -11,7 +11,7 @@ defmodule Sportyweb.Asset.EquipmentNote do
     belongs_to :equipment, Equipment
     belongs_to :note, Note
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

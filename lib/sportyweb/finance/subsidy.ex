@@ -24,7 +24,7 @@ defmodule Sportyweb.Finance.Subsidy do
     field :description, :string, default: ""
     field :amount, Money.Ecto.Composite.Type, default_currency: :EUR
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def is_in_use?(%Subsidy{} = subsidy, %Date{} = date \\ Date.utc_today()) do

@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.GroupNote do
     belongs_to :group, Group
     belongs_to :note, Note
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

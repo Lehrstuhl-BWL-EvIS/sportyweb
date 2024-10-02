@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.DepartmentNote do
     belongs_to :department, Department
     belongs_to :note, Note
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

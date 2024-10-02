@@ -11,7 +11,7 @@ defmodule Sportyweb.Calendar.EventLocation do
     belongs_to :event, Event
     belongs_to :location, Location
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

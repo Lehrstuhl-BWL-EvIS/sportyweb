@@ -11,7 +11,7 @@ defmodule Sportyweb.Finance.SubsidyNote do
     belongs_to :subsidy, Subsidy
     belongs_to :note, Note
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

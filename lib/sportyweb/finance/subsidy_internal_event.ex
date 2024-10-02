@@ -11,7 +11,7 @@ defmodule Sportyweb.Finance.SubsidyInternalEvent do
     belongs_to :subsidy, Subsidy
     belongs_to :internal_event, InternalEvent
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

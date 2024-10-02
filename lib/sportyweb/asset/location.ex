@@ -30,7 +30,7 @@ defmodule Sportyweb.Asset.Location do
     field :reference_number, :string, default: ""
     field :description, :string, default: ""
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

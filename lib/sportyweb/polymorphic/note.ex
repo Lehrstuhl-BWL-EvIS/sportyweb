@@ -7,7 +7,7 @@ defmodule Sportyweb.Polymorphic.Note do
   schema "notes" do
     field :content, :string, default: ""
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

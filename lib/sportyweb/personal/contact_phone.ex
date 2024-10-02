@@ -11,7 +11,7 @@ defmodule Sportyweb.Personal.ContactPhone do
     belongs_to :contact, Contact
     belongs_to :phone, Phone
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

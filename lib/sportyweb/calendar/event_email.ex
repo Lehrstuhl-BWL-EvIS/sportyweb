@@ -11,7 +11,7 @@ defmodule Sportyweb.Calendar.EventEmail do
     belongs_to :event, Event
     belongs_to :email, Email
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

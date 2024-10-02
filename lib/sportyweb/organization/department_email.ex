@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.DepartmentEmail do
     belongs_to :department, Department
     belongs_to :email, Email
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

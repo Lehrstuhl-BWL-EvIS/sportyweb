@@ -11,7 +11,7 @@ defmodule Sportyweb.Personal.ContactGroupContact do
     belongs_to :contact_group, ContactGroup
     belongs_to :contact, Contact
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

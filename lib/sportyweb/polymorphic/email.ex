@@ -9,7 +9,7 @@ defmodule Sportyweb.Polymorphic.Email do
     field :address, :string, default: ""
     field :is_main, :boolean, default: false
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def get_valid_types do

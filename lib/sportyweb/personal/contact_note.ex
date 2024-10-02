@@ -11,7 +11,7 @@ defmodule Sportyweb.Personal.ContactNote do
     belongs_to :contact, Contact
     belongs_to :note, Note
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

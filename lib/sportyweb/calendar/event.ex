@@ -48,7 +48,7 @@ defmodule Sportyweb.Calendar.Event do
     field :venue_type, :string, default: ""
     field :venue_description, :string, default: ""
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def get_valid_statuses do

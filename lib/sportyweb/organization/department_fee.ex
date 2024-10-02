@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.DepartmentFee do
     belongs_to :department, Department
     belongs_to :fee, Fee
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

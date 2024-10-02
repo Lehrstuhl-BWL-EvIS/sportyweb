@@ -19,7 +19,7 @@ defmodule Sportyweb.Polymorphic.FinancialData do
     field :invoice_additional_information, :string, default: ""
     field :is_main, :boolean, default: false
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def get_valid_types do

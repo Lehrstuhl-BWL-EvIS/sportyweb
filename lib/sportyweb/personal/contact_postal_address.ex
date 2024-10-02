@@ -11,7 +11,7 @@ defmodule Sportyweb.Personal.ContactPostalAddress do
     belongs_to :contact, Contact
     belongs_to :postal_address, PostalAddress
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

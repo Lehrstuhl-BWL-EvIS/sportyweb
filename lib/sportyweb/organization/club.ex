@@ -47,7 +47,7 @@ defmodule Sportyweb.Organization.Club do
     field :website_url, :string, default: ""
     field :foundation_date, :date, default: nil
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def is_main_location?(%Club{} = club, %Location{} = location) do

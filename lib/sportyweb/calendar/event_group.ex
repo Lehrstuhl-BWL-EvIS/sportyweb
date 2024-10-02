@@ -11,7 +11,7 @@ defmodule Sportyweb.Calendar.EventGroup do
     belongs_to :event, Event
     belongs_to :group, Group
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

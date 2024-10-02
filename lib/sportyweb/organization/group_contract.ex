@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.GroupContract do
     belongs_to :group, Group
     belongs_to :contract, Contract
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

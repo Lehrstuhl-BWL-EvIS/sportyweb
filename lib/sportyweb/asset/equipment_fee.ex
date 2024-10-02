@@ -11,7 +11,7 @@ defmodule Sportyweb.Asset.EquipmentFee do
     belongs_to :equipment, Equipment
     belongs_to :fee, Fee
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

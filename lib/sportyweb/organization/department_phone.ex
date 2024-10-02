@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.DepartmentPhone do
     belongs_to :department, Department
     belongs_to :phone, Phone
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

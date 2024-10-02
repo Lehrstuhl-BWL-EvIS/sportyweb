@@ -11,7 +11,7 @@ defmodule Sportyweb.Asset.LocationNote do
     belongs_to :location, Location
     belongs_to :note, Note
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

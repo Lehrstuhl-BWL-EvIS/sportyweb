@@ -49,7 +49,7 @@ defmodule Sportyweb.Finance.Fee do
     field :minimum_age_in_years, :integer, default: nil
     field :maximum_age_in_years, :integer, default: nil
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def get_valid_types do

@@ -11,7 +11,7 @@ defmodule Sportyweb.Calendar.EventPhone do
     belongs_to :event, Event
     belongs_to :phone, Phone
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

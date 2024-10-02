@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.ClubContract do
     belongs_to :club, Club
     belongs_to :contract, Contract
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

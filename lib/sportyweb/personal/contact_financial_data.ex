@@ -11,7 +11,7 @@ defmodule Sportyweb.Personal.ContactFinancialData do
     belongs_to :contact, Contact
     belongs_to :financial_data, FinancialData
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

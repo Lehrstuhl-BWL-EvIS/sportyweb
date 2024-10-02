@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.GroupEmail do
     belongs_to :group, Group
     belongs_to :email, Email
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

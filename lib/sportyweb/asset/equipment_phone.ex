@@ -11,7 +11,7 @@ defmodule Sportyweb.Asset.EquipmentPhone do
     belongs_to :equipment, Equipment
     belongs_to :phone, Phone
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

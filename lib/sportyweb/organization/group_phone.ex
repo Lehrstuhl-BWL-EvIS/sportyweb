@@ -11,7 +11,7 @@ defmodule Sportyweb.Organization.GroupPhone do
     belongs_to :group, Group
     belongs_to :phone, Phone
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

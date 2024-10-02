@@ -13,7 +13,7 @@ defmodule Sportyweb.RBAC.UserRole.UserClubRole do
     belongs_to :club, Club
     belongs_to :clubrole, ClubRole
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

@@ -11,7 +11,7 @@ defmodule Sportyweb.Asset.LocationPhone do
     belongs_to :location, Location
     belongs_to :phone, Phone
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

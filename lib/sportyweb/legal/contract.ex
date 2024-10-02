@@ -31,7 +31,7 @@ defmodule Sportyweb.Legal.Contract do
     field :termination_date, :date, default: nil
     field :archive_date, :date, default: nil
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   def is_in_use?(%Contract{} = contract, %Date{} = date \\ Date.utc_today()) do

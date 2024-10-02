@@ -11,7 +11,7 @@ defmodule Sportyweb.Finance.FeeNote do
     belongs_to :fee, Fee
     belongs_to :note, Note
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

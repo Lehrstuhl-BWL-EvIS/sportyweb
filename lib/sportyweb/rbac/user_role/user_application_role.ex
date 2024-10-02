@@ -11,7 +11,7 @@ defmodule Sportyweb.RBAC.UserRole.UserApplicationRole do
     belongs_to :user, User
     belongs_to :applicationrole, ApplicationRole
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false

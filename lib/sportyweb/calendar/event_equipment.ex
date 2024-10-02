@@ -11,7 +11,7 @@ defmodule Sportyweb.Calendar.EventEquipment do
     belongs_to :event, Event
     belongs_to :equipment, Equipment
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @doc false
