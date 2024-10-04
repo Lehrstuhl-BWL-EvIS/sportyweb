@@ -1,4 +1,8 @@
 defmodule Sportyweb.Personal.ContactPhone do
+  @moduledoc """
+  Associative entity, part of a polymorphic association with many to many.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 
