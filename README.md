@@ -2,9 +2,9 @@
 
 ![Hero](documentation/evolution/v0.2.0-Department.png)
 
-Sportyweb is a multitenancy web application for the efficient and collaborative organization and administration of multi-sports clubs, some of which have many thousands of members.
+Sportyweb is a multitenancy web application for the efficient and collaborative management of sports clubs. Sportyweb targets a broad range of sports clubs of sizes from large-sized, multi-sports clubs with several thousand members to small, single-sports clubs with a few dozen members. 
 
-The integrated open source software is currently in its initial development phase and aims to offer digital solutions for all typical club management areas:
+The integrated open-source-software is currently in its initial development phase and aims to offer digital solutions for all typical club management areas:
 
 - **Club administration:** Management of the core data of clubs
 - **Departments & groups:** Mapping of the hierarchical structure of a club, management of department and group members
