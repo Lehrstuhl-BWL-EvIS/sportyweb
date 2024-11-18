@@ -1,4 +1,4 @@
-# Sportyweb - Make managing sports clubs a breeze!
+# Sportyweb - A web app for managing sports clubs
 
 ![Hero](documentation/evolution/v0.2.0-Department.png)
 
