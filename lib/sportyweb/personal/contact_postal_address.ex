@@ -1,6 +1,6 @@
 defmodule Sportyweb.Personal.ContactPostalAddress do
   @moduledoc """
-  Associative entity, part of a polymorphic association with many to many.
+  Associative entity, part of a [polymorphic association with many to many](https://hexdocs.pm/ecto/polymorphic-associations-with-many-to-many.html).
   """
 
   use Ecto.Schema
