@@ -3,7 +3,7 @@
   <:subtitle>Verwalter: <%= @current_user.email %></:subtitle>
 </.header>
 
-<.card class="mt-8 max-w-mx">
+<.card class="mt-8">
   <.simple_form for={@form} id="add_user_form" phx-submit="add" phx-change="validate" as={:user}>
     <.error :if={@form.errors[:email] != nil}>
       Bitte überprüfen Sie ihre Eingaben.

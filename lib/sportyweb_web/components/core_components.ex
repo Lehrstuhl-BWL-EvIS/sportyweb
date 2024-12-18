@@ -230,11 +230,11 @@ defmodule SportywebWeb.CoreComponents do
     ~H"""
     <button
       type={@type}
-      class={[
+      class={Twix.tw([
         "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "text-sm font-semibold leading-6 text-white active:text-white",
         @class
-      ]}
+      ])}
       {@rest}
     >
       <%= render_slot(@inner_block) %>
@@ -259,7 +259,7 @@ defmodule SportywebWeb.CoreComponents do
     ~H"""
     <.link
       navigate={@navigate}
-      class={["mx-2 py-1 px-1 text-sm font-semibold hover:underline", @class]}
+      class={Twix.tw(["mx-2 py-1 px-1 text-sm font-semibold hover:underline", @class])}
     >
       <%= render_slot(@inner_block) %>
     </.link>
@@ -300,7 +300,7 @@ defmodule SportywebWeb.CoreComponents do
 
   def input_grids(assigns) do
     ~H"""
-    <div class={["divide-y divide-zinc-200 space-y-8", @class]}>
+    <div class={Twix.tw(["divide-y divide-zinc-200 space-y-8", @class])}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -331,7 +331,7 @@ defmodule SportywebWeb.CoreComponents do
 
   def input_grid(assigns) do
     ~H"""
-    <div class={["grid grid-cols-12 gap-x-4 gap-y-6", @class]}>
+    <div class={Twix.tw(["grid grid-cols-12 gap-x-4 gap-y-6", @class])}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -528,7 +528,7 @@ defmodule SportywebWeb.CoreComponents do
 
   def input_description(assigns) do
     ~H"""
-    <div class={["mt-2 text-sm text-zinc-500", @class]}>
+    <div class={Twix.tw(["mt-2 text-sm text-zinc-500", @class])}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -569,10 +569,10 @@ defmodule SportywebWeb.CoreComponents do
       )
 
     ~H"""
-    <header class={[
+    <header class={Twix.tw([
       "flex flex-wrap md:flex-nowrap items-center justify-between gap-x-8 gap-y-2 mb-3 min-h-[40px] px-4 sm:px-0",
       @class
-    ]}>
+    ])}>
       <div class="flex-grow">
         <%= case @level do %>
           <% "1" -> %>
@@ -614,7 +614,7 @@ defmodule SportywebWeb.CoreComponents do
 
   def card(assigns) do
     ~H"""
-    <div class={["bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6", @class]}>
+    <div class={Twix.tw(["bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6", @class])}>
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -653,7 +653,7 @@ defmodule SportywebWeb.CoreComponents do
       end
 
     ~H"""
-    <div class={["overflow-y-auto px-4 md:overflow-visible sm:px-0", @class]}>
+    <div class={Twix.tw(["overflow-y-auto px-4 md:overflow-visible sm:px-0", @class])}>
       <table class="w-[40rem] sm:w-full">
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>

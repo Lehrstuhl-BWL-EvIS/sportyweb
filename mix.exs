@@ -46,7 +46,7 @@ defmodule Sportyweb.MixProject do
 
       # Don't use bcrypt_elixir!
       {:argon2_elixir, "~> 3.1"},
-      {:phoenix, "~> 1.7.17"},
+      {:phoenix, "~> 1.7.18"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
@@ -115,6 +115,11 @@ defmodule Sportyweb.MixProject do
       # https://hexdocs.pm/quantum/readme.html
       # https://github.com/quantum-elixir/quantum-core
       {:quantum, "~> 3.5"},
+
+      # Tailwind class merging in Elixir
+      # https://hex.pm/packages/twix
+      # https://github.com/bratsche/twix
+      {:twix, "~> 0.3.0"},
 
       # TimeZoneDatabase for DateTime (which per default only supports UTC)
       # https://hexdocs.pm/tzdata/readme.html
