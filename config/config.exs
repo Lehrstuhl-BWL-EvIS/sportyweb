@@ -58,8 +58,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  # IMPORTANT NOTE: Versions > 3.2.4 break the coloring of buttons. Check after future upgrade!
-  version: "3.2.4",
+  version: "3.4.3",
   sportyweb: [
     args: ~w(
       --config=tailwind.config.js
