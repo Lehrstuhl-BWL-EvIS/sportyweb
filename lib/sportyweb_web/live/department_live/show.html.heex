@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
   <:actions>
     <.link navigate={~p"/departments/#{@department}/edit"}>
       <.button>Abteilung bearbeiten</.button>
@@ -10,19 +10,19 @@
 <.card>
   <.list>
     <:item title="Referenznummer">
-      <%= format_string_field(@department.reference_number) %>
+      {format_string_field(@department.reference_number)}
     </:item>
     <:item title="Beschreibung">
-      <%= format_string_field(@department.description) %>
+      {format_string_field(@department.description)}
     </:item>
     <:item title="Erstellungsdatum">
-      <%= format_date_field_dmy(@department.creation_date) %>
+      {format_date_field_dmy(@department.creation_date)}
     </:item>
     <:item title="E-Mail">
-      <%= format_struct_list(@department.emails, :address) %>
+      {format_struct_list(@department.emails, :address)}
     </:item>
     <:item title="Telefon">
-      <%= format_struct_list(@department.phones, :number) %>
+      {format_struct_list(@department.phones, :number)}
     </:item>
     <:item title="Notizen">
       <.live_component
@@ -72,18 +72,18 @@
       row_click={fn {_id, group} -> JS.navigate(~p"/groups/#{group}") end}
     >
       <:col :let={{_id, group}} label="Name">
-        <%= format_string_field(group.name) %>
+        {format_string_field(group.name)}
       </:col>
       <:col :let={{_id, group}} label="Ref.nr.">
-        <%= format_string_field(group.reference_number) %>
+        {format_string_field(group.reference_number)}
       </:col>
       <:col :let={{_id, group}} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
-          <%= format_string_field(group.description) %>
+          {format_string_field(group.description)}
         </div>
       </:col>
       <:col :let={{_id, group}} label="Erstellungsdatum">
-        <%= format_date_field_dmy(group.creation_date) %>
+        {format_date_field_dmy(group.creation_date)}
       </:col>
 
       <:action :let={{_id, group}}>

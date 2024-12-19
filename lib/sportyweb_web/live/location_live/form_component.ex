@@ -9,7 +9,7 @@ defmodule SportywebWeb.LocationLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.card>

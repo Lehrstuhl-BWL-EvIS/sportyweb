@@ -14,7 +14,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.card>

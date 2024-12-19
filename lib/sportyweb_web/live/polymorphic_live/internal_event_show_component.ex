@@ -15,37 +15,37 @@ defmodule SportywebWeb.PolymorphicLive.InternalEventShowComponent do
                 <%= if !internal_event.is_recurring do %>
                   einmalig.
 
-                  Sie kann ab <%= format_date_field_dmy(internal_event.commission_date) %> verwendet werden.
+                  Sie kann ab {format_date_field_dmy(internal_event.commission_date)} verwendet werden.
                 <% else %>
                   wiederholend.
                   <%= if internal_event.frequency == "month" do %>
                     <%= if internal_event.interval == 1 do %>
                       Einmal monatlich,
                     <% else %>
-                      Alle <%= internal_event.interval %> Monate,
+                      Alle {internal_event.interval} Monate,
                     <% end %>
-                    immer am <%= Calendar.strftime(internal_event.commission_date, "%d.") %> des jeweiligen Monats.
+                    immer am {Calendar.strftime(internal_event.commission_date, "%d.")} des jeweiligen Monats.
                   <% end %>
 
                   <%= if internal_event.frequency == "year" do %>
                     <%= if internal_event.interval == 1 do %>
                       Einmal jährlich,
                     <% else %>
-                      Alle <%= internal_event.interval %> Jahre,
+                      Alle {internal_event.interval} Jahre,
                     <% end %>
-                    immer am <%= Calendar.strftime(internal_event.commission_date, "%d.%m.") %> des jeweiligen Jahres.
+                    immer am {Calendar.strftime(internal_event.commission_date, "%d.%m.")} des jeweiligen Jahres.
                   <% end %>
-                  (Ausgehend von der ersten Verwendung am <%= format_date_field_dmy(
+                  (Ausgehend von der ersten Verwendung am {format_date_field_dmy(
                     internal_event.commission_date
-                  ) %>.)
+                  )}.)
                 <% end %>
               </p>
 
               <p>
                 <%= if internal_event.archive_date do %>
-                  Das Archivierungsdatum wurde auf den <%= format_date_field_dmy(
+                  Das Archivierungsdatum wurde auf den {format_date_field_dmy(
                     internal_event.archive_date
-                  ) %> festgelegt.
+                  )} festgelegt.
                   Ab diesem Zeitpunkt ist keine weitere Verwendung mehr möglich und es findet keine weitere Abrechnung statt.
                 <% else %>
                   Derzeit ist keine Archivierungsdatum festgelegt, somit sind weder die Nutzung,

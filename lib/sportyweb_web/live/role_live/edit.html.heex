@@ -1,6 +1,6 @@
 <.header>
-  Rollen von <%= @user.email %>
-  <:subtitle>im Verein <%= @club.name %></:subtitle>
+  Rollen von {@user.email}
+  <:subtitle>im Verein {@club.name}</:subtitle>
   <:actions>
     <.link navigate={~p"/clubs/#{@club.id}/roles"}>
       <.button>Fertig</.button>
@@ -15,7 +15,7 @@
   <%= if Enum.any?(@assigned_club_roles) do %>
     <.table id="assigned_club_roles" rows={@assigned_club_roles}>
       <:col :let={assigned_club_roles} label="im Verein">
-        <%= assigned_club_roles.clubrole.name %>
+        {assigned_club_roles.clubrole.name}
       </:col>
       <:action :let={assigned_club_roles}>
         <.button
@@ -37,7 +37,7 @@
   <%= if Enum.any?(@assigned_department_roles) do %>
     <.table id="assigned_department_roles" rows={@assigned_department_roles}>
       <:col :let={assigned_department_roles} label="in den Abteilungen">
-        <%= assigned_department_roles.name %>
+        {assigned_department_roles.name}
       </:col>
       <:action :let={assigned_department_roles}>
         <.button
@@ -68,7 +68,7 @@
 <.card class="mt-5">
   <%= if Enum.any?(@available_club_roles) do %>
     <.table id="available_club_roles" rows={@available_club_roles}>
-      <:col :let={available_club_roles} label="Verein"><%= available_club_roles.name %></:col>
+      <:col :let={available_club_roles} label="Verein">{available_club_roles.name}</:col>
       <:action :let={available_club_roles}>
         <.button
           class="bg-green-700 hover:bg-green-400"
@@ -80,14 +80,14 @@
     </.table>
   <% else %>
     <p>
-      <%= @user.email %> sind bereits alle Vereinsrollen zugewiesen.
+      {@user.email} sind bereits alle Vereinsrollen zugewiesen.
     </p>
   <% end %>
 </.card>
 
 <%= for department <- Organization.list_departments(@club.id) do %>
   <.header level="2" class="mt-12">
-    Rollen in der Abteilung <%= department.name %>
+    Rollen in der Abteilung {department.name}
   </.header>
   <.card>
     <% assigns =
@@ -101,7 +101,7 @@
     <%= if Enum.any?(@adr) do %>
       <.table id="adr" rows={@adr}>
         <:col :let={adr} label="Name">
-          <%= adr.name %>
+          {adr.name}
         </:col>
         <:action :let={adr}>
           <.button
@@ -118,7 +118,7 @@
       </.table>
     <% else %>
       <p>
-        <%= @user.email %> sind bereits alle Rollen dieser Abteilung zugewiesen.
+        {@user.email} sind bereits alle Rollen dieser Abteilung zugewiesen.
       </p>
     <% end %>
   </.card>

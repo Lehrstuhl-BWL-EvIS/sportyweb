@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
 </.header>
 
 <.card class="flex flex-wrap sm:flex-nowrap justify-between space-x-6">
@@ -18,32 +18,32 @@
 
 <.card class="mt-12">
   <p class="mb-3">
-    Vom <%= format_date_field_dmy(@start_date) %> - <%= format_date_field_dmy(@end_date) %> werden <%= Enum.count(
+    Vom {format_date_field_dmy(@start_date)} - {format_date_field_dmy(@end_date)} werden {Enum.count(
       @streams.transactions
-    ) %> Transaktionen erzeugt.
+    )} Transaktionen erzeugt.
   </p>
 
   <p>
-    Summe aller Beträge: <%= @transactions_amount_sum %>.
+    Summe aller Beträge: {@transactions_amount_sum}.
   </p>
 
   <%= if Enum.any?(@streams.transactions.inserts) do %>
     <.table id="transactions" rows={@streams.transactions} class="mt-12">
       <:col :let={{_id, transaction}} label="Name">
-        <%= format_string_field(transaction.name) %>
+        {format_string_field(transaction.name)}
       </:col>
       <:col :let={{_id, transaction}} label="Betrag">
-        <%= transaction.amount %>
+        {transaction.amount}
       </:col>
       <:col :let={{_id, transaction}} label="Erstellungsdatum">
-        <%= format_date_field_dmy(transaction.creation_date) %>
+        {format_date_field_dmy(transaction.creation_date)}
       </:col>
       <:col :let={{_id, transaction}} label="Kontakt">
         <.link
           navigate={~p"/contacts/#{transaction.contract.contact}"}
           class="text-indigo-600 hover:underline"
         >
-          <%= format_string_field(transaction.contract.contact.name) %>
+          {format_string_field(transaction.contract.contact.name)}
         </.link>
       </:col>
     </.table>

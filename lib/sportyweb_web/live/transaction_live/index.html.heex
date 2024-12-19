@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
 </.header>
 
 <.card>
@@ -10,23 +10,23 @@
       row_click={fn {_id, transaction} -> JS.navigate(~p"/transactions/#{transaction}") end}
     >
       <:col :let={{_id, transaction}} label="Name">
-        <%= format_string_field(transaction.name) %>
+        {format_string_field(transaction.name)}
       </:col>
       <:col :let={{_id, transaction}} label="Betrag">
-        <%= transaction.amount %>
+        {transaction.amount}
       </:col>
       <:col :let={{_id, transaction}} label="Erstellung">
-        <%= format_date_field_dmy(transaction.creation_date) %>
+        {format_date_field_dmy(transaction.creation_date)}
       </:col>
       <:col :let={{_id, transaction}} label="Zahlung">
-        <%= format_date_field_dmy(transaction.payment_date) %>
+        {format_date_field_dmy(transaction.payment_date)}
       </:col>
       <:col :let={{_id, transaction}} label="Kontakt">
         <.link
           navigate={~p"/contacts/#{transaction.contract.contact}"}
           class="text-indigo-600 hover:underline"
         >
-          <%= format_string_field(transaction.contract.contact.name) %>
+          {format_string_field(transaction.contract.contact.name)}
         </.link>
       </:col>
 

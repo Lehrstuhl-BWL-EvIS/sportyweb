@@ -10,10 +10,10 @@ defmodule SportywebWeb.ContactLive.IndexTableComponent do
     <div>
       <.table id="contacts" rows={@contacts} row_click={&JS.navigate(~p"/contacts/#{&1}")}>
         <:col :let={contact} label="Name">
-          <%= format_string_field(contact.name) %>
+          {format_string_field(contact.name)}
         </:col>
         <:col :let={contact} label="Art">
-          <%= get_key_for_value(Contact.get_valid_types(), contact.type) %>
+          {get_key_for_value(Contact.get_valid_types(), contact.type)}
         </:col>
 
         <:action :let={contact}>

@@ -79,7 +79,7 @@ defmodule SportywebWeb.CoreComponents do
                 </button>
               </div>
               <div id={"#{@id}-content"}>
-                <%= render_slot(@inner_block) %>
+                {render_slot(@inner_block)}
               </div>
             </.focus_wrap>
           </div>
@@ -124,9 +124,9 @@ defmodule SportywebWeb.CoreComponents do
       <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
         <.icon :if={@kind == :info} name="hero-information-circle-mini" class="h-4 w-4" />
         <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="h-4 w-4" />
-        <%= @title %>
+        {@title}
       </p>
-      <p class="mt-2 text-sm leading-5"><%= msg %></p>
+      <p class="mt-2 text-sm leading-5">{msg}</p>
       <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
         <.icon name="hero-x-mark-solid" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
       </button>
@@ -157,7 +157,7 @@ defmodule SportywebWeb.CoreComponents do
         phx-connected={hide("#client-error")}
         hidden
       >
-        <%= gettext("Attempting to reconnect") %>
+        {gettext("Attempting to reconnect")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
@@ -169,7 +169,7 @@ defmodule SportywebWeb.CoreComponents do
         phx-connected={hide("#server-error")}
         hidden
       >
-        <%= gettext("Hang in there while we get back on track") %>
+        {gettext("Hang in there while we get back on track")}
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>
@@ -203,9 +203,9 @@ defmodule SportywebWeb.CoreComponents do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
       <div>
-        <%= render_slot(@inner_block, f) %>
+        {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-8 flex items-center justify-between gap-6">
-          <%= render_slot(action, f) %>
+          {render_slot(action, f)}
         </div>
       </div>
     </.form>
@@ -230,14 +230,16 @@ defmodule SportywebWeb.CoreComponents do
     ~H"""
     <button
       type={@type}
-      class={Twix.tw([
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white",
-        @class
-      ])}
+      class={
+        Twix.tw([
+          "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
+          "text-sm font-semibold leading-6 text-white active:text-white",
+          @class
+        ])
+      }
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -261,7 +263,7 @@ defmodule SportywebWeb.CoreComponents do
       navigate={@navigate}
       class={Twix.tw(["mx-2 py-1 px-1 text-sm font-semibold hover:underline", @class])}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.link>
     """
   end
@@ -301,7 +303,7 @@ defmodule SportywebWeb.CoreComponents do
   def input_grids(assigns) do
     ~H"""
     <div class={Twix.tw(["divide-y divide-zinc-200 space-y-8", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -332,7 +334,7 @@ defmodule SportywebWeb.CoreComponents do
   def input_grid(assigns) do
     ~H"""
     <div class={Twix.tw(["grid grid-cols-12 gap-x-4 gap-y-6", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -416,9 +418,9 @@ defmodule SportywebWeb.CoreComponents do
           class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
           {@rest}
         />
-        <%= @label %>
+        {@label}
       </label>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -426,7 +428,7 @@ defmodule SportywebWeb.CoreComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div>
-      <.label for={@id}><%= @label %></.label>
+      <.label for={@id}>{@label}</.label>
       <select
         id={@id}
         name={@name}
@@ -434,10 +436,10 @@ defmodule SportywebWeb.CoreComponents do
         multiple={@multiple}
         {@rest}
       >
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -445,7 +447,7 @@ defmodule SportywebWeb.CoreComponents do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div>
-      <.label for={@id}><%= @label %></.label>
+      <.label for={@id}>{@label}</.label>
       <textarea
         id={@id}
         name={@name}
@@ -455,8 +457,8 @@ defmodule SportywebWeb.CoreComponents do
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
         {@rest}
-      ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -465,7 +467,7 @@ defmodule SportywebWeb.CoreComponents do
   def input(assigns) do
     ~H"""
     <div>
-      <.label for={@id}><%= @label %></.label>
+      <.label for={@id}>{@label}</.label>
       <input
         type={@type}
         name={@name}
@@ -478,7 +480,7 @@ defmodule SportywebWeb.CoreComponents do
         ]}
         {@rest}
       />
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -492,7 +494,7 @@ defmodule SportywebWeb.CoreComponents do
   def label(assigns) do
     ~H"""
     <label for={@for} class="block text-sm font-semibold leading-6 text-zinc-800">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -506,7 +508,7 @@ defmodule SportywebWeb.CoreComponents do
     ~H"""
     <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600">
       <.icon name="hero-exclamation-circle-mini" class="mt-0.5 h-5 w-5 flex-none" />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -529,7 +531,7 @@ defmodule SportywebWeb.CoreComponents do
   def input_description(assigns) do
     ~H"""
     <div class={Twix.tw(["mt-2 text-sm text-zinc-500", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -569,32 +571,34 @@ defmodule SportywebWeb.CoreComponents do
       )
 
     ~H"""
-    <header class={Twix.tw([
-      "flex flex-wrap md:flex-nowrap items-center justify-between gap-x-8 gap-y-2 mb-3 min-h-[40px] px-4 sm:px-0",
-      @class
-    ])}>
+    <header class={
+      Twix.tw([
+        "flex flex-wrap md:flex-nowrap items-center justify-between gap-x-8 gap-y-2 mb-3 min-h-[40px] px-4 sm:px-0",
+        @class
+      ])
+    }>
       <div class="flex-grow">
         <%= case @level do %>
           <% "1" -> %>
-            <h1 class={["text-3xl", @default_header_classes]}><%= render_slot(@inner_block) %></h1>
+            <h1 class={["text-3xl", @default_header_classes]}>{render_slot(@inner_block)}</h1>
           <% "2" -> %>
-            <h2 class={["text-2xl", @default_header_classes]}><%= render_slot(@inner_block) %></h2>
+            <h2 class={["text-2xl", @default_header_classes]}>{render_slot(@inner_block)}</h2>
           <% "3" -> %>
-            <h3 class={["text-xl", @default_header_classes]}><%= render_slot(@inner_block) %></h3>
+            <h3 class={["text-xl", @default_header_classes]}>{render_slot(@inner_block)}</h3>
           <% "4" -> %>
-            <h4 class={["text-lg", @default_header_classes]}><%= render_slot(@inner_block) %></h4>
+            <h4 class={["text-lg", @default_header_classes]}>{render_slot(@inner_block)}</h4>
           <% "5" -> %>
-            <h5 class={["text-md", @default_header_classes]}><%= render_slot(@inner_block) %></h5>
+            <h5 class={["text-md", @default_header_classes]}>{render_slot(@inner_block)}</h5>
           <% _   -> %>
-            <h6 class={["text-sm", @default_header_classes]}><%= render_slot(@inner_block) %></h6>
+            <h6 class={["text-sm", @default_header_classes]}>{render_slot(@inner_block)}</h6>
         <% end %>
 
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
-          <%= render_slot(@subtitle) %>
+          {render_slot(@subtitle)}
         </p>
       </div>
 
-      <div :if={@actions != []} class="flex-none"><%= render_slot(@actions) %></div>
+      <div :if={@actions != []} class="flex-none">{render_slot(@actions)}</div>
     </header>
     """
   end
@@ -615,7 +619,7 @@ defmodule SportywebWeb.CoreComponents do
   def card(assigns) do
     ~H"""
     <div class={Twix.tw(["bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6", @class])}>
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </div>
     """
   end
@@ -626,8 +630,8 @@ defmodule SportywebWeb.CoreComponents do
   ## Examples
 
       <.table id="users" rows={@users}>
-        <:col :let={user} label="id"><%= user.id %></:col>
-        <:col :let={user} label="username"><%= user.username %></:col>
+        <:col :let={user} label="id">{user.id}</:col>
+        <:col :let={user} label="username">{user.username}</:col>
       </.table>
   """
   attr :id, :string, required: true
@@ -657,9 +661,9 @@ defmodule SportywebWeb.CoreComponents do
       <table class="w-[40rem] sm:w-full">
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal"><%= col[:label] %></th>
+            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal">{col[:label]}</th>
             <th :if={@action != []} class="relative p-0 pb-4">
-              <span class="sr-only"><%= gettext("Actions") %></span>
+              <span class="sr-only">{gettext("Actions")}</span>
             </th>
           </tr>
         </thead>
@@ -677,7 +681,7 @@ defmodule SportywebWeb.CoreComponents do
               <div class="block py-4 pr-6">
                 <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
                 <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
-                  <%= render_slot(col, @row_item.(row)) %>
+                  {render_slot(col, @row_item.(row))}
                 </span>
               </div>
             </td>
@@ -688,7 +692,7 @@ defmodule SportywebWeb.CoreComponents do
                   :for={action <- @action}
                   class="relative ml-4 font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
                 >
-                  <%= render_slot(action, @row_item.(row)) %>
+                  {render_slot(action, @row_item.(row))}
                 </span>
               </div>
             </td>
@@ -705,8 +709,8 @@ defmodule SportywebWeb.CoreComponents do
   ## Examples
 
       <.list>
-        <:item title="Title"><%= @post.title %></:item>
-        <:item title="Views"><%= @post.views %></:item>
+        <:item title="Title">{@post.title}</:item>
+        <:item title="Views">{@post.views}</:item>
       </.list>
   """
   attr :class, :string, default: nil
@@ -720,8 +724,8 @@ defmodule SportywebWeb.CoreComponents do
     <div class={@class}>
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 text-sm leading-6 sm:gap-8">
-          <dt class="w-1/4 flex-none text-zinc-500"><%= item.title %></dt>
-          <dd class="text-zinc-700"><%= render_slot(item) %></dd>
+          <dt class="w-1/4 flex-none text-zinc-500">{item.title}</dt>
+          <dd class="text-zinc-700">{render_slot(item)}</dd>
         </div>
       </dl>
     </div>
@@ -747,7 +751,7 @@ defmodule SportywebWeb.CoreComponents do
         class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
       >
         <.icon name="hero-arrow-left-solid" class="h-3 w-3" />
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </.link>
     </div>
     """

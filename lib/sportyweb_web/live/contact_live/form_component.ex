@@ -10,7 +10,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.card>

@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
   <:actions>
     <.link navigate={~p"/groups/#{@group}/edit"}>
       <.button>Gruppe bearbeiten</.button>
@@ -10,22 +10,22 @@
 <.card>
   <.list>
     <:item title="Abteilung">
-      <%= format_string_field(@group.department.name) %>
+      {format_string_field(@group.department.name)}
     </:item>
     <:item title="Referenznummer">
-      <%= format_string_field(@group.reference_number) %>
+      {format_string_field(@group.reference_number)}
     </:item>
     <:item title="Beschreibung">
-      <%= format_string_field(@group.description) %>
+      {format_string_field(@group.description)}
     </:item>
     <:item title="Erstellungsdatum">
-      <%= format_date_field_dmy(@group.creation_date) %>
+      {format_date_field_dmy(@group.creation_date)}
     </:item>
     <:item title="E-Mail">
-      <%= format_struct_list(@group.emails, :address) %>
+      {format_struct_list(@group.emails, :address)}
     </:item>
     <:item title="Telefon">
-      <%= format_struct_list(@group.phones, :number) %>
+      {format_struct_list(@group.phones, :number)}
     </:item>
     <:item title="Notizen">
       <.live_component

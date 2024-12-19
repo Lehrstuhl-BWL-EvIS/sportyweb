@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
   <:actions>
     <.link navigate={~p"/contacts/#{@contact}/edit"}>
       <.button>Kontakt bearbeiten</.button>
@@ -10,19 +10,19 @@
 <.card>
   <.list>
     <:item title="Art">
-      <%= get_key_for_value(Contact.get_valid_types(), @contact.type) %>
+      {get_key_for_value(Contact.get_valid_types(), @contact.type)}
     </:item>
     <:item title="Name">
-      <%= format_string_field(@contact.name) %>
+      {format_string_field(@contact.name)}
     </:item>
     <:item :if={Contact.is_organization?(@contact)} title="Organisationstyp">
-      <%= get_key_for_value(Contact.get_valid_organization_types(), @contact.organization_type) %>
+      {get_key_for_value(Contact.get_valid_organization_types(), @contact.organization_type)}
     </:item>
     <:item :if={Contact.is_person?(@contact)} title="Geschlecht">
-      <%= get_key_for_value(Contact.get_valid_genders(), @contact.person_gender) %>
+      {get_key_for_value(Contact.get_valid_genders(), @contact.person_gender)}
     </:item>
     <:item :if={Contact.is_person?(@contact)} title="Geburtsdatum">
-      <%= format_date_field_dmy(@contact.person_birthday) %> - <%= Contact.age_in_years(@contact) %> Jahre
+      {format_date_field_dmy(@contact.person_birthday)} - {Contact.age_in_years(@contact)} Jahre
     </:item>
     <:item title="Adresse">
       <.live_component
@@ -32,10 +32,10 @@
       />
     </:item>
     <:item title="E-Mail">
-      <%= format_struct_list(@contact.emails, :address) %>
+      {format_struct_list(@contact.emails, :address)}
     </:item>
     <:item title="Telefon">
-      <%= format_struct_list(@contact.phones, :number) %>
+      {format_struct_list(@contact.phones, :number)}
     </:item>
     <:item title="Zahlungsdaten">
       <.live_component
@@ -69,10 +69,10 @@
       row_click={fn {_id, contract} -> JS.navigate(~p"/contracts/#{contract}") end}
     >
       <:col :let={{_id, contract}} label="Vertragsobjekt">
-        <%= format_string_field(Contract.get_object(contract).name) %>
+        {format_string_field(Contract.get_object(contract).name)}
       </:col>
       <:col :let={{_id, contract}} label="Gebühr">
-        <%= format_string_field(contract.fee.name) %>
+        {format_string_field(contract.fee.name)}
         <%= if Fee.is_archived?(contract.fee) do %>
           <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
         <% end %>

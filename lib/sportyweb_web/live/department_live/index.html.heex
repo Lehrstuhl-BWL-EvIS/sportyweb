@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
   <:actions>
     <.link navigate={~p"/clubs/#{@club}/departments/new"}>
       <.button>Abteilung erstellen</.button>
@@ -15,21 +15,21 @@
       row_click={fn {_id, department} -> JS.navigate(~p"/departments/#{department}") end}
     >
       <:col :let={{_id, department}} label="Name">
-        <%= format_string_field(department.name) %>
+        {format_string_field(department.name)}
       </:col>
       <:col :let={{_id, department}} label="Ref.nr.">
-        <%= format_string_field(department.reference_number) %>
+        {format_string_field(department.reference_number)}
       </:col>
       <:col :let={{_id, department}} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
-          <%= format_string_field(department.description) %>
+          {format_string_field(department.description)}
         </div>
       </:col>
       <:col :let={{_id, department}} label="Erstellungsdatum">
-        <%= format_date_field_dmy(department.creation_date) %>
+        {format_date_field_dmy(department.creation_date)}
       </:col>
       <:col :let={{_id, department}} label="Gruppen">
-        <%= Enum.count(department.groups) %>
+        {Enum.count(department.groups)}
       </:col>
 
       <:action :let={{_id, department}}>

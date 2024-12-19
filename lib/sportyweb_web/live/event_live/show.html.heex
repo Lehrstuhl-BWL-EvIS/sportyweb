@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
   <:actions>
     <.link navigate={~p"/events/#{@event}/edit"}>
       <.button>Veranstaltung bearbeiten</.button>
@@ -10,25 +10,25 @@
 <.card>
   <.list>
     <:item title="Referenznummer">
-      <%= format_string_field(@event.reference_number) %>
+      {format_string_field(@event.reference_number)}
     </:item>
     <:item title="Status">
-      <%= get_key_for_value(Event.get_valid_statuses(), @event.status) %>
+      {get_key_for_value(Event.get_valid_statuses(), @event.status)}
     </:item>
     <:item title="Beschreibung">
-      <%= format_string_field(@event.description) %>
+      {format_string_field(@event.description)}
     </:item>
     <:item title="Minimale Anzahl an Teilnehmern">
-      <%= format_integer_field(@event.minimum_participants) %>
+      {format_integer_field(@event.minimum_participants)}
     </:item>
     <:item title="Maximale Anzahl an Teilnehmern">
-      <%= format_integer_field(@event.maximum_participants) %>
+      {format_integer_field(@event.maximum_participants)}
     </:item>
     <:item title="Mindestalter">
-      <%= format_integer_field(@event.minimum_age_in_years) %>
+      {format_integer_field(@event.minimum_age_in_years)}
     </:item>
     <:item title="Höchstalter">
-      <%= format_integer_field(@event.maximum_age_in_years) %>
+      {format_integer_field(@event.maximum_age_in_years)}
     </:item>
     <:item title="Veranstaltungsort">
       <%= if @event.venue_type == "no_info" do %>
@@ -36,7 +36,7 @@
       <% end %>
 
       <%= if @event.venue_type == "location" do %>
-        <%= format_struct_list(@event.locations, :name) %>
+        {format_struct_list(@event.locations, :name)}
       <% end %>
 
       <%= if @event.venue_type == "postal_address" do %>
@@ -48,14 +48,14 @@
       <% end %>
 
       <%= if @event.venue_type == "free_form" do %>
-        <%= format_string_field(@event.venue_description) %>
+        {format_string_field(@event.venue_description)}
       <% end %>
     </:item>
     <:item title="E-Mail">
-      <%= format_struct_list(@event.emails, :address) %>
+      {format_struct_list(@event.emails, :address)}
     </:item>
     <:item title="Telefon">
-      <%= format_struct_list(@event.phones, :number) %>
+      {format_struct_list(@event.phones, :number)}
     </:item>
     <:item title="Notizen">
       <.live_component

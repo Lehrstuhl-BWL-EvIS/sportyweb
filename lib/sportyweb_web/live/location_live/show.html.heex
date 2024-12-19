@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
   <:actions>
     <.link navigate={~p"/locations/#{@location}/edit"}>
       <.button>Standort bearbeiten</.button>
@@ -13,10 +13,10 @@
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>
     <:item title="Referenznummer">
-      <%= format_string_field(@location.reference_number) %>
+      {format_string_field(@location.reference_number)}
     </:item>
     <:item title="Beschreibung">
-      <%= format_string_field(@location.description) %>
+      {format_string_field(@location.description)}
     </:item>
     <:item title="Adresse">
       <.live_component
@@ -26,10 +26,10 @@
       />
     </:item>
     <:item title="E-Mail">
-      <%= format_struct_list(@location.emails, :address) %>
+      {format_struct_list(@location.emails, :address)}
     </:item>
     <:item title="Telefon">
-      <%= format_struct_list(@location.phones, :number) %>
+      {format_struct_list(@location.phones, :number)}
     </:item>
     <:item title="Notizen">
       <.live_component
@@ -79,14 +79,14 @@
       row_click={fn {_id, equipment} -> JS.navigate(~p"/equipment/#{equipment}") end}
     >
       <:col :let={{_id, equipment}} label="Name">
-        <%= format_string_field(equipment.name) %>
+        {format_string_field(equipment.name)}
       </:col>
       <:col :let={{_id, equipment}} label="Ref.nr.">
-        <%= format_string_field(equipment.reference_number) %>
+        {format_string_field(equipment.reference_number)}
       </:col>
       <:col :let={{_id, equipment}} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
-          <%= format_string_field(equipment.description) %>
+          {format_string_field(equipment.description)}
         </div>
       </:col>
 

@@ -1,5 +1,5 @@
 <.header>
-  <%= @club.name %>
+  {@club.name}
   <:actions>
     <.link navigate={~p"/clubs/#{@club}/edit"} phx-click={JS.push_focus()}>
       <.button>Verein bearbeiten</.button>
@@ -10,37 +10,37 @@
 <.card>
   <.list>
     <:item title="Referenznummer">
-      <%= format_string_field(@club.reference_number) %>
+      {format_string_field(@club.reference_number)}
     </:item>
     <:item title="Beschreibung">
-      <%= format_string_field(@club.description) %>
+      {format_string_field(@club.description)}
     </:item>
     <:item title="URL">
       <%= if String.trim(@club.website_url) != "" do %>
         <.link href={@club.website_url} class="text-indigo-600 hover:underline" target="_blank">
-          <%= format_string_field(@club.website_url) %>
+          {format_string_field(@club.website_url)}
         </.link>
       <% else %>
         -
       <% end %>
     </:item>
     <:item title="Gründungsdatum">
-      <%= format_date_field_dmy(@club.foundation_date) %>
+      {format_date_field_dmy(@club.foundation_date)}
     </:item>
     <:item title="Hauptstandort">
       <%= if @club.location do %>
         <.link navigate={~p"/locations/#{@club.location}"} class="text-indigo-600 hover:underline">
-          <%= format_string_field(@club.location.name) %>
+          {format_string_field(@club.location.name)}
         </.link>
       <% else %>
         -
       <% end %>
     </:item>
     <:item title="E-Mail">
-      <%= format_struct_list(@club.emails, :address) %>
+      {format_struct_list(@club.emails, :address)}
     </:item>
     <:item title="Telefon">
-      <%= format_struct_list(@club.phones, :number) %>
+      {format_struct_list(@club.phones, :number)}
     </:item>
     <:item title="Zahlungsdaten">
       <.live_component

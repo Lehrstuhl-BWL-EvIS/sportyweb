@@ -9,7 +9,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.card>
@@ -76,7 +76,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
                   Dieser Zuschuss kann nicht gelöscht, sondern nur archiviert werden, denn:
                   <ul class="list-disc pl-4 mb-3">
                     <li :if={Enum.any?(@subsidy.fees)}>
-                      Er wird von <%= Enum.count(@subsidy.fees) %> Gebühren verwendet.
+                      Er wird von {Enum.count(@subsidy.fees)} Gebühren verwendet.
                     </li>
                   </ul>
                   Zur Archivierung bitte das gewünschte Datum im Feld "Archiviert ab" eintragen und "Speichern" klicken.

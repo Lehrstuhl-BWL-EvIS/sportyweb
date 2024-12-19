@@ -31,7 +31,7 @@
             >
               <span class="sr-only">Open menu</span>
               <span class="flex justify-center items-center h-8 w-8 rounded-full font-bold text-white bg-zinc-800">
-                <%= @current_user.email |> String.slice(0, 1) %>
+                {@current_user.email |> String.slice(0, 1)}
               </span>
             </button>
           </div>
@@ -64,7 +64,7 @@
                 >
                   <span class="sr-only">Open menu</span>
                   <span class="flex justify-center items-center h-8 w-8 rounded-full font-bold text-white bg-zinc-800">
-                    <%= @current_user.email |> String.slice(0, 1) %>
+                    {@current_user.email |> String.slice(0, 1)}
                   </span>
                 </button>
               </div>
@@ -78,7 +78,7 @@
                 tabindex="-1"
               >
                 <div class="px-4 pt-2 pb-3 text-sm font-medium text-zinc-800 truncate">
-                  <%= @current_user.email %>
+                  {@current_user.email}
                 </div>
 
                 <.link
@@ -125,7 +125,7 @@
         <div class="border-t border-zinc-200 px-2 sm:px-4 py-4">
           <div class="mx-auto max-w-3xl">
             <div class="px-4 text-base font-medium text-zinc-800 truncate">
-              <%= @current_user.email %>
+              {@current_user.email}
             </div>
           </div>
 
@@ -166,7 +166,7 @@
       <main class={"lg:block #{if show_club_navigation(assigns), do: ~c"lg:col-span-9", else: ~c"lg:col-span-12"}"}>
         <div>
           <.flash_group flash={@flash} />
-          <%= @inner_content %>
+          {@inner_content}
         </div>
       </main>
     </div>

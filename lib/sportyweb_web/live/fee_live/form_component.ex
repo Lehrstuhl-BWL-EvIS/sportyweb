@@ -18,7 +18,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.card>
@@ -153,10 +153,10 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                   Diese Gebühr kann nicht gelöscht, sondern nur archiviert werden, denn:
                   <ul class="list-disc pl-4 mb-3">
                     <li :if={Enum.any?(@fee.contracts)}>
-                      Sie wird in <%= Enum.count(@fee.contracts) %> Verträgen verwendet.
+                      Sie wird in {Enum.count(@fee.contracts)} Verträgen verwendet.
                     </li>
                     <li :if={Enum.any?(@fee.ancestors)}>
-                      Sie dient <%= Enum.count(@fee.ancestors) %> anderen Gebühren als Nachfolger.
+                      Sie dient {Enum.count(@fee.ancestors)} anderen Gebühren als Nachfolger.
                     </li>
                   </ul>
                   Zur Archivierung bitte das gewünschte Datum im Feld "Archiviert ab" eintragen und "Speichern" klicken.

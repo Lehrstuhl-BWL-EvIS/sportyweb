@@ -8,7 +8,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.card>

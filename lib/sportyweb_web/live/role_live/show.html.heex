@@ -23,9 +23,9 @@
 
 <.card class="mt-5">
   <.table id="clubroles" rows={@clubroles}>
-    <:col :let={clubroles} label="Name"><%= clubroles.name %></:col>
+    <:col :let={clubroles} label="Name">{clubroles.name}</:col>
     <:col :let={clubroles} label="Info">
-      Die Rolle "<%= clubroles.name %>" <%= clubroles.info %>
+      Die Rolle "{clubroles.name}" {clubroles.info}
     </:col>
   </.table>
 </.card>
@@ -44,9 +44,9 @@
 
 <.card class="mt-5">
   <.table id="departmentroles" rows={@departmentroles}>
-    <:col :let={departmentroles} label="Name"><%= departmentroles.name %></:col>
+    <:col :let={departmentroles} label="Name">{departmentroles.name}</:col>
     <:col :let={departmentroles} label="Info">
-      Die Rolle "<%= departmentroles.name %>" <%= departmentroles.info %>
+      Die Rolle "{departmentroles.name}" {departmentroles.info}
     </:col>
   </.table>
 </.card>

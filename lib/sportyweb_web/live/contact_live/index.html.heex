@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
   <:actions>
     <.link navigate={~p"/clubs/#{@club}/contracts/new"}>
       <.button>Vereinsmitglied erstellen</.button>
@@ -18,13 +18,13 @@
       row_click={fn {_id, contact} -> JS.navigate(~p"/contacts/#{contact}") end}
     >
       <:col :let={{_id, contact}} label="Name">
-        <%= format_string_field(contact.name) %>
+        {format_string_field(contact.name)}
         <%= if Contact.has_active_membership_contract?(contact) do %>
           <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-800" />
         <% end %>
       </:col>
       <:col :let={{_id, contact}} label="Art">
-        <%= get_key_for_value(Contact.get_valid_types(), contact.type) %>
+        {get_key_for_value(Contact.get_valid_types(), contact.type)}
       </:col>
 
       <:action :let={{_id, contact}}>

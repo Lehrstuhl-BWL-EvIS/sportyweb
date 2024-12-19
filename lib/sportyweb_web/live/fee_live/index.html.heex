@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
 </.header>
 
 <.card class="flex flex-wrap sm:flex-nowrap justify-between space-x-6">
@@ -19,7 +19,7 @@
 
 <%= for type <- Fee.get_valid_types do %>
   <.header level="2" class="mt-12">
-    <%= type[:key] %>
+    {type[:key]}
     <:actions>
       <.link navigate={~p"/clubs/#{@club}/fees/new/#{type[:value]}"}>
         <.button>Gebühr erstellen</.button>

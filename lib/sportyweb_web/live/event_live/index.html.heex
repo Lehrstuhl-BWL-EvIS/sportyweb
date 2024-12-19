@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
   <:actions>
     <.link navigate={~p"/clubs/#{@club}/events/new"}>
       <.button>Veranstaltung erstellen</.button>
@@ -15,17 +15,17 @@
       row_click={fn {_id, event} -> JS.navigate(~p"/events/#{event}") end}
     >
       <:col :let={{_id, event}} label="Name">
-        <%= format_string_field(event.name) %>
+        {format_string_field(event.name)}
       </:col>
       <:col :let={{_id, event}} label="Ref.nr.">
-        <%= format_string_field(event.reference_number) %>
+        {format_string_field(event.reference_number)}
       </:col>
       <:col :let={{_id, event}} label="Status">
-        <%= get_key_for_value(Event.get_valid_statuses(), event.status) %>
+        {get_key_for_value(Event.get_valid_statuses(), event.status)}
       </:col>
       <:col :let={{_id, event}} label="Description">
         <div class="max-w-[200px] truncate overflow-hidden">
-          <%= format_string_field(event.description) %>
+          {format_string_field(event.description)}
         </div>
       </:col>
 

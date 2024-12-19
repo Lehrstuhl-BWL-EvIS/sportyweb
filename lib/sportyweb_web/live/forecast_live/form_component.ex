@@ -11,7 +11,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.card>

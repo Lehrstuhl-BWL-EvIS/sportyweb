@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
   <:actions>
     <.link navigate={~p"/subsidies/#{@subsidy}/edit"}>
       <.button>Zuschuss bearbeiten</.button>
@@ -10,13 +10,13 @@
 <.card>
   <.list>
     <:item title="Referenznummer">
-      <%= format_string_field(@subsidy.reference_number) %>
+      {format_string_field(@subsidy.reference_number)}
     </:item>
     <:item title="Beschreibung">
-      <%= format_string_field(@subsidy.description) %>
+      {format_string_field(@subsidy.description)}
     </:item>
     <:item title="Betrag">
-      <%= @subsidy.amount %>
+      {@subsidy.amount}
     </:item>
     <:item title="Art der Abrechnung">
       <.live_component
@@ -36,7 +36,7 @@
       />
     </:item>
     <:item title="Einsatz">
-      Dieser Zuschuss wird derzeit in <%= Enum.count(@subsidy.fees) %> Gebühren verwendet.
+      Dieser Zuschuss wird derzeit in {Enum.count(@subsidy.fees)} Gebühren verwendet.
     </:item>
   </.list>
 </.card>

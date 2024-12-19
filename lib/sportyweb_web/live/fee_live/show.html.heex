@@ -1,5 +1,5 @@
 <.header>
-  <%= @page_title %>
+  {@page_title}
   <:actions>
     <.link navigate={~p"/fees/#{@fee}/edit"}>
       <.button>Gebühr bearbeiten</.button>
@@ -10,42 +10,42 @@
 <.card>
   <.list>
     <:item :if={@fee.is_general} title="Für">
-      <%= get_key_for_value(Fee.get_valid_types(), @fee.type) %>
+      {get_key_for_value(Fee.get_valid_types(), @fee.type)}
     </:item>
     <:item title="Referenznummer">
-      <%= format_string_field(@fee.reference_number) %>
+      {format_string_field(@fee.reference_number)}
     </:item>
     <:item title="Beschreibung">
-      <%= format_string_field(@fee.description) %>
+      {format_string_field(@fee.description)}
     </:item>
     <:item title="Grundbetrag">
-      <%= @fee.amount %>
+      {@fee.amount}
     </:item>
     <:item title="Einmalzahlung">
-      <%= @fee.amount_one_time %>
+      {@fee.amount_one_time}
     </:item>
     <:item title="Zuschuss">
       <%= if @fee.subsidy do %>
         <.link navigate={~p"/subsidies/#{@fee.subsidy}"} class="text-indigo-600 hover:underline">
-          <%= format_string_field(@fee.subsidy.name) %>
+          {format_string_field(@fee.subsidy.name)}
         </.link>
       <% else %>
         -
       <% end %>
     </:item>
     <:item title="Nur für Kontaktgruppen-Mitglieder?">
-      <%= format_boolean_field(@fee.is_for_contact_group_contacts_only) %>
+      {format_boolean_field(@fee.is_for_contact_group_contacts_only)}
     </:item>
     <:item title="Mindestalter">
-      <%= format_integer_field(@fee.minimum_age_in_years) %>
+      {format_integer_field(@fee.minimum_age_in_years)}
     </:item>
     <:item title="Höchstalter">
-      <%= format_integer_field(@fee.maximum_age_in_years) %>
+      {format_integer_field(@fee.maximum_age_in_years)}
     </:item>
     <:item title="Nachfolger-Gebühr">
       <%= if @fee.successor do %>
         <.link navigate={~p"/fees/#{@fee.successor}"} class="text-indigo-600 hover:underline">
-          <%= format_string_field(@fee.successor.name) %>
+          {format_string_field(@fee.successor.name)}
         </.link>
       <% else %>
         -
@@ -69,8 +69,8 @@
       />
     </:item>
     <:item title="Einsatz">
-      Diese Gebühr wird derzeit in <%= Enum.count(@fee.contracts) %> Verträgen verwendet
-      und dient <%= Enum.count(@fee.ancestors) %> anderen Gebühren als Nachfolger.
+      Diese Gebühr wird derzeit in {Enum.count(@fee.contracts)} Verträgen verwendet
+      und dient {Enum.count(@fee.ancestors)} anderen Gebühren als Nachfolger.
     </:item>
   </.list>
 </.card>

@@ -9,23 +9,23 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
     ~H"""
     <div>
       <.header>
-        <%= @title %>
+        {@title}
       </.header>
 
       <.card>
         <.list>
           <:item title="Betrag">
-            <%= @transaction.amount %>
+            {@transaction.amount}
           </:item>
           <:item title="Erstellungsdatum">
-            <%= format_date_field_dmy(@transaction.creation_date) %>
+            {format_date_field_dmy(@transaction.creation_date)}
           </:item>
           <:item title="Kontakt">
             <.link
               navigate={~p"/contacts/#{@transaction.contract.contact}"}
               class="text-indigo-600 hover:underline"
             >
-              <%= format_string_field(@transaction.contract.contact.name) %>
+              {format_string_field(@transaction.contract.contact.name)}
             </.link>
           </:item>
         </.list>
