@@ -19,11 +19,9 @@
       {@subsidy.amount}
     </:item>
     <:item title="Art der Abrechnung">
-      <.live_component
-        module={SportywebWeb.PolymorphicLive.InternalEventShowComponent}
-        id="internal_events"
-        internal_events={@subsidy.internal_events}
-      />
+      <SportywebWeb.PolymorphicLive.InternalEventShowComponent.render internal_events={
+        @subsidy.internal_events
+      } />
     </:item>
     <:item :if={Subsidy.is_archived?(@subsidy)} title="Archiviert">
       <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />

@@ -67,13 +67,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <.inputs_for :let={financial_data} field={@form[:financial_data]}>
-                <.live_component
-                  module={SportywebWeb.PolymorphicLive.FinancialDataFormComponent}
-                  id={"financial_data_#{financial_data.index}"}
-                  financial_data={financial_data}
-                />
-              </.inputs_for>
+              <SportywebWeb.PolymorphicLive.FinancialDataFormComponent.render form={@form} />
             </.input_grid>
 
             <.input_grid class="pt-6">

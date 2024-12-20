@@ -126,22 +126,11 @@ defmodule SportywebWeb.FeeLive.FormComponent do
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <.inputs_for :let={internal_event} field={@form[:internal_events]}>
-                <.live_component
-                  module={SportywebWeb.PolymorphicLive.InternalEventFormComponent}
-                  id={"internal_event_#{internal_event.index}"}
-                  internal_event={internal_event}
-                />
-              </.inputs_for>
+              <SportywebWeb.PolymorphicLive.InternalEventFormComponent.render form={@form} />
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <div class="col-span-12">
-                <.label>Notizen (optional)</.label>
-                <.inputs_for :let={note} field={@form[:notes]}>
-                  <.input field={note[:content]} type="textarea" />
-                </.inputs_for>
-              </div>
+              <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
             </.input_grid>
 
             <.input_grid :if={show_archive_message?(@fee)} class="pt-6">

@@ -40,13 +40,7 @@ defmodule SportywebWeb.LocationLive.FormComponent do
             </.input_grid>
 
             <.input_grid class="pt-6">
-              <.inputs_for :let={postal_address} field={@form[:postal_addresses]}>
-                <.live_component
-                  module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
-                  id={"postal_addresses_#{postal_address.index}"}
-                  postal_address={postal_address}
-                />
-              </.inputs_for>
+              <SportywebWeb.PolymorphicLive.PostalAddressesFormComponent.render form={@form} />
             </.input_grid>
 
             <.input_grid class="pt-6">

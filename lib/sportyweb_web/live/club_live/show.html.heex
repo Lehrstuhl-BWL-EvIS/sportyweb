@@ -43,11 +43,9 @@
       {format_struct_list(@club.phones, :number)}
     </:item>
     <:item title="Zahlungsdaten">
-      <.live_component
-        module={SportywebWeb.PolymorphicLive.FinancialDataShowComponent}
-        id="financial_data"
-        financial_data={@club.financial_data}
-      />
+      <SportywebWeb.PolymorphicLive.FinancialDataShowComponent.render financial_data={
+        @club.financial_data
+      } />
     </:item>
     <:item title="Notizen">
       <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@club.notes} />

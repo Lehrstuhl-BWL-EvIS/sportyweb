@@ -19,11 +19,9 @@
       {format_string_field(@location.description)}
     </:item>
     <:item title="Adresse">
-      <.live_component
-        module={SportywebWeb.PolymorphicLive.PostalAddressShowComponent}
-        id="postal_addresses"
-        postal_addresses={@location.postal_addresses}
-      />
+      <SportywebWeb.PolymorphicLive.PostalAddressesShowComponent.render postal_addresses={
+        @location.postal_addresses
+      } />
     </:item>
     <:item title="E-Mail">
       {format_struct_list(@location.emails, :address)}

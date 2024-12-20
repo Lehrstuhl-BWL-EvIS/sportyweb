@@ -106,17 +106,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
               <% end %>
 
               <%= if @venue_type == "postal_address" do %>
-                <div class="col-span-12">
-                  <.input_grid>
-                    <.inputs_for :let={postal_address} field={@form[:postal_addresses]}>
-                      <.live_component
-                        module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
-                        id={"postal_addresses_#{postal_address.index}"}
-                        postal_address={postal_address}
-                      />
-                    </.inputs_for>
-                  </.input_grid>
-                </div>
+                <SportywebWeb.PolymorphicLive.PostalAddressesFormComponent.render form={@form} />
               <% end %>
 
               <%= if @venue_type == "free_form" do %>

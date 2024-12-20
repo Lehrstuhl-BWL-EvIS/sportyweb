@@ -92,13 +92,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               <% end %>
 
               <.input_grid class="pt-6">
-                <.inputs_for :let={postal_address} field={@form[:postal_addresses]}>
-                  <.live_component
-                    module={SportywebWeb.PolymorphicLive.PostalAddressesFormComponent}
-                    id={"postal_addresses_#{postal_address.index}"}
-                    postal_address={postal_address}
-                  />
-                </.inputs_for>
+                <SportywebWeb.PolymorphicLive.PostalAddressesFormComponent.render form={@form} />
               </.input_grid>
 
               <.input_grid class="pt-6">
@@ -110,13 +104,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               </.input_grid>
 
               <.input_grid class="pt-6">
-                <.inputs_for :let={financial_data} field={@form[:financial_data]}>
-                  <.live_component
-                    module={SportywebWeb.PolymorphicLive.FinancialDataFormComponent}
-                    id={"financial_data_#{financial_data.index}"}
-                    financial_data={financial_data}
-                  />
-                </.inputs_for>
+                <SportywebWeb.PolymorphicLive.FinancialDataFormComponent.render form={@form} />
               </.input_grid>
 
               <.input_grid class="pt-6">

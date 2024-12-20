@@ -40,11 +40,9 @@
       <% end %>
 
       <%= if @event.venue_type == "postal_address" do %>
-        <.live_component
-          module={SportywebWeb.PolymorphicLive.PostalAddressShowComponent}
-          id="postal_addresses"
-          postal_addresses={@event.postal_addresses}
-        />
+        <SportywebWeb.PolymorphicLive.PostalAddressesShowComponent.render postal_addresses={
+          @event.postal_addresses
+        } />
       <% end %>
 
       <%= if @event.venue_type == "free_form" do %>
