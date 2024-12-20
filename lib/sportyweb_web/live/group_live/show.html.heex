@@ -28,11 +28,7 @@
       {format_struct_list(@group.phones, :number)}
     </:item>
     <:item title="Notizen">
-      <.live_component
-        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
-        id="notes"
-        notes={@group.notes}
-      />
+      <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@group.notes} />
     </:item>
   </.list>
 </.card>

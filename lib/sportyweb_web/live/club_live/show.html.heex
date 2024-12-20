@@ -50,11 +50,7 @@
       />
     </:item>
     <:item title="Notizen">
-      <.live_component
-        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
-        id="notes"
-        notes={@club.notes}
-      />
+      <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@club.notes} />
     </:item>
   </.list>
 </.card>

@@ -62,11 +62,7 @@
       <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
     </:item>
     <:item title="Notizen">
-      <.live_component
-        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
-        id="notes"
-        notes={@fee.notes}
-      />
+      <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@fee.notes} />
     </:item>
     <:item title="Einsatz">
       Diese Gebühr wird derzeit in {Enum.count(@fee.contracts)} Verträgen verwendet

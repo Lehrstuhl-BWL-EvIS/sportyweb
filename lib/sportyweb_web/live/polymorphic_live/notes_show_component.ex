@@ -1,8 +1,7 @@
 defmodule SportywebWeb.PolymorphicLive.NotesShowComponent do
-  use SportywebWeb, :live_component
+  use SportywebWeb, :html
   import SportywebWeb.CommonHelper
 
-  @impl true
   def render(assigns) do
     ~H"""
     <div>

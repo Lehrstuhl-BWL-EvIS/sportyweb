@@ -102,21 +102,11 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               </.input_grid>
 
               <.input_grid class="pt-6">
-                <.inputs_for :let={email} field={@form[:emails]}>
-                  <.live_component
-                    module={SportywebWeb.PolymorphicLive.EmailFormComponent}
-                    id={"email_#{email.index}"}
-                    email={email}
-                  />
-                </.inputs_for>
+                <SportywebWeb.PolymorphicLive.EmailsFormComponent.render form={@form} />
+              </.input_grid>
 
-                <.inputs_for :let={phone} field={@form[:phones]}>
-                  <.live_component
-                    module={SportywebWeb.PolymorphicLive.PhoneFormComponent}
-                    id={"phone_#{phone.index}"}
-                    phone={phone}
-                  />
-                </.inputs_for>
+              <.input_grid class="pt-6">
+                <SportywebWeb.PolymorphicLive.PhonesFormComponent.render form={@form} />
               </.input_grid>
 
               <.input_grid class="pt-6">
@@ -130,12 +120,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               </.input_grid>
 
               <.input_grid class="pt-6">
-                <div class="col-span-12">
-                  <.label>Notizen (optional)</.label>
-                  <.inputs_for :let={note} field={@form[:notes]}>
-                    <.input field={note[:content]} type="textarea" />
-                  </.inputs_for>
-                </div>
+                <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
               </.input_grid>
             <% end %>
           </.input_grids>

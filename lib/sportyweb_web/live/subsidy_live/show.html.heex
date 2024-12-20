@@ -29,11 +29,7 @@
       <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
     </:item>
     <:item title="Notizen">
-      <.live_component
-        module={SportywebWeb.PolymorphicLive.NotesShowComponent}
-        id="notes"
-        notes={@subsidy.notes}
-      />
+      <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@subsidy.notes} />
     </:item>
     <:item title="Einsatz">
       Dieser Zuschuss wird derzeit in {Enum.count(@subsidy.fees)} Gebühren verwendet.
