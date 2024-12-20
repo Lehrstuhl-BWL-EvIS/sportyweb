@@ -41,11 +41,7 @@
 
 <.card>
   <%= if Enum.any?(@department.fees) do %>
-    <.live_component
-      module={SportywebWeb.FeeLive.IndexTableComponent}
-      id="fees-table"
-      fees={@department.fees}
-    />
+    <SportywebWeb.FeeLive.IndexTableComponent.render fees={@department.fees} />
   <% else %>
     <p>Bisher wurde noch keine abteilungsspezifische Gebühr erstellt.</p>
   <% end %>
@@ -102,11 +98,7 @@
 
 <.card>
   <%= if Enum.any?(@department.contacts) do %>
-    <.live_component
-      module={SportywebWeb.ContactLive.IndexTableComponent}
-      id="contacts-table"
-      contacts={@department.contacts}
-    />
+    <SportywebWeb.ContactLive.IndexTableComponent.render contacts={@department.contacts} />
   <% else %>
     <p>
       Bisher wurde noch kein Mitglied erstellt.

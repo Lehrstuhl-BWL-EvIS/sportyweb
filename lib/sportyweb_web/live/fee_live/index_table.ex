@@ -1,10 +1,11 @@
 defmodule SportywebWeb.FeeLive.IndexTableComponent do
-  use SportywebWeb, :live_component
+  use SportywebWeb, :html
   import SportywebWeb.CommonHelper
 
   alias Sportyweb.Finance.Fee
 
-  @impl true
+  attr :fees, :list, required: true
+
   def render(assigns) do
     ~H"""
     <div>

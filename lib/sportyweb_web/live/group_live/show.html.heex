@@ -44,11 +44,7 @@
 
 <.card>
   <%= if Enum.any?(@group.fees) do %>
-    <.live_component
-      module={SportywebWeb.FeeLive.IndexTableComponent}
-      id="fees-table"
-      fees={@group.fees}
-    />
+    <SportywebWeb.FeeLive.IndexTableComponent.render fees={@group.fees} />
   <% else %>
     <p>Bisher wurde noch keine gruppenspezifische Gebühr erstellt.</p>
   <% end %>
@@ -65,11 +61,7 @@
 
 <.card>
   <%= if Enum.any?(@group.contacts) do %>
-    <.live_component
-      module={SportywebWeb.ContactLive.IndexTableComponent}
-      id="contacts-table"
-      contacts={@group.contacts}
-    />
+    <SportywebWeb.ContactLive.IndexTableComponent.render contacts={@group.contacts} />
   <% else %>
     <p>
       Bisher wurde noch kein Mitglied erstellt.

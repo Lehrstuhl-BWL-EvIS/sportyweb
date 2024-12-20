@@ -1,10 +1,11 @@
 defmodule SportywebWeb.ContactLive.IndexTableComponent do
-  use SportywebWeb, :live_component
+  use SportywebWeb, :html
   import SportywebWeb.CommonHelper
 
   alias Sportyweb.Personal.Contact
 
-  @impl true
+  attr :contacts, :list, required: true
+
   def render(assigns) do
     ~H"""
     <div>

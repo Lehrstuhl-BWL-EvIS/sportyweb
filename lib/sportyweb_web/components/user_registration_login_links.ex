@@ -1,7 +1,6 @@
 defmodule SportywebWeb.UserRegistrationLoginLinksComponent do
-  use SportywebWeb, :live_component
+  use SportywebWeb, :html
 
-  @impl true
   def render(assigns) do
     ~H"""
     <p class="mt-4 text-sm text-center">

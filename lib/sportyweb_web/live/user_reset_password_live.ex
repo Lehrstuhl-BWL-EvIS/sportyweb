@@ -32,10 +32,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
         </.simple_form>
       </.card>
 
-      <.live_component
-        module={SportywebWeb.UserRegistrationLoginLinksComponent}
-        id="user-registration-login-links"
-      />
+      <SportywebWeb.UserRegistrationLoginLinksComponent.render />
     </div>
     """
   end

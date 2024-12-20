@@ -72,11 +72,7 @@
 
 <.card>
   <%= if Enum.any?(@event.fees) do %>
-    <.live_component
-      module={SportywebWeb.FeeLive.IndexTableComponent}
-      id="fees-table"
-      fees={@event.fees}
-    />
+    <SportywebWeb.FeeLive.IndexTableComponent.render fees={@event.fees} />
   <% else %>
     <p>Bisher wurde noch keine veranstaltungsspezifische Gebühr erstellt.</p>
   <% end %>

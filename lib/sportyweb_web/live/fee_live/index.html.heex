@@ -35,11 +35,7 @@
         Finance.list_general_fees(@club.id, type[:value], [:internal_events])
       ) %>
     <%= if Enum.any?(@fees) do %>
-      <.live_component
-        module={SportywebWeb.FeeLive.IndexTableComponent}
-        id={"index-fees-table-#{type[:value]}"}
-        fees={@fees}
-      />
+      <SportywebWeb.FeeLive.IndexTableComponent.render fees={@fees} />
     <% else %>
       <p>
         Bisher wurde noch keine Gebühr erstellt.
