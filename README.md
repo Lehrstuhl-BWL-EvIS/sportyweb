@@ -48,7 +48,7 @@ We recommend using a version manager to install Elixir & Erlang: https://elixir-
 ### Start the application
 
 - Install dependencies with `mix deps.get`
-- Change the development database name ("sportyweb_dev") if necessary in `sportyweb/config/dev.exs`
+- Change the development database name ("sportyweb_dev") in `sportyweb/config/dev.exs` if necessary
 - Create and migrate your database with `mix ecto.setup`
 - Start Phoenix endpoint with `mix phx.server` or via IEx with `iex -S mix phx.server`
 
@@ -58,17 +58,31 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 ## Learn more about the tech stack
 
 - **Elixir**
+  - A functional, concurrent programming language designed for building scalable and maintainable applications.
   - Website: https://elixir-lang.org
   - Docs: https://elixir-lang.org/docs.html
   - Source: https://github.com/elixir-lang/elixir
   - Forum: https://elixirforum.com
 - **Phoenix**
+  - A web framework for Elixir, optimized for high-performance and real-time applications.
   - Website: https://www.phoenixframework.org
   - Docs: https://hexdocs.pm/phoenix
   - Source: https://github.com/phoenixframework/phoenix
 - **Phoenix LiveView**
+  - A library for building interactive, real-time web interfaces without the need for JavaScript frameworks.
   - Docs: https://hexdocs.pm/phoenix_live_view/welcome.html
   - Source: https://github.com/phoenixframework/phoenix_live_view
+- **Tailwind CSS**
+  - A utility-first CSS framework for creating modern, responsive designs quickly and consistently.
+  - Website: https://tailwindcss.com/
+  - Docs: https://tailwindcss.com/docs/utility-first
+  - Source: https://github.com/tailwindlabs/tailwindcss
 - **Ecto**
+  - A database wrapper and query generator for Elixir, offering tools for managing data and schemas.
   - Docs: https://hexdocs.pm/ecto/getting-started.html
   - Source: https://github.com/elixir-ecto/ecto
+- **PostgreSQL**
+  - A powerful, open source object-relational database system with a strong reputation for reliability, feature robustness, and performance.
+  - Website: https://www.postgresql.org
+  - Docs: https://www.postgresql.org/docs
+  - Source: https://github.com/postgres/postgres (Mirror)
