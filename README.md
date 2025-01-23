@@ -1,6 +1,6 @@
 # Sportyweb - A web app for managing sports clubs
 
-![Hero](documentation/evolution/v0.2.0-Department.png)
+![Hero](documents/Evolution/v0.2.0-Department.png)
 
 Sportyweb is a multitenancy web application for the efficient and collaborative management of sports clubs.
 Sportyweb targets a broad range of sports clubs of sizes from large-sized, multi-sports clubs with several thousand members to small, single-sports clubs with a few dozen members.
@@ -70,7 +70,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   - Source: https://github.com/phoenixframework/phoenix
 - **Phoenix LiveView**
   - A library for building interactive, real-time web interfaces without the need for JavaScript frameworks.
-  - Docs: https://hexdocs.pm/phoenix_live_view/welcome.html
+  - Docs: https://hexdocs.pm/phoenix_live_view
   - Source: https://github.com/phoenixframework/phoenix_live_view
 - **Tailwind CSS**
   - A utility-first CSS framework for creating modern, responsive designs quickly and consistently.
@@ -79,7 +79,10 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
   - Source: https://github.com/tailwindlabs/tailwindcss
 - **Ecto**
   - A database wrapper and query generator for Elixir, offering tools for managing data and schemas.
-  - Docs: https://hexdocs.pm/ecto/getting-started.html
+  - Docs:
+    - https://hexdocs.pm/ecto/getting-started.html
+    - https://hexdocs.pm/ecto/Ecto.html
+    - https://hexdocs.pm/ecto_sql/Ecto.Migration.html
   - Source: https://github.com/elixir-ecto/ecto
 - **PostgreSQL**
   - A powerful, open source object-relational database system with a strong reputation for reliability, feature robustness, and performance.

@@ -50,7 +50,7 @@ echo "- Generate an ERD (Entity Relationship Diagram)"
 if command -v mmdc &> /dev/null
 then
     # https://hexdocs.pm/ecto_erd/Mix.Tasks.Ecto.Gen.Erd.html#module-mermaid
-    mix ecto.gen.erd --output-path=ecto_erd.mmd && mmdc -i ecto_erd.mmd -o documentation/erd.pdf
+    mix ecto.gen.erd --output-path=ecto_erd.mmd && mmdc -i ecto_erd.mmd -o documents/erd.pdf
     rm ecto_erd.mmd # Remove the mermaid file
 else
     echo "  WARNING: Can't generate an ERD!"
