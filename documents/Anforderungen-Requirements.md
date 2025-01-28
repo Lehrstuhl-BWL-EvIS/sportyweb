@@ -1,6 +1,6 @@
-# Sportyweb - Anforderungen an die Software-Entwicklung (Software Requirements)
+# Sportyweb - Anforderungen an die Software-Entwicklung 
 
-Letzte Änderung: S. Strecker, 23.01.2025
+Letzte Änderung: S. Strecker, 28.01.2025
 
 # Einführende Erläuterungen, Zwecksetzung, Entwurfs- und Entwicklungsziele 
 
