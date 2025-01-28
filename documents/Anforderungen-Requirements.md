@@ -2,9 +2,13 @@
 
 Letzte Änderung: S. Strecker, 23.01.2025
 
-# Einführende Erläuterungen 
+# Einführende Erläuterungen, Zwecksetzung, Entwurfs- und Entwicklungsziele 
 
 Anforderungen an die Software-Entwicklung sehen wir als Mittel zur Erreichung von Entwurfs- und Entwicklungszielen an, die wiederum auf die Erreichung einer übergeordneten Zwecksetzung gerichtet sind.
+
+Die übergeordnete Zwecksetzung ist die reflektierte Entwicklung einer mandantenfähigen Webapplikation für das effiziente und kollaborative Management von Sportvereinen.
+
+[...]
 
 Anforderungen an die Software-Entwicklung gründen auf einer Analyse der Anwendungsdomäne (Domänenanalyse), die darauf zielt, zentrale Begriffe (Konzepte) der Anwendungsdomäne, zentrale Sachverhalte und Sachzusammenhänge zu identifizieren und strukturierend zu beschreiben. Eine Domänenanalyse wird Hintergrundinformationen zur Anwendungsdomäne zusammentragen (Kontextinformationen) und fachliche Anforderungen (domain requirements) entwickeln.
 
