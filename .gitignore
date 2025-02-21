@@ -172,4 +172,4 @@ npm-debug.log
 # Don't commit the SQL structure and ERD files,
 # recreate both with each setup-dev-env.sh run
 /priv/repo/structure.sql
-/documentation/erd.pdf
+/documents/erd.pdf
