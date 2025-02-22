@@ -42,7 +42,7 @@ defmodule SportywebWeb.ContactLive.Index do
 
     socket = socket
      |> assign(:sorting, %{"Art" => direction})
-     |> assign(:contacts, contacts)
+     |> stream(:contacts, contacts)
     {:noreply, socket}
   end
 
@@ -58,8 +58,9 @@ defmodule SportywebWeb.ContactLive.Index do
 
     socket = socket
              |> assign(:sorting, %{"Name" => direction})
-             |> assign(:contacts, contacts)
+             |> stream(:contacts, contacts)
     {:noreply, socket}
   end
+
 
 end

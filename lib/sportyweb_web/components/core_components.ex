@@ -625,14 +625,12 @@ defmodule SportywebWeb.CoreComponents do
   end
 
   def next_sort_direction(current_direction) do
-    new_direction = cond do
+    cond do
       current_direction == "asc" -> "desc"
       current_direction == "desc" -> nil
       current_direction == nil -> "asc"
       true -> raise "#{current_direction} is no valid sort direction"
     end
-    IO.puts("change from #{current_direction} to #{new_direction}")
-    new_direction
   end
 
   @doc ~S"""
@@ -658,7 +656,7 @@ defmodule SportywebWeb.CoreComponents do
 
   slot :col, required: true do
     attr :label, :string
-    attr :sortable, :string
+    attr :sortable, :boolean, required: false
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -675,7 +673,6 @@ defmodule SportywebWeb.CoreComponents do
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
             <th :for={col <- @col}
-                :let={old_sorting=@sorting[col[:label]]}
               phx-click={if col[:sortable] do JS.push("sort-by-column", value: %{col[:label] => next_sort_direction(@sorting[col[:label]])}) end}
               class="p-0 pb-4 pr-6 font-normal">
                 {col[:label]}
@@ -693,7 +690,6 @@ defmodule SportywebWeb.CoreComponents do
         </thead>
         <tbody
           id={@id}
-          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
           class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
         >
           <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">
