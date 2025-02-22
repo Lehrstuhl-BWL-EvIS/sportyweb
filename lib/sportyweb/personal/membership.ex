@@ -41,7 +41,7 @@ defmodule Sportyweb.Personal.Membership do
       membership.group != nil -> membership.group
       membership.department != nil -> membership.department
       membership.club != nil -> membership.club
-      true -> raise "no community for membership"
+      true -> raise "no community for membership #{membership.id}}"
     end
   end
 

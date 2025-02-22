@@ -55,15 +55,60 @@ defmodule SportywebWeb.ClubNavigationComponent do
         </.link>
 
         <.link
-          navigate={~p"/clubs/#{@club}/contacts"}
+          phx-target={@myself}
+          phx-click="toggle_submenu"
+          phx-value-item={:members}
           class={[
             @classes_menu_item,
-            if(@club_navigation_current_item == :contacts, do: @classes_menu_item_active)
+            if(@club_navigation_current_item == :members, do: @classes_menu_item_active)
           ]}
         >
           <.icon name="hero-user-group" class={@classes_icon} />
-          <span class="truncate">Kontakte & Mitglieder</span>
+          <span class="truncate">Mitglieder & Kontakte</span>
+          <.icon
+            name="hero-chevron-right"
+            class={Enum.join([@classes_chevron, if(@show_submenu_contacts, do: "rotate-90")], " ")}
+          />
         </.link>
+
+        <ul class={["mb-1 px-2", if(!@show_submenu_contacts, do: "hidden")]}>
+          <li>
+            <.link
+             navigate={~p"/clubs/#{@club}/members"}
+              class={[
+                @classes_menu_item,
+                @classes_submenu_item,
+                if(@club_navigation_current_item == :members, do: @classes_menu_item_active)
+              ]}
+            >
+              <span class="truncate">Mitglieder</span>
+            </.link>
+          </li>
+          <li>
+            <.link
+              navigate={~p"/clubs/#{@club}/memberships"}
+              class={[
+                @classes_menu_item,
+                @classes_submenu_item,
+                if(@club_navigation_current_item == :memberships, do: @classes_menu_item_active)
+              ]}
+            >
+              <span class="truncate">Mitgliedschaften</span>
+            </.link>
+          </li>
+          <li>
+            <.link
+             navigate={~p"/clubs/#{@club}/contacts"}
+              class={[
+                @classes_menu_item,
+                @classes_submenu_item,
+                if(@club_navigation_current_item == :contacts, do: @classes_menu_item_active)
+              ]}
+            >
+              <span class="truncate">Kontakte</span>
+            </.link>
+          </li>
+        </ul>
 
         <.link
           navigate={~p"/clubs/#{@club}/locations"}
@@ -167,6 +212,11 @@ defmodule SportywebWeb.ClubNavigationComponent do
         assigns.club_navigation_current_item == :fees ||
         assigns.club_navigation_current_item == :subsidies
 
+    show_submenu_contacts =
+      assigns.club_navigation_current_item == :contacts ||
+        assigns.club_navigation_current_item == :members ||
+        assigns.club_navigation_current_item == :memberships
+
     {:ok,
      socket
      |> assign(assigns)
@@ -178,11 +228,16 @@ defmodule SportywebWeb.ClubNavigationComponent do
      |> assign(:classes_submenu_item, "pl-11 text-sm font-normal")
      |> assign(:classes_icon, "text-zinc-400 group-hover:text-zinc-500 mr-4 h-6 w-6")
      |> assign(:classes_chevron, "text-zinc-600 ml-auto h-4 w-4")
-     |> assign(:show_submenu_finances, show_submenu_finances)}
+     |> assign(:show_submenu_finances, show_submenu_finances)
+     |> assign(:show_submenu_contacts, show_submenu_contacts)}
   end
 
   @impl true
   def handle_event("toggle_submenu", %{"item" => "finances"}, socket) do
     {:noreply, assign(socket, :show_submenu_finances, !socket.assigns.show_submenu_finances)}
+  end
+
+  def handle_event("toggle_submenu", %{"item" => "members"}, socket) do
+    {:noreply, assign(socket, :show_submenu_contacts, !socket.assigns.show_submenu_contacts)}
   end
 end

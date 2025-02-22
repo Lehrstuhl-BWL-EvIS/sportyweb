@@ -191,6 +191,17 @@ defmodule SportywebWeb.Router do
            ForecastLive.Show,
            :show_subsidies_single
 
+      # Memberships (Polymorphic)
+      live "/memberships", MembershipLive.Index, :index_root
+      live "/memberships/:id/edit", MembershipLive.NewEdit, :edit
+      live "/memberships/:id", MembershipLive.Show, :show
+
+      live "/members", MembersLive.Index, :index_root
+      live "/clubs/:club_id/members", MembersLive.Index, :index
+      live "/clubs/:club_id/members/new", MembersLive.NewEdit, :new
+      live "/members/:id/edit", MembersLive.NewEdit, :edit
+      live "/members/:id", MembersLive.Show, :show
+
       # Contracts (Polymorphic)
 
       live "/contracts", ContractLive.Index, :index_root

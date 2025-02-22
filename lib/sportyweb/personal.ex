@@ -8,6 +8,7 @@ defmodule Sportyweb.Personal do
 
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.Personal.Membership
 
   @doc """
   Returns the list of contacts.
@@ -34,6 +35,18 @@ defmodule Sportyweb.Personal do
   """
   def list_contacts(club_id, preloads) do
     Repo.preload(list_contacts(club_id), preloads)
+  end
+
+  def list_contacts_of_members(club_id, preloads) do
+    query = from(c in Contact,
+      as: :contact,
+      where: exists(from m in Membership,
+                    where: m.contact_id == parent_as(:contact).id,
+                    select: 1
+                    ),
+      order_by: c.name)
+    Repo.all(query)
+    |> Repo.preload(preloads)
   end
 
   @doc """
@@ -280,8 +293,13 @@ defmodule Sportyweb.Personal do
       [%Membership{}, ...]
 
   """
-  def list_memberships do
-    Repo.all(Membership)
+  def list_memberships(club_id) do
+      query = from(m in Membership, where: m.club_id == ^club_id)
+      Repo.all(query)
+  end
+  def list_memberships(club_id, preloads) do
+    list_memberships(club_id)
+    |> Repo.preload(preloads)
   end
 
   @doc """
@@ -299,6 +317,27 @@ defmodule Sportyweb.Personal do
 
   """
   def get_membership!(id), do: Repo.get!(Membership, id)
+
+  @doc """
+  Gets a single membership. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Membership does not exist.
+
+  ## Examples
+
+      iex> get_membership!(123, [:club])
+      %Contact{}
+
+      iex> get_membership!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_membership!(id, preloads) do
+    Membership
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
+
 
   @doc """
   Creates a membership.
