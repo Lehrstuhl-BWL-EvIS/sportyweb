@@ -11,6 +11,7 @@
   <%= if Enum.any?(@streams.contacts.inserts) do %>
     <SportywebWeb.ContactLive.DetailsTableComponent.render
             contacts={@streams.contacts}
+            sorting={@sorting}
             mode={"members"} />
 
     <div class="mt-4 flex align-middle">

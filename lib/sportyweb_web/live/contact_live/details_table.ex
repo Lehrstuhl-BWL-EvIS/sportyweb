@@ -20,23 +20,23 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
         row_click={fn {_id, contact} -> if @mode == "members", do: JS.navigate(~p"/members/#{contact}"), else: JS.navigate(~p"/contacts/#{contact}") end}
         >
         <:col :let={{_id, contact}} label="Art" sortable>
-        <%= if contact.type == "person" do %>
+          <%= if contact.type == "person" do %>
              <.icon name="hero-user" class="ml-1 inline-block w-[20px]" />
-        <% else %>
+          <% else %>
               <.icon name="hero-building-office" class="ml-1 inline-block w-[20px]" />
-        <% end %>
+          <% end %>
              {get_key_for_value(Contact.get_valid_types(), contact.type)}
         </:col>
         <:col :let={{_id, contact}} label="Name" sortable>
           {format_string_field(contact.name)}
         </:col>
-        <:col :let={{_id, contact}} label="Vorname">
+        <:col :let={{_id, contact}} label="Vorname" sortable>
           {format_string_field(contact.person_first_name_1)}
         </:col>
-        <:col :let={{_id, contact}} label="Nachname">
+        <:col :let={{_id, contact}} label="Nachname" sortable>
           {format_string_field(contact.person_last_name)}
         </:col>
-        <:col :let={{_id, contact}} label="Geburtsdatum">
+        <:col :let={{_id, contact}} label="Geburtsdatum" sortable>
           {format_date_field_dmy(contact.person_birthday)}
         </:col>
         <:col :let={{_id, contact}} label="Adressen">

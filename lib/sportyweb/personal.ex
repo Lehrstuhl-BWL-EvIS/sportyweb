@@ -19,6 +19,9 @@ defmodule Sportyweb.Personal do
       [%Contact{}, ...]
 
   """
+  def list_contacts(club_id) do
+    list_contacts(club_id, nil)
+  end
   def list_contacts(club_id, order_by) do
     query = cond do
       order_by == nil -> from(c in Contact, where: c.club_id == ^club_id, order_by: c.name)
@@ -36,18 +39,23 @@ defmodule Sportyweb.Personal do
       [%Contact{}, ...]
 
   """
-  def list_contacts(club_id, sort, preloads) do
-    Repo.preload(list_contacts(club_id, sort), preloads)
+  def list_contacts(club_id, order_by, preloads) do
+    Repo.preload(list_contacts(club_id, order_by), preloads)
   end
 
-  def list_contacts_of_members(club_id, preloads) do
+  def list_contacts_of_members(club_id, order_by, preloads) do
+    order_by = cond do
+      order_by == nil -> :name
+      true -> order_by
+    end
+
     query = from(c in Contact,
       as: :contact,
       where: exists(from m in Membership,
                     where: m.club_id == ^club_id and m.contact_id == parent_as(:contact).id,
                     select: 1
                     ),
-      order_by: c.name)
+      order_by: ^order_by)
     Repo.all(query)
     |> Repo.preload(preloads)
   end

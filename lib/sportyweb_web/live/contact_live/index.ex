@@ -31,33 +31,44 @@ defmodule SportywebWeb.ContactLive.Index do
   end
 
   @impl true
-  def handle_event("sort-by-column", %{"Art" => direction}, socket) do
-    club_id = socket.assigns.club.id
-    sorting = cond do
-      direction == "asc" -> [asc: :type]
-      direction == "desc" -> [desc: :type]
-      true -> nil
-    end
-    contacts = Personal.list_contacts(club_id, sorting, [:postal_addresses, :emails, :phones, :memberships])
-
-    socket = socket
-     |> assign(:sorting, %{"Art" => direction})
-     |> stream(:contacts, contacts)
-    {:noreply, socket}
+  def handle_event("sort-by-column", %{"Art" => _direction} = wanted_sorting, socket) do
+    sort_contacts(wanted_sorting, "Art", :type, socket)
   end
 
   @impl true
-  def handle_event("sort-by-column", %{"Name" => direction}, socket) do
-    club_id = socket.assigns.club.id
-    sorting = cond do
-      direction == "asc" -> [asc: :name]
-      direction == "desc" -> [desc: :name]
+  def handle_event("sort-by-column", %{"Vorname" => _direction} = wanted_sorting, socket) do
+    sort_contacts(wanted_sorting, "Vorname", :person_first_name_1, socket)
+  end
+
+  @impl true
+  def handle_event("sort-by-column", %{"Nachname" => _direction} = wanted_sorting, socket) do
+    sort_contacts(wanted_sorting, "Nachname", :person_last_name, socket)
+  end
+
+  @impl true
+  def handle_event("sort-by-column", %{"Name" => _direction} = wanted_sorting, socket) do
+    sort_contacts(wanted_sorting, "Name", :name, socket)
+  end
+
+  @impl true
+  def handle_event("sort-by-column", %{"Geburtsdatum" => _direction} = wanted_sorting, socket) do
+    sort_contacts(wanted_sorting, "Geburtsdatum", :person_birthday, socket)
+  end
+
+  def sort_contacts(%{} = wanted_sorting, column_label, column_database_field, socket) do
+    wanted_direction = wanted_sorting[column_label];
+
+    database_sorting = cond do
+      wanted_direction == "asc" -> [asc: column_database_field]
+      wanted_direction == "desc" -> [desc: column_database_field]
       true -> nil
     end
-    contacts = Personal.list_contacts(club_id, sorting, [:postal_addresses, :emails, :phones, :memberships])
+
+    club_id = socket.assigns.club.id
+    contacts = Personal.list_contacts(club_id, database_sorting, [:postal_addresses, :emails, :phones, :memberships])
 
     socket = socket
-             |> assign(:sorting, %{"Name" => direction})
+             |> assign(:sorting, %{column_label => wanted_direction})
              |> stream(:contacts, contacts)
     {:noreply, socket}
   end
