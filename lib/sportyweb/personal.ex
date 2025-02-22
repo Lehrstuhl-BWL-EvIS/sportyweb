@@ -41,7 +41,7 @@ defmodule Sportyweb.Personal do
     query = from(c in Contact,
       as: :contact,
       where: exists(from m in Membership,
-                    where: m.contact_id == parent_as(:contact).id,
+                    where: m.club_id == ^club_id and m.contact_id == parent_as(:contact).id,
                     select: 1
                     ),
       order_by: c.name)

@@ -4,12 +4,14 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
 
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.Membership
+  alias Sportyweb.Polymorphic.PostalAddress
 
   attr :contacts, :list, required: true
+  attr :mode, :string, required: true
 
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="overflow-auto max-h-[500px]">
       <.table
         id="contacts"
         rows={@contacts}
@@ -26,8 +28,37 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
         <:col :let={{_id, contact}} label="Name">
           {format_string_field(contact.name)}
         </:col>
+        <:col :let={{_id, contact}} label="Vorname">
+          {format_string_field(contact.person_first_name_1)}
+        </:col>
+        <:col :let={{_id, contact}} label="Nachname">
+          {format_string_field(contact.person_last_name)}
+        </:col>
+        <:col :let={{_id, contact}} label="Geburtsdatum">
+          {format_date_field_dmy(contact.person_birthday)}
+        </:col>
+        <:col :let={{_id, contact}} label="Adressen">
+          <span :for={postal_address <- contact.postal_addresses} :if={postal_address.is_main}>
+            {format_string_field(PostalAddress.as_text(postal_address))}
+          </span>
+        </:col>
+        <:col :let={{_id, contact}} label="E-Mail">
+          <span :for={email <- contact.emails} :if={email.is_main}>
+            {format_string_field(email.address)}
+          </span>
+        </:col>
+        <:col :let={{_id, contact}} label="Telefonnummer">
+          <li :for={phone <- contact.phones} :if={phone.is_main}>
+            {format_string_field(phone.number)}
+          </li>
+        </:col>
+        <:col :let={{_id, contact}} :if={@mode != "members"} label="Mitglied">
+            <%= if length(contact.memberships) > 0 do %>
+                <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-600" />
+            <% end %>
+        </:col>
         <:col :let={{_id, contact}} :if={@mode == "members"} label="Mitgliedschaften">
-          <li :for={membership <- contact.memberships}>
+          <li :for={membership <- contact.memberships} >
               <%= if membership.state == "pending" do %>
               <.icon name="hero-arrow-down-on-square" class="ml-1 inline-block w-[20px] text-amber-500" />
             <% end %>

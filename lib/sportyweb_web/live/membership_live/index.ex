@@ -1,6 +1,9 @@
 defmodule SportywebWeb.MembershipLive.Index do
   use SportywebWeb, :live_view
 
+  alias Sportyweb.Organization
+  alias Sportyweb.Personal
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -26,5 +29,15 @@ defmodule SportywebWeb.MembershipLive.Index do
   defp apply_action(socket, :index_root, _params) do
     socket
     |> redirect(to: "/clubs")
+  end
+
+  defp apply_action(socket, :index, %{"club_id" => club_id}) do
+    club = Organization.get_club!(club_id);
+    memberships = Personal.list_memberships(club_id,  [:group, :department, :club, :contact ])
+
+    socket
+    |> assign(:page_title, "Mitglieder")
+    |> assign(:club, club)
+    |> stream(:memberships, memberships)
   end
 end

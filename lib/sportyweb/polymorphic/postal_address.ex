@@ -22,6 +22,10 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
     timestamps(type: :utc_datetime)
   end
 
+  def as_text(postal_address) do
+    "#{postal_address.street} #{postal_address.street_number}, #{postal_address.zipcode} #{postal_address.city}"
+  end
+
   def get_valid_countries do
     [
       [key: "Deutschland", value: "DEU"],

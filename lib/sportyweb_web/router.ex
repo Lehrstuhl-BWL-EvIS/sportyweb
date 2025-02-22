@@ -135,15 +135,25 @@ defmodule SportywebWeb.Router do
       live "/groups/:id/fees", GroupLive.FeeNew, :index
       live "/groups/:id/fees/new", GroupLive.FeeNew, :new
 
-      # Contacts (Each belongs to a club)
+      # Contacts and memberships (Each belongs to a club)
 
       live "/contacts", ContactLive.Index, :index_root
       live "/clubs/:club_id/contacts", ContactLive.Index, :index
-
       live "/clubs/:club_id/contacts/new", ContactLive.NewEdit, :new
       live "/contacts/:id/edit", ContactLive.NewEdit, :edit
-
       live "/contacts/:id", ContactLive.Show, :show
+
+      live "/memberships", MembershipLive.Index, :index_root
+      live "/clubs/:club_id/memberships", MembershipLive.Index, :index
+      live "/clubs/:club_id/memberships/new", MembershipLive.NewEdit, :new
+      live "/memberships/:id/edit", MembershipLive.NewEdit, :edit
+      live "/memberships/:id", MembershipLive.Show, :show
+
+      live "/members", MembersLive.Index, :index_root
+      live "/clubs/:club_id/members", MembersLive.Index, :index
+      live "/clubs/:club_id/members/new", MembersLive.NewEdit, :new
+      live "/members/:id/edit", MembersLive.NewEdit, :edit
+      live "/members/:id", MembersLive.Show, :show
 
       # Locations (Each belongs to a club)
 
@@ -190,17 +200,6 @@ defmodule SportywebWeb.Router do
       live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/subsidy/:subsidy_id",
            ForecastLive.Show,
            :show_subsidies_single
-
-      # Memberships (Polymorphic)
-      live "/memberships", MembershipLive.Index, :index_root
-      live "/memberships/:id/edit", MembershipLive.NewEdit, :edit
-      live "/memberships/:id", MembershipLive.Show, :show
-
-      live "/members", MembersLive.Index, :index_root
-      live "/clubs/:club_id/members", MembersLive.Index, :index
-      live "/clubs/:club_id/members/new", MembersLive.NewEdit, :new
-      live "/members/:id/edit", MembersLive.NewEdit, :edit
-      live "/members/:id", MembersLive.Show, :show
 
       # Contracts (Polymorphic)
 

@@ -50,13 +50,20 @@ defmodule Sportyweb.SeedHelper do
   end
 
   def get_random_email do
+    get_random_email(false)
+  end
+  def get_random_email(is_main) do
     %Email{
       type: Email.get_valid_types() |> Enum.map(fn type -> type[:value] end) |> Enum.random(),
-      address: if(:rand.uniform() < 0.7, do: Faker.Internet.email(), else: "")
+      address: if(:rand.uniform() < 0.7, do: Faker.Internet.email(), else: ""),
+      is_main: is_main
     }
   end
 
   def get_random_financial_data do
+    get_random_financial_data(false)
+  end
+  def get_random_financial_data(is_main) do
     random_name = "#{Faker.Person.last_name()}, #{Faker.Person.first_name()}"
 
     if :rand.uniform() < 0.9 do
@@ -64,13 +71,15 @@ defmodule Sportyweb.SeedHelper do
         type: "direct_debit",
         direct_debit_account_holder: random_name,
         direct_debit_iban: "DE06495352657836424132",
-        direct_debit_institute: "Beispielbank"
+        direct_debit_institute: "Beispielbank",
+        is_main: is_main
       }
     else
       %FinancialData{
         type: "invoice",
         invoice_recipient: random_name,
-        invoice_additional_information: ""
+        invoice_additional_information: "",
+        is_main: is_main
       }
     end
   end
@@ -86,19 +95,27 @@ defmodule Sportyweb.SeedHelper do
   end
 
   def get_random_phone do
+    get_random_phone(false)
+  end
+  def get_random_phone(is_main) do
     %Phone{
       type: Phone.get_valid_types() |> Enum.map(fn type -> type[:value] end) |> Enum.random(),
-      number: if(:rand.uniform() < 0.7, do: Faker.Phone.EnUs.phone(), else: "")
+      number: if(:rand.uniform() < 0.7, do: Faker.Phone.EnUs.phone(), else: ""),
+      is_main: is_main
     }
   end
 
   def get_random_postal_address do
+    get_random_postal_address(false)
+  end
+  def get_random_postal_address(is_main) do
     %PostalAddress{
       street: Faker.Address.street_name(),
       street_number: Faker.Address.building_number(),
       street_additional_information: "",
       zipcode: Faker.Address.zip(),
       city: Faker.Address.city(),
+      is_main: is_main,
       country:
         PostalAddress.get_valid_countries()
         |> Enum.map(fn country -> country[:value] end)
@@ -905,10 +922,10 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
             |> Enum.map(fn gender -> gender[:value] end)
             |> Enum.random(),
           person_birthday: Faker.Date.date_of_birth(6..99),
-          postal_addresses: [Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address())],
-          emails: [Map.from_struct(Sportyweb.SeedHelper.get_random_email())],
-          phones: [Map.from_struct(Sportyweb.SeedHelper.get_random_phone())],
-          financial_data: [Map.from_struct(Sportyweb.SeedHelper.get_random_financial_data())],
+          postal_addresses: [Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address(true))],
+          emails: [Map.from_struct(Sportyweb.SeedHelper.get_random_email(true))],
+          phones: [Map.from_struct(Sportyweb.SeedHelper.get_random_phone(true))],
+          financial_data: [Map.from_struct(Sportyweb.SeedHelper.get_random_financial_data(true))],
           notes: [Map.from_struct(Sportyweb.SeedHelper.get_random_note())]
         })
 
