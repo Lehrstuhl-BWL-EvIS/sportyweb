@@ -624,6 +624,17 @@ defmodule SportywebWeb.CoreComponents do
     """
   end
 
+  def next_sort_direction(current_direction) do
+    new_direction = cond do
+      current_direction == "asc" -> "desc"
+      current_direction == "desc" -> nil
+      current_direction == nil -> "asc"
+      true -> raise "#{current_direction} is no valid sort direction"
+    end
+    IO.puts("change from #{current_direction} to #{new_direction}")
+    new_direction
+  end
+
   @doc ~S"""
   Renders a table with generic styling.
 
@@ -637,6 +648,7 @@ defmodule SportywebWeb.CoreComponents do
   attr :id, :string, required: true
   attr :class, :string, default: nil
   attr :rows, :list, required: true
+  attr :sorting, :any, default: %{}
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
 
@@ -646,6 +658,7 @@ defmodule SportywebWeb.CoreComponents do
 
   slot :col, required: true do
     attr :label, :string
+    attr :sortable, :string
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -661,7 +674,18 @@ defmodule SportywebWeb.CoreComponents do
       <table class="w-[40rem] sm:w-full">
         <thead class="text-sm text-left leading-6 text-zinc-500">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal">{col[:label]}</th>
+            <th :for={col <- @col}
+                :let={old_sorting=@sorting[col[:label]]}
+              phx-click={if col[:sortable] do JS.push("sort-by-column", value: %{col[:label] => next_sort_direction(@sorting[col[:label]])}) end}
+              class="p-0 pb-4 pr-6 font-normal">
+                {col[:label]}
+                <.icon :if={col[:sortable] && @sorting[col[:label]]!="desc" && @sorting[col[:label]]!="asc" }
+                    name="hero-arrows-up-down" class="h-3 w-3" />
+                <.icon :if={col[:sortable] && @sorting[col[:label]]=="desc"}
+                    name="hero-arrow-up" class="h-3 w-3 text-amber-500" />
+                <.icon :if={col[:sortable] && @sorting[col[:label]]=="asc"}
+                    name="hero-arrow-down" class="h-3 w-3 text-amber-500" />
+            </th>
             <th :if={@action != []} class="relative p-0 pb-4">
               <span class="sr-only">{gettext("Actions")}</span>
             </th>

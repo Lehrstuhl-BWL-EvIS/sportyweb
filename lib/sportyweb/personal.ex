@@ -19,8 +19,11 @@ defmodule Sportyweb.Personal do
       [%Contact{}, ...]
 
   """
-  def list_contacts(club_id) do
-    query = from(c in Contact, where: c.club_id == ^club_id, order_by: c.name)
+  def list_contacts(club_id, order_by) do
+    query = cond do
+      order_by == nil -> from(c in Contact, where: c.club_id == ^club_id, order_by: c.name)
+      true -> from(c in Contact, where: c.club_id == ^club_id, order_by: ^order_by)
+    end
     Repo.all(query)
   end
 
@@ -33,8 +36,8 @@ defmodule Sportyweb.Personal do
       [%Contact{}, ...]
 
   """
-  def list_contacts(club_id, preloads) do
-    Repo.preload(list_contacts(club_id), preloads)
+  def list_contacts(club_id, sort, preloads) do
+    Repo.preload(list_contacts(club_id, sort), preloads)
   end
 
   def list_contacts_of_members(club_id, preloads) do

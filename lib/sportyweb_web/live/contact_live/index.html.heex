@@ -8,12 +8,9 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@streams.contacts.inserts) do %>
-    <SportywebWeb.ContactLive.DetailsTableComponent.render contacts={@streams.contacts} mode="contacts"/>
-  <% else %>
-    <p>
-      Bisher wurde noch kein Kontakt erstellt.
-    </p>
-  <% end %>
+    <SportywebWeb.ContactLive.DetailsTableComponent.render
+        contacts={@streams.contacts}
+        sorting={@sorting}
+        mode="contacts"/>
 </.card>
 

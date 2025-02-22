@@ -8,6 +8,7 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
 
   attr :contacts, :list, required: true
   attr :mode, :string, required: true
+  attr :sorting, :any, default: %{}
 
   def render(assigns) do
     ~H"""
@@ -15,9 +16,10 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
       <.table
         id="contacts"
         rows={@contacts}
+        sorting={@sorting}
         row_click={fn {_id, contact} -> if @mode == "members", do: JS.navigate(~p"/members/#{contact}"), else: JS.navigate(~p"/contacts/#{contact}") end}
-      >
-        <:col :let={{_id, contact}} label="Art">
+        >
+        <:col :let={{_id, contact}} label="Art" sortable>
         <%= if contact.type == "person" do %>
              <.icon name="hero-user" class="ml-1 inline-block w-[20px]" />
         <% else %>
@@ -25,7 +27,7 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
         <% end %>
              {get_key_for_value(Contact.get_valid_types(), contact.type)}
         </:col>
-        <:col :let={{_id, contact}} label="Name">
+        <:col :let={{_id, contact}} label="Name" sortable>
           {format_string_field(contact.name)}
         </:col>
         <:col :let={{_id, contact}} label="Vorname">
@@ -80,7 +82,14 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
           <% end %>
         </:action>
       </.table>
+
+      <%= if !Enum.any?(@contacts.inserts) do %>
+        <p>
+          Bisher wurde noch kein Kontakt erstellt.
+        </p>
+      <% end %>
     </div>
     """
   end
+
 end

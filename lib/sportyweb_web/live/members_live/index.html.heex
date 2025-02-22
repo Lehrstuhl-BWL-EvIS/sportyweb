@@ -9,7 +9,9 @@
 
 <.card>
   <%= if Enum.any?(@streams.contacts.inserts) do %>
-    <SportywebWeb.ContactLive.DetailsTableComponent.render contacts={@streams.contacts} mode={"members"} />
+    <SportywebWeb.ContactLive.DetailsTableComponent.render
+            contacts={@streams.contacts}
+            mode={"members"} />
 
     <div class="mt-4 flex align-middle">
         <.icon name="hero-check-badge" class="mr-1 inline-block w-[20px] text-green-600" /> aktuelle Mitgliedschaft
