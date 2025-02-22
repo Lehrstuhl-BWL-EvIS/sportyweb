@@ -202,4 +202,58 @@ defmodule Sportyweb.PersonalTest do
       assert %Ecto.Changeset{} = Personal.change_contact_group(contact_group)
     end
   end
+
+  describe "memberships" do
+    alias Sportyweb.Personal.Membership
+
+    import Sportyweb.PersonalFixtures
+
+    @invalid_attrs %{state: nil}
+
+    test "list_memberships/0 returns all memberships" do
+      membership = membership_fixture()
+      assert Personal.list_memberships() == [membership]
+    end
+
+    test "get_membership!/1 returns the membership with given id" do
+      membership = membership_fixture()
+      assert Personal.get_membership!(membership.id) == membership
+    end
+
+    test "create_membership/1 with valid data creates a membership" do
+      valid_attrs = %{state: "some state"}
+
+      assert {:ok, %Membership{} = membership} = Personal.create_membership(valid_attrs)
+      assert membership.state == "some state"
+    end
+
+    test "create_membership/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Personal.create_membership(@invalid_attrs)
+    end
+
+    test "update_membership/2 with valid data updates the membership" do
+      membership = membership_fixture()
+      update_attrs = %{state: "some updated state"}
+
+      assert {:ok, %Membership{} = membership} = Personal.update_membership(membership, update_attrs)
+      assert membership.state == "some updated state"
+    end
+
+    test "update_membership/2 with invalid data returns error changeset" do
+      membership = membership_fixture()
+      assert {:error, %Ecto.Changeset{}} = Personal.update_membership(membership, @invalid_attrs)
+      assert membership == Personal.get_membership!(membership.id)
+    end
+
+    test "delete_membership/1 deletes the membership" do
+      membership = membership_fixture()
+      assert {:ok, %Membership{}} = Personal.delete_membership(membership)
+      assert_raise Ecto.NoResultsError, fn -> Personal.get_membership!(membership.id) end
+    end
+
+    test "change_membership/1 returns a membership changeset" do
+      membership = membership_fixture()
+      assert %Ecto.Changeset{} = Personal.change_membership(membership)
+    end
+  end
 end

@@ -13,12 +13,14 @@ defmodule Sportyweb.Legal.Contract do
   alias Sportyweb.Organization.Group
   alias Sportyweb.Organization.GroupContract
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.Personal.Membership
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "contracts" do
     belongs_to :club, Club
     belongs_to :contact, Contact
+    belongs_to :membership, Membership
     belongs_to :fee, Fee
     has_many :transactions, Transaction
     many_to_many :clubs, Club, join_through: ClubContract
@@ -79,6 +81,7 @@ defmodule Sportyweb.Legal.Contract do
       [
         :club_id,
         :contact_id,
+        :membership_id,
         :fee_id,
         :signing_date,
         :first_billing_date,

@@ -28,6 +28,7 @@ alias Sportyweb.Organization.Department
 alias Sportyweb.Organization.Group
 alias Sportyweb.Personal
 alias Sportyweb.Personal.Contact
+alias Sportyweb.Personal.Membership
 alias Sportyweb.Polymorphic.Email
 alias Sportyweb.Polymorphic.FinancialData
 alias Sportyweb.Polymorphic.InternalEvent
@@ -912,11 +913,12 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
         })
 
       if contact.type == "person" do
-        if :rand.uniform() < 0.5 do
-          # Select a random fee that works with this combination of club & contact
+        # create contracts for most persons
+        if :rand.uniform() < 0.9 do
+
           fee = Finance.list_contract_fee_options(club, contact.id) |> Enum.random()
 
-          Repo.insert!(%Contract{
+          contract = Repo.insert!(%Contract{
             club_id: club.id,
             contact_id: contact.id,
             fee_id: fee.id,
@@ -926,45 +928,76 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
             archive_date: nil,
             clubs: [club]
           })
-        end
 
-        if Enum.any?(club.departments) do
-          department = club.departments |> Enum.random()
-
-          if :rand.uniform() < 0.3 do
-            # Select a random fee that works with this combination of club & department
-            fee = Finance.list_contract_fee_options(department, contact.id) |> Enum.random()
-
-            Repo.insert!(%Contract{
+          # make most persons with contracts members
+          # allow contracts between persons and departments or groups only for memberships
+          if :rand.uniform() < 0.85 do
+            Repo.insert!(%Membership{
               club_id: club.id,
               contact_id: contact.id,
-              fee_id: fee.id,
-              signing_date: ~D[2021-11-28],
-              start_date: ~D[2022-01-01],
-              termination_date: nil,
-              archive_date: nil,
-              departments: [department]
+              contracts: [contract],
+              state: Membership.get_valid_states()
+                     |> Enum.map(fn state -> state[:value] end)
+                     |> Enum.random(),
             })
-          end
 
-          if Enum.any?(department.groups) do
-            group = department.groups |> Enum.random()
+            if Enum.any?(club.departments) do
+              department = club.departments |> Enum.random()
+              if :rand.uniform() < 0.3 do
+                # Select a random fee that works with this combination of club & department
+                fee = Finance.list_contract_fee_options(department, contact.id) |> Enum.random()
 
-            if :rand.uniform() < 0.3 do
-              # Select a random fee that works with this combination of club & group
-              fee = Finance.list_contract_fee_options(group, contact.id) |> Enum.random()
+                department_contract = Repo.insert!(%Contract{
+                  club_id: club.id,
+                  contact_id: contact.id,
+                  fee_id: fee.id,
+                  signing_date: ~D[2021-11-28],
+                  start_date: ~D[2022-01-01],
+                  termination_date: nil,
+                  archive_date: nil,
+                  departments: [department]
+                })
 
-              Repo.insert!(%Contract{
-                club_id: club.id,
-                contact_id: contact.id,
-                fee_id: fee.id,
-                signing_date: ~D[2021-11-28],
-                start_date: ~D[2022-01-01],
-                termination_date: nil,
-                archive_date: nil,
-                groups: [group]
-              })
-            end
+                Repo.insert!(%Membership{
+                  club_id: club.id,
+                  contact_id: contact.id,
+                  department_id: department.id,
+                  contracts: [department_contract],
+                  state: Membership.get_valid_states()
+                         |> Enum.map(fn state -> state[:value] end)
+                         |> Enum.random(),
+                })
+
+                if Enum.any?(department.groups) do
+                  group = department.groups |> Enum.random()
+
+                  if :rand.uniform() < 0.3 do
+                    # Select a random fee that works with this combination of club & group
+                    fee = Finance.list_contract_fee_options(group, contact.id) |> Enum.random()
+
+                    group_contract = Repo.insert!(%Contract{
+                      club_id: club.id,
+                      contact_id: contact.id,
+                      fee_id: fee.id,
+                      signing_date: ~D[2021-11-28],
+                      start_date: ~D[2022-01-01],
+                      termination_date: nil,
+                      archive_date: nil,
+                      groups: [group]
+                    })
+                    Repo.insert!(%Membership{
+                      club_id: club.id,
+                      contact_id: contact.id,
+                      group_id: group.id,
+                      contracts: [group_contract],
+                      state: Membership.get_valid_states()
+                             |> Enum.map(fn state -> state[:value] end)
+                             |> Enum.random(),
+                    })
+                  end
+                end
+              end
+             end
           end
         end
       end

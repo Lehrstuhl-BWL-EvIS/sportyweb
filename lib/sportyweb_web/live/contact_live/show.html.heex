@@ -43,16 +43,52 @@
     <:item title="Notizen">
       <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@contact.notes} />
     </:item>
-    <:item :if={Contact.has_active_membership_contract?(@contact)} title="Aktives Mitglied">
-      <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
-    </:item>
   </.list>
 </.card>
 
 <.header level="2" class="mt-12">
-  Mitgliedschaftsverträge
+Mitgliedschaften
 </.header>
+<.card>
+    <%= if Enum.any?(@streams.contracts.inserts) do %>
+        <.table
+        id="memberships"
+        rows={@streams.memberships}
+        row_click={fn {_id, membership} -> JS.navigate(~p"/contracts/#{membership}") end}
+        >
+            <:col :let={{_id, membership}} label="in">
+                {format_string_field(Membership.get_smallest_community(membership).name)}
+            </:col>
+            <:col :let={{_id, membership}} label="Status">
+                <%= if Membership.is_active(membership) do %>
+                    <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-600" />
+                <% end %>
+                <%= if membership.state == "pending" do %>
+                    <.icon name="hero-arrow-down-on-square" class="ml-1 inline-block w-[20px] text-amber-500" />
+                <% end %>
+                <%= if membership.state == "terminated"  do %>
+                    <.icon name="archive-box-x-mark" class="ml-1 inline-block w-[20px]" />
+                <% end %>
+                {get_key_for_value(Membership.get_valid_states(), membership.state)}
+            </:col>
+            <:col :let={{_id, membership}} label="Verträge">
+                {length(membership.contracts)}
+            </:col>
 
+            <:action :let={{_id, membership}}>
+                <.link navigate={~p"/contracts/#{membership}"}>Anzeigen</.link>
+            </:action>
+        </.table>
+    <% else %>
+    <p>
+        Bisher wurden noch keine Mitgliedschaften hinterlegt.
+    </p>
+    <% end %>
+</.card>
+
+<.header level="2" class="mt-12">
+Verträge
+</.header>
 <.card>
   <%= if Enum.any?(@streams.contracts.inserts) do %>
     <.table
@@ -60,6 +96,9 @@
       rows={@streams.contracts}
       row_click={fn {_id, contract} -> JS.navigate(~p"/contracts/#{contract}") end}
     >
+        <:col :if={ length(@contact.memberships) > 0 } label="Mitgliedschaft">
+            <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
+        </:col>
       <:col :let={{_id, contract}} label="Vertragsobjekt">
         {format_string_field(Contract.get_object(contract).name)}
       </:col>
@@ -76,7 +115,7 @@
     </.table>
   <% else %>
     <p>
-      Bisher wurde noch kein Mitgliedschaftsvertrag erstellt.
+      Bisher wurde noch kein Vertrag erstellt.
     </p>
   <% end %>
 </.card>

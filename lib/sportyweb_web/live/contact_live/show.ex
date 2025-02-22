@@ -5,6 +5,7 @@ defmodule SportywebWeb.ContactLive.Show do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.Personal.Membership
 
   @impl true
   def mount(_params, _session, socket) do
@@ -21,6 +22,7 @@ defmodule SportywebWeb.ContactLive.Show do
         :notes,
         :phones,
         :postal_addresses,
+        memberships: [:club, :department, :group, :contracts],
         contracts: [:clubs, :departments, :groups, fee: :internal_events]
       ])
 
@@ -29,6 +31,7 @@ defmodule SportywebWeb.ContactLive.Show do
      |> assign(:page_title, "Kontakt: #{contact.name}")
      |> assign(:contact, contact)
      |> assign(:club, contact.club)
-     |> stream(:contracts, contact.contracts)}
+     |> stream(:contracts, contact.contracts)
+     |> stream(:memberships, contact.memberships)}
   end
 end
