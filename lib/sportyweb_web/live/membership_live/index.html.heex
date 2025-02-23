@@ -1,0 +1,65 @@
+<.header>
+  {@page_title}
+    <:actions>
+        <.link navigate={~p"/clubs/#{@club}/memberships/new"}>
+            <.button>Mitgliedschaft hinzufügen</.button>
+        </.link>
+    </:actions>
+</.header>
+
+<.card>
+    <div class="overflow-auto max-h-[500px]">
+        <.table
+        id="memberships"
+        rows={@streams.memberships}
+        sorting={@sorting}
+        row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}") end}
+        >
+            <:col :let={{_id, membership}} label="Name">
+                {format_string_field(membership.contact.name)}
+            </:col>
+            <:col :let={{_id, membership}} label="Name">
+                {format_string_field(Membership.get_smallest_community(membership).name)}
+            </:col>
+            <:col :let={{_id, membership}} label="Status" sortable>
+                {format_string_field(membership.state)}
+            </:col>
+            <:col :let={{_id, membership}} label="Verträge">
+                <div :for={contract <- membership.contracts} >
+                    <li :if={Contract.is_for_future?(contract)}>
+                        <.icon name="hero-arrow-down-on-square" class="ml-1 inline-block w-[20px] text-amber-500" />
+                        {format_date_field_dmy(contract.start_date)} - {format_date_field_dmy(contract.termination_date)}
+                        {format_string_field(contract.fee.name)}
+                        {contract.fee.amount}
+                    </li>
+                </div>
+                <div :for={contract <- membership.contracts} >
+                    <li :if={Contract.is_in_use?(contract)}>
+                        <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-600" />
+                        {format_date_field_dmy(contract.start_date)} - {format_date_field_dmy(contract.termination_date)}
+                        {format_string_field(contract.fee.name)}
+                        {contract.fee.amount}
+                    </li>
+                </div>
+                <div :for={contract <- membership.contracts} >
+                    <li :if={Contract.is_archived?(contract)}>
+                        <.icon name="hero-archive-box-x-mark" class="ml-1 inline-block w-[20px]" />
+                        {format_date_field_dmy(contract.start_date)} - {format_date_field_dmy(contract.termination_date)}
+                        {format_string_field(contract.fee.name)}
+                        {contract.fee.amount}
+                    </li>
+                </div>
+            </:col>
+
+            <:action :let={{_id, membership}}>
+                <.link navigate={~p"/memberships/#{membership}"}>Kontaktdaten bearbeiten</.link>
+            </:action>
+        </.table>
+
+        <%= if !Enum.any?(@streams.memberships.inserts) do %>
+        <p>
+            Bisher wurde noch kein Kontakt erstellt.
+        </p>
+        <% end %>
+    </div>
+</.card>

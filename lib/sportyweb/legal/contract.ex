@@ -36,6 +36,10 @@ defmodule Sportyweb.Legal.Contract do
     timestamps(type: :utc_datetime)
   end
 
+  def is_for_future?(%Contract{} = contract, %Date{} = date \\ Date.utc_today()) do
+    is_nil(contract.start_date) || Date.compare(date, contract.start_date) == :lt
+  end
+
   def is_in_use?(%Contract{} = contract, %Date{} = date \\ Date.utc_today()) do
     Date.compare(date, contract.start_date) != :lt &&
       (is_nil(contract.archive_date) || Date.compare(date, contract.archive_date) == :lt)

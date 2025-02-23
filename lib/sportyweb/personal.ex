@@ -308,8 +308,15 @@ defmodule Sportyweb.Personal do
       query = from(m in Membership, where: m.club_id == ^club_id)
       Repo.all(query)
   end
-  def list_memberships(club_id, preloads) do
-    list_memberships(club_id)
+  def list_memberships(club_id, order_by) do
+    query = cond do
+      order_by == nil -> from(m in Membership, where: m.club_id == ^club_id, order_by: m.state)
+      true -> from(m in Membership, where: m.club_id == ^club_id, order_by: ^order_by)
+    end
+    Repo.all(query)
+  end
+  def list_memberships(club_id, order_by, preloads) do
+    list_memberships(club_id, order_by)
     |> Repo.preload(preloads)
   end
 
