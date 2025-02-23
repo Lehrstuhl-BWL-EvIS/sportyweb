@@ -675,6 +675,7 @@ defmodule SportywebWeb.CoreComponents do
             <th :for={col <- @col}
               phx-click={if col[:sortable] do JS.push("sort-by-column", value: %{col[:label] => next_sort_direction(@sorting[col[:label]])}) end}
               class="p-0 pb-4 pr-6 font-normal">
+              <div class="flex items-center">
                 {col[:label]}
                 <.icon :if={col[:sortable] && @sorting[col[:label]]!="desc" && @sorting[col[:label]]!="asc" }
                     name="hero-arrows-up-down" class="h-3 w-3" />
@@ -682,6 +683,7 @@ defmodule SportywebWeb.CoreComponents do
                     name="hero-arrow-up" class="h-3 w-3 text-amber-500" />
                 <.icon :if={col[:sortable] && @sorting[col[:label]]=="asc"}
                     name="hero-arrow-down" class="h-3 w-3 text-amber-500" />
+              </div>
             </th>
             <th :if={@action != []} class="relative p-0 pb-4">
               <span class="sr-only">{gettext("Actions")}</span>
@@ -700,7 +702,7 @@ defmodule SportywebWeb.CoreComponents do
             >
               <div class="block py-4 pr-6">
                 <span class="absolute -inset-y-px right-0 -left-4 group-hover:bg-zinc-50 sm:rounded-l-xl" />
-                <span class={["relative", i == 0 && "font-semibold text-zinc-900"]}>
+                <span class={["relative whitespace-nowrap", i == 0 && "font-semibold text-zinc-900"]}>
                   {render_slot(col, @row_item.(row))}
                 </span>
               </div>
