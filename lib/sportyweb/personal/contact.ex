@@ -195,4 +195,30 @@ defmodule Sportyweb.Personal.Contact do
 
     changeset |> Ecto.Changeset.change(name: String.trim(name))
   end
+
+
+  def get_most_relevant_email(%Contact{} = contact) do
+    find_most_relevant(contact.emails)
+  end
+  def get_most_relevant_phone(%Contact{} = contact) do
+    find_most_relevant(contact.phones)
+  end
+  def get_most_relevant_postal_address(%Contact{} = contact) do
+    find_most_relevant(contact.postal_addresses)
+  end
+
+  defp find_most_relevant(postal_addresses) do
+    numberOfAddresses = length(postal_addresses)
+
+    cond do
+      numberOfAddresses == 1 -> Enum.at(postal_addresses, 0)
+      true ->
+        main_address = Enum.find(postal_addresses, fn add -> add.is_main end)
+        cond do
+          main_address != nil -> main_address
+          true -> Enum.sort_by(postal_addresses, fn add -> add.updated_at end, :desc)
+                  |> Enum.at(0)
+        end
+    end
+  end
 end

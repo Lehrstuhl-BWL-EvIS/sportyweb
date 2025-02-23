@@ -39,20 +39,14 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
         <:col :let={{_id, contact}} label="Geburtsdatum" sortable>
           {format_date_field_dmy(contact.person_birthday)}
         </:col>
-        <:col :let={{_id, contact}} label="Adressen">
-          <span :for={postal_address <- contact.postal_addresses} :if={postal_address.is_main}>
-            {format_string_field(PostalAddress.as_text(postal_address))}
-          </span>
+        <:col :let={{_id, contact}} label="Adresse">
+            {format_string_field(PostalAddress.as_text(Contact.get_most_relevant_postal_address(contact)))}
         </:col>
         <:col :let={{_id, contact}} label="E-Mail">
-          <span :for={email <- contact.emails} :if={email.is_main}>
-            {format_string_field(email.address)}
-          </span>
+            {format_string_field(Contact.get_most_relevant_email(contact).address)}
         </:col>
         <:col :let={{_id, contact}} label="Telefonnummer">
-          <li :for={phone <- contact.phones} :if={phone.is_main}>
-            {format_string_field(phone.number)}
-          </li>
+               {format_string_field(Contact.get_most_relevant_phone(contact).number)}
         </:col>
         <:col :let={{_id, contact}} :if={@mode != "members"} label="Mitglied">
             <%= if length(contact.memberships) > 0 do %>
