@@ -900,31 +900,47 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
     end)
 
     # Contacts & Contracts
-
     for _i <- 0..Enum.random(20..50) do
+      is_main = :rand.uniform() < 0.8
+      postal_addresses = cond do
+        :rand.uniform() < 0.85 -> [Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address(is_main))]
+        true -> [Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address(is_main)),
+                  Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address(false))]
+      end
+      is_main = :rand.uniform() < 0.8
+      emails = cond do
+        :rand.uniform() < 0.6 -> [Map.from_struct(Sportyweb.SeedHelper.get_random_email(is_main))]
+        true -> [Map.from_struct(Sportyweb.SeedHelper.get_random_email(is_main)),
+                  Map.from_struct(Sportyweb.SeedHelper.get_random_email(false))]
+      end
+      is_main = :rand.uniform() < 0.8
+      phones = cond do
+        :rand.uniform() < 0.6 -> [Map.from_struct(Sportyweb.SeedHelper.get_random_phone(is_main))]
+        true -> [Map.from_struct(Sportyweb.SeedHelper.get_random_phone(is_main)),
+                  Map.from_struct(Sportyweb.SeedHelper.get_random_phone(false))]
+      end
+      is_person = :rand.uniform() < 0.8
+
       # Use the context function instead of Repo.insert!() to invoke the changeset which sets the name.
       {:ok, %Contact{} = contact} =
         Personal.create_contact(%{
           club_id: club.id,
-          type: if(:rand.uniform() < 0.8, do: "person", else: "organization"),
-          organization_name:
-            "#{Faker.Company.buzzword_prefix()} #{Faker.Industry.sub_sector()} #{Faker.Company.buzzword_prefix()}",
-          organization_type:
-            Contact.get_valid_organization_types()
-            |> Enum.map(fn organization_type -> organization_type[:value] end)
-            |> Enum.random(),
-          person_last_name: Faker.Person.last_name(),
-          person_first_name_1: Faker.Person.first_name(),
-          person_first_name_2:
-            if(:rand.uniform() < 0.80, do: "", else: Faker.Person.first_name()),
-          person_gender:
-            Contact.get_valid_genders()
-            |> Enum.map(fn gender -> gender[:value] end)
-            |> Enum.random(),
-          person_birthday: Faker.Date.date_of_birth(6..99),
-          postal_addresses: [Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address(true))],
-          emails: [Map.from_struct(Sportyweb.SeedHelper.get_random_email(true))],
-          phones: [Map.from_struct(Sportyweb.SeedHelper.get_random_phone(true))],
+          type: if(is_person, do: "person", else: "organization"),
+          organization_name: if(is_person, do: "", else: "#{Faker.Company.buzzword_prefix()} #{Faker.Industry.sub_sector()} #{Faker.Company.buzzword_prefix()}"),
+          organization_type: if(is_person, do: "", else: Contact.get_valid_organization_types()
+                                                         |> Enum.map(fn organization_type -> organization_type[:value] end)
+                                                         |> Enum.random()),
+          person_last_name: if(is_person, do: Faker.Person.last_name(), else: ""),
+          person_first_name_1: if(is_person, do: Faker.Person.first_name(), else: ""),
+          person_first_name_2: if(is_person && :rand.uniform() > 0.80, do: Faker.Person.first_name(), else: ""),
+          person_gender: if(is_person, do: Contact.get_valid_genders()
+                                           |> Enum.map(fn gender -> gender[:value] end)
+                                           |> Enum.random(),
+            else: ""),
+          person_birthday: if(is_person, do: Faker.Date.date_of_birth(6..99), else: ""),
+          postal_addresses: postal_addresses,
+          emails: emails,
+          phones: phones,
           financial_data: [Map.from_struct(Sportyweb.SeedHelper.get_random_financial_data(true))],
           notes: [Map.from_struct(Sportyweb.SeedHelper.get_random_note())]
         })
