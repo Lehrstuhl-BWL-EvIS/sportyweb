@@ -670,7 +670,7 @@ defmodule SportywebWeb.CoreComponents do
     ~H"""
     <div class={Twix.tw(["overflow-y-auto px-4 md:overflow-visible sm:px-0", @class])}>
       <table class="w-[40rem] sm:w-full">
-        <thead class="text-sm text-left leading-6 text-zinc-500">
+        <thead class="text-sm text-left leading-6 text-zinc-500 bg-white sticky top-0 z-10">
           <tr>
             <th :for={col <- @col}
               phx-click={if col[:sortable] do JS.push("sort-by-column", value: %{col[:label] => next_sort_direction(@sorting[col[:label]])}) end}
