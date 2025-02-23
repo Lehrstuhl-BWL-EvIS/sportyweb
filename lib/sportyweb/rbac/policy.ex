@@ -53,6 +53,8 @@ defmodule Sportyweb.RBAC.Policy do
              :LocationLive,
              :EventLive,
              :ContactLive,
+             :MemberLive,
+             :MembershipLive,
              :FeeLive
            ] do
     club_id =
@@ -155,6 +157,7 @@ defmodule Sportyweb.RBAC.Policy do
       :GroupLive -> id |> Organization.get_group!() |> Map.get(:department_id)
       :EventLive -> id |> Calendar.get_event!() |> Map.get(:club_id)
       :ContactLive -> id |> Personal.get_contact!() |> Map.get(:club_id)
+      :MembershipLive -> id |> Personal.get_membership!() |> Map.get(:club_id)
       :LocationLive -> id |> Asset.get_location!() |> Map.get(:club_id)
       :EquipmentLive -> id |> Asset.get_equipment!() |> Map.get(:location_id)
       :FeeLive -> id |> Finance.get_fee!() |> Map.get(:club_id)
@@ -196,6 +199,8 @@ defmodule Sportyweb.RBAC.Policy do
       :DepartmentLive -> ~p"/clubs/#{club_id}/departments/"
       :EventLive -> ~p"/clubs/#{club_id}/events/"
       :ContactLive -> ~p"/clubs/#{club_id}/contacts"
+      :MemberLive -> ~p"/clubs/#{club_id}/members"
+      :MemebershipLive -> ~p"/clubs/#{club_id}/memberships"
       :LocationLive -> ~p"/clubs/#{club_id}/locations/"
       :FeeLive -> ~p"/clubs/#{club_id}/fees/"
     end
@@ -214,6 +219,8 @@ defmodule Sportyweb.RBAC.Policy do
       :GroupLive -> ~p"/groups/#{id}/"
       :EventLive -> ~p"/events/#{id}/"
       :ContactLive -> ~p"/contacts/#{id}/"
+      :MemberLive -> ~p"/members/#{id}/"
+      :MembershipLive -> ~p"/memberships/#{id}/"
       :LocationLive -> ~p"/locations/#{id}/"
       :EquipmentLive -> ~p"/equipment/#{id}/"
       :FeeLive -> ~p"/fees/#{id}/"

@@ -1,4 +1,4 @@
-defmodule SportywebWeb.MembersLive.Index do
+defmodule SportywebWeb.MemberLive.Index do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Organization
@@ -24,7 +24,7 @@ defmodule SportywebWeb.MembersLive.Index do
     contacts = Personal.list_contacts_of_members(club_id, nil, [:postal_addresses, :emails, :phones, memberships: [:group, :department, :club ]])
 
     socket
-    |> assign(:page_title, "Mitgliedschaften")
+    |> assign(:page_title, "Mitglieder")
     |> assign(:club, club)
     |> assign(:sorting, %{})
     |> stream(:contacts, contacts)

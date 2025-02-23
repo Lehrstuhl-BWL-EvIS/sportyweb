@@ -1,4 +1,4 @@
-defmodule SportywebWeb.MembersLive.NewEdit do
+defmodule SportywebWeb.MemberLive.NewEdit do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Personal

@@ -149,11 +149,11 @@ defmodule SportywebWeb.Router do
       live "/memberships/:id/edit", MembershipLive.NewEdit, :edit
       live "/memberships/:id", MembershipLive.Show, :show
 
-      live "/members", MembersLive.Index, :index_root
-      live "/clubs/:club_id/members", MembersLive.Index, :index
-      live "/clubs/:club_id/members/new", MembersLive.NewEdit, :new
-      live "/members/:id/edit", MembersLive.NewEdit, :edit
-      live "/members/:id", MembersLive.Show, :show
+      live "/members", MemberLive.Index, :index_root
+      live "/clubs/:club_id/members", MemberLive.Index, :index
+      live "/clubs/:club_id/members/new", MemberLive.NewEdit, :new
+      live "/members/:id/edit", MemberLive.NewEdit, :edit
+      live "/members/:id", MemberLive.Show, :show
 
       # Locations (Each belongs to a club)
 

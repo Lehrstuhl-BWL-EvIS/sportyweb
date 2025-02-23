@@ -1,4 +1,4 @@
-defmodule SportywebWeb.MembersLive.Show do
+defmodule SportywebWeb.MemberLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Finance.Fee
