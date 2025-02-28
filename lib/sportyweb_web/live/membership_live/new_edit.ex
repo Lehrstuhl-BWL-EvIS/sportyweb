@@ -1,9 +1,11 @@
 defmodule SportywebWeb.MembershipLive.NewEdit do
   use SportywebWeb, :live_view
 
-  alias Sportyweb.Personal
   alias Sportyweb.Organization
   alias Sportyweb.Finance
+  alias Sportyweb.Legal
+  alias Sportyweb.Legal.Contract
+  alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
 
   @impl true
@@ -17,94 +19,144 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
       <.card>
           <.input_grids>
             <.input_grid>
-              <div class="col-span-6 md:col-span-6">
-                <.label>Kontakt ({length(@contacts)})</.label>
-                <select class="py-2.5 block rounded-md border border-zinc-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm">
-                  <option phx-click={JS.push("contact_unselected", value: %{})}>
-                    {if @selected_contact == nil, do: "-", else: @selected_contact.name}
-                  </option>
-                  <%= for contact <- @contacts do %>
-                    <option phx-click={JS.push("contact_selected", value: %{contact_id: contact.id})}>
-                      <%= if Contact.is_person?(contact) do %>
-                        <.icon name="hero-user" class="ml-1 inline-block w-[20px]" />
-                        {contact.name} - {Contact.age_in_years(contact)}
-                      <% else %>
-                        <.icon name="hero-building-office" class="ml-1 inline-block w-[20px]" />
-                        {contact.name}
-                      <% end %>
-                    </option>
-                  <% end %>
-                </select>
-              </div>
-
-              <div :if={@selected_contact != nil}class="col-span-6 md:col-span-6">
-                <h6>
-                <%= if Contact.is_person?(@selected_contact) do %>
-                    <.icon name="hero-user" class="ml-1 inline-block w-[20px]" />
-                  <% else %>
-                    <.icon name="hero-building-office" class="ml-1 inline-block w-[20px]" />
-                  <% end %>
-                  {@selected_contact.name}
-                </h6>
-                <%= if (Contact.is_person?(@selected_contact)) do %>
-                  <p>
-                    {Contact.age_in_years(@selected_contact)}
-                  </p>
-                  <p>
-                    {get_key_for_value(Contact.get_valid_genders(), @selected_contact.person_gender)}
-                  </p>
-                <% end %>
+              <div class="col-span-12 md:col-span-6">
+                <.input
+                      id="contact_selection"
+                      type="select"
+                      label={"Kontakt (#{length(@contacts)})"}
+                      name="Kontakt"
+                      options={@contacts}
+                      prompt="Bitte auswählen"
+                      fire_selection_event="true"
+                    >
+                  <:option_renderer :let={contact}>
+                      {contact.name}
+                  </:option_renderer>
+                </.input>
               </div>
             </.input_grid>
 
             <.input_grid>
-              <div class="col-span-12 md:col-span-6">
-                <.label>Abteilung ({length(@departments)})</.label>
-                <select class="py-2.5 block rounded-md border border-zinc-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm">
-                  <option phx-click={JS.push("department_unselected", value: %{})}>
-                    {if @selected_department == nil, do: "-", else: @selected_department.name}
-                  </option>
-                  <%= for department <- @departments do %>
-                    <option phx-click={JS.push("department_selected", value: %{department_id: department.id})}>
+            <div class="col-span-12 md:col-span-6">
+                <.input
+                      id="department_selection"
+                      type="select"
+                      label={"Abteilung (#{length(@departments)})"}
+                      name="Abteilung"
+                      options={@departments}
+                      prompt="Bitte auswählen"
+                      fire_selection_event="true"
+                    >
+                  <:option_renderer :let={department}>
                       {department.name}
-                    </option>
-                  <% end %>
-                </select>
+                  </:option_renderer>
+                </.input>
+              </div>
+              <div class="col-span-12 md:col-span-6">
+                <.input
+                      id="group_selection"
+                      type="select"
+                      label={"Gruppe (#{length(@groups)})"}
+                      name="Gruppe"
+                      options={@groups}
+                      prompt="Bitte auswählen"
+                      fire_selection_event="true"
+                    >
+                  <:option_renderer :let={group}>
+                      {group.name}
+                  </:option_renderer>
+                </.input>
               </div>
 
-              <div class="col-span-12 md:col-span-6">
-                <.label class="whitespace-nowrap">Gruppe ({length(@groups)})</.label>
-              <select class="py-2.5 block rounded-md border border-zinc-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm">
-                  <option phx-click={JS.push("group_unselected", value: %{})}>
-                    {if @selected_group == nil, do: "-", else: @selected_group.name}
-                  </option>
-                  <%= for group <- @groups do %>
-                    <option phx-click={JS.push("group_selected", value: %{group_id: group.id})}>
-                      {group.name}
-                    </option>
-                  <% end %>
-                </select>
-              </div>
             </.input_grid>
 
             <.input_grid>
               <div class="col-span-12 md:col-span-6">
-                <.label>Beitrag ({length(@fees)})</.label>
-                <select class="py-2.5 block rounded-md border border-zinc-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm">
-                   <option phx-click={JS.push("fee_unselected", value: %{})}>
-                    {if @selected_fee == nil, do: "-", else: @selected_fee.name}
-                  </option>
-                    <%= for fee <- @fees do %>
-                      <option phx-click={JS.push("fee_selected", value: %{fee_id: fee.id})}>
-                        {fee.name} - {fee.amount}
-                      </option>
-                    <% end %>
-                  </select>
+                <.input
+                      id="fee_selection"
+                      type="select"
+                      label={"Beitrag (#{length(@fees)})"}
+                      name="Beitrag"
+                      options={@fees}
+                      prompt="Bitte auswählen"
+                      fire_selection_event="true"
+                    >
+                  <:option_renderer :let={fee}>
+                      {fee.name}
+                  </:option_renderer>
+                </.input>
               </div>
             </.input_grid>
           </.input_grids>
       </.card>
 
+      <.card>
+        <.input_grids>
+          <.input_grid>
+            <div  class="col-span-12 md:col-span-3">
+              <.label>Kontakt</.label>
+              <%= if @selected_contact != nil do %>
+                  <h5>
+                    <%= if Contact.is_person?(@selected_contact) do %>
+                      <.icon name="hero-user" class="ml-1 inline-block w-[20px]" />
+                    <% else %>
+                      <.icon name="hero-building-office" class="ml-1 inline-block w-[20px]" />
+                    <% end %>
+                    {@selected_contact.name}
+                  </h5>
+                  <%= if (Contact.is_person?(@selected_contact)) do %>
+                    <p>
+                      Alter: {Contact.age_in_years(@selected_contact)}
+                    </p>
+                    <p>
+                      Geschlecht: {get_key_for_value(Contact.get_valid_genders(), @selected_contact.person_gender)}
+                    </p>
+                  <% end %>
+                <% end %>
+            </div>
+            <div  class="col-span-12 md:col-span-3">
+              <.label>Mitgliedschaft in</.label>
+              <%= if @selected_group != nil do %>
+                {@selected_group.name}
+                <button type="button" phx-click="group_selection_deselected">
+                  <.icon name="hero-x-mark-solid" class="h-5 w-5 text-red-500" />
+                </button>
+              <% else %>
+                <%= if @selected_department != nil do %>
+                  {@selected_department.name}
+                  <button type="button" phx-click="department_selection_deselected">
+                    <.icon name="hero-x-mark-solid" class="h-5 w-5 text-red-500" />
+                  </button>
+                <% else %>
+                  {@club.name}
+                <% end %>
+              <% end %>
+            </div>
+            <div  class="col-span-12 md:col-span-3">
+              <.label>Beitrag</.label>
+                <%= if @selected_fee != nil do %>
+                {@selected_fee.name}
+                {@selected_fee.amount}
+                <button type="button" phx-click="fee_selection_deselected">
+                  <.icon name="hero-x-mark-solid" class="h-5 w-5 text-red-500" />
+                </button>
+              <% end %>
+            </div>
+            <div class="col-span-12 md:col-span-3">
+               <.input type="date" label="Vertragsbeginn" name="Vertragsbeginn"
+              value="nil"
+              phx-change=""/>
+            </div>
+            <div  class="col-span-12 md:col-span-4">
+              <%= if @allow_save do %>
+                <.button disabled phx-click={JS.push("save")}>
+                  Speichern
+                </.button>
+              <% end %>
+            </div>
+          </.input_grid>
+        </.input_grids>
+      </.card>
 
     </div>
     """
@@ -140,6 +192,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     |> assign(:groups, groups)
     |> assign(:contacts, contacts)
     |> assign(:fees, [])
+    |> assign(:allow_save, false)
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
@@ -147,7 +200,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
 
     departments = Organization.list_departments(club_id)
     groups = Organization.list_groups(club_id)
-    contacts = Personal.list_contacts(club_id);
+    contacts = Personal.list_contacts(club_id)
 
     socket
     |> assign(:page_title, "Mitgliedschaft erstellen")
@@ -160,11 +213,12 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     |> assign(:departments, departments)
     |> assign(:groups, groups)
     |> assign(:fees, [])
+    |> assign(:allow_save, false)
   end
 
 
   @impl true
-  def handle_event("department_selected", %{"department_id" => department_id}, socket) do
+  def handle_event("department_selection_selected", %{"option_id" => department_id}, socket) do
     socket = if socket.assigns.selected_department != nil && socket.assigns.selected_department.id == department_id do
         # same department was selected again -> ignore
         socket
@@ -181,7 +235,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   @impl true
-  def handle_event("department_unselected", %{}, socket) do
+  def handle_event("department_selection_deselected", %{}, socket) do
     socket = if socket.assigns.selected_department == nil do
       socket
     else
@@ -194,7 +248,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   @impl true
-  def handle_event("group_selected", %{"group_id" => group_id}, socket) do
+  def handle_event("group_selection_selected", %{"option_id" => group_id}, socket) do
     socket = if socket.assigns.selected_group != nil && socket.assigns.selected_group.id == group_id do
       # same group was selected again -> ignore
       socket
@@ -209,7 +263,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   @impl true
-  def handle_event("group_unselected", %{}, socket) do
+  def handle_event("group_selection_deselected", %{}, socket) do
     socket = if socket.assigns.selected_group == nil do
       socket
     else
@@ -222,7 +276,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   @impl true
-  def handle_event("contact_selected", %{"contact_id" => contact_id}, socket) do
+  def handle_event("contact_selection_selected", %{"option_id" => contact_id}, socket) do
     socket = if socket.assigns.selected_contact != nil && socket.assigns.selected_contact.id == contact_id do
       # same contact was selected again -> ignore
       socket
@@ -237,7 +291,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   @impl true
-  def handle_event("contact_unselected", %{}, socket) do
+  def handle_event("contact_selection_deselected", %{}, socket) do
     socket = if socket.assigns.selected_contact == nil do
       socket
     else
@@ -250,14 +304,46 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   @impl true
-  def handle_event("fee_selected", %{"fee_id" => fee_id}, socket) do
+  def handle_event("fee_selection_selected", %{"option_id" => fee_id}, socket) do
     fee = Finance.get_fee!(fee_id)
-    socket
-    |> assign(:selected_fee, fee)
+    socket = socket
+             |> assign(:selected_fee, fee)
+             |> validate()
 
     {:noreply, socket}
   end
 
+  @impl true
+  def handle_event("fee_selection_deselected", %{}, socket) do
+    socket = if socket.assigns.selected_fee == nil do
+      socket
+    else
+      socket
+      |> assign(:selected_fee, nil)
+      |> validate()
+    end
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("save", %{}, socket) do
+    club = socket.assigns.club
+    contact = socket.assigns.contact
+    fee = socket.assigns.selected_fee
+    contract = Legal.create_contract(%{
+      club_id: club.id,
+      contact_id: contact.id,
+      fee_id: contact.fee,
+      signing_date: ~D[2023-02-01],
+      start_date: ~D[2023-03-01]
+    })
+
+    {:noreply,
+      socket
+      |> put_flash(:info, "Mitglied erfolgreich gelöscht")
+      |> push_navigate(to: "/clubs/#{contact.club_id}/contacts")}
+  end
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
@@ -291,12 +377,34 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
       contact == nil -> selected_fee # fee was selected but no contact
                                       # -> user might be switching between contacts
                                       # -> keep selected fee until new contact is selected
-      Enum.find(fees, fn fee -> fee.id == selected_fee.id end) -> selected_fee
-      true -> nil
+      Enum.find(fees, fn fee -> fee.id == selected_fee.id || fee.name == selected_fee.name end) -> selected_fee
+      true ->
+        IO.puts("remove selected fee #{selected_fee.name}")
+        IO.inspect(fees)
+        nil
     end
 
     socket
     |> assign(:fees, fees)
     |> assign(:selected_fee, selected_fee)
+    |> validate()
   end
+
+  defp validate(socket) do
+    group = socket.assigns.selected_group
+    department = socket.assigns.selected_department
+    contact = socket.assigns.selected_contact
+    fee = socket.assigns.selected_fee
+    allow_save = cond do
+      contact == nil -> false
+      department != nil || group != nil -> true # allow memberships in sub-organisations without fee
+      fee == nil -> false
+      true -> true
+    end
+
+    socket
+    |> assign(:allow_save, allow_save)
+  end
+
+
 end
