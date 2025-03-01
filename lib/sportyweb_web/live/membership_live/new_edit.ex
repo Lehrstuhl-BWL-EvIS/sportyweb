@@ -2,11 +2,13 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Organization
+  alias Sportyweb.Organization.Club
   alias Sportyweb.Finance
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.Personal.Membership
 
   @impl true
   def render(assigns) do
@@ -16,148 +18,78 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
         {@page_title}
       </.header>
 
+
       <.card>
-          <.input_grids>
+        <.simple_form
+          for={@form}
+          id="membership-form"
+          phx-change="validate"
+          phx-submit="save"
+        >
+        <.input_grids>
             <.input_grid>
               <div class="col-span-12 md:col-span-6">
                 <.input
-                      id="contact_selection"
-                      type="select"
-                      label={"Kontakt (#{length(@contacts)})"}
-                      name="Kontakt"
-                      options={@contacts}
-                      prompt="Bitte auswählen"
-                      fire_selection_event="true"
-                    >
-                  <:option_renderer :let={contact}>
-                      {contact.name}
-                  </:option_renderer>
-                </.input>
+                  field={@form[:contact]}
+                  type="select"
+                   label={"Kontakt (#{length(@contacts)})"}
+                  options={@contacts |> Enum.map(&{map_contact(&1), &1.id})}
+                  prompt="Bitte auswählen"
+                />
               </div>
             </.input_grid>
 
             <.input_grid>
-            <div class="col-span-12 md:col-span-6">
+              <div class="col-span-12 md:col-span-6">
                 <.input
-                      id="department_selection"
-                      type="select"
-                      label={"Abteilung (#{length(@departments)})"}
-                      name="Abteilung"
-                      options={@departments}
-                      prompt="Bitte auswählen"
-                      fire_selection_event="true"
-                    >
-                  <:option_renderer :let={department}>
-                      {department.name}
-                  </:option_renderer>
-                </.input>
+                  field={@form[:department]}
+                  type="select"
+                  label={"Abteilung (#{length(@departments)})"}
+                  options={@departments |> Enum.map(&{&1.name, &1.id})}
+                  prompt="Bitte auswählen"
+                />
               </div>
               <div class="col-span-12 md:col-span-6">
                 <.input
-                      id="group_selection"
-                      type="select"
-                      label={"Gruppe (#{length(@groups)})"}
-                      name="Gruppe"
-                      options={@groups}
-                      prompt="Bitte auswählen"
-                      fire_selection_event="true"
-                    >
-                  <:option_renderer :let={group}>
-                      {group.name}
-                  </:option_renderer>
-                </.input>
-              </div>
-
+                  field={@form[:group]}
+                  type="select"
+                  label={"Gruppe (#{length(@groups)})"}
+                  options={@groups |> Enum.map(&{&1.name, &1.id})}
+                  prompt="Bitte auswählen"
+                />
+            </div>
             </.input_grid>
 
             <.input_grid>
               <div class="col-span-12 md:col-span-6">
                 <.input
-                      id="fee_selection"
-                      type="select"
-                      label={"Beitrag (#{length(@fees)})"}
-                      name="Beitrag"
-                      options={@fees}
-                      prompt="Bitte auswählen"
-                      fire_selection_event="true"
-                    >
-                  <:option_renderer :let={fee}>
-                      {fee.name}
-                  </:option_renderer>
-                </.input>
+                  field={@form[:fee]}
+                  type="select"
+                  label={"Beitrag (#{length(@fees)})"}
+                  options={@fees |> Enum.map(&{&1.name, &1.id})}
+                  prompt="Bitte auswählen"
+                />
+              </div>
+
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:start_date]} type="date" label="Beginn" />
               </div>
             </.input_grid>
           </.input_grids>
+          <:actions>
+            <.button phx-disable-with="Speichern...">Speichern</.button>
+            <.cancel_button navigate={"/clubs/#{@club.id}/memberships"}>Abbrechen</.cancel_button>
+            <.button
+              :if={@mode == "edit"}
+              class="bg-rose-700 hover:bg-rose-800"
+              phx-click={JS.push("delete", value: %{id: @membership.id})}
+              data-confirm="Unwiderruflich löschen?"
+            >
+              Löschen
+            </.button>
+          </:actions>
+        </.simple_form>
       </.card>
-
-      <.card>
-        <.input_grids>
-          <.input_grid>
-            <div  class="col-span-12 md:col-span-3">
-              <.label>Kontakt</.label>
-              <%= if @selected_contact != nil do %>
-                  <h5>
-                    <%= if Contact.is_person?(@selected_contact) do %>
-                      <.icon name="hero-user" class="ml-1 inline-block w-[20px]" />
-                    <% else %>
-                      <.icon name="hero-building-office" class="ml-1 inline-block w-[20px]" />
-                    <% end %>
-                    {@selected_contact.name}
-                  </h5>
-                  <%= if (Contact.is_person?(@selected_contact)) do %>
-                    <p>
-                      Alter: {Contact.age_in_years(@selected_contact)}
-                    </p>
-                    <p>
-                      Geschlecht: {get_key_for_value(Contact.get_valid_genders(), @selected_contact.person_gender)}
-                    </p>
-                  <% end %>
-                <% end %>
-            </div>
-            <div  class="col-span-12 md:col-span-3">
-              <.label>Mitgliedschaft in</.label>
-              <%= if @selected_group != nil do %>
-                {@selected_group.name}
-                <button type="button" phx-click="group_selection_deselected">
-                  <.icon name="hero-x-mark-solid" class="h-5 w-5 text-red-500" />
-                </button>
-              <% else %>
-                <%= if @selected_department != nil do %>
-                  {@selected_department.name}
-                  <button type="button" phx-click="department_selection_deselected">
-                    <.icon name="hero-x-mark-solid" class="h-5 w-5 text-red-500" />
-                  </button>
-                <% else %>
-                  {@club.name}
-                <% end %>
-              <% end %>
-            </div>
-            <div  class="col-span-12 md:col-span-3">
-              <.label>Beitrag</.label>
-                <%= if @selected_fee != nil do %>
-                {@selected_fee.name}
-                {@selected_fee.amount}
-                <button type="button" phx-click="fee_selection_deselected">
-                  <.icon name="hero-x-mark-solid" class="h-5 w-5 text-red-500" />
-                </button>
-              <% end %>
-            </div>
-            <div class="col-span-12 md:col-span-3">
-               <.input type="date" label="Vertragsbeginn" name="Vertragsbeginn"
-              value="nil"
-              phx-change=""/>
-            </div>
-            <div  class="col-span-12 md:col-span-4">
-              <%= if @allow_save do %>
-                <.button disabled phx-click={JS.push("save")}>
-                  Speichern
-                </.button>
-              <% end %>
-            </div>
-          </.input_grid>
-        </.input_grids>
-      </.card>
-
     </div>
     """
   end
@@ -173,190 +105,189 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    membership = Personal.get_membership!(id, [:contact, :club, :department, :group, contracts: [:fee]])
-
-    departments = if membership.department == nil do [] else [membership.department] end
-    groups = if membership.group == nil do [] else [membership.group] end
-    contacts = [membership.contact]
-
-    IO.puts("departments #{departments}, groups #{groups}, contacts #{contacts}")
+    membership = Personal.get_membership!(id, [:contact, club: [:all_fees], department: [:fees], group: [:fees], contracts: [:fee]])
 
     socket
     |> assign(:page_title, "Mitgliedschaft bearbeiten")
-    |> assign(:club, membership.club)
-    |> assign(:selected_contact, membership.contact)
-    |> assign(:selected_department, membership.department)
-    |> assign(:selected_group, membership.group)
-    |> assign(:selected_fee, membership.fee)
-    |> assign(:departments, departments)
-    |> assign(:groups, groups)
-    |> assign(:contacts, contacts)
-    |> assign(:fees, [])
-    |> assign(:allow_save, false)
+    |> assign(:mode, "edit")
+    |> assign(:membership, membership)
+    |> init_form(membership, membership.club)
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
     club = Organization.get_club!(club_id, :all_fees)
 
-    departments = Organization.list_departments(club_id)
-    groups = Organization.list_groups(club_id)
-    contacts = Personal.list_contacts(club_id)
-
     socket
     |> assign(:page_title, "Mitgliedschaft erstellen")
-    |> assign(:selected_contact, nil)
-    |> assign(:selected_department, nil)
-    |> assign(:selected_group, nil)
-    |> assign(:selected_fee, nil)
+    |> assign(:mode, "create")
+    |> init_form(nil, club)
+  end
+
+  defp init_form(socket, membership, club) do
+    {contact, group, department, fee, start_date} = if membership == nil do
+      {nil, nil, nil, nil, nil}
+    else
+      {membership.contact, membership.group, membership.department, nil, membership.start_date}
+    end
+
+    departments = Organization.list_departments(club.id)
+    contacts = Personal.list_contacts(club.id)
+
+    form = to_form(
+      %{"contact" => get_id(contact),
+        "department"=> get_id(department),
+        "group"=> get_id(group),
+        "fee"=> get_id(fee),
+        "start_date"=> start_date}
+    )
+
+    assign(socket, :form, form)
     |> assign(:club, club)
     |> assign(:contacts, contacts)
     |> assign(:departments, departments)
-    |> assign(:groups, groups)
-    |> assign(:fees, [])
-    |> assign(:allow_save, false)
+    |> assign(:groups, [])
+    |> assign(:selected_contact, contact)
+    |> assign(:selected_department, department)
+    |> assign(:selected_group, group)
+    |> assign(:selected_fee, fee)
+    |> assign(:start_date, start_date)
+    |> update_fee_options()
   end
 
-
   @impl true
-  def handle_event("department_selection_selected", %{"option_id" => department_id}, socket) do
-    socket = if socket.assigns.selected_department != nil && socket.assigns.selected_department.id == department_id do
-        # same department was selected again -> ignore
-        socket
-      else
-        department = Organization.get_department!(department_id, :fees)
-        groups = Organization.list_groups(department_id)
-        socket
-        |> assign(:selected_department, department)
-        |> assign(:groups, groups)
-        |> update_fees()
-      end
-
+  def handle_event("validate", %{"contact" => contact_id, "department" => department_id, "group" => group_id, "fee" => fee_id, "start_date" => start_date}, socket) do
+    socket = check_socket_assignments(socket, contact_id, department_id, group_id, fee_id, start_date)
+           |> validate()
     {:noreply, socket}
   end
 
   @impl true
-  def handle_event("department_selection_deselected", %{}, socket) do
-    socket = if socket.assigns.selected_department == nil do
-      socket
-    else
-      socket
-      |> assign(:selected_department, nil)
-      |> update_fees()
-    end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("group_selection_selected", %{"option_id" => group_id}, socket) do
-    socket = if socket.assigns.selected_group != nil && socket.assigns.selected_group.id == group_id do
-      # same group was selected again -> ignore
-      socket
-    else
-      group = Organization.get_group!(group_id, :fees)
-      socket
-      |> assign(:selected_group, group)
-      |> update_fees()
-    end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("group_selection_deselected", %{}, socket) do
-    socket = if socket.assigns.selected_group == nil do
-      socket
-    else
-      socket
-      |> assign(:selected_group, nil)
-      |> update_fees()
-    end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("contact_selection_selected", %{"option_id" => contact_id}, socket) do
-    socket = if socket.assigns.selected_contact != nil && socket.assigns.selected_contact.id == contact_id do
-      # same contact was selected again -> ignore
-      socket
-    else
-      contact = Personal.get_contact!(contact_id);
-      socket
-      |> assign(:selected_contact, contact)
-      |> update_fees()
-    end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("contact_selection_deselected", %{}, socket) do
-    socket = if socket.assigns.selected_contact == nil do
-      socket
-    else
-      socket
-      |> assign(:selected_contact, nil)
-      |> update_fees()
-    end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("fee_selection_selected", %{"option_id" => fee_id}, socket) do
-    fee = Finance.get_fee!(fee_id)
-    socket = socket
-             |> assign(:selected_fee, fee)
+  def handle_event("save", %{"contact" => contact_id, "department" => department_id, "group" => group_id, "fee" => fee_id, "start_date" => start_date}, socket) do
+    socket = check_socket_assignments(socket, contact_id, department_id, group_id, fee_id, start_date)
              |> validate()
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("fee_selection_deselected", %{}, socket) do
-    socket = if socket.assigns.selected_fee == nil do
-      socket
+    errors = socket.assigns.form.errors
+    if length(errors) > 0 do
+      {:noreply, socket}
     else
-      socket
-      |> assign(:selected_fee, nil)
-      |> validate()
+      create_new_membership(socket)
     end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("save", %{}, socket) do
-    club = socket.assigns.club
-    contact = socket.assigns.contact
-    fee = socket.assigns.selected_fee
-    contract = Legal.create_contract(%{
-      club_id: club.id,
-      contact_id: contact.id,
-      fee_id: contact.fee,
-      signing_date: ~D[2023-02-01],
-      start_date: ~D[2023-03-01]
-    })
-
-    {:noreply,
-      socket
-      |> put_flash(:info, "Mitglied erfolgreich gelöscht")
-      |> push_navigate(to: "/clubs/#{contact.club_id}/contacts")}
   end
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    contact = Personal.get_contact!(id)
-    {:ok, _} = Personal.delete_contact(contact)
+    membership = Personal.get_membership!(id)
+    {:ok, _} = Personal.delete_membership(membership);
 
     {:noreply,
-     socket
-     |> put_flash(:info, "Mitglied erfolgreich gelöscht")
-     |> push_navigate(to: "/clubs/#{contact.club_id}/contacts")}
+      socket
+      |> put_flash(:info, "Mitgliedschaft erfolgreich gelöscht")
+      |> push_navigate(to: "/clubs/#{membership.club_id}/memberships")}
   end
 
-  defp update_fees(socket) do
+  defp create_new_membership(socket) do
+    contact = socket.assigns.selected_contact
+    club = socket.assigns.club
+    department = socket.assigns.selected_department
+    group = socket.assigns.selected_group
+    fee = socket.assigns.selected_fee
+    start_date = socket.assigns.start_date
+
+    contract_attrs = %{
+      club_id: club.id,
+      contact_id: contact.id,
+      fee_id: get_id(fee),
+      signing_date: Date.utc_today,
+      start_date: start_date,
+      clubs: as_list(club),
+      departments: as_list(department),
+      groups: as_list(group)
+    }
+    case Legal.create_contract(contract_attrs) do
+      {:ok, %Contract{} = contract} ->
+        membership_attrs = %{
+          club_id: club.id,
+          department_id: get_id(department),
+          group_id: get_id(group),
+          contact_id: contact.id,
+          state: "active",
+          start_date: start_date,
+          contracts: [contract]
+        }
+        case Personal.create_membership(membership_attrs) do
+          {:ok, %Membership{} = membership} ->
+            IO.puts("created membership #{membership.id}")
+            socket = socket
+                     |> put_flash(:info, "Mitgliedschaft wurde angelegt")
+                     |> push_navigate(to: "/memberships/#{membership.id}/edit")
+            {:noreply, socket}
+          {:error, %Ecto.Changeset{} = changeset} ->
+            IO.puts("could not create membership")
+            IO.inspect(changeset)
+            {:noreply, socket}
+        end
+      {:error, %Ecto.Changeset{} = changeset} ->
+        IO.puts("could not create contract")
+        IO.inspect(changeset)
+        {:noreply, socket}
+    end
+  end
+
+  defp check_socket_assignments(socket, contact_id, department_id, group_id, fee_id, start_date) do
+    socket
+    |> update_selected_contact(contact_id)
+    |> update_selected_department_and_group_options(department_id)
+    |> update_selected_group(group_id)
+    |> update_selected_fee(fee_id)
+    |> assign(:start_date, start_date)
+    |> update_fee_options()
+  end
+
+  defp update_selected_contact(socket, contact_id) do
+    cond do
+      contact_id == "" -> assign(socket, :selected_contact, nil)
+      socket.assigns.selected_contact == nil || socket.assigns.selected_contact.id != contact_id ->
+        assign(socket, :selected_contact, Personal.get_contact!(contact_id))
+      true -> socket
+    end
+  end
+
+  defp update_selected_department_and_group_options(socket, department_id) do
+    cond do
+      department_id == "" && socket.assigns.selected_department == nil -> socket
+      department_id == "" ->
+        socket
+        |> assign(:selected_department, nil)
+        |> assign(:groups, [])
+      socket.assigns.selected_department == nil || socket.assigns.selected_department.id != department_id ->
+        department = Organization.get_department!(department_id, :fees)
+        groups = Organization.list_groups(department.id)
+        socket
+        |> assign(:selected_department, department)
+        |> assign(:groups, groups)
+      true -> socket
+    end
+  end
+
+  defp update_selected_group(socket, group_id) do
+    cond do
+      group_id == "" -> assign(socket, :selected_group, nil)
+      socket.assigns.selected_group == nil || socket.assigns.selected_group.id != group_id ->
+        groups = Organization.get_group!(group_id, :fees)
+        assign(socket, :selected_group, groups)
+      true -> socket
+    end
+  end
+
+  defp update_selected_fee(socket, fee_id) do
+    cond do
+      fee_id == "" -> assign(socket, :selected_fee, nil)
+      socket.assigns.selected_fee == nil || socket.assigns.selected_fee.id != fee_id ->
+        assign(socket, :selected_fee, Finance.get_fee!(fee_id))
+      true -> socket
+    end
+  end
+
+  defp update_fee_options(socket) do
     group = socket.assigns.selected_group
     department = socket.assigns.selected_department
     club = socket.assigns.club
@@ -370,40 +301,119 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
       true -> Finance.list_contract_fee_options(club, contact.id)
     end
 
-    # update selected_fee to be within matching fees
-    selected_fee = socket.assigns.selected_fee
-    selected_fee = cond do
-      selected_fee == nil -> nil
-      contact == nil -> selected_fee # fee was selected but no contact
-                                      # -> user might be switching between contacts
-                                      # -> keep selected fee until new contact is selected
-      Enum.find(fees, fn fee -> fee.id == selected_fee.id || fee.name == selected_fee.name end) -> selected_fee
-      true ->
-        IO.puts("remove selected fee #{selected_fee.name}")
-        IO.inspect(fees)
-        nil
-    end
-
     socket
     |> assign(:fees, fees)
-    |> assign(:selected_fee, selected_fee)
-    |> validate()
   end
 
+
   defp validate(socket) do
-    group = socket.assigns.selected_group
     department = socket.assigns.selected_department
+    group = socket.assigns.selected_group
     contact = socket.assigns.selected_contact
+    club = socket.assigns.club
     fee = socket.assigns.selected_fee
-    allow_save = cond do
-      contact == nil -> false
-      department != nil || group != nil -> true # allow memberships in sub-organisations without fee
-      fee == nil -> false
-      true -> true
+    start_date = socket.assigns.start_date
+
+    contract_object = cond do
+      group != nil -> group
+      department != nil -> department
+      club == nil -> raise "no contract_object set for new membership. At least club should always be assigned"
+      true -> club;
     end
 
+    duplicated_memberships = if contact == nil do [] else Personal.get_memberships_of_contact_in(contact.id, contract_object) end
+    is_duplicated_memberships = length(duplicated_memberships) > 0
+
+    errors = []
+
+    errors = case is_contact_valid(contact,is_duplicated_memberships, contract_object) do
+      {false, msg} -> [{:contact, {msg, []}} | errors]
+      {true,_} -> errors
+    end
+    errors = case is_fee_valid(fee, contact, contract_object, club) do
+      {false, msg} -> [{:fee, {msg, []}} | errors]
+      {true,_} ->  errors
+    end
+    errors = case is_start_date_valid(start_date) do
+      {false, msg} -> [{:start_date, {msg, []}} | errors]
+      {true,_} -> errors
+    end
+
+    form = to_form(
+      %{"contact" => get_id(contact),
+        "department"=> get_id(department),
+        "group"=> get_id(group),
+        "fee"=> get_id(fee),
+        "start_date"=> start_date},
+      action: :validate,
+      errors: errors
+    )
+
     socket
-    |> assign(:allow_save, allow_save)
+    |> assign(:allow_save, length(errors) == 0)
+    |> assign(:form, form)
+  end
+
+
+  defp is_contact_valid(contact, is_duplicated_memberships, contract_object) do
+    cond do
+      contact == nil -> {false, "Bitte einen Kontakt auswählen"}
+      is_duplicated_memberships -> {false, "#{contact.name} ist bereits Mitglied in #{contract_object.name}"}
+      true -> {true, nil}
+    end
+  end
+
+  defp is_start_date_valid(start_date) do
+    cond do
+      start_date == "" -> {false, "Bitte ein Datum auswählen"}
+      true -> {true, nil}
+    end
+  end
+
+  defp is_fee_valid(fee, contact, contract_object, %Club{} = club) do
+    cond do
+      contact == nil || contract_object == nil ->
+        # not an issue of the fee-field but prevents further validation
+        {true, nil}
+      fee == nil && contract_object.id == club.id ->
+        {false, "Für die Mitgliedschaft im Gesamtverein muss eine Gebühr ausgewählt werden"}
+      fee == nil ->
+        # is a fee really required for memberships in departments or groups
+        {false, "Bitte eine Gebühr auswählen"}
+      true ->
+        fee_options = Finance.list_contract_fee_options(contract_object, contact.id)
+        cond do
+          Enum.any?(fee_options, fn f -> f.id == fee.id end) == false ->
+            {false, "Die ausgewählte Gebühr ist bei der gegebenen Kombination nicht möglich"}
+          true -> {true, nil}
+        end
+    end
+  end
+
+  defp get_id(object) do
+    if object == nil do
+      nil
+    else
+      object.id
+    end
+  end
+
+  defp as_list(object) do
+    if object == nil do
+      []
+    else
+      [object]
+    end
+  end
+
+  def map_contact(contact) do
+    if (Contact.is_person?(contact)) do
+      age_in_years = Contact.age_in_years(contact)
+      gender = get_key_for_value(Contact.get_valid_genders(), contact.person_gender)
+      "#{contact.name} (#{age_in_years}, #{gender})"
+    else
+      contact.name
+    end
   end
 
 

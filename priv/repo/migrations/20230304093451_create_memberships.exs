@@ -10,6 +10,7 @@ defmodule Sportyweb.Repo.Migrations.CreateMemberships do
       add :contact_id, references(:contacts, on_delete: :delete_all, type: :binary_id), null: false
       add :group_id, references(:groups, on_delete: :delete_all, type: :binary_id), null: true
       add :department_id, references(:departments, on_delete: :delete_all, type: :binary_id), null: true
+      add :start_date, :date, null: false
 
       timestamps(type: :utc_datetime)
     end

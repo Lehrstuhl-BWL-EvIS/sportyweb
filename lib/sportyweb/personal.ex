@@ -9,6 +9,9 @@ defmodule Sportyweb.Personal do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.Membership
+  alias Sportyweb.Organization.Club
+  alias Sportyweb.Organization.Department
+  alias Sportyweb.Organization.Group
 
   @doc """
   Returns the list of contacts.
@@ -354,6 +357,25 @@ defmodule Sportyweb.Personal do
     Membership
     |> Repo.get!(id)
     |> Repo.preload(preloads)
+  end
+
+  def get_memberships_of_contact(contact_id) do
+    query = from(m in Membership, where: m.contact_id == ^contact_id)
+    Repo.all(query)
+  end
+  def get_memberships_of_contact_in(contact_id, %Club{} = club) do
+    query = from(m in Membership, where: m.contact_id == ^contact_id and m.club_id == ^club.id
+                                       and is_nil(m.department_id) and is_nil(m.group_id))
+    Repo.all(query)
+  end
+  def get_memberships_of_contact_in(contact_id, %Department{} = department) do
+    query = from(m in Membership, where: m.contact_id == ^contact_id and m.department_id == ^department.id
+                                         and is_nil(m.group_id))
+    Repo.all(query)
+  end
+  def get_memberships_of_contact_in(contact_id, %Group{} = group) do
+    query = from(m in Membership, where: m.contact_id == ^contact_id and m.group_id == ^group.id)
+    Repo.all(query)
   end
 
 

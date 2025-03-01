@@ -969,6 +969,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
               club_id: club.id,
               contact_id: contact.id,
               contracts: [contract],
+              start_date: contract.start_date,
               state: Membership.get_valid_states()
                      |> Enum.map(fn state -> state[:value] end)
                      |> Enum.random(),
@@ -996,6 +997,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
                   contact_id: contact.id,
                   department_id: department.id,
                   contracts: [department_contract],
+                  start_date: department_contract.start_date,
                   state: Membership.get_valid_states()
                          |> Enum.map(fn state -> state[:value] end)
                          |> Enum.random(),
@@ -1023,6 +1025,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
                       contact_id: contact.id,
                       group_id: group.id,
                       contracts: [group_contract],
+                      start_date: group_contract.start_date,
                       state: Membership.get_valid_states()
                              |> Enum.map(fn state -> state[:value] end)
                              |> Enum.random(),

@@ -207,16 +207,16 @@ defmodule Sportyweb.Personal.Contact do
     find_most_relevant(contact.postal_addresses)
   end
 
-  defp find_most_relevant(postal_addresses) do
-    numberOfAddresses = length(postal_addresses)
+  defp find_most_relevant(information_list) do
+    number_of_information = length(information_list)
 
     cond do
-      numberOfAddresses == 1 -> Enum.at(postal_addresses, 0)
+      number_of_information == 1 -> Enum.at(information_list, 0)
       true ->
-        main_address = Enum.find(postal_addresses, fn add -> add.is_main end)
+        main_information = Enum.find(information_list, fn add -> add.is_main end)
         cond do
-          main_address != nil -> main_address
-          true -> Enum.sort_by(postal_addresses, fn add -> add.updated_at end, :desc)
+          main_information != nil -> main_information
+          true -> Enum.sort_by(information_list, fn add -> add.updated_at end, :desc)
                   |> Enum.at(0)
         end
     end

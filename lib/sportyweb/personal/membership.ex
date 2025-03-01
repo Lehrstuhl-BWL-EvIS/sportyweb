@@ -17,6 +17,7 @@ defmodule Sportyweb.Personal.Membership do
     belongs_to :group, Group
     has_many :contracts, Contract
     field :state, :string
+    field :start_date, :date, default: nil
 
     timestamps(type: :utc_datetime)
   end
@@ -52,12 +53,16 @@ defmodule Sportyweb.Personal.Membership do
          [
            :club_id,
            :contact_id,
-           :state
+           :department_id,
+           :group_id,
+           :state,
+           :start_date
          ],
          empty_values: ["", nil])
     |> validate_required([
       :club_id,
       :contact_id,
+      :start_date,
       :state
     ])
     |> validate_inclusion(
