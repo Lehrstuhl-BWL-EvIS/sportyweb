@@ -54,7 +54,7 @@ Mitgliedschaften
         <.table
         id="memberships"
         rows={@streams.memberships}
-        row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}") end}
+        row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}/edit") end}
         >
             <:col :let={{_id, membership}} label="in">
                 {format_string_field(Membership.get_smallest_community(membership).name)}
@@ -76,7 +76,7 @@ Mitgliedschaften
             </:col>
 
             <:action :let={{_id, membership}}>
-                <.link navigate={~p"/memberships/#{membership}"}>Anzeigen</.link>
+                <.link navigate={~p"/memberships/#{membership}/edit"}>Bearbeiten</.link>
             </:action>
         </.table>
     <% else %>

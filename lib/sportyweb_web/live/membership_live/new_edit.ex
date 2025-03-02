@@ -4,8 +4,6 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   alias Sportyweb.Organization
   alias Sportyweb.Organization.Club
   alias Sportyweb.Finance
-  alias Sportyweb.Legal
-  alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.Membership
@@ -33,7 +31,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
                   field={@form[:contact]}
                   type="select"
                    label={"Kontakt (#{length(@contacts)})"}
-                  options={@contacts |> Enum.map(&{map_contact(&1), &1.id})}
+                  options={@contacts |> Enum.map(&{print_contact(&1), &1.id})}
                   prompt="Bitte auswählen"
                 />
               </div>
@@ -77,12 +75,14 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
             </.input_grid>
           </.input_grids>
           <:actions>
-            <.button phx-disable-with="Speichern...">Speichern</.button>
-            <.cancel_button navigate={"/clubs/#{@club.id}/memberships"}>Abbrechen</.cancel_button>
+            <div>
+              <.button :if={length(@form.errors) == 0} phx-disable-with="Speichern...">Speichern</.button>
+              <.cancel_button navigate={"/clubs/#{@club.id}/memberships"}>Abbrechen</.cancel_button>
+            </div>
             <.button
               :if={@mode == "edit"}
               class="bg-rose-700 hover:bg-rose-800"
-              phx-click={JS.push("delete", value: %{id: @membership.id})}
+              phx-click={JS.push("delete", value: %{id: @edited_membership.id})}
               data-confirm="Unwiderruflich löschen?"
             >
               Löschen
@@ -110,8 +110,9 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     socket
     |> assign(:page_title, "Mitgliedschaft bearbeiten")
     |> assign(:mode, "edit")
-    |> assign(:membership, membership)
+    |> assign(:edited_membership, membership)
     |> init_form(membership, membership.club)
+    |> validate()
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
@@ -120,7 +121,9 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     socket
     |> assign(:page_title, "Mitgliedschaft erstellen")
     |> assign(:mode, "create")
+    |> assign(:edited_membership, nil)
     |> init_form(nil, club)
+    |> validate()
   end
 
   defp init_form(socket, membership, club) do
@@ -192,44 +195,42 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     fee = socket.assigns.selected_fee
     start_date = socket.assigns.start_date
 
+    contract_object = cond do
+      group != nil -> group
+      department != nil -> department
+      true -> club
+    end
+
     contract_attrs = %{
       club_id: club.id,
       contact_id: contact.id,
       fee_id: get_id(fee),
       signing_date: Date.utc_today,
       start_date: start_date,
-      clubs: as_list(club),
-      departments: as_list(department),
-      groups: as_list(group)
     }
-    case Legal.create_contract(contract_attrs) do
-      {:ok, %Contract{} = contract} ->
-        membership_attrs = %{
-          club_id: club.id,
-          department_id: get_id(department),
-          group_id: get_id(group),
-          contact_id: contact.id,
-          state: "active",
-          start_date: start_date,
-          contracts: [contract]
-        }
-        case Personal.create_membership(membership_attrs) do
-          {:ok, %Membership{} = membership} ->
-            IO.puts("created membership #{membership.id}")
-            socket = socket
-                     |> put_flash(:info, "Mitgliedschaft wurde angelegt")
-                     |> push_navigate(to: "/memberships/#{membership.id}/edit")
-            {:noreply, socket}
-          {:error, %Ecto.Changeset{} = changeset} ->
-            IO.puts("could not create membership")
-            IO.inspect(changeset)
-            {:noreply, socket}
-        end
+
+    membership_attrs = %{
+      club_id: club.id,
+      department_id: get_id(department),
+      group_id: get_id(group),
+      contact_id: contact.id,
+      state: "active",
+      start_date: start_date,
+    }
+
+    case Personal.create_membership_and_contract(membership_attrs, contract_attrs, contract_object) do
+      {:ok, %Membership{} = membership} ->
+        IO.puts("created membership #{membership.id}")
+        socket = socket
+                 |> put_flash(:info, "Mitgliedschaft wurde angelegt")
+                 |> push_navigate(to: "/memberships/#{membership.id}/edit")
+        {:noreply, socket}
       {:error, %Ecto.Changeset{} = changeset} ->
-        IO.puts("could not create contract")
+        IO.puts("could not create membership")
         IO.inspect(changeset)
         {:noreply, socket}
     end
+
   end
 
   defp check_socket_assignments(socket, contact_id, department_id, group_id, fee_id, start_date) do
@@ -307,6 +308,8 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
 
 
   defp validate(socket) do
+    edited_membership = socket.assigns.edited_membership
+
     department = socket.assigns.selected_department
     group = socket.assigns.selected_group
     contact = socket.assigns.selected_contact
@@ -322,6 +325,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     end
 
     duplicated_memberships = if contact == nil do [] else Personal.get_memberships_of_contact_in(contact.id, contract_object) end
+    duplicated_memberships = Enum.filter(duplicated_memberships, fn m -> edited_membership == nil || edited_membership.id != m.id end)
     is_duplicated_memberships = length(duplicated_memberships) > 0
 
     errors = []
@@ -398,15 +402,8 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     end
   end
 
-  defp as_list(object) do
-    if object == nil do
-      []
-    else
-      [object]
-    end
-  end
 
-  def map_contact(contact) do
+  def print_contact(contact) do
     if (Contact.is_person?(contact)) do
       age_in_years = Contact.age_in_years(contact)
       gender = get_key_for_value(Contact.get_valid_genders(), contact.person_gender)
