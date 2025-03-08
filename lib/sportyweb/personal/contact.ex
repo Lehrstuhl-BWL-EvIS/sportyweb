@@ -17,12 +17,16 @@ defmodule Sportyweb.Personal.Contact do
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
   alias Sportyweb.Polymorphic.PostalAddress
+  alias Sportyweb.Personal.ContactDocument
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "contacts" do
     belongs_to :club, Club
     has_many :contracts, Contract
+    has_many :contact_documents, ContactDocument
+    has_many :documents, through: [:contact_documents, :document]
+
     many_to_many :contact_groups, ContactGroup, join_through: ContactGroupContact
     many_to_many :emails, Email, join_through: ContactEmail
     many_to_many :financial_data, FinancialData, join_through: ContactFinancialData

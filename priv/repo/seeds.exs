@@ -133,6 +133,11 @@ if Mix.env() in [:dev] do
   })
 
   Accounts.register_user(%{
+    email: "dominik.both@fernuni-hagen.de",
+    password: "ORqZfa42gf2ds77b"
+  })
+
+  Accounts.register_user(%{
     email: "TesterSportywebAdmin@test.de",
     password: "testtest"
   })
