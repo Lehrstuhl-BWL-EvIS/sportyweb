@@ -59,6 +59,7 @@ defmodule Sportyweb.Personal.Membership do
            :start_date
          ],
          empty_values: ["", nil])
+    |> cast_assoc(:contracts)
     |> validate_required([
       :club_id,
       :contact_id,
