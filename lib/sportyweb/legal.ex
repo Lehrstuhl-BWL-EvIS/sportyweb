@@ -56,6 +56,16 @@ defmodule Sportyweb.Legal do
     Repo.preload(list_contracts(club_id), preloads)
   end
 
+  def list_contracts_of_contact(contact_id, preloads, not_membership_only) do
+    query = if (not_membership_only) do
+      from(c in Contract, where: c.contact_id == ^contact_id and is_nil(c.membership_id))
+      else
+      from(c in Contract, where: c.contact_id == ^contact_id)
+    end
+    Repo.all(query)
+    |> Repo.preload(preloads)
+  end
+
   @doc """
   Gets a single contract.
 

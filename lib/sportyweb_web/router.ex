@@ -153,7 +153,6 @@ defmodule SportywebWeb.Router do
       live "/clubs/:club_id/members", MemberLive.Index, :index
       live "/clubs/:club_id/members/new", MemberLive.NewEdit, :new
       live "/members/:id/edit", MemberLive.NewEdit, :edit
-      live "/members/:id", MemberLive.Show, :show
 
       # Locations (Each belongs to a club)
 

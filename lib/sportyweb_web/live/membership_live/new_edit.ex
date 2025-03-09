@@ -74,7 +74,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
               <.input_grid>
                 <div class="col-span-12 md:col-span-6">
                   <.header level="5" class="mt-2">
-                    Verträge
+                    Beitrag
                   </.header>
                 </div>
                 <div class="col-span-12 md:col-span-2">
@@ -92,7 +92,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
             <:actions>
               <div>
                 <.button phx-disable-with="Speichern...">Speichern</.button>
-                <.cancel_button>Abbrechen</.cancel_button>
+                <.cancel_button navigate={if @membership.id, do: ~p"/memberships/#{@membership}", else: ~p"/clubs/#{@club}/memberships"}>Abbrechen</.cancel_button>
               </div>
             </:actions>
           </.simple_form>
@@ -163,7 +163,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    membership = Personal.get_membership!(id, [:contract, club: [:all_fees], department: [:fees], group: [:fees], contracts: [:fee]])
+    membership = Personal.get_membership!(id, [:contact, club: [:all_fees], department: [:fees], group: [:fees], contracts: [:fee]])
     departments = if membership.department != nil do
       [membership.department]
      else

@@ -17,7 +17,7 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
         id="contacts"
         rows={@contacts}
         sorting={@sorting}
-        row_click={fn {_id, contact} -> if @mode == "members", do: JS.navigate(~p"/members/#{contact}"), else: JS.navigate(~p"/contacts/#{contact}") end}
+        row_click={fn {_id, contact} -> JS.navigate(~p"/contacts/#{contact}") end}
         >
         <:col :let={{_id, contact}} label="Art" sortable>
           <%= if contact.type == "person" do %>
@@ -69,11 +69,7 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
         </:col>
 
         <:action :let={{_id, contact}}>
-          <%= if @mode == "members" do %>
-            <.link navigate={~p"/members/#{contact}"}>Anzeigen</.link>
-          <% else %>
             <.link navigate={~p"/contacts/#{contact}"}>Anzeigen</.link>
-          <% end %>
         </:action>
       </.table>
 

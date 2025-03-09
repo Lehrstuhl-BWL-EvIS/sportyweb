@@ -11,7 +11,7 @@ defmodule SportywebWeb.MembershipLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    membership  = Personal.get_membership!(id, [:club, :contact, :department, :group, :contracts]);
+    membership  = Personal.get_membership!(id, [:club, :contact, :department, :group, contracts: [:fee]]);
 
     contact_name = membership.contact.name
     community_name = Membership.get_smallest_community(membership).name
@@ -19,7 +19,7 @@ defmodule SportywebWeb.MembershipLive.Show do
      socket
      |> assign(
        :page_title,
-       "Mitgliedschaft von (#{contact_name} in #{community_name})"
+       "Mitgliedschaft von #{contact_name} in #{community_name}"
      )
      |> assign(:membership, membership)
      |> assign(:community_name, community_name)

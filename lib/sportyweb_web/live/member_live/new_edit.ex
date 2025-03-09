@@ -20,7 +20,7 @@ defmodule SportywebWeb.MemberLive.NewEdit do
         title={@page_title}
         action={@live_action}
         contact={@contact}
-        navigate={if @contact.id, do: ~p"/members/#{@contact}", else: ~p"/clubs/#{@club}/members"}
+        navigate={if @contact.id, do: ~p"/contacts/#{@contact}", else: ~p"/clubs/#{@club}/members"}
       />
     </div>
     """
