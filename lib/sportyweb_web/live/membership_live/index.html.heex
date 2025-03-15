@@ -8,21 +8,66 @@
 </.header>
 
 <.card>
-    <div class="overflow-auto max-h-[500px]">
+    <div class="pb-4">
+        <.input_grids>
+            <.input_grid>
+                <div class="col-span-5">
+                    <.input name="my-input" value={@filters[Name]} label="Name" phx-keyup={JS.push("quick_filter_changed", value: %{column_label: "Name"})}/>
+                </div>
+                
+                <div class="col-span-4">
+                    <.input name="department-options" 
+                    type="select" 
+                    value={@filters[In]} 
+                    options={@departments |> Enum.map(&{&1.name, &1.id})}
+                    prompt="-"
+                    label="Abteilung" 
+                    phx-click={JS.push("quick_filter_changed", value: %{column_label: "In"})}
+                    />
+                </div>
+
+                <div class="col-span-3">
+                    <.input name="state-options" 
+                    type="select" 
+                    value={@filters[In]} 
+                    options={Membership.get_valid_states()}
+                    prompt="-"
+                    label="Status" 
+                    phx-click={JS.push("quick_filter_changed", value: %{column_label: "Status"})}
+                    />
+                </div>
+            </.input_grid>
+        </.input_grids>
+    </div>
+
+    <div class="overflow-auto max-w-full">
         <.table
         id="memberships"
         rows={@streams.memberships}
         sorting={@sorting}
+        filters={@filters}
         row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}") end}
         >
-            <:col :let={{_id, membership}} label="Name">
+            <:col :let={{_id, membership}} label="Name" sortable filterable>
                 {format_string_field(membership.contact.name)}
             </:col>
-            <:col :let={{_id, membership}} label="Name">
+            <:col :let={{_id, membership}} label="Vorname" sortable filterable>
+                {format_string_field(membership.contact.person_first_name_1)}
+            </:col>
+            <:col :let={{_id, membership}} label="Nachname" sortable filterable>
+                {format_string_field(membership.contact.person_last_name)}
+            </:col>
+            <:col :let={{_id, membership}} label="In" sortable filterable>
                 {format_string_field(Membership.get_smallest_community(membership).name)}
             </:col>
-            <:col :let={{_id, membership}} label="Status" sortable>
-                {format_string_field(membership.state)}
+            <:col :let={{_id, membership}} label="Abteilung" sortable>
+                {format_string_field(if membership.department != nil do membership.department else nil end)}
+            </:col>
+            <:col :let={{_id, membership}} label="Gruppe" sortable filterable>
+                {format_string_field(if membership.group != nil do membership.group else nil end)}
+            </:col>
+            <:col :let={{_id, membership}} label="Status" sortable filterable>
+                {get_key_for_value(Membership.get_valid_states(), membership.state)}
             </:col>
             <:col :let={{_id, membership}} label="Verträge">
                 <div :for={contract <- membership.contracts} >
@@ -55,11 +100,5 @@
                 <.link navigate={~p"/memberships/#{membership}"}>Kontaktdaten bearbeiten</.link>
             </:action>
         </.table>
-
-        <%= if !Enum.any?(@streams.memberships.inserts) do %>
-        <p>
-            Bisher wurde noch kein Kontakt erstellt.
-        </p>
-        <% end %>
     </div>
 </.card>

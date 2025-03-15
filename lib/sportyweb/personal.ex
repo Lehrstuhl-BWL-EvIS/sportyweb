@@ -312,15 +312,20 @@ defmodule Sportyweb.Personal do
       query = from(m in Membership, where: m.club_id == ^club_id)
       Repo.all(query)
   end
-  def list_memberships(club_id, order_by) do
+  def list_memberships(club_id, order_by, filters) do
+    query = from(m in Membership, where: m.club_id == ^club_id)
     query = cond do
-      order_by == nil -> from(m in Membership, where: m.club_id == ^club_id, order_by: m.state)
-      true -> from(m in Membership, where: m.club_id == ^club_id, order_by: ^order_by)
+      order_by == nil -> order_by(query, asc: :state)
+      true -> order_by(query, ^order_by)
+    end
+    query = cond do
+      filters == nil || length(filters) == 0 -> query
+      true -> where(query, ^filters)
     end
     Repo.all(query)
   end
-  def list_memberships(club_id, order_by, preloads) do
-    list_memberships(club_id, order_by)
+  def list_memberships(club_id, order_by, filters, preloads) do
+    list_memberships(club_id, order_by, filters)
     |> Repo.preload(preloads)
   end
 

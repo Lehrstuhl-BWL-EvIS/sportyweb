@@ -624,7 +624,40 @@ defmodule SportywebWeb.CoreComponents do
     """
   end
 
-  def next_sort_direction(current_direction) do
+  attr :column_label, :string, required: true
+  attr :current_filter, :any, default: nil
+  attr :id, :string, required: true
+
+  defp column_filter_dialog(assigns) do
+    assigns =
+      assign(assigns,
+        form:
+          to_form(%{
+            "column_label" => assigns.column_label,
+            "#{assigns.column_label}" => assigns.current_filter
+          })
+      )
+
+    ~H"""
+    <.modal id={@id}>
+      Spalte {@column_label} filtern
+      <.simple_form for={@form} id="club-form" phx-submit="apply_filter">
+        <.input field={@form["#{assigns.column_label}"]} type="text" label="Filtern nach" />
+        <.button phx-click={hide_modal(@id)}>
+          Filtern
+        </.button>
+        <.button type="button"
+            :if={@current_filter != nil}
+        class="bg-rose-700 hover:bg-rose-800"
+         phx-click={hide_modal(@id) |> JS.push("remove_filter", value: %{column: assigns.column_label})}>
+         Zurücksetzen
+         </.button>
+      </.simple_form>
+    </.modal>
+    """
+  end
+
+  defp next_sort_direction(current_direction) do
     cond do
       current_direction == "asc" -> "desc"
       current_direction == "desc" -> nil
@@ -647,6 +680,7 @@ defmodule SportywebWeb.CoreComponents do
   attr :class, :string, default: nil
   attr :rows, :list, required: true
   attr :sorting, :any, default: %{}
+  attr :filters, :any, default: %{}
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
 
@@ -657,6 +691,7 @@ defmodule SportywebWeb.CoreComponents do
   slot :col, required: true do
     attr :label, :string
     attr :sortable, :boolean, required: false
+    attr :filterable, :boolean, required: false
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -673,16 +708,20 @@ defmodule SportywebWeb.CoreComponents do
         <thead class="text-sm text-left leading-6 text-zinc-500 bg-white sticky top-0 z-10">
           <tr>
             <th :for={col <- @col}
-              phx-click={if col[:sortable] do JS.push("sort-by-column", value: %{col[:label] => next_sort_direction(@sorting[col[:label]])}) end}
+              phx-click={if col[:sortable] do JS.push("apply_sorting", value: %{col[:label] => next_sort_direction(@sorting[col[:label]])}) end}
               class="p-0 pb-4 pr-6 font-normal">
               <div class="flex items-center">
                 {col[:label]}
-                <.icon :if={col[:sortable] && @sorting[col[:label]]!="desc" && @sorting[col[:label]]!="asc" }
-                    name="hero-arrows-up-down" class="h-3 w-3" />
-                <.icon :if={col[:sortable] && @sorting[col[:label]]=="desc"}
-                    name="hero-arrow-up" class="h-3 w-3 text-amber-500" />
-                <.icon :if={col[:sortable] && @sorting[col[:label]]=="asc"}
-                    name="hero-arrow-down" class="h-3 w-3 text-amber-500" />
+                <div :if={col[:sortable]}>
+                  <.icon :if={@sorting[col[:label]] != "desc" && @sorting[col[:label]] != "asc"} name="hero-arrows-up-down" class="h-3 w-3" />
+                  <.icon :if={@sorting[col[:label]] == "desc"} name="hero-arrow-up" class="h-3 w-3 text-amber-500" />
+                  <.icon :if={@sorting[col[:label]] == "asc"} name="hero-arrow-down" class="h-3 w-3 text-amber-500" />
+                </div>
+                <div :if={col[:filterable]} phx-click={show_modal("#{@id}-#{col[:label]}")}>
+                  <.column_filter_dialog column_label={col[:label]} id={"#{@id}-#{col[:label]}"} current_filter={@filters[col[:label]]} />
+                  <.icon :if={@filters[col[:label]] != nil} name="hero-funnel" class="h-3 w-3 text-amber-500" />
+                  <.icon :if={@filters[col[:label]] == nil} name="hero-funnel" class="h-3 w-3" />
+                </div>
               </div>
             </th>
             <th :if={@action != []} class="relative p-0 pb-4">

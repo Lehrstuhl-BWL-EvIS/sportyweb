@@ -120,8 +120,8 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
         />
         <div class="flex gap-4 items-end">
             <div class="hidden">
-                 <.input field={@contract[:club_id]} type="hidden" class="hidden" />
-                 <.input field={@contract[:contact_id]} type="hidden" class="hidden" />
+                 <.input field={@contract[:club_id]} type="text" />
+                 <.input field={@contract[:contact_id]} type="text" />
             </div>
            <div class="col-span-12 md:col-span-3">
               <.input field={@contract[:signing_date]} type="date" label="Unterzeichnungsdatum" />
