@@ -46,6 +46,12 @@ config :sportyweb, Sportyweb.Scheduler,
     {"@daily", {Sportyweb.Accounting, :create_todays_transactions, []}}
   ]
 
+# Custom: Configures the document backend
+config :sportyweb, Sportyweb.Documents,
+  storage_backend: Sportyweb.Documents.Storage.Local,
+  upload_dir: "priv/static/uploads/documents",
+  thumbnail_dir: "priv/static/uploads/documents/thumbnails"
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

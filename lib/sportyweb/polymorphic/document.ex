@@ -22,36 +22,35 @@ defmodule Sportyweb.Polymorphic.Document do
     timestamps(type: :utc_datetime)
   end
 
-
   @doc false
-    @doc false
-    def changeset(document, attrs) do
-      document
-      |> cast(attrs, [
-        :title,
-        :description,
-        :filename,
-        :content_type,
-        :byte_size,
-        :storage_path,
-        :thumbnail_path,
-        :checksum,
-        :uploaded_by_id
-      ])
-      |> validate_required([
-        :title,
-        :description,
-        :filename,
-        :content_type,
-        :byte_size,
-        :storage_path,
-        :checksum,
-        :uploaded_by_id
-      ])
-      |> validate_length(:filename, min: 1)
-      |> validate_length(:content_type, min: 1)
-      |> validate_length(:storage_path, min: 1)
-      |> validate_length(:checksum, is: 64) # z. B. für SHA-256
-      |> assoc_constraint(:uploaded_by)
-    end
+  def changeset(document, attrs) do
+    document
+    |> cast(attrs, [
+      :title,
+      :description,
+      :filename,
+      :content_type,
+      :byte_size,
+      :storage_path,
+      :thumbnail_path,
+      :checksum,
+      :uploaded_by_id
+    ])
+    |> validate_required([
+      :title,
+      :description,
+      :filename,
+      :content_type,
+      :byte_size,
+      :storage_path,
+      :checksum,
+      :uploaded_by_id
+    ])
+    |> validate_length(:filename, min: 1)
+    |> validate_length(:content_type, min: 1)
+    |> validate_length(:storage_path, min: 1)
+    # z. B. für SHA-256
+    |> validate_length(:checksum, is: 64)
+    |> assoc_constraint(:uploaded_by)
+  end
 end
