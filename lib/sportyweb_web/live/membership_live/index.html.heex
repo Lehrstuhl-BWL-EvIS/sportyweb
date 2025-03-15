@@ -40,7 +40,7 @@
         </.input_grids>
     </div>
 
-    <div class="overflow-auto max-w-full">
+    <div class="overflow-auto max-w-full max-h-[600px]">
         <.table
         id="memberships"
         rows={@streams.memberships}
@@ -100,5 +100,13 @@
                 <.link navigate={~p"/memberships/#{membership}"}>Kontaktdaten bearbeiten</.link>
             </:action>
         </.table>
+    </div>
+
+    <div class="text-zinc-500 ">
+        <%= if @all_element_count == 0 do %>
+            Es wurde keine passende Mitgliedschaft gefunden
+        <% else %>
+            Es werden {@shown_element_count} von {@all_element_count} passenden Mitgliedschaften angezeigt
+        <% end %>
     </div>
 </.card>

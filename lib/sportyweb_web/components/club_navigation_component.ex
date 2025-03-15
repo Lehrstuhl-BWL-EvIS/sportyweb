@@ -74,14 +74,14 @@ defmodule SportywebWeb.ClubNavigationComponent do
         <ul class={["mb-1 px-2", if(!@show_submenu_contacts, do: "hidden")]}>
           <li>
             <.link
-             navigate={~p"/clubs/#{@club}/members"}
+             navigate={~p"/clubs/#{@club}/contacts"}
               class={[
                 @classes_menu_item,
                 @classes_submenu_item,
-                if(@club_navigation_current_item == :members, do: @classes_menu_item_active)
+                if(@club_navigation_current_item == :contacts, do: @classes_menu_item_active)
               ]}
             >
-              <span class="truncate">Mitglieder</span>
+              <span class="truncate">Mitglieder & Kontakte</span>
             </.link>
           </li>
           <li>
@@ -94,18 +94,6 @@ defmodule SportywebWeb.ClubNavigationComponent do
               ]}
             >
               <span class="truncate">Mitgliedschaften</span>
-            </.link>
-          </li>
-          <li>
-            <.link
-             navigate={~p"/clubs/#{@club}/contacts"}
-              class={[
-                @classes_menu_item,
-                @classes_submenu_item,
-                if(@club_navigation_current_item == :contacts, do: @classes_menu_item_active)
-              ]}
-            >
-              <span class="truncate">Kontakte</span>
             </.link>
           </li>
         </ul>

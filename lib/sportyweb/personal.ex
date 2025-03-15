@@ -24,27 +24,35 @@ defmodule Sportyweb.Personal do
 
   """
   def list_contacts(club_id) do
-    list_contacts(club_id, nil)
+    query = from(c in Contact, where: c.club_id == ^club_id)
+    Repo.all(query)
   end
-  def list_contacts(club_id, order_by) do
+  def list_contacts(club_id, order_by, filters) do
+    query = from(c in Contact, where: c.club_id == ^club_id)
     query = cond do
-      order_by == nil -> from(c in Contact, where: c.club_id == ^club_id, order_by: c.name)
-      true -> from(c in Contact, where: c.club_id == ^club_id, order_by: ^order_by)
+      order_by == nil -> order_by(query, asc: :name)
+      true -> order_by(query, ^order_by)
+    end
+    query = cond do
+      filters == nil || length(filters) == 0 -> query
+      true -> where(query, ^filter_contacts_like(filters))
     end
     Repo.all(query)
   end
+  def list_contacts(club_id, order_by, filters, preloads) do
+    list_contacts(club_id, order_by, filters)
+    |> Repo.preload(preloads)
+  end
 
-  @doc """
-  Returns a clubs list of contacts. Preloads associations.
-
-  ## Examples
-
-      iex> list_contacts(1, [:club])
-      [%Contact{}, ...]
-
-  """
-  def list_contacts(club_id, order_by, preloads) do
-    Repo.preload(list_contacts(club_id, order_by), preloads)
+  def filter_contacts_like(params) do
+    Enum.reduce(params, dynamic(true), fn
+      {:type, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.type, ^value))
+      {:name, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.name, ^value))
+      {:person_last_name, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.person_last_name, ^value))
+      {:person_first_name_1, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.person_first_name_1, ^value))
+      {:person_birthday, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.person_birthday, ^value))
+      {:person_gender, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.person_gender, ^value))
+    end)
   end
 
   def list_contacts_of_members(club_id, order_by, preloads) do

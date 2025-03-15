@@ -8,9 +8,59 @@
 </.header>
 
 <.card>
-    <SportywebWeb.ContactLive.DetailsTableComponent.render
-        contacts={@streams.contacts}
-        sorting={@sorting}
-        mode="contacts"/>
+    <div class="pb-4">
+      <.input_grids>
+          <.input_grid>
+            <div class="col-span-2">
+              <.input
+              name="show-only-members"
+              checked={@filters[Mitglied]}
+              type="checkbox"
+              phx-click={JS.push("quick_filter_changed", value: %{column_label: "Mitglied"})}
+              label="Nur Mitglieder anzeigen"
+              />
+            </div>
+            <div class="col-span-3">
+              <.input name="state-options" 
+              type="select" 
+              value={@filters[Art]} 
+              options={Contact.get_valid_types()}
+              prompt="-"
+              label="Art" 
+              phx-click={JS.push("quick_filter_changed", value: %{column_label: "Art"})}
+              />
+            </div>
+            <div class="col-span-5">
+                <.input name="my-input" value={@filters[Name]} label="Name" phx-keyup={JS.push("quick_filter_changed", value: %{column_label: "Name"})}/>
+            </div>
+            <div class="col-span-2">
+              <.input name="state-options" 
+              type="select" 
+              value={@filters[Geschlecht]} 
+              options={Contact.get_valid_genders()}
+              prompt="-"
+              label="Geschlecht" 
+              phx-click={JS.push("quick_filter_changed", value: %{column_label: "Geschlecht"})}
+              />
+          </div>
+        </.input_grid>
+      </.input_grids>
+    </div>
+
+    <div class="overflow-auto max-w-full max-h-[600px]">
+      <SportywebWeb.ContactLive.DetailsTableComponent.render
+          contacts={@streams.contacts}
+          sorting={@sorting}
+          filters={@filters}
+          mode="contacts"/>
+    </div>
+
+    <div class="text-zinc-500 ">
+        <%= if @all_element_count == 0 do %>
+            Es wurden keine passende Kontakte gefunden
+        <% else %>
+            Es werden {@shown_element_count} von {@all_element_count} passenden Kontakte angezeigt
+        <% end %>
+    </div>
 </.card>
 

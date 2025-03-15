@@ -26,6 +26,8 @@ defmodule SportywebWeb.MembershipLive.Index do
     club = Organization.get_club!(club_id);
     departments = Organization.list_departments(club.id)
     memberships = Personal.list_memberships(club_id, nil, nil, [:contact, :club, :department, :group, contracts: [:fee]])
+    all_element_count = length(memberships)
+    memberships = Enum.take(memberships, 50)
 
     socket
     |> assign(:page_title, "Mitgliedschaften")
@@ -33,6 +35,8 @@ defmodule SportywebWeb.MembershipLive.Index do
     |> assign(:departments, departments)
     |> assign(:sorting, %{})
     |> assign(:filters, %{})
+    |> assign(:all_element_count, all_element_count)
+    |> assign(:shown_element_count, length(memberships))
     |> stream(:memberships, memberships)
   end
 
@@ -72,13 +76,6 @@ defmodule SportywebWeb.MembershipLive.Index do
   defp sort_and_filter_data(sorting, filters, socket) do
     {database_filter, memory_filters, all_valid_filters} = separate_filter(filters)
 
-    IO.puts("sorting:")
-    IO.inspect(sorting)
-    IO.puts("database_filter:")
-    IO.inspect(database_filter)
-    IO.puts("memory_filters:")
-    IO.inspect(memory_filters)
-
     {memberships, used_sorting} = case sorting do
       %{"Status" => direction} -> {load_sorted(:state, direction, database_filter, socket), sorting}
       %{"Name" => direction} -> {load_unsorted(database_filter, socket) |> memory_sort(fn m -> m.contact.name end, direction), sorting}
@@ -91,14 +88,15 @@ defmodule SportywebWeb.MembershipLive.Index do
     end
 
     memberships = memory_filter(memberships, memory_filters)
-
-    IO.inspect(all_valid_filters)
+    all_element_count = length(memberships)
+    memberships = Enum.take(memberships, 50)
 
     socket = socket
             |> assign(:sorting, used_sorting)
             |> assign(:filters, all_valid_filters)
+            |> assign(:all_element_count, all_element_count)
+            |> assign(:shown_element_count, length(memberships))
             |> stream(:memberships, memberships)
-
 
     {:noreply, socket}
   end
@@ -107,12 +105,12 @@ defmodule SportywebWeb.MembershipLive.Index do
     filter_tuples = Enum.map(filters, fn filter ->
       case filter do
         {"Status", filterValue} -> {[state: filterValue], nil}
-        {"Name", filterValue} -> {nil, fn m -> String.contains?(m.contact.name,filterValue) end}
-        {"Nachname", filterValue} -> {nil, fn m -> String.contains?(m.contact.person_last_name, filterValue) end}
-        {"Vorname", filterValue} -> {nil, fn m -> String.contains?(m.contact.person_first_name_1,filterValue) end}
-        {"Abteilung", filterValue} -> {nil, fn m -> m.department != nil and String.contains?(m.department.name, filterValue) end}
-        {"Gruppe", filterValue} -> {nil, fn m -> m.group != nil and String.contains?(m.group.name, filterValue) end}
-        {"In", filterValue} -> {nil, fn m -> String.contains?(Membership.get_smallest_community(m).name, filterValue) end}
+        {"Name", filterValue} -> {nil, fn m -> case_insensitive_contains(m.contact.name,filterValue) end}
+        {"Nachname", filterValue} -> {nil, fn m -> case_insensitive_contains(m.contact.person_last_name, filterValue) end}
+        {"Vorname", filterValue} -> {nil, fn m -> case_insensitive_contains(m.contact.person_first_name_1,filterValue) end}
+        {"Abteilung", filterValue} -> {nil, fn m -> m.department != nil and case_insensitive_contains(m.department.name, filterValue) end}
+        {"Gruppe", filterValue} -> {nil, fn m -> m.group != nil and case_insensitive_contains(m.group.name, filterValue) end}
+        {"In", filterValue} -> {nil, fn m -> case_insensitive_contains(Membership.get_smallest_community(m).name, filterValue) end}
       end
     end
     )
@@ -124,6 +122,12 @@ defmodule SportywebWeb.MembershipLive.Index do
 
     database_filter = List.flatten(database_filters)
     {database_filter, memory_filters, all_valid_filters}
+  end
+
+  defp case_insensitive_contains(string, content) when is_binary(string) and is_binary(content) do
+    string = String.downcase(string)
+    content = String.downcase(content)
+    String.contains?(string, content)
   end
 
   defp load_sorted(column_database_field, direction, database_filters, socket) do
@@ -152,7 +156,7 @@ defmodule SportywebWeb.MembershipLive.Index do
 
   defp memory_filter(memberships, memory_filters) do
     cond do
-      memory_filters == nil || length(memory_filters) == 0 -> memberships
+      length(memory_filters) == 0 -> memberships
       true -> Enum.filter(memberships, fn m -> Enum.all?(memory_filters, fn filter -> filter.(m) end) end)
     end
 

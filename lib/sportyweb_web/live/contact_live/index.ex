@@ -3,6 +3,8 @@ defmodule SportywebWeb.ContactLive.Index do
 
   alias Sportyweb.Organization
   alias Sportyweb.Personal
+  alias Sportyweb.Personal.Contact
+  alias Sportyweb.Polymorphic.PostalAddress
 
   @impl true
   def mount(_params, _session, socket) do
@@ -21,57 +23,152 @@ defmodule SportywebWeb.ContactLive.Index do
 
   defp apply_action(socket, :index, %{"club_id" => club_id}) do
     club = Organization.get_club!(club_id)
-    contacts = Personal.list_contacts(club_id, nil, [:postal_addresses, :emails, :phones, :memberships])
+    contacts = Personal.list_contacts(club_id, nil, nil, [:postal_addresses, :emails, :phones, :memberships])
+    all_element_count = length(contacts)
+    contacts = Enum.take(contacts, 50)
 
     socket
-    |> assign(:page_title, "Kontakte")
+    |> assign(:page_title, "Mitglieder & Kontakte")
     |> assign(:club, club)
     |> assign(:sorting, %{})
+    |> assign(:filters, %{})
+    |> assign(:all_element_count, all_element_count)
+    |> assign(:shown_element_count, length(contacts))
     |> stream(:contacts, contacts)
   end
 
   @impl true
-  def handle_event("sort-by-column", %{"Art" => _direction} = wanted_sorting, socket) do
-    sort_contacts(wanted_sorting, "Art", :type, socket)
+  def handle_event("quick_filter_changed", %{"value" => value, "column_label" => column_label}, socket) do
+    cond do
+      value == nil || value == "" ->
+        handle_event("remove_filter", %{"column" => column_label}, socket)
+      true ->
+        inputMap = Map.put(%{}, column_label, value)
+        handle_event("apply_filter", inputMap, socket)
+    end
   end
 
   @impl true
-  def handle_event("sort-by-column", %{"Vorname" => _direction} = wanted_sorting, socket) do
-    sort_contacts(wanted_sorting, "Vorname", :person_first_name_1, socket)
+  def handle_event("quick_filter_changed", %{"column_label" => column_label}, socket) do
+    # special handling for deselection of checkbox
+    handle_event("remove_filter", %{"column" => column_label}, socket)
+  end
+
+
+  @impl true
+  def handle_event("apply_filter", %{} = filter, socket) do
+    sorting = socket.assigns.sorting
+    merged_filters = Map.merge(socket.assigns.filters, filter)
+    sort_and_filter_data(sorting, merged_filters, socket)
   end
 
   @impl true
-  def handle_event("sort-by-column", %{"Nachname" => _direction} = wanted_sorting, socket) do
-    sort_contacts(wanted_sorting, "Nachname", :person_last_name, socket)
+  def handle_event("remove_filter", %{"column" => column}, socket) do
+    sorting = socket.assigns.sorting
+    cleaned_filters = Map.delete(socket.assigns.filters, column)
+    sort_and_filter_data(sorting, cleaned_filters, socket)
   end
 
   @impl true
-  def handle_event("sort-by-column", %{"Name" => _direction} = wanted_sorting, socket) do
-    sort_contacts(wanted_sorting, "Name", :name, socket)
+  def handle_event("apply_sorting", %{} = sorting, socket) do
+    filters = socket.assigns.filters
+    sort_and_filter_data(sorting, filters, socket)
   end
 
-  @impl true
-  def handle_event("sort-by-column", %{"Geburtsdatum" => _direction} = wanted_sorting, socket) do
-    sort_contacts(wanted_sorting, "Geburtsdatum", :person_birthday, socket)
-  end
+  defp sort_and_filter_data(sorting, filters, socket) do
+    {database_filter, memory_filters, all_valid_filters} = separate_filter(filters)
 
-  def sort_contacts(%{} = wanted_sorting, column_label, column_database_field, socket) do
-    wanted_direction = wanted_sorting[column_label];
-
-    database_sorting = cond do
-      wanted_direction == "asc" -> [asc: column_database_field]
-      wanted_direction == "desc" -> [desc: column_database_field]
-      true -> nil
+    {contacts, used_sorting} = case sorting do
+      %{"Art" => direction} -> {load_sorted(:type, direction, database_filter, socket), sorting}
+      %{"Name" => direction} -> {load_sorted(:name, direction, database_filter, socket), sorting}
+      %{"Nachname" => direction} ->{load_sorted(:person_last_name, direction, database_filter, socket), sorting}
+      %{"Vorname" => direction} -> {load_sorted(:person_first_name_1, direction, database_filter, socket), sorting}
+      %{"Geburtsdatum" => direction} -> {load_sorted(:person_birthday, direction, database_filter, socket), sorting}
+      %{"Geschlecht" => direction} -> {load_sorted(:person_gender, direction, database_filter, socket), sorting}
+      %{"Mitglied" => direction} -> {load_unsorted(database_filter, socket) |> memory_sort(fn c -> if length(c.memberships) > 0 do "true" else "false" end  end, direction), sorting}
+      %{"Adresse" => direction} -> {load_unsorted(database_filter, socket) |> memory_sort(fn c -> PostalAddress.as_text(Contact.get_most_relevant_postal_address(c)) end, direction), sorting}
+      %{"E-Mail" => direction} -> {load_unsorted(database_filter, socket) |> memory_sort(fn c -> Contact.get_most_relevant_email(c).address end, direction), sorting}
+      %{"Telefonnummer" => direction} -> {load_unsorted(database_filter, socket) |> memory_sort(fn c -> Contact.get_most_relevant_phone(c).number end, direction), sorting}
+      _ -> {load_unsorted(database_filter, socket), nil}
     end
 
-    club_id = socket.assigns.club.id
-    contacts = Personal.list_contacts(club_id, database_sorting, [:postal_addresses, :emails, :phones, :memberships])
+    contacts = memory_filter(contacts, memory_filters)
+    all_element_count = length(contacts)
+    contacts = Enum.take(contacts, 50)
 
     socket = socket
-             |> assign(:sorting, %{column_label => wanted_direction})
-             |> stream(:contacts, contacts)
+            |> assign(:sorting, used_sorting)
+            |> assign(:filters, all_valid_filters)
+            |> assign(:all_element_count, all_element_count)
+            |> assign(:shown_element_count, length(contacts))
+            |> stream(:contacts, contacts)
+
+
     {:noreply, socket}
   end
 
+  defp separate_filter(filters) do
+    filter_tuples = Enum.map(filters, fn filter ->
+      case filter do
+        {"Art", filterValue} -> {[type: "%#{filterValue}%"], nil}
+        {"Name", filterValue} -> {[name: "%#{filterValue}%"], nil}
+        {"Nachname", filterValue} -> {[person_last_name: "%#{filterValue}%"], nil}
+        {"Vorname", filterValue} -> {[person_first_name_1: "%#{filterValue}%"], nil}
+        {"Geburtsdatum", filterValue} -> {[person_birthday: "%#{filterValue}%"], nil}
+        {"Geschlecht", filterValue} -> {[person_gender: "%#{filterValue}%"], nil}
+        {"Adresse", filterValue} -> {nil, fn c -> String.contains?(PostalAddress.as_text(Contact.get_most_relevant_postal_address(c)), filterValue) end}
+        {"Mitglied", filterValue} -> case filterValue do
+          "true" ->  {nil, fn c -> length(c.memberships) > 0 end}
+          "false" ->  {nil, fn c -> length(c.memberships) == 0 end}
+        end
+        {"E-Mail", filterValue} -> {nil, fn c -> String.contains?(Contact.get_most_relevant_email(c).address, filterValue) end}
+        {"Telefonnummer", filterValue} -> {nil, fn c -> String.contains?(Contact.get_most_relevant_phone(c).number, filterValue) end}
+      end
+    end)
+
+    all_valid_filters = filters # as long as each filter was mappend in cond above thery are valid
+
+    database_filters = filter_tuples
+    |> Enum.map( fn {database_filter, _} -> database_filter end)
+    |> Enum.filter(fn filter -> filter != nil end)
+    memory_filters = filter_tuples
+    |> Enum.map( fn {_, memory_filter} -> memory_filter end)
+    |> Enum.filter(fn filter -> filter != nil end)
+
+    database_filter = List.flatten(database_filters)
+    {database_filter, memory_filters, all_valid_filters}
+  end
+
+  defp load_sorted(column_database_field, direction, database_filters, socket) do
+    database_sorting = case direction do
+      "asc" -> [asc: column_database_field]
+      "desc" -> [desc: column_database_field]
+      _ -> nil
+    end
+
+    club_id = socket.assigns.club.id
+    Personal.list_contacts(club_id, database_sorting, database_filters, [:postal_addresses, :emails, :phones, :memberships])
+  end
+
+  defp load_unsorted(database_filters, socket) do
+    club_id = socket.assigns.club.id
+    Personal.list_contacts(club_id, nil, database_filters, [:postal_addresses, :emails, :phones, :memberships])
+  end
+
+  defp memory_sort(contacts, to_field_function, direction) do
+    case direction do
+      "asc" -> Enum.sort_by(contacts, fn contact -> to_field_function.(contact) end, :asc)
+      "desc" -> Enum.sort_by(contacts, fn contact -> to_field_function.(contact) end, :desc)
+      _ -> contacts
+    end
+  end
+
+  defp memory_filter(contacts, memory_filters) do
+    cond do
+      length(memory_filters) == 0 -> contacts
+      true -> Enum.filter(contacts, fn c -> Enum.all?(memory_filters, fn filter -> filter.(c) end) end)
+    end
+
+  end
 
 end
