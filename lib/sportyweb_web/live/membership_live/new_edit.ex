@@ -14,7 +14,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     ~H"""
     <div>
         <.header>
-          {Titel}
+          {@page_title}
         </.header>
 
         <.card>
@@ -27,34 +27,37 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
             <.input_grids>
               <.input_grid>
                 <div class="col-span-12 md:col-span-6">
-                  <.input
-                    field={@form[:contact_id]}
-                    type="select"
-                    label={"Kontakt (#{length(@contacts)})"}
-                    options={@contacts |> Enum.map(&{print_contract(&1), &1.id})}
-                    prompt="Bitte auswählen"
-                  />
+                  <.select_or_read_only
+                    read_only={@membership.id != nil}
+                    form={@form}
+                    field={:contact_id}
+                    options={@contacts}
+                    label={"Kontakt"}
+                    print_function={&print_contract(&1)}
+                    />
                 </div>
               </.input_grid>
 
               <.input_grid>
                 <div class="col-span-12 md:col-span-6">
-                  <.input
-                    field={@form[:department_id]}
-                    type="select"
-                    label={"Abteilung (#{length(@departments)})"}
-                    options={@departments |> Enum.map(&{&1.name, &1.id})}
-                    prompt="Keine spezifische Abteilung"
-                  />
+                  <.select_or_read_only
+                    read_only={@membership.id != nil}
+                    form={@form}
+                    field={:department_id}
+                    options={@departments}
+                    label={"Abteilung"}
+                    print_function={&(&1.name)}
+                    />
                 </div>
                 <div class="col-span-12 md:col-span-6">
-                  <.input
-                    field={@form[:group_id]}
-                    type="select"
-                    label={"Gruppe (#{length(@groups)})"}
-                    options={@groups |> Enum.map(&{&1.name, &1.id})}
-                    prompt="Keine spezifische Gruppe"
-                  />
+                <.select_or_read_only
+                    read_only={@membership.id != nil}
+                    form={@form}
+                    field={:group_id}
+                    options={@groups}
+                    label={"Gruppe"}
+                    print_function={&(&1.name)}
+                    />
                 </div>
 
                  <div class="col-span-12 md:col-span-3">
@@ -109,6 +112,30 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     """
   end
 
+  attr :read_only, :boolean
+  attr :form, :any
+  attr :field, :any
+  attr :options, :any
+  attr :label, :string
+  attr :print_function, :any
+  def select_or_read_only(assigns) do
+    ~H"""
+      <div class={if @read_only do "hidden"  else "" end}>
+        <.input
+          field={@form[@field]}
+          type="select"
+          label={"#{@label} (#{length(@options)})"}
+          options={@options |> Enum.map(&{@print_function.(&1), &1.id})}
+          prompt="Bitte auswählen"
+        />
+      </div>
+      <div :if={@read_only} >
+        <.label>{@label}</.label>
+        {print_wanted_element(@options, @form[@field].value, @print_function)}
+      </div>
+    """
+  end
+
   attr :fees, :any
   attr :contract, :any
   def contract_line(assigns) do
@@ -137,6 +164,9 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
            </div>
            <div class="col-span-12 md:col-span-3">
               <.input field={@contract[:start_date]} type="date" label="Ab" />
+           </div>
+           <div class="col-span-12 md:col-span-3">
+              <.input field={@contract[:termination_date]} type="date" label="Bis" />
            </div>
            <div class="col-span-12 md:col-span-5">
                <.input
@@ -191,7 +221,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
 
     contacts = [membership.contact]
     init(socket, membership.club, departments, groups, contacts, fees, membership)
-    |> assign(page_title: "Mitgliedschaft #{membership.id} bearbeiten")
+    |> assign(page_title: "Mitgliedschaft von #{membership.contact.name} in #{Membership.get_smallest_community(membership).name} bearbeiten")
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
@@ -247,7 +277,8 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   def handle_event("add-contract", _, socket) do
     new_contract = %Contract{
       club_id: socket.assigns.club.id,
-      signing_date: Date.utc_today
+      signing_date: Date.utc_today,
+      start_date: Date.utc_today
     }
     socket = update(socket, :form, fn %{source: changeset} ->
       existing = Changeset.get_assoc(changeset, :contracts)
@@ -381,6 +412,13 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     end
   end
 
+  def print_wanted_element(elements, wanted_id, print_function) do
+    res = case Enum.find(elements, fn e -> e.id == wanted_id end) do
+      nil -> nil
+      elements -> print_function.(elements)
+    end
+    format_string_field(res)
+  end
 
 
 end
