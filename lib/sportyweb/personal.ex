@@ -405,7 +405,11 @@ defmodule Sportyweb.Personal do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_membership(attrs \\ %{}) do
+  def create_membership(attrs \\ %{})
+  def create_membership(%Ecto.Changeset{}  = changeset) do
+    Repo.insert(changeset)
+  end
+  def create_membership(attrs) do
     %Membership{}
     |> Membership.changeset(attrs)
     |> Repo.insert()
@@ -439,6 +443,9 @@ defmodule Sportyweb.Personal do
     membership
     |> Membership.changeset(attrs)
     |> Repo.update()
+  end
+  def update_membership(%Ecto.Changeset{} = changeset) do
+    Repo.update(changeset)
   end
 
   @doc """

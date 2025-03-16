@@ -94,6 +94,14 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
                 <.button phx-disable-with="Speichern...">Speichern</.button>
                 <.cancel_button navigate={if @membership.id, do: ~p"/memberships/#{@membership}", else: ~p"/clubs/#{@club}/memberships"}>Abbrechen</.cancel_button>
               </div>
+              <.button
+                :if={@club.id}
+                class="bg-rose-700 hover:bg-rose-800"
+                phx-click={JS.push("delete", value: %{id: @membership.id})}
+                data-confirm="Unwiderruflich löschen?"
+              >
+                Löschen
+              </.button>
             </:actions>
           </.simple_form>
         </.card>
@@ -108,7 +116,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
       assign(
         assigns,
         :deleted,
-        Phoenix.HTML.Form.input_value(assigns.contract, :delete) == true
+        Phoenix.HTML.Form.input_value(assigns.contract, :deleted) == true
       )
 
     ~H"""
@@ -122,6 +130,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
             <div class="hidden">
                  <.input field={@contract[:club_id]} type="text" />
                  <.input field={@contract[:contact_id]} type="text" />
+                 <.input field={@contract[:deleted]} type="checkbox" />
             </div>
            <div class="col-span-12 md:col-span-3">
               <.input field={@contract[:signing_date]} type="date" label="Unterzeichnungsdatum" />
@@ -224,6 +233,17 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    membership = Personal.get_membership!(id)
+    {:ok, _} = Personal.delete_membership(membership)
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Mitgliedschaft erfolgreich gelöscht")
+     |> push_navigate(to: "/clubs/#{membership.club_id}/memberships")}
+  end
+
+  @impl true
   def handle_event("add-contract", _, socket) do
     new_contract = %Contract{
       club_id: socket.assigns.club.id,
@@ -241,24 +261,22 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   @impl true
   def handle_event("delete-contract", %{"index" => index}, socket) do
     index = String.to_integer(index)
+    changeset = socket.assigns.changeset
 
-    socket =
-      update(socket, :form, fn %{source: changeset} ->
-        existing = Changeset.get_assoc(changeset, :contracts)
-        {to_delete, rest} = List.pop_at(existing, index)
+    contracts = Changeset.get_assoc(changeset, :contracts)
+    contract_to_delete = Enum.at(contracts, index)
+    contracts = if contract_to_delete != nil && contract_to_delete.data != nil do
+      contract_to_delete = Changeset.change(contract_to_delete, deleted: true)
+      List.replace_at(contracts, index, contract_to_delete)
+    else
+      List.delete_at(contracts, index)
+    end
 
-        contracts =
-          if Changeset.change(to_delete).data.id do
-            List.replace_at(existing, index, Changeset.change(to_delete, delete: true))
-          else
-            rest
-          end
+    changeset = Changeset.put_assoc(changeset, :contracts, contracts)
 
-        changeset
-        |> Changeset.put_assoc(:contracts, contracts)
-        |> to_form()
-      end)
-
+    socket = socket
+    |> assign(changeset: changeset)
+    |> assign(form: to_form(changeset))
     {:noreply, socket}
   end
 
@@ -284,42 +302,59 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   @impl true
-  def handle_event("save", %{"membership" => membership_params}, socket) do
-    case socket.assigns.live_action do
-      :edit -> update_membership(socket, membership_params)
-      :new ->  create_membership(socket, membership_params)
+  def handle_event("save", %{"membership" => params}, socket) do
+    changeset = socket.assigns.membership
+    |> Membership.changeset(params)
+    |> write_contract_objects()
+
+    cond do
+      changeset.valid? == false ->
+        IO.puts("changes are not valid")
+        IO.inspect(changeset)
+        socket
+        |> assign(changeset: changeset)
+        |> assign(form: to_form(changeset))
+        {:noreply, socket}
+      true ->
+        case socket.assigns.live_action do
+          :edit -> update_membership(socket, changeset)
+          :new ->  create_membership(socket, changeset)
+        end
     end
+
+
   end
 
   defp write_contract_objects(changeset) do
-    contact_id = Changeset.get_change(changeset, :contact_id)
+    contact_id = case Changeset.get_change(changeset, :contact_id) do
+      nil -> Changeset.get_field(changeset, :contact_id)
+      value -> value
+    end
 
     contract_changesets = Changeset.get_assoc(changeset, :contracts)
     updated_contracts = Enum.map(contract_changesets, fn contract_changeset ->
-      contract_changeset
-      |> Changeset.put_change(:contact_id, contact_id)
+      Changeset.put_change(contract_changeset, :contact_id, contact_id)
     end)
     Changeset.put_assoc(changeset, :contracts, updated_contracts)
   end
 
-  defp update_membership(socket, membership_params) do
-    socket = case Personal.update_membership(socket.assigns.membership, membership_params) do
-      {:ok, _membership} ->
-        put_flash(socket, :info, "Mitgliedschaft erfolgreich aktualisiert")
+  defp update_membership(socket, %Changeset{} = changeset) do
+    socket = case Personal.update_membership(changeset) do
+      {:ok, membership} ->
+        socket
+        |> put_flash(:info, "Mitgliedschaft erfolgreich aktualisiert")
+        |> push_navigate(to: ~p"/memberships/#{membership.id}")
       {:error, %Changeset{} = changeset} ->
+        IO.puts("error on update")
+        IO.inspect(changeset)
         assign(socket, form: to_form(changeset))
     end
 
     {:noreply, socket}
   end
 
-  defp create_membership(socket, membership_params) do
-    membership_params =
-      Enum.into(membership_params, %{
-        "club_id" => socket.assigns.membership.club.id
-      })
-
-    socket = case Personal.create_membership(membership_params) do
+  defp create_membership(socket, %Changeset{} = changeset) do
+    socket = case Personal.create_membership(changeset) do
       {:ok, membership} ->
         socket
         |> put_flash(:info, "Mitgliedschaft erfolgreich erstellt")

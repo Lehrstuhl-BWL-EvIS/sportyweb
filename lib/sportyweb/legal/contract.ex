@@ -32,6 +32,7 @@ defmodule Sportyweb.Legal.Contract do
     field :first_billing_date, :date, default: nil
     field :termination_date, :date, default: nil
     field :archive_date, :date, default: nil
+    field :deleted, :boolean, virtual: true, default: false
 
     timestamps(type: :utc_datetime)
   end
@@ -91,7 +92,8 @@ defmodule Sportyweb.Legal.Contract do
         :first_billing_date,
         :start_date,
         :termination_date,
-        :archive_date
+        :archive_date,
+        :deleted
       ],
       empty_values: ["", nil]
     )
@@ -117,5 +119,17 @@ defmodule Sportyweb.Legal.Contract do
       :archive_date,
       "Muss zeitlich später als oder gleich \"Kündigungsdatum\" sein!"
     )
+    |> check_deletion()
+  end
+
+  defp check_deletion(%{data: %{id: nil}} = changeset) do
+    changeset
+  end
+  defp check_deletion(changeset) do
+    if get_change(changeset, :deleted) do
+      %{changeset | action: :delete}
+    else
+      changeset
+    end
   end
 end
