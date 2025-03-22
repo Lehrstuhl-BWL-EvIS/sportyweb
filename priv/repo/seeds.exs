@@ -977,6 +977,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
              state: Membership.get_valid_states()
                     |> Enum.map(fn state -> state[:value] end)
                     |> Enum.random(),
+              termination_date: if :rand.uniform() < 0.1 do  Date.add(Date.utc_today(), -14) else nil end
            })
 
            if Enum.any?(club.departments) do

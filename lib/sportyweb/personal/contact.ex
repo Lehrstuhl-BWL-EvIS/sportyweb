@@ -83,15 +83,17 @@ defmodule Sportyweb.Personal.Contact do
   end
 
   def age_in_years(%Contact{} = contact) do
+    age_in_years(contact, Date.utc_today())
+  end
+  def age_in_years(%Contact{} = contact, at_date) do
     # Based on: https://stackoverflow.com/a/71043385
 
     birthday = contact.person_birthday
-    today = Date.utc_today()
 
-    years_diff = today.year - birthday.year
+    years_diff = at_date.year - birthday.year
 
     # If today's date in the year is before the contact's birthday, substract 1
-    if Date.compare(today, %Date{birthday | year: today.year}) == :lt do
+    if Date.compare(at_date, %Date{birthday | year: at_date.year}) == :lt do
       years_diff - 1
     else
       years_diff

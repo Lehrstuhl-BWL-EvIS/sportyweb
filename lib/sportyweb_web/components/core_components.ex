@@ -513,6 +513,21 @@ defmodule SportywebWeb.CoreComponents do
     """
   end
 
+    @doc """
+  Generates a generic waring message.
+  """
+  slot :inner_block, required: true
+
+  def warn(assigns) do
+    ~H"""
+    <p class="mt-2 flex gap-3 text-sm leading-6 text-amber-600">
+      <.icon name="hero-exclamation-triangle-mini" class="mt-0.5 h-5 w-5 flex-none" />
+      {render_slot(@inner_block)}
+    </p>
+    """
+  end
+
+
   @doc """
   Renders a description (usually below) input fields.
 

@@ -10,9 +10,6 @@ defmodule Sportyweb.Personal do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.Membership
-  alias Sportyweb.Organization.Club
-  alias Sportyweb.Organization.Department
-  alias Sportyweb.Organization.Group
 
   @doc """
   Returns the list of contacts.
@@ -24,7 +21,7 @@ defmodule Sportyweb.Personal do
 
   """
   def list_contacts(club_id) do
-    query = from(c in Contact, where: c.club_id == ^club_id)
+    query = from(c in Contact, where: c.club_id == ^club_id, order_by: c.name)
     Repo.all(query)
   end
   def list_contacts(club_id, order_by, filters) do
@@ -373,22 +370,22 @@ defmodule Sportyweb.Personal do
     |> Repo.preload(preloads)
   end
 
-  def get_memberships_of_contact(contact_id) do
+  def list_memberships_of_contact(contact_id) do
     query = from(m in Membership, where: m.contact_id == ^contact_id)
     Repo.all(query)
   end
-  def get_memberships_of_contact_in(contact_id, %Club{} = club) do
-    query = from(m in Membership, where: m.contact_id == ^contact_id and m.club_id == ^club.id
+  def list_memberships_of_contact_in_club(contact_id, club_id) do
+    query = from(m in Membership, where: m.contact_id == ^contact_id and m.club_id == ^club_id
                                        and is_nil(m.department_id) and is_nil(m.group_id))
     Repo.all(query)
   end
-  def get_memberships_of_contact_in(contact_id, %Department{} = department) do
-    query = from(m in Membership, where: m.contact_id == ^contact_id and m.department_id == ^department.id
+  def list_memberships_of_contact_in_department(contact_id, department_id) do
+    query = from(m in Membership, where: m.contact_id == ^contact_id and m.department_id == ^department_id
                                          and is_nil(m.group_id))
     Repo.all(query)
   end
-  def get_memberships_of_contact_in(contact_id, %Group{} = group) do
-    query = from(m in Membership, where: m.contact_id == ^contact_id and m.group_id == ^group.id)
+  def list_memberships_of_contact_in_group(contact_id, group_id) do
+    query = from(m in Membership, where: m.contact_id == ^contact_id and m.group_id == ^group_id)
     Repo.all(query)
   end
 

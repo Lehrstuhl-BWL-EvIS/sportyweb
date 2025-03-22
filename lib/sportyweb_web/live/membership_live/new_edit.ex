@@ -2,7 +2,6 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Organization
-  alias Sportyweb.Finance
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Membership
 
@@ -42,7 +41,10 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     socket
     |> assign(club: membership.club)
     |> assign(membership: membership)
-    |> assign(page_title: "Mitgliedschaft von #{membership.contact.name} in #{Membership.get_smallest_community(membership).name} bearbeiten")
+    |> assign(
+      page_title:
+        "Mitgliedschaft von #{membership.contact.name} in #{Membership.get_smallest_community(membership).name} bearbeiten"
+    )
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
@@ -52,11 +54,11 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
       club_id: club.id,
       club: club,
       state: "active",
-      start_date: Date.utc_today,
+      start_date: Date.utc_today(),
       department: nil,
       group: nil,
       contact: nil,
-      contracts: [],
+      contracts: []
     }
 
     socket
@@ -64,7 +66,4 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     |> assign(membership: membership)
     |> assign(page_title: "Neue Mitgliedschaft anlegen")
   end
-
-
-
 end
