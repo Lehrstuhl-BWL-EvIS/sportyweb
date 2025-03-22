@@ -87,8 +87,6 @@ defmodule SportywebWeb.Router do
 
       live "/clubs/:id", ClubLive.Show, :show
 
-      live "/clubs/:id/contracts", ClubLive.ContractNew, :index
-      live "/clubs/:id/contracts/new", ClubLive.ContractNew, :new
 
       # Events (Each belongs to a club)
 
@@ -112,10 +110,6 @@ defmodule SportywebWeb.Router do
       live "/departments/:id/edit", DepartmentLive.NewEdit, :edit
 
       live "/departments/:id", DepartmentLive.Show, :show
-
-      live "/departments/:id/contracts", DepartmentLive.ContractNew, :index
-      live "/departments/:id/contracts/new", DepartmentLive.ContractNew, :new
-
       live "/departments/:id/fees", DepartmentLive.FeeNew, :index
       live "/departments/:id/fees/new", DepartmentLive.FeeNew, :new
 
@@ -128,9 +122,6 @@ defmodule SportywebWeb.Router do
       live "/groups/:id/edit", GroupLive.NewEdit, :edit
 
       live "/groups/:id", GroupLive.Show, :show
-
-      live "/groups/:id/contracts", GroupLive.ContractNew, :index
-      live "/groups/:id/contracts/new", GroupLive.ContractNew, :new
 
       live "/groups/:id/fees", GroupLive.FeeNew, :index
       live "/groups/:id/fees/new", GroupLive.FeeNew, :new

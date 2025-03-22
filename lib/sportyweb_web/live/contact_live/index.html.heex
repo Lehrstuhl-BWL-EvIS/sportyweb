@@ -14,7 +14,7 @@
             <div class="col-span-2">
               <.input
               name="show-only-members"
-              checked={@filters[Mitglied]}
+              checked={@filters["Mitglied"]}
               type="checkbox"
               phx-click={JS.push("quick_filter_changed", value: %{column_label: "Mitglied"})}
               label="Nur Mitglieder anzeigen"
@@ -23,7 +23,7 @@
             <div class="col-span-3">
               <.input name="state-options" 
               type="select" 
-              value={@filters[Art]} 
+              value={@filters["Art"]} 
               options={Contact.get_valid_types()}
               prompt="-"
               label="Art" 
@@ -31,12 +31,12 @@
               />
             </div>
             <div class="col-span-5">
-                <.input name="my-input" value={@filters[Name]} label="Name" phx-keyup={JS.push("quick_filter_changed", value: %{column_label: "Name"})}/>
+                <.input name="my-input" value={@filters["Name"]} label="Name" phx-keyup={JS.push("quick_filter_changed", value: %{column_label: "Name"})}/>
             </div>
             <div class="col-span-2">
               <.input name="state-options" 
               type="select" 
-              value={@filters[Geschlecht]} 
+              value={@filters["Geschlecht"]} 
               options={Contact.get_valid_genders()}
               prompt="-"
               label="Geschlecht" 

@@ -31,7 +31,7 @@ defmodule SportywebWeb.Membership.FormComponent do
                 options={@contacts}
                 label="Kontakt"
                 promt="Bitte auswählen"
-                print_function={&print_contract(&1)}
+                print_function={&print_contact(&1)}
               />
             </div>
             <div :if={@duplicated_membership_error != nil} class="col-span-12 md:col-span-6">
@@ -511,8 +511,10 @@ defmodule SportywebWeb.Membership.FormComponent do
       contract_to_change = Changeset.change(contract_to_change, changes)
       contracts = List.replace_at(contracts, contract_index, contract_to_change)
 
-      changeset = Changeset.put_assoc(changeset, :contracts, contracts)
-                  |> struct!(action: :validate)
+      changeset =
+        Changeset.put_assoc(changeset, :contracts, contracts)
+        |> struct!(action: :validate)
+
       to_form(changeset)
     end)
   end
@@ -533,14 +535,19 @@ defmodule SportywebWeb.Membership.FormComponent do
     newDate
   end
 
-  def print_contract(contract) do
-    if Contact.is_person?(contract) do
-      age_in_years = Contact.age_in_years(contract)
-      gender = CommonHelper.get_key_for_value(Contact.get_valid_genders(), contract.person_gender)
-      "#{contract.name} (#{age_in_years}, #{gender})"
+  def print_contact(%Contact{} = contact) do
+    if Contact.is_person?(contact) do
+      age_in_years = Contact.age_in_years(contact)
+      gender = CommonHelper.get_key_for_value(Contact.get_valid_genders(), contact.person_gender)
+      "#{contact.name} (#{age_in_years}, #{gender})"
     else
-      contract.name
+      contact.name
     end
+  end
+
+  def print_contact(test) do
+    IO.inspect(test)
+    "test"
   end
 
   def find_by_id(elements, wanted_id) do

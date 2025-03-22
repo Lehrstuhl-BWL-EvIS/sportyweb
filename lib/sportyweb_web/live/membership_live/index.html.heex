@@ -1,5 +1,5 @@
 <.header>
-  {@page_title}
+    {@page_title}
     <:actions>
         <.link navigate={~p"/clubs/#{@club}/memberships/new"}>
             <.button>Mitgliedschaft hinzufügen</.button>
@@ -8,105 +8,10 @@
 </.header>
 
 <.card>
-    <div class="pb-4">
-        <.input_grids>
-            <.input_grid>
-                <div class="col-span-5">
-                    <.input name="my-input" value={@filters[Name]} label="Name" phx-keyup={JS.push("quick_filter_changed", value: %{column_label: "Name"})}/>
-                </div>
-                
-                <div class="col-span-4">
-                    <.input name="department-options" 
-                    type="select" 
-                    value={@filters[In]} 
-                    options={@departments |> Enum.map(&{&1.name, &1.id})}
-                    prompt="-"
-                    label="Abteilung" 
-                    phx-click={JS.push("quick_filter_changed", value: %{column_label: "In"})}
-                    />
-                </div>
-
-                <div class="col-span-3">
-                    <.input name="state-options" 
-                    type="select" 
-                    value={@filters[In]} 
-                    options={Membership.get_valid_states()}
-                    prompt="-"
-                    label="Status" 
-                    phx-click={JS.push("quick_filter_changed", value: %{column_label: "Status"})}
-                    />
-                </div>
-            </.input_grid>
-        </.input_grids>
-    </div>
-
-    <div class="overflow-auto max-w-full max-h-[600px]">
-        <.table
-        id="memberships"
-        rows={@streams.memberships}
-        sorting={@sorting}
-        filters={@filters}
-        row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}") end}
-        >
-            <:col :let={{_id, membership}} label="Name" sortable filterable>
-                {format_string_field(membership.contact.name)}
-            </:col>
-            <:col :let={{_id, membership}} label="Vorname" sortable filterable>
-                {format_string_field(membership.contact.person_first_name_1)}
-            </:col>
-            <:col :let={{_id, membership}} label="Nachname" sortable filterable>
-                {format_string_field(membership.contact.person_last_name)}
-            </:col>
-            <:col :let={{_id, membership}} label="In" sortable filterable>
-                {format_string_field(Membership.get_smallest_community(membership).name)}
-            </:col>
-            <:col :let={{_id, membership}} label="Abteilung" sortable>
-                {format_string_field(if membership.department != nil do membership.department else nil end)}
-            </:col>
-            <:col :let={{_id, membership}} label="Gruppe" sortable filterable>
-                {format_string_field(if membership.group != nil do membership.group else nil end)}
-            </:col>
-            <:col :let={{_id, membership}} label="Status" sortable filterable>
-                {get_key_for_value(Membership.get_valid_states(), membership.state)}
-            </:col>
-            <:col :let={{_id, membership}} label="Verträge">
-                <div :for={contract <- membership.contracts} >
-                    <li :if={Contract.is_for_future?(contract)}>
-                        <.icon name="hero-arrow-down-on-square" class="ml-1 inline-block w-[20px] text-amber-500" />
-                        {format_date_field_dmy(contract.start_date)} - {format_date_field_dmy(contract.termination_date)}
-                        {format_string_field(contract.fee.name)}
-                        {contract.fee.amount}
-                    </li>
-                </div>
-                <div :for={contract <- membership.contracts} >
-                    <li :if={Contract.is_in_use?(contract)}>
-                        <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-600" />
-                        {format_date_field_dmy(contract.start_date)} - {format_date_field_dmy(contract.termination_date)}
-                        {format_string_field(contract.fee.name)}
-                        {contract.fee.amount}
-                    </li>
-                </div>
-                <div :for={contract <- membership.contracts} >
-                    <li :if={Contract.is_archived?(contract)}>
-                        <.icon name="hero-archive-box-x-mark" class="ml-1 inline-block w-[20px]" />
-                        {format_date_field_dmy(contract.start_date)} - {format_date_field_dmy(contract.termination_date)}
-                        {format_string_field(contract.fee.name)}
-                        {contract.fee.amount}
-                    </li>
-                </div>
-            </:col>
-
-            <:action :let={{_id, membership}}>
-                <.link navigate={~p"/memberships/#{membership}"}>Mitgliedschaft bearbeiten</.link>
-            </:action>
-        </.table>
-    </div>
-
-    <div class="text-zinc-500 ">
-        <%= if @all_element_count == 0 do %>
-            Es wurde keine passende Mitgliedschaft gefunden
-        <% else %>
-            Es werden {@shown_element_count} von {@all_element_count} passenden Mitgliedschaften angezeigt
-        <% end %>
-    </div>
+    <.live_component 
+        id="membership_table" 
+        module={SportywebWeb.Membership.MembershipTable} 
+        show_quick_filters={false}
+        default_filters={%{"Name": "Zoey"}}
+        club={@club} />
 </.card>

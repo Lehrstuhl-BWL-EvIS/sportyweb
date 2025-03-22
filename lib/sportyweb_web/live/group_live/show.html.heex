@@ -53,18 +53,17 @@
 <.header level="2" class="mt-12">
   Mitglieder
   <:actions>
-    <.link navigate={~p"/groups/#{@group}/contracts/new"}>
+    <.link navigate={~p"/clubs/#{@club}/memberships/new?group=#{@group}"}>
       <.button>Mitglied erstellen</.button>
     </.link>
   </:actions>
 </.header>
 
 <.card>
-  <%= if Enum.any?(@group.contacts) do %>
-    <SportywebWeb.ContactLive.IndexTableComponent.render contacts={@group.contacts} />
-  <% else %>
-    <p>
-      Bisher wurde noch kein Mitglied erstellt.
-    </p>
-  <% end %>
+  <.live_component 
+    id="group_membership_table" 
+    module={SportywebWeb.Membership.MembershipTable} 
+    show_quick_filters={false}
+    default_filters={%{"In": @group.name}}
+    club={@club} />
 </.card>
