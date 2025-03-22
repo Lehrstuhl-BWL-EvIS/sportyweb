@@ -8,7 +8,6 @@ defmodule SportywebWeb.Membership.FormComponent do
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.Membership
   alias Sportyweb.Legal.Contract
-  alias Sportyweb.Finance.Fee
   alias SportywebWeb.CommonHelper
 
   @impl true
@@ -39,9 +38,11 @@ defmodule SportywebWeb.Membership.FormComponent do
               <.warn>
                 Es besteht bereits eine Mitgliedschaft von {@duplicated_membership_error.contact_name} in {@duplicated_membership_error.object_name}
               </.warn>
-              <.link navigate={~p"/memberships/#{@duplicated_membership_error.other_id}/edit"}>
-                Zur bestehenden Mitgliedschaft
-              </.link>
+              <.button type="button">
+                <.link navigate={~p"/memberships/#{@duplicated_membership_error.other_id}/edit"}>
+                  Zur bestehenden Mitgliedschaft
+                </.link>
+              </.button>
             </div>
           </.input_grid>
 
@@ -97,7 +98,7 @@ defmodule SportywebWeb.Membership.FormComponent do
                 <.contract_line
                   parent={@myself}
                   contract={f_contract}
-                  contract_hints={@contract_hints}
+                  contract_warnings={@contract_warnings}
                   fees={@fees}
                   contact={find_by_id(@contacts, @form[:contact_id].value)}
                 />
@@ -177,7 +178,7 @@ defmodule SportywebWeb.Membership.FormComponent do
   attr :contract, :any
   attr :parent, :any
   attr :contact, :any
-  attr :contract_hints, :any
+  attr :contract_warnings, :any
 
   def contract_line(assigns) do
     assigns =
@@ -229,25 +230,26 @@ defmodule SportywebWeb.Membership.FormComponent do
             <.icon name="hero-minus-circle" />
           </.button>
         </div>
-        <div :if={@contract_hints[@contract.index] != nil} class="col-span-12 md:col-span-12">
-          <div :for={msg <- @contract_hints[@contract.index]} class="flex">
+        <div :if={@contract_warnings[@contract.index] != nil} class="col-span-12 md:col-span-12">
+          <div :for={warning <- @contract_warnings[@contract.index]} class="flex">
             <.warn>
-              {msg.hint}
+              {warning.hint}
             </.warn>
             <.button
+              :if={warning.action != nil}
               type="button"
               phx-target={@parent}
               phx-click={
                 JS.push("apply-contract-action",
                   value: %{
-                    key: msg.action.key,
-                    new_value: msg.action.new_value,
+                    key: warning.action.key,
+                    new_value: warning.action.new_value,
                     contract: @contract.index
                   }
                 )
               }
             >
-              {print_contract_action(msg.action)}
+              {print_contract_action(warning.action)}
             </.button>
           </div>
         </div>
@@ -259,8 +261,6 @@ defmodule SportywebWeb.Membership.FormComponent do
   @impl true
   def update(%{membership: membership} = assigns, socket) do
     club_id = membership.club.id
-    department_id = if membership.department, do: membership.department.id, else: nil
-    group_id = if membership.group, do: membership.group.id, else: nil
 
     contacts =
       case membership.contact do
@@ -270,7 +270,7 @@ defmodule SportywebWeb.Membership.FormComponent do
 
     departments =
       case membership.department do
-        nil -> Organization.list_departments(club_id)
+        nil -> Organization.list_departments(club_id, :fees)
         _ -> [membership.department]
       end
 
@@ -289,9 +289,12 @@ defmodule SportywebWeb.Membership.FormComponent do
       |> assign(groups: groups)
       |> assign(contacts: contacts)
       |> assign(duplicated_membership_error: nil)
-      |> assign(contract_hints: %{})
-      |> update_fee_options(department_id, group_id)
+      |> assign(contract_warnings: %{})
       |> assign(form: to_form(changeset))
+      |> update_fee_options()
+      |> update_group_options()
+      |> update_duplicated_membership_hint()
+      |> update_contract_warnings()
 
     {:ok, socket}
   end
@@ -305,8 +308,11 @@ defmodule SportywebWeb.Membership.FormComponent do
     IO.inspect(new_value)
 
     {:ok, new_date} = Date.from_iso8601(new_value)
-    socket = apply_contract_action(socket, contract, start_date: new_date)
-    {socket, _} = update_contracts(socket, socket.assigns.form.source)
+
+    socket =
+      apply_contract_action(socket, contract, start_date: new_date)
+      |> update_contract_warnings()
+
     {:noreply, socket}
   end
 
@@ -317,24 +323,12 @@ defmodule SportywebWeb.Membership.FormComponent do
         socket
       ) do
     {:ok, new_date} = Date.from_iso8601(new_value)
-    socket = apply_contract_action(socket, contract, termination_date: new_date)
-    {socket, _} = update_contracts(socket, socket.assigns.form.source)
+
+    socket =
+      apply_contract_action(socket, contract, termination_date: new_date)
+      |> update_contract_warnings()
+
     {:noreply, socket}
-  end
-
-  @impl true
-  defp apply_contract_action(socket, contract_index, changes \\ %{}) do
-    IO.inspect(changes)
-
-    update(socket, :form, fn %{source: changeset} ->
-      contracts = Changeset.get_assoc(changeset, :contracts)
-      contract_to_change = Enum.at(contracts, contract_index)
-      contract_to_change = Changeset.change(contract_to_change, changes)
-      contracts = List.replace_at(contracts, contract_index, contract_to_change)
-
-      changeset = Changeset.put_assoc(changeset, :contracts, contracts)
-      to_form(changeset)
-    end)
   end
 
   @impl true
@@ -395,28 +389,18 @@ defmodule SportywebWeb.Membership.FormComponent do
 
   @impl true
   def handle_event("validate", %{"membership" => params}, socket) do
-    department_id = params["department_id"]
-    group_id = params["group_id"]
-
-    groups =
-      if department_id == "" do
-        []
-      else
-        Organization.list_groups(department_id)
-      end
-
     changeset =
       socket.assigns.membership
       |> Membership.changeset(params)
       |> struct!(action: :validate)
 
-    {socket, changeset} = update_contracts(socket, changeset)
-
     socket =
-      check_duplicated_membership(socket, changeset)
-      |> update_fee_options(department_id, group_id)
-      |> assign(groups: groups)
-      |> assign(form: to_form(changeset))
+      assign(socket, form: to_form(changeset))
+      |> sync_contracts()
+      |> update_fee_options()
+      |> update_group_options()
+      |> update_duplicated_membership_hint()
+      |> update_contract_warnings()
 
     {:noreply, socket}
   end
@@ -427,8 +411,14 @@ defmodule SportywebWeb.Membership.FormComponent do
       socket.assigns.membership
       |> Membership.changeset(params)
 
-    {socket, changeset} = update_contracts(socket, changeset)
-    socket = check_duplicated_membership(socket, changeset)
+    socket =
+      socket
+      |> assign(form: to_form(changeset))
+      |> sync_contracts()
+      |> update_fee_options()
+      |> update_group_options()
+      |> update_duplicated_membership_hint()
+      |> update_contract_warnings()
 
     socket =
       cond do
@@ -436,10 +426,11 @@ defmodule SportywebWeb.Membership.FormComponent do
           IO.puts("changes are not valid")
           IO.inspect(changeset)
 
-          changeset = struct!(changeset, action: :validate)
-
           socket
-          |> assign(form: to_form(changeset))
+          |> update(:form, fn %{source: changeset} ->
+            changeset = struct!(changeset, action: :validate)
+            to_form(changeset)
+          end)
           |> put_flash(:error, "Die Eingabe ist nicht gültig")
 
         true ->
@@ -450,22 +441,6 @@ defmodule SportywebWeb.Membership.FormComponent do
       end
 
     {:noreply, socket}
-  end
-
-  defp update_fee_options(socket, department_id, group_id) do
-    fees =
-      cond do
-        group_id != nil && group_id != "" ->
-          Organization.get_group!(group_id, :fees).fees
-
-        department_id != nil && department_id != "" ->
-          Organization.get_department!(department_id, :fees).fees
-
-        true ->
-          Finance.list_general_fees(socket.assigns.club.id, "club")
-      end
-
-    assign(socket, fees: fees)
   end
 
   defp update_membership(socket, %Changeset{} = changeset) do
@@ -496,52 +471,69 @@ defmodule SportywebWeb.Membership.FormComponent do
     end
   end
 
-  def print_contract(contract) do
-    if Contact.is_person?(contract) do
-      age_in_years = Contact.age_in_years(contract)
-      gender = CommonHelper.get_key_for_value(Contact.get_valid_genders(), contract.person_gender)
-      "#{contract.name} (#{age_in_years}, #{gender})"
-    else
-      contract.name
-    end
-  end
+  defp update_group_options(socket) do
+    department_id = get_form_value(socket, :group_id)
 
-  def find_by_id(elements, wanted_id) do
-    Enum.find(elements, fn e -> e.id == wanted_id end)
-  end
-
-  def print_wanted_element(elements, wanted_id, print_function) do
-    res =
-      case find_by_id(elements, wanted_id) do
-        nil -> nil
-        elements -> print_function.(elements)
+    groups =
+      if department_id == nil do
+        []
+      else
+        Organization.list_groups(department_id, :fees)
       end
 
-    CommonHelper.format_string_field(res)
+    assign(socket, groups: groups)
   end
 
-  defp check_duplicated_membership(socket, %Changeset{} = changeset) do
-    contact =
-      case get_value(changeset, :contact_id) do
-        nil -> nil
-        contact_id -> find_by_id(socket.assigns.contacts, contact_id)
-      end
-
+  defp update_fee_options(socket) do
     group =
-      case get_value(changeset, :group_id) do
+      case get_form_value(socket, :group_id) do
         nil -> nil
         group_id -> find_by_id(socket.assigns.groups, group_id)
       end
 
     department =
-      case get_value(changeset, :department_id) do
+      case get_form_value(socket, :department_id) do
+        nil -> nil
+        department_id -> find_by_id(socket.assigns.departments, department_id)
+      end
+
+    fees =
+      cond do
+        group != nil ->
+          group.fees
+
+        department != nil ->
+          department.fees
+
+        true ->
+          Finance.list_general_fees(socket.assigns.club.id, "club")
+      end
+
+    assign(socket, fees: fees)
+  end
+
+  defp update_duplicated_membership_hint(socket) do
+    contact =
+      case get_form_value(socket, :contact_id) do
+        nil -> nil
+        contact_id -> find_by_id(socket.assigns.contacts, contact_id)
+      end
+
+    group =
+      case get_form_value(socket, :group_id) do
+        nil -> nil
+        group_id -> find_by_id(socket.assigns.groups, group_id)
+      end
+
+    department =
+      case get_form_value(socket, :department_id) do
         nil -> nil
         department_id -> find_by_id(socket.assigns.departments, department_id)
       end
 
     club = socket.assigns.club
 
-    edited_membership_id = get_value(changeset, :id)
+    edited_membership_id = get_form_value(socket, :id)
 
     {matching_memberships, object} =
       cond do
@@ -579,75 +571,78 @@ defmodule SportywebWeb.Membership.FormComponent do
     end
   end
 
-  defp update_contracts(socket, %Changeset{} = changeset) do
+  defp sync_contracts(socket) do
+    update(socket, :form, fn %{source: changeset} ->
+      contact =
+        case get_value(changeset, :contact_id) do
+          nil -> nil
+          contact_id -> find_by_id(socket.assigns.contacts, contact_id)
+        end
+
+      contact_id = if contact == nil, do: nil, else: contact.id
+
+      contract_changeset =
+        Changeset.get_assoc(changeset, :contracts)
+        |> Enum.map(fn contract_changeset ->
+          Changeset.put_change(contract_changeset, :contact_id, contact_id)
+        end)
+
+      changeset = Changeset.put_assoc(changeset, :contracts, contract_changeset)
+      to_form(changeset)
+    end)
+  end
+
+  defp update_contract_warnings(socket) do
     contact =
-      case get_value(changeset, :contact_id) do
+      case get_form_value(socket, :contact_id) do
         nil -> nil
         contact_id -> find_by_id(socket.assigns.contacts, contact_id)
       end
 
+    %Ecto.Changeset{} = changeset = socket.assigns.form.source
     contract_changesets = Changeset.get_assoc(changeset, :contracts)
 
-    changesets_and_hints =
+    warnings =
       Enum.map(contract_changesets, fn contract_changeset ->
-        changeset = synchronize_contract_changeset(contract_changeset, contact)
-        hints = get_contract_hints(contract_changeset, contact, socket)
-        {changeset, hints}
+        fee_id = get_value(contract_changeset, :fee_id)
+
+        fee =
+          case fee_id do
+            nil ->
+              nil
+
+            _ ->
+              find_by_id(socket.assigns.fees, fee_id)
+          end
+
+        start_date = get_value(contract_changeset, :start_date)
+        termination_date = get_value(contract_changeset, :termination_date)
+
+        cond do
+          contact == nil || fee == nil -> nil
+          !Contact.is_person?(contact) -> nil
+          true -> compare_fees_and_ages(contact, fee, start_date, termination_date)
+        end
       end)
 
-    updated_changesets = Enum.map(changesets_and_hints, fn {changeset, _} -> changeset end)
-
-    hint_map =
-      Enum.with_index(changesets_and_hints)
-      |> Enum.filter(fn {{_, hint}, _} -> hint != nil end)
-      |> Enum.map(fn {{_, hint}, index} -> {index, hint} end)
+    warning_map =
+      Enum.with_index(warnings)
+      |> Enum.filter(fn {warning, _} -> warning != nil end)
+      |> Enum.map(fn {warning, index} -> {index, warning} end)
       |> Enum.into(%{})
 
-    changeset = Changeset.put_assoc(changeset, :contracts, updated_changesets)
-    socket = assign(socket, :contract_hints, hint_map)
-
-    {socket, changeset}
+    assign(socket, :contract_warnings, warning_map)
   end
 
-  defp synchronize_contract_changeset(%Changeset{} = contract_changeset, contact) do
-    contact_id = if contact == nil, do: nil, else: contact.id
-    Changeset.put_change(contract_changeset, :contact_id, contact_id)
-  end
+  defp compare_fees_and_ages(contact, fee, start_date, termination_date) do
+    warnings = []
 
-  def get_contract_hints(%Changeset{} = contract_changeset, contact, socket) do
-    fee =
-      case get_value(contract_changeset, :fee_id) do
-        nil ->
-          nil
-
-        fee_id ->
-          find_by_id(socket.assigns.fees, fee_id)
-      end
-
-    cond do
-      contract_changeset == nil || contact == nil || fee == nil ->
-        nil
-
-      !Contact.is_person?(contact) ->
-        nil
-
-      true ->
-        compare_fees_and_ages(contract_changeset, contact, fee)
-    end
-  end
-
-  def compare_fees_and_ages(%Changeset{} = contract_changeset, contact, fee) do
-    start_date = get_value(contract_changeset, :start_date)
-    termination_date = get_value(contract_changeset, :termination_date)
-
-    hints = []
-
-    hints =
+    warnings =
       cond do
         fee.minimum_age_in_years != nil &&
             (start_date == nil ||
                Contact.age_in_years(contact, start_date) < fee.minimum_age_in_years) ->
-          message =
+          hint =
             "Die Gebühr ist erst ab einem Alter von #{fee.minimum_age_in_years} Jahren gültig"
 
           action =
@@ -656,39 +651,48 @@ defmodule SportywebWeb.Membership.FormComponent do
               new_value: add_years(contact.person_birthday, fee.minimum_age_in_years)
             }
 
-          hints ++ [%{hint: message, action: action}]
+          warnings ++ [%{hint: hint, action: action}]
 
         true ->
-          hints
+          warnings
       end
 
-    hints =
+    warnings =
       cond do
         fee.maximum_age_in_years != nil &&
             (termination_date == nil ||
                Contact.age_in_years(contact, termination_date) > fee.maximum_age_in_years) ->
-          message =
+          hint =
             "Die Gebühr ist nur bis zu einem Alter von #{fee.maximum_age_in_years} Jahren gültig"
 
-          action =
-            %{
-              key: "set_termination_date",
-              new_value: add_years(contact.person_birthday, fee.maximum_age_in_years)
-            }
+          # propose day before birthday as termination_date
+          max_termination_date = add_years(contact.person_birthday, fee.maximum_age_in_years + 1)
+          max_termination_date = Date.add(max_termination_date, -1)
+          IO.inspect(max_termination_date)
+          IO.inspect( Date.utc_today())
+          IO.inspect(max_termination_date < Date.utc_today())
+          action = cond do
+              start_date != nil && Date.before?(start_date, max_termination_date) -> nil
+              Date.before?(max_termination_date, Date.utc_today()) -> nil
+              true ->
+                  %{
+                    key: "set_termination_date",
+                    new_value: max_termination_date
+                  }
+          end
 
-          hints ++ [%{hint: message, action: action}]
+          warnings ++ [%{hint: hint, action: action}]
 
         true ->
-          hints
+          warnings
       end
 
     cond do
-      length(hints) == 0 ->
+      length(warnings) == 0 ->
         nil
 
       true ->
-        IO.inspect(hints)
-        hints
+        warnings
     end
   end
 
@@ -698,6 +702,23 @@ defmodule SportywebWeb.Membership.FormComponent do
 
   def print_contract_action(%{:key => "set_termination_date", :new_value => new_value}) do
     "Enddatum auf #{CommonHelper.format_date_field_dmy(new_value)} setzten"
+  end
+
+  defp apply_contract_action(socket, contract_index, changes) do
+    update(socket, :form, fn %{source: changeset} ->
+      contracts = Changeset.get_assoc(changeset, :contracts)
+      contract_to_change = Enum.at(contracts, contract_index)
+      contract_to_change = Changeset.change(contract_to_change, changes)
+      contracts = List.replace_at(contracts, contract_index, contract_to_change)
+
+      changeset = Changeset.put_assoc(changeset, :contracts, contracts)
+      |> struct!(action: :validate)
+      to_form(changeset)
+    end)
+  end
+
+  def get_form_value(socket, field) do
+    get_value(socket.assigns.form.source, field)
   end
 
   def get_value(%Changeset{} = changeset, field) do
@@ -710,5 +731,29 @@ defmodule SportywebWeb.Membership.FormComponent do
   def add_years(%Date{} = date, years_to_add) do
     {:ok, newDate} = Date.new(date.year + years_to_add, date.month, date.day)
     newDate
+  end
+
+  def print_contract(contract) do
+    if Contact.is_person?(contract) do
+      age_in_years = Contact.age_in_years(contract)
+      gender = CommonHelper.get_key_for_value(Contact.get_valid_genders(), contract.person_gender)
+      "#{contract.name} (#{age_in_years}, #{gender})"
+    else
+      contract.name
+    end
+  end
+
+  def find_by_id(elements, wanted_id) do
+    Enum.find(elements, fn e -> e.id == wanted_id end)
+  end
+
+  def print_wanted_element(elements, wanted_id, print_function) do
+    res =
+      case find_by_id(elements, wanted_id) do
+        nil -> nil
+        elements -> print_function.(elements)
+      end
+
+    CommonHelper.format_string_field(res)
   end
 end

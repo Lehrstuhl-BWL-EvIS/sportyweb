@@ -36,7 +36,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    membership = Personal.get_membership!(id, [:contact, :club, :department, :group, :contracts])
+    membership = Personal.get_membership!(id, [:contact, :club, :contracts, department: [:fees], group:  [:fees]])
 
     socket
     |> assign(club: membership.club)
