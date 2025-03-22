@@ -6,7 +6,6 @@ defmodule Sportyweb.Personal do
   import Ecto.Query, warn: false
   alias Sportyweb.Repo
 
-  alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.Membership
@@ -410,18 +409,6 @@ defmodule Sportyweb.Personal do
     %Membership{}
     |> Membership.changeset(attrs)
     |> Repo.insert()
-  end
-
-  def create_membership_and_contract(membership_attrs, contract_attrs, contract_object) do
-    case create_membership(membership_attrs) do
-      {:error, response} -> {:error, response}
-      {:ok, membership} ->
-        contract_attrs = Map.put(contract_attrs, :membership_id, membership.id)
-        case Legal.create_contract_with_association(contract_attrs, contract_object) do
-          {:ok, _} -> {:ok, membership}
-          {:error, _} -> delete_membership(membership)
-        end
-    end
   end
 
   @doc """

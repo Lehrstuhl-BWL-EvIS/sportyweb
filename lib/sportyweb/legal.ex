@@ -9,10 +9,6 @@ defmodule Sportyweb.Legal do
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal.Contact
-  alias Sportyweb.Organization
-  alias Sportyweb.Organization.Club
-  alias Sportyweb.Organization.Department
-  alias Sportyweb.Organization.Group
 
   @doc """
   Returns a list of all contracts. Preloads associations.
@@ -119,40 +115,6 @@ defmodule Sportyweb.Legal do
     |> Contract.changeset(attrs)
     |> Repo.insert()
   end
-
-  def create_contract_with_association(attrs, %Club{} = contract_object) do
-    case create_contract(attrs) do
-      {:error, response} -> {:error, response}
-      {:ok, contract} ->
-        case Organization.create_club_contract(contract_object, contract) do
-          {:ok, _} -> {:ok, contract}
-          {:error, _} -> Legal.delete_contract(contract)
-        end
-    end
-  end
-
-  def create_contract_with_association(attrs, %Department{} = contract_object) do
-    case create_contract(attrs) do
-      {:error, response} -> {:error, response}
-      {:ok, contract} ->
-        case Organization.create_department_contract(contract_object, contract) do
-          {:ok, _} -> {:ok, contract}
-          {:error, _} -> Legal.delete_contract(contract)
-        end
-    end
-  end
-
-  def create_contract_with_association(attrs, %Group{} = contract_object) do
-    case create_contract(attrs) do
-      {:error, response} -> {:error, response}
-      {:ok, contract} ->
-        case Organization.create_group_contract(contract_object, contract) do
-          {:ok, _} -> {:ok, contract}
-          {:error, _} -> Legal.delete_contract(contract)
-        end
-    end
-  end
-
 
   @doc """
   Updates a contract.
