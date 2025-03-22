@@ -12,7 +12,7 @@ defmodule SportywebWeb.ContractLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    contract = Legal.get_contract!(id, [:club, :clubs, :contact, :departments, :fee, :groups])
+    contract = Legal.get_contract!(id, [:club, :clubs, :contact, :departments, :fee, :groups, contract_documents: [:document]])
     contract_object = Contract.get_object(contract)
 
     {:noreply,
@@ -23,6 +23,7 @@ defmodule SportywebWeb.ContractLive.Show do
      )
      |> assign(:contract, contract)
      |> assign(:contract_object, contract_object)
+     |> assign(:documents, contract.contract_documents)
      |> assign(:club, contract.club)}
   end
 end

@@ -18,7 +18,8 @@ defmodule SportywebWeb.DepartmentLive.Show do
         :groups,
         :notes,
         :phones,
-        fees: :internal_events
+        fees: :internal_events,
+        department_documents: [:document],
       ])
 
     {:noreply,
@@ -26,6 +27,7 @@ defmodule SportywebWeb.DepartmentLive.Show do
      |> assign(:page_title, "Abteilung: #{department.name}")
      |> assign(:department, department)
      |> assign(:club, department.club)
+     |> assign(:documents, department.department_documents)
      |> stream(:groups, department.groups)}
   end
 end

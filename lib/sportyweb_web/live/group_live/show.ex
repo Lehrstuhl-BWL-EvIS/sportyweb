@@ -17,7 +17,8 @@ defmodule SportywebWeb.GroupLive.Show do
         :notes,
         :phones,
         department: :club,
-        fees: :internal_events
+        fees: :internal_events,
+        group_documents: [:document]
       ])
 
     {:noreply,
@@ -25,6 +26,7 @@ defmodule SportywebWeb.GroupLive.Show do
      |> assign(:page_title, "Gruppe: #{group.name}")
      |> assign(:group, group)
      |> assign(:department, group.department)
+     |> assign(:documents, group.group_documents)
      |> assign(:club, group.department.club)}
   end
 end

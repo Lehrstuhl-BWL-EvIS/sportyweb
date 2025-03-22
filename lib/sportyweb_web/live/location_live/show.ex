@@ -19,13 +19,15 @@ defmodule SportywebWeb.LocationLive.Show do
         :notes,
         :phones,
         :postal_addresses,
-        fees: :internal_events
+        fees: :internal_events,
+        location_documents: [:document]
       ])
 
     {:noreply,
      socket
      |> assign(:page_title, "Standort: #{location.name}")
      |> assign(:location, location)
+     |> assign(:documents, location.location_documents)
      |> assign(:club, location.club)
      |> stream(:equipment, location.equipment)}
   end

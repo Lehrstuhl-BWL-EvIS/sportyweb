@@ -16,6 +16,9 @@ cmake-build-*/
 # IntelliJ
 out/
 
+#Upload folder
+uploads/
+
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 

@@ -13,7 +13,6 @@ defmodule Sportyweb.Repo.Migrations.CreateDocuments do
       add :thumbnail_path, :string, null: true
       add :checksum, :string, null: false
       add :uploaded_by_id, references(:users, type: :binary_id, on_delete: :nothing), null: false
-
       timestamps(type: :utc_datetime)
     end
   end

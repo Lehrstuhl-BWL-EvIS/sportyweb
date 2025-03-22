@@ -36,6 +36,8 @@ defmodule Sportyweb.Calendar.Event do
     many_to_many :phones, Phone, join_through: EventPhone
     many_to_many :postal_addresses, PostalAddress, join_through: EventPostalAddress
     many_to_many :locations, Location, join_through: EventLocation
+    has_many :event_documents, Sportyweb.Documents.EventDocument
+    has_many :documents, through: [:event_documents, :document]
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""

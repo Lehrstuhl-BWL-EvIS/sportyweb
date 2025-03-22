@@ -21,6 +21,8 @@ defmodule Sportyweb.Asset.Equipment do
     many_to_many :fees, Fee, join_through: EquipmentFee
     many_to_many :notes, Note, join_through: EquipmentNote
     many_to_many :phones, Phone, join_through: EquipmentPhone
+    has_many :equipment_documents, Sportyweb.Documents.EquipmentDocument
+    has_many :documents, through: [:equipment_documents, :document]
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""

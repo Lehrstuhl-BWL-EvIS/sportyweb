@@ -52,3 +52,28 @@
     </:item>
   </.list>
 </.card>
+<.header level="2" class="mt-12">
+  Dokumente
+  <:actions>
+    <.link navigate={
+      ~p"/documents/new?#{%{ref: @club.id, type: "club_document"}}"
+    }>
+      <.button>Dokument hochladen</.button>
+    </.link>
+  </:actions>
+</.header>
+<.card>
+  <%= if Enum.any?(@documents) do %>
+    <.live_component
+      module={SportywebWeb.DocumentListComponent}
+      id="documents"
+      documents={@documents}
+      document_module={Sportyweb.Documents.ClubDocument}
+      group_by_type={true}
+    />
+  <% else %>
+    <p>
+      Bisher wurden noch keine Dokumente hinzugefügt.
+    </p>
+  <% end %>
+</.card>

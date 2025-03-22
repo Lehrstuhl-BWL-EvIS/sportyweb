@@ -43,6 +43,32 @@
 </.card>
 
 <.header level="2" class="mt-12">
+  Dokumente
+  <:actions>
+    <.link navigate={
+      ~p"/documents/new?#{%{ref: @equipment.id, type: "equipment_document"}}"
+    }>
+      <.button>Dokument hochladen</.button>
+    </.link>
+  </:actions>
+</.header>
+<.card>
+  <%= if Enum.any?(@documents) do %>
+    <.live_component
+      module={SportywebWeb.DocumentListComponent}
+      id="documents"
+      documents={@documents}
+      document_module={Sportyweb.Documents.EquipmentDocument}
+      group_by_type={true}
+    />
+  <% else %>
+    <p>
+      Bisher wurden noch keine Dokumente hinzugefügt.
+    </p>
+  <% end %>
+</.card>
+
+<.header level="2" class="mt-12">
   Gebühren
   <:actions>
     <.link navigate={~p"/equipment/#{@equipment}/fees/new"}>

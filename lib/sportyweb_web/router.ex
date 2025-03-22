@@ -145,6 +145,9 @@ defmodule SportywebWeb.Router do
 
       live "/contacts/:id", ContactLive.Show, :show
 
+      # Documents
+      live "/documents/new", DocumentLive.NewEdit, :new
+
       # Locations (Each belongs to a club)
 
       live "/locations", LocationLive.Index, :index_root
@@ -236,6 +239,11 @@ defmodule SportywebWeb.Router do
       live "/clubs/:club_id/roles/new", RoleLive.New, :new
       live "/clubs/:club_id/roles/:user_id/edit", RoleLive.Edit, :edit
       live "/clubs/:club_id/roles/show", RoleLive.Show, :show
+
+
+      get "/documents/:id/file", DocumentController, :show
+      get "/documents/:id/thumbnail", DocumentController, :thumbnail
+
     end
   end
 

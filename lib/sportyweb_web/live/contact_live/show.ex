@@ -21,6 +21,7 @@ defmodule SportywebWeb.ContactLive.Show do
         :notes,
         :phones,
         :postal_addresses,
+        contact_documents: [:document],
         contracts: [:clubs, :departments, :groups, fee: :internal_events]
       ])
 
@@ -29,6 +30,7 @@ defmodule SportywebWeb.ContactLive.Show do
      |> assign(:page_title, "Kontakt: #{contact.name}")
      |> assign(:contact, contact)
      |> assign(:club, contact.club)
+     |> assign(:documents, contact.contact_documents)
      |> stream(:contracts, contact.contracts)}
   end
 end

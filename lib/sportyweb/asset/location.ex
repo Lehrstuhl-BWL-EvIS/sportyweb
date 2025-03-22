@@ -25,6 +25,8 @@ defmodule Sportyweb.Asset.Location do
     many_to_many :notes, Note, join_through: LocationNote
     many_to_many :phones, Phone, join_through: LocationPhone
     many_to_many :postal_addresses, PostalAddress, join_through: LocationPostalAddress
+    has_many :location_documents, Sportyweb.Documents.LocationDocument
+    has_many :documents, through: [:location_documents, :document]
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""

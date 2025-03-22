@@ -11,12 +11,13 @@ defmodule SportywebWeb.EquipmentLive.Show do
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
     equipment =
-      Asset.get_equipment!(id, [:emails, :notes, :phones, fees: :internal_events, location: :club])
+      Asset.get_equipment!(id, [:emails, :notes, :phones, fees: :internal_events, location: :club, equipment_documents: [:document]])
 
     {:noreply,
      socket
      |> assign(:page_title, "Equipment: #{equipment.name}")
      |> assign(:equipment, equipment)
+     |> assign(:documents, equipment.equipment_documents)
      |> assign(:location, equipment.location)
      |> assign(:club, equipment.location.club)}
   end

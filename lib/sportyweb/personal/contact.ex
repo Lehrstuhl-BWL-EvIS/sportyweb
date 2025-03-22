@@ -17,7 +17,7 @@ defmodule Sportyweb.Personal.Contact do
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
   alias Sportyweb.Polymorphic.PostalAddress
-  alias Sportyweb.Personal.ContactDocument
+  alias Sportyweb.Documents.ContactDocument
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

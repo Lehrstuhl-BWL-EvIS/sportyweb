@@ -1,17 +1,15 @@
-defmodule Sportyweb.Personal.ContactDocument do
+defmodule Sportyweb.Documents.ContactDocument do
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Sportyweb.Personal.Contact
-  alias Sportyweb.Polymorphic.Document
+  alias Sportyweb.Documents.Document
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
   @valid_types [
     [key: "Ausweiskopie", value: "id_card"],
-    [key: "Mitgliedsantrag", value: "membership_application"],
-    [key: "Austrittserklärung", value: "exit_form"],
     [key: "SEPA-Mandat", value: "sepa_mandate"],
     [key: "Attest / Gesundheitsnachweis", value: "health_certificate"],
     [key: "Nachweis Schüler/Student", value: "student_proof"],

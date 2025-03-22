@@ -17,12 +17,14 @@ defmodule SportywebWeb.ClubLive.Show do
         :financial_data,
         :notes,
         :phones,
-        :location
+        :location,
+        club_documents: [:document]
       ])
 
     {:noreply,
      socket
      |> assign(:page_title, "Verein: #{club.name}")
+     |> assign(:documents, club.club_documents)
      |> assign(:club, club)}
   end
 end

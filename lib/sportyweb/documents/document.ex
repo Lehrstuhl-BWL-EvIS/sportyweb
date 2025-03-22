@@ -1,4 +1,4 @@
-defmodule Sportyweb.Polymorphic.Document do
+defmodule Sportyweb.Documents.Document do
   use Ecto.Schema
   import Ecto.Changeset
 

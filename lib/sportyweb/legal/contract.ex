@@ -25,6 +25,9 @@ defmodule Sportyweb.Legal.Contract do
     many_to_many :departments, Department, join_through: DepartmentContract
     many_to_many :groups, Group, join_through: GroupContract
 
+    has_many :contract_documents, Sportyweb.Documents.ContractDocument
+    has_many :documents, through: [:contract_documents, :document]
+
     field :signing_date, :date, default: nil
     field :start_date, :date, default: nil
     field :first_billing_date, :date, default: nil
