@@ -68,7 +68,7 @@ defmodule SportywebWeb.ContactLive.DetailsTableComponent do
           <%= if membership.state == "terminated" do %>
               <.icon name="hero-archive-box-x-mark" class="ml-1 inline-block w-[20px]" />
           <% end %>
-          {format_string_field(Membership.get_smallest_community(membership).name)}
+          {format_string_field(Membership.membership_in(membership).name)}
         </li>
       </:col>
 

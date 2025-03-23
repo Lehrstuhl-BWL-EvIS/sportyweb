@@ -14,7 +14,7 @@ defmodule SportywebWeb.MembershipLive.Show do
     membership  = Personal.get_membership!(id, [:club, :contact, :department, :group, contracts: [:fee]]);
 
     contact_name = membership.contact.name
-    community_name = Membership.get_smallest_community(membership).name
+    community_name = Membership.membership_in(membership).name
     {:noreply,
      socket
      |> assign(

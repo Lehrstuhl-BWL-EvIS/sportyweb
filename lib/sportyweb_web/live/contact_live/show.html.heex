@@ -57,7 +57,7 @@ Mitgliedschaften
         row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}/edit") end}
         >
             <:col :let={{_id, membership}} label="in">
-                {format_string_field(Membership.get_smallest_community(membership).name)}
+                {format_string_field(Membership.membership_in(membership).name)}
             </:col>
             <:col :let={{_id, membership}} label="Status">
                 <%= if Membership.is_active(membership) do %>

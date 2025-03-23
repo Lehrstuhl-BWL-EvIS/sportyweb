@@ -198,8 +198,6 @@ defmodule SportywebWeb.Membership.FormComponent do
         _ -> [membership.group]
       end
 
-    changeset = Membership.changeset(membership, %{})
-
     socket =
       socket
       |> assign(assigns)
@@ -208,7 +206,7 @@ defmodule SportywebWeb.Membership.FormComponent do
       |> assign(contacts: contacts)
       |> assign(duplicated_membership_error: nil)
       |> assign(contract_warnings: %{})
-      |> assign(form: to_form(changeset))
+      |> assign(form: to_form(Membership.changeset(membership)))
       |> update_fee_options()
       |> update_group_options()
       |> update_duplicated_membership_hint()
@@ -542,11 +540,6 @@ defmodule SportywebWeb.Membership.FormComponent do
     else
       contact.name
     end
-  end
-
-  def print_contact(test) do
-    IO.inspect(test)
-    "test"
   end
 
   def find_by_id(elements, wanted_id) do

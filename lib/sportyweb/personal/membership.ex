@@ -15,7 +15,7 @@ defmodule Sportyweb.Personal.Membership do
     belongs_to :club, Club
     belongs_to :department, Department
     belongs_to :group, Group
-    has_many :contracts, Contract
+    has_many :contracts, Contract, preload_order: [asc: :start_date]
     field :state, :string
     field :start_date, :date, default: nil
     field :termination_date, :date, default: nil
@@ -38,7 +38,7 @@ defmodule Sportyweb.Personal.Membership do
   end
 
 
-  def get_smallest_community(membership) do
+  def membership_in(membership) do
     cond do
       membership.group != nil -> membership.group
       membership.department != nil -> membership.department
@@ -48,7 +48,7 @@ defmodule Sportyweb.Personal.Membership do
   end
 
   @doc false
-  def changeset(membership, attrs) do
+  def changeset(membership, attrs \\ %{}) do
     membership
     |> cast(attrs,
          [

@@ -70,7 +70,7 @@ defmodule SportywebWeb.Membership.MembershipTable do
             {format_string_field(membership.contact.person_last_name)}
           </:col>
           <:col :let={{_id, membership}} label="In" sortable filterable>
-            {format_string_field(Membership.get_smallest_community(membership).name)}
+            {format_string_field(Membership.membership_in(membership).name)}
           </:col>
           <:col :let={{_id, membership}} label="Abteilung" sortable>
             {format_string_field(
@@ -277,7 +277,7 @@ defmodule SportywebWeb.Membership.MembershipTable do
 
         %{"In" => direction} ->
           {load_unsorted(database_filter, socket)
-           |> memory_sort(fn m -> Membership.get_smallest_community(m).name end, direction),
+           |> memory_sort(fn m -> Membership.membership_in(m).name end, direction),
            sorting}
 
         _ ->
@@ -327,7 +327,7 @@ defmodule SportywebWeb.Membership.MembershipTable do
           {"In", filterValue} ->
             {nil,
              fn m ->
-               case_insensitive_contains(Membership.get_smallest_community(m).name, filterValue)
+               case_insensitive_contains(Membership.membership_in(m).name, filterValue)
              end}
         end
       end)

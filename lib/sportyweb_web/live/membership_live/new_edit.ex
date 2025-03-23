@@ -32,8 +32,6 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
 
   @impl true
   def handle_params(params, _url, socket) do
-    IO.inspect(params)
-
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
@@ -45,7 +43,7 @@ defmodule SportywebWeb.MembershipLive.NewEdit do
     |> assign(membership: membership)
     |> assign(
       page_title:
-        "Mitgliedschaft von #{membership.contact.name} in #{Membership.get_smallest_community(membership).name} bearbeiten"
+        "Mitgliedschaft von #{membership.contact.name} in #{Membership.membership_in(membership).name} bearbeiten"
     )
   end
 
