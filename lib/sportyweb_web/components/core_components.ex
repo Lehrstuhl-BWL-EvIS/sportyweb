@@ -513,7 +513,7 @@ defmodule SportywebWeb.CoreComponents do
     """
   end
 
-    @doc """
+  @doc """
   Generates a generic waring message.
   """
   slot :inner_block, required: true
@@ -642,6 +642,7 @@ defmodule SportywebWeb.CoreComponents do
   attr :column_label, :string, required: true
   attr :current_filter, :any, default: nil
   attr :id, :string, required: true
+  attr :filter_sort_target, :any, default: nil
 
   defp column_filter_dialog(assigns) do
     assigns =
@@ -656,17 +657,27 @@ defmodule SportywebWeb.CoreComponents do
     ~H"""
     <.modal id={@id}>
       Spalte {@column_label} filtern
-      <.simple_form for={@form} id="club-form" phx-submit="apply_filter">
+      <.simple_form
+        for={@form}
+        id="club-form"
+        phx-target={@filter_sort_target}
+        phx-submit="apply_filter"
+      >
         <.input field={@form["#{assigns.column_label}"]} type="text" label="Filtern nach" />
         <.button phx-click={hide_modal(@id)}>
           Filtern
         </.button>
-        <.button type="button"
-            :if={@current_filter != nil}
-        class="bg-rose-700 hover:bg-rose-800"
-         phx-click={hide_modal(@id) |> JS.push("remove_filter", value: %{column: assigns.column_label})}>
-         Zurücksetzen
-         </.button>
+        <.button
+          :if={@current_filter != nil}
+          type="button"
+          class="bg-rose-700 hover:bg-rose-800"
+          phx-target={@filter_sort_target}
+          phx-click={
+            hide_modal(@id) |> JS.push("remove_filter", value: %{column: assigns.column_label})
+          }
+        >
+          Zurücksetzen
+        </.button>
       </.simple_form>
     </.modal>
     """
@@ -698,6 +709,7 @@ defmodule SportywebWeb.CoreComponents do
   attr :filters, :any, default: %{}
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
+  attr :filter_sort_target, :any, default: nil
 
   attr :row_item, :any,
     default: &Function.identity/1,
@@ -722,9 +734,18 @@ defmodule SportywebWeb.CoreComponents do
       <table class="w-[40rem] sm:w-full">
         <thead class="text-sm text-left leading-6 text-zinc-500 bg-white sticky top-0 z-10">
           <tr>
-            <th :for={col <- @col}
-              phx-click={if col[:sortable] do JS.push("apply_sorting", value: %{col[:label] => next_sort_direction(@sorting[col[:label]])}) end}
-              class="p-0 pb-4 pr-6 font-normal">
+            <th
+              :for={col <- @col}
+              phx-target={@filter_sort_target}
+              phx-click={
+                if col[:sortable] do
+                  JS.push("apply_sorting",
+                    value: %{col[:label] => next_sort_direction(@sorting[col[:label]])}
+                  )
+                end
+              }
+              class="p-0 pb-4 pr-6 font-normal"
+            >
               <div class="flex items-center">
                 {col[:label]}
                 <div :if={col[:sortable]}>
@@ -893,7 +914,6 @@ defmodule SportywebWeb.CoreComponents do
       transition: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"}
     )
     |> show("##{id}-container")
-    |> JS.add_class("overflow-hidden", to: "body")
     |> JS.focus_first(to: "##{id}-content")
   end
 

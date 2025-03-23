@@ -23,18 +23,30 @@ defmodule SportywebWeb.ContactLive.Index do
 
   defp apply_action(socket, :index, %{"club_id" => club_id}) do
     club = Organization.get_club!(club_id)
-    contacts = Personal.list_contacts(club_id, nil, nil, [:postal_addresses, :emails, :phones, :memberships])
-    all_element_count = length(contacts)
-    contacts = Enum.take(contacts, 50)
 
-    socket
+    socket = socket
     |> assign(:page_title, "Mitglieder & Kontakte")
     |> assign(:club, club)
-    |> assign(:sorting, %{})
-    |> assign(:filters, %{})
-    |> assign(:all_element_count, all_element_count)
-    |> assign(:shown_element_count, length(contacts))
-    |> stream(:contacts, contacts)
+    sort_and_filter_data(%{}, %{}, 50, socket)
+  end
+
+  @impl true
+  def handle_event("max_elements_counts_changed", %{"value" => new_value}, socket) do
+    IO.inspect(Integer.parse(new_value))
+    socket = case Integer.parse(new_value) do
+      :error -> socket
+      {new_max_count, ""} ->
+        cond do
+          new_max_count == socket.assigns.max_elements_counts -> socket
+          true ->
+            sorting = socket.assigns.sorting
+            filters = socket.assigns.filters
+            sort_and_filter_data(sorting, filters, new_max_count, socket)
+        end
+      {_, _} -> socket
+    end
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -58,24 +70,33 @@ defmodule SportywebWeb.ContactLive.Index do
   @impl true
   def handle_event("apply_filter", %{} = filter, socket) do
     sorting = socket.assigns.sorting
+    max_elements_counts = socket.assigns.max_elements_counts
     merged_filters = Map.merge(socket.assigns.filters, filter)
-    sort_and_filter_data(sorting, merged_filters, socket)
+    socket = sort_and_filter_data(sorting, merged_filters, max_elements_counts, socket)
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("remove_filter", %{"column" => column}, socket) do
     sorting = socket.assigns.sorting
+    max_elements_counts = socket.assigns.max_elements_counts
     cleaned_filters = Map.delete(socket.assigns.filters, column)
-    sort_and_filter_data(sorting, cleaned_filters, socket)
+    socket = sort_and_filter_data(sorting, cleaned_filters, max_elements_counts, socket)
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("apply_sorting", %{} = sorting, socket) do
     filters = socket.assigns.filters
-    sort_and_filter_data(sorting, filters, socket)
+    max_elements_counts = socket.assigns.max_elements_counts
+    socket = sort_and_filter_data(sorting, filters, max_elements_counts, socket)
+
+    {:noreply, socket}
   end
 
-  defp sort_and_filter_data(sorting, filters, socket) do
+  defp sort_and_filter_data(sorting, filters, new_max_count, socket) do
     {database_filter, memory_filters, all_valid_filters} = separate_filter(filters)
 
     {contacts, used_sorting} = case sorting do
@@ -94,17 +115,15 @@ defmodule SportywebWeb.ContactLive.Index do
 
     contacts = memory_filter(contacts, memory_filters)
     all_element_count = length(contacts)
-    contacts = Enum.take(contacts, 50)
+    contacts = Enum.take(contacts, new_max_count)
 
-    socket = socket
-            |> assign(:sorting, used_sorting)
-            |> assign(:filters, all_valid_filters)
-            |> assign(:all_element_count, all_element_count)
-            |> assign(:shown_element_count, length(contacts))
-            |> stream(:contacts, contacts)
-
-
-    {:noreply, socket}
+    socket
+    |> assign(:sorting, used_sorting)
+    |> assign(:filters, all_valid_filters)
+    |> assign(:all_element_count, all_element_count)
+    |> assign(:max_elements_counts, new_max_count)
+    |> assign(:shown_element_count, length(contacts))
+    |> stream(:contacts, contacts)
   end
 
   defp separate_filter(filters) do

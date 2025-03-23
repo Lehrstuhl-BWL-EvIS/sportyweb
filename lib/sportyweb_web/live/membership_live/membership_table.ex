@@ -53,6 +53,7 @@ defmodule SportywebWeb.Membership.MembershipTable do
 
       <div class="overflow-auto max-w-full max-h-[600px]">
         <.table
+          filter_sort_target={@myself}
           id="memberships"
           rows={@streams.memberships}
           sorting={@sorting}
@@ -138,7 +139,14 @@ defmodule SportywebWeb.Membership.MembershipTable do
         <%= if @all_element_count==0 do %>
           Es wurde keine passende Mitgliedschaft gefunden
         <% else %>
-          Es werden {@shown_element_count} von {@all_element_count} passenden Mitgliedschaften angezeigt
+          Es werden {@shown_element_count} von {@all_element_count} passenden Mitgliedschaften angezeigt. Maximal
+          <input
+            type="number"
+            class="rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6 border-zinc-300 focus:border-zinc-400"
+            value={@max_elements_counts}
+            phx-target={@myself}
+            phx-keyup={JS.push("max_element_count_changed", value: %{})}
+          />
         <% end %>
       </div>
     </div>
@@ -156,11 +164,27 @@ defmodule SportywebWeb.Membership.MembershipTable do
       %{}
     end
 
-      IO.puts("initial filters ")
-      IO.inspect(filters)
-
-    socket = sort_and_filter_data(%{}, filters, socket)
+    socket = sort_and_filter_data(%{}, filters, 50, socket)
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_event("max_element_count_changed", %{"value" => new_value}, socket) do
+    IO.inspect(Integer.parse(new_value))
+    socket = case Integer.parse(new_value) do
+      :error -> socket
+      {new_max_count, ""} ->
+        cond do
+          new_max_count == socket.assigns.max_elements_counts -> socket
+          true ->
+            sorting = socket.assigns.sorting
+            filters = socket.assigns.filters
+            sort_and_filter_data(sorting, filters, new_max_count, socket)
+        end
+      {_, _} -> socket
+    end
+
+    {:noreply, socket}
   end
 
   @impl true
@@ -182,27 +206,30 @@ defmodule SportywebWeb.Membership.MembershipTable do
   @impl true
   def handle_event("apply_filter", %{} = filter, socket) do
     sorting = socket.assigns.sorting
+    max_elements_counts = socket.assigns.max_elements_counts
     merged_filters = Map.merge(socket.assigns.filters, filter)
-    socket = sort_and_filter_data(sorting, merged_filters, socket)
+    socket = sort_and_filter_data(sorting, merged_filters, max_elements_counts, socket)
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("remove_filter", %{"column" => column}, socket) do
     sorting = socket.assigns.sorting
+    max_elements_counts = socket.assigns.max_elements_counts
     cleaned_filters = Map.delete(socket.assigns.filters, column)
-    socket = sort_and_filter_data(sorting, cleaned_filters, socket)
+    socket = sort_and_filter_data(sorting, cleaned_filters, max_elements_counts, socket)
     {:noreply, socket}
   end
 
   @impl true
   def handle_event("apply_sorting", %{} = sorting, socket) do
     filters = socket.assigns.filters
-    socket = sort_and_filter_data(sorting, filters, socket)
+    max_elements_counts = socket.assigns.max_elements_counts
+    socket = sort_and_filter_data(sorting, filters, max_elements_counts, socket)
     {:noreply, socket}
   end
 
-  defp sort_and_filter_data(sorting, filters, socket) do
+  defp sort_and_filter_data(sorting, filters, max_elements_counts, socket) do
     {database_filter, memory_filters, all_valid_filters} = separate_filter(filters)
 
     {memberships, used_sorting} =
@@ -259,12 +286,13 @@ defmodule SportywebWeb.Membership.MembershipTable do
 
     memberships = memory_filter(memberships, memory_filters)
     all_element_count = length(memberships)
-    memberships = Enum.take(memberships, 50)
+    memberships = Enum.take(memberships, max_elements_counts)
 
     socket
     |> assign(:sorting, used_sorting)
     |> assign(:filters, all_valid_filters)
     |> assign(:all_element_count, all_element_count)
+    |> assign(:max_elements_counts, max_elements_counts)
     |> assign(:shown_element_count, length(memberships))
     |> stream(:memberships, memberships)
   end
