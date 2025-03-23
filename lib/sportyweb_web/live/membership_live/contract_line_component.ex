@@ -23,6 +23,8 @@ defmodule SportywebWeb.Membership.ContractLineComponent do
         />
         <div class="hidden">
           <.input field={@contract[:club_id]} type="text" />
+          <.input field={@contract[:partner_department_id]} type="text" />
+          <.input field={@contract[:partner_group_id]} type="text" />
           <.input field={@contract[:contact_id]} type="text" />
           <.input field={@contract[:deleted]} type="checkbox" />
         </div>

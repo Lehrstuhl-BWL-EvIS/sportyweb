@@ -7,25 +7,26 @@ defmodule Sportyweb.Legal.Contract do
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization.Club
-  alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.Department
-  alias Sportyweb.Organization.DepartmentContract
   alias Sportyweb.Organization.Group
-  alias Sportyweb.Organization.GroupContract
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.Membership
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "contracts" do
+    # contract partners: contact <-> (club, department or group)
     belongs_to :club, Club
+    belongs_to :partner_department, Department
+    belongs_to :partner_group, Group
     belongs_to :contact, Contact
+
+    # contract objects (what is the contract about?)
+    # Usually something the club ofers against a fee (memberships, events e.g.)
     belongs_to :membership, Membership
     belongs_to :fee, Fee
+
     has_many :transactions, Transaction
-    many_to_many :clubs, Club, join_through: ClubContract
-    many_to_many :departments, Department, join_through: DepartmentContract
-    many_to_many :groups, Group, join_through: GroupContract
 
     field :signing_date, :date, default: nil
     field :start_date, :date, default: nil
@@ -64,17 +65,24 @@ defmodule Sportyweb.Legal.Contract do
   """
   def get_object(%Contract{} = contract) do
     cond do
-      is_list(contract.clubs) && Enum.any?(contract.clubs) ->
-        Enum.at(contract.clubs, 0)
-
-      is_list(contract.departments) && Enum.any?(contract.departments) ->
-        Enum.at(contract.departments, 0)
-
-      is_list(contract.groups) && Enum.any?(contract.groups) ->
-        Enum.at(contract.groups, 0)
+      contract.membership != nil -> contract.membership
 
       true ->
         nil
+    end
+  end
+  def print_contract_object(%Contract{} = contract) do
+    cond do
+      contract.membership != nil -> "Mitgliedschaft in #{Membership.membership_in(contract.membership).name}"
+      true -> nil
+    end
+  end
+
+  def get_internal_partner(%Contract{} = contract) do
+    cond do
+      contract.partner_group != nil -> contract.partner_group
+      contract.partner_department != nil -> contract.partner_department
+      true -> contract.club
     end
   end
 
@@ -85,6 +93,8 @@ defmodule Sportyweb.Legal.Contract do
       attrs,
       [
         :club_id,
+        :partner_group_id,
+        :partner_department_id,
         :contact_id,
         :membership_id,
         :fee_id,

@@ -1,0 +1,14 @@
+<.header>
+  {@page_title}
+  <:actions>
+    <.link navigate={~p"/clubs/#{@club}/contracts/new"}>
+      <.button>Vertrag erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <.live_component id="contracts_table" 
+    module={SportywebWeb.Contract.ContractTable}
+    club={@club} />
+</.card>

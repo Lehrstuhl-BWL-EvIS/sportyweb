@@ -48,7 +48,7 @@ defmodule SportywebWeb.ContactLive.Show do
   def load_contacts(socket) do
     show_membership_contracts = socket.assigns.show_membership_contracts
     contact_id = socket.assigns.contact.id
-    contracts = Legal.list_contracts_of_contact(contact_id, [:clubs, :departments, :groups, fee: :internal_events], !show_membership_contracts)
+    contracts = Legal.list_contracts_of_contact(contact_id, [:club, :partner_department, :partner_group, membership: [:club, :department, :group], fee: :internal_events], !show_membership_contracts)
 
     socket
     |> stream(:contracts, contracts, reset: true)

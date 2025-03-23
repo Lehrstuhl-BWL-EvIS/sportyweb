@@ -1,11 +1,15 @@
 <.header>
   {@page_title}
+
+  // action to create new contracts is missing here on purpose. As contracts
+  // can be created for multiple objects, there creation should happen on specific
+  // pages for each object
 </.header>
 
 <.card>
   <.list>
     <:item title="Vertragsobjekt">
-      {format_string_field(if @contract_object == nil do nil else @contract_object.name end )}
+      {format_string_field(Contract.print_contract_object(@contract))}
     </:item>
     <:item title="Kontakt">
       <.link navigate={~p"/contacts/#{@contract.contact}"} class="text-indigo-600 hover:underline">

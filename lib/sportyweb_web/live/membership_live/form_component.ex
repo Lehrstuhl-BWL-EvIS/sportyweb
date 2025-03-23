@@ -485,18 +485,17 @@ defmodule SportywebWeb.Membership.FormComponent do
 
   defp sync_contracts(socket) do
     update(socket, :form, fn %{source: changeset} ->
-      contact =
-        case get_value(changeset, :contact_id) do
-          nil -> nil
-          contact_id -> find_by_id(socket.assigns.contacts, contact_id)
-        end
-
-      contact_id = if contact == nil, do: nil, else: contact.id
+      contact_id = get_value(changeset, :contact_id)
+      group_id = get_value(changeset, :group_id)
+      department_id = get_value(changeset, :department_id)
 
       contract_changeset =
         Changeset.get_assoc(changeset, :contracts)
         |> Enum.map(fn contract_changeset ->
-          Changeset.put_change(contract_changeset, :contact_id, contact_id)
+          contract_changeset
+          |> Changeset.put_change(:contact_id, contact_id)
+          |> Changeset.put_change(:partner_group_id, group_id)
+          |> Changeset.put_change(:partner_department_id, department_id)
         end)
 
       changeset = Changeset.put_assoc(changeset, :contracts, contract_changeset)

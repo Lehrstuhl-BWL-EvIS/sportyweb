@@ -114,7 +114,7 @@ Verträge
                 </:col>
               <:col :let={{_id, contract}} label="Vertragsobjekt">
                   <%= if Contract.get_object(contract) != nil do %>
-                    {format_string_field(Contract.get_object(contract).name)}
+                    {format_string_field(Contract.print_contract_object(contract))}
                   <% end %>
               </:col>
               <:col :let={{_id, contract}} label="Gebühr">

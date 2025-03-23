@@ -1,21 +1,11 @@
 defmodule SportywebWeb.ContractLive.Index do
   use SportywebWeb, :live_view
 
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <div>Currently not in use</div>
-    """
-  end
-
-  @impl true
-  def mount(%{"club_id" => _club_id}, _session, socket) do
-    {:ok, assign(socket, :club_navigation_current_item, :fees)}
-  end
+  alias Sportyweb.Organization
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, :club_navigation_current_item, :contracts)}
   end
 
   @impl true
@@ -27,4 +17,14 @@ defmodule SportywebWeb.ContractLive.Index do
     socket
     |> redirect(to: "/clubs")
   end
+
+  defp apply_action(socket, :index, %{"club_id" => club_id}) do
+    club = Organization.get_club!(club_id)
+
+    socket
+    |> assign(:page_title, "Verträge")
+    |> assign(:club, club)
+  end
+
+
 end

@@ -140,6 +140,15 @@ defmodule SportywebWeb.Router do
       live "/memberships/:id/edit", MembershipLive.NewEdit, :edit
       live "/memberships/:id", MembershipLive.Show, :show
 
+      # Contracts
+
+      live "/contracts", ContractLive.Index, :index_root
+      live "/clubs/:club_id/contracts", ContractLive.Index, :index
+      live "/clubs/:club_id/contracts/new", ContractLive.NewEdit, :new
+      live "/contracts/:id/edit", ContractLive.NewEdit, :edit
+      live "/contracts/:id", ContractLive.Show, :show
+
+
       # Locations (Each belongs to a club)
 
       live "/locations", LocationLive.Index, :index_root
@@ -185,14 +194,6 @@ defmodule SportywebWeb.Router do
       live "/clubs/:club_id/forecasts/start/:start_date/end/:end_date/subsidy/:subsidy_id",
            ForecastLive.Show,
            :show_subsidies_single
-
-      # Contracts (Polymorphic)
-
-      live "/contracts", ContractLive.Index, :index_root
-
-      live "/contracts/:id/edit", ContractLive.NewEdit, :edit
-
-      live "/contracts/:id", ContractLive.Show, :show
 
       # Transaction (Each belongs to a contract)
 

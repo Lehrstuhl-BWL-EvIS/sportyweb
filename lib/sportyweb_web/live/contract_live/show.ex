@@ -3,26 +3,23 @@ defmodule SportywebWeb.ContractLive.Show do
 
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
-  alias Sportyweb.Finance.Fee
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :club_navigation_current_item, :fees)}
+    {:ok, assign(socket, :club_navigation_current_item, :contracts)}
   end
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    contract = Legal.get_contract!(id, [:club, :clubs, :contact, :departments, :fee, :groups])
-    contract_object = Contract.get_object(contract)
+    contract = Legal.get_contract!(id, [:club, :contact, :partner_department, :partner_group, :fee, membership: [:club, :department, :group]])
 
     {:noreply,
      socket
      |> assign(
        :page_title,
-       "Vertrag (#{get_key_for_value(Fee.get_valid_types(), contract.fee.type)})"
+       "Vertrag zwischen #{contract.contact.name} und #{Contract.get_internal_partner(contract).name}"
      )
      |> assign(:contract, contract)
-     |> assign(:contract_object, contract_object)
      |> assign(:club, contract.club)}
   end
 end

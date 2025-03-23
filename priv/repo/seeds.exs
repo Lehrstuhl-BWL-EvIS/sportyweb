@@ -957,13 +957,13 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 
          contract = Repo.insert!(%Contract{
            club_id: club.id,
+           club: club,
            contact_id: contact.id,
            fee_id: fee.id,
            signing_date: ~D[2021-11-28],
            start_date: ~D[2022-01-01],
            termination_date: nil,
            archive_date: nil,
-           clubs: [club]
          })
 
          # make most persons with contracts members
@@ -994,7 +994,8 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
                  start_date: ~D[2022-01-01],
                  termination_date: nil,
                  archive_date: nil,
-                 departments: [department]
+                 partner_department: department,
+                 partner_department_id: department.id
                })
 
                Repo.insert!(%Membership{
@@ -1023,7 +1024,8 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
                      start_date: ~D[2022-01-01],
                      termination_date: nil,
                      archive_date: nil,
-                     groups: [group]
+                     partner_group: group,
+                     partner_group_id: group.id
                    })
                    Repo.insert!(%Membership{
                      club_id: club.id,
