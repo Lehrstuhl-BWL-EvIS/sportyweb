@@ -42,7 +42,10 @@ defmodule Sportyweb.RBAC.Policy do
       ArgumentError -> String.to_atom(view_str)
     end
   end
+<<<<<<< HEAD
 
+=======
+>>>>>>> fix-get-live-view
 
   # <--- Policy check for application admins ---> #
   def is_application_admin_or_tester(user) do
