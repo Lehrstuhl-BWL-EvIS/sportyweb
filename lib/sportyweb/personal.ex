@@ -40,7 +40,7 @@ defmodule Sportyweb.Personal do
     |> Repo.preload(preloads)
   end
 
-  def filter_contacts_like(params) do
+  defp filter_contacts_like(params) do
     Enum.reduce(params, dynamic(true), fn
       {:type, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.type, ^value))
       {:name, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.name, ^value))
@@ -301,8 +301,6 @@ defmodule Sportyweb.Personal do
     ContactGroup.changeset(contact_group, attrs)
   end
 
-  alias Sportyweb.Personal.Membership
-
   @doc """
   Returns the list of memberships.
 
@@ -369,10 +367,6 @@ defmodule Sportyweb.Personal do
     |> Repo.preload(preloads)
   end
 
-  def list_memberships_of_contact(contact_id) do
-    query = from(m in Membership, where: m.contact_id == ^contact_id)
-    Repo.all(query)
-  end
   def list_memberships_of_contact_in_club(contact_id, club_id) do
     query = from(m in Membership, where: m.contact_id == ^contact_id and m.club_id == ^club_id
                                        and is_nil(m.department_id) and is_nil(m.group_id))

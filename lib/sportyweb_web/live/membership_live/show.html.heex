@@ -37,6 +37,9 @@
     <:item title="Start">
         {format_date_field_dmy(@membership.start_date)}
     </:item>
+    <:item :if={@membership.termination_date != nil} title="Enddatum">
+        {format_date_field_dmy(@membership.termination_date)}
+    </:item>
   </.list>
 </.card>
 

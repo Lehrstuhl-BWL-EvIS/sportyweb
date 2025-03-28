@@ -659,7 +659,7 @@ defmodule SportywebWeb.CoreComponents do
       Spalte {@column_label} filtern
       <.simple_form
         for={@form}
-        id="club-form"
+        id={"#{@id}-filter-form"}
         phx-target={@filter_sort_target}
         phx-submit="apply_filter"
       >

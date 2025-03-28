@@ -3,6 +3,19 @@ defmodule Sportyweb.PersonalTest do
 
   alias Sportyweb.Personal
 
+  describe "contact" do
+    alias Sportyweb.Personal.Contact
+
+    import Sportyweb.PersonalFixtures
+
+    test "age_in_years/2 returns correct age" do
+      contact = contact_fixture(%{person_birthday: ~D[2000-03-15]})
+
+      assert Contact.age_in_years(contact, ~D[2025-03-14]) == 24
+      assert Contact.age_in_years(contact, ~D[2025-03-15]) == 25
+    end
+  end
+
   describe "contacts" do
     alias Sportyweb.Personal.Contact
 
@@ -26,16 +39,96 @@ defmodule Sportyweb.PersonalTest do
       assert List.first(Personal.list_contacts(contact.club_id)).id == contact.id
     end
 
-    test "list_contacts/2 returns all contacts of a given club with preloaded associations" do
+    test "list_contacts/4 without order or filter returns all contacts of a given club with preloaded associations" do
       contact = contact_fixture()
 
-      assert Personal.list_contacts(contact.club_id, [
+      assert Personal.list_contacts(contact.club_id, nil, nil, [
                :emails,
                :financial_data,
                :notes,
                :phones,
                :postal_addresses
              ]) == [contact]
+    end
+
+    test "list_contacts/4 without filter returns all contacts in correct order" do
+      club = club_fixture()
+      youngest_contact = contact_fixture(%{person_birthday: ~D[2003-02-15], club_id: club.id})
+      middle_contact = contact_fixture(%{person_birthday: ~D[2001-02-15], club_id: club.id})
+      oldest_contact = contact_fixture(%{person_birthday: ~D[2000-02-15], club_id: club.id})
+
+      contacts = Personal.list_contacts(club.id, [asc: :person_birthday], nil, [:emails, :financial_data, :notes, :phones, :postal_addresses])
+      assert contacts == [oldest_contact, middle_contact, youngest_contact]
+
+      contacts = Personal.list_contacts(club.id, [desc: :person_birthday], nil, [:emails, :financial_data, :notes, :phones, :postal_addresses])
+      assert contacts == [youngest_contact, middle_contact, oldest_contact]
+    end
+
+    test "list_contacts/4 with order and filter returns wanted contacts in correct order" do
+      club = club_fixture()
+
+      contact1 =
+        contact_fixture(%{
+          person_birthday: ~D[2003-02-15],
+          club_id: club.id,
+          person_last_name: "my name 1"
+        })
+
+      contact2 =
+        contact_fixture(%{
+          person_birthday: ~D[2000-02-15],
+          club_id: club.id,
+          person_last_name: "CAPITALNAME"
+        })
+
+        contact_fixture(%{
+          person_birthday: ~D[2001-02-15],
+          club_id: club.id,
+          person_last_name: "someting else"
+        })
+
+      contacts =
+        Personal.list_contacts(club.id, [asc: :person_birthday], [person_last_name: "%name%"], [:emails, :financial_data, :notes, :phones, :postal_addresses])
+      assert contacts == [contact2, contact1]
+    end
+
+    test "list_contacts/4 works with multiple filters" do
+      club = club_fixture()
+
+      contact1 =
+        contact_fixture(%{
+          person_birthday: ~D[2003-02-15],
+          club_id: club.id,
+          person_first_name_1: "Alex",
+          person_last_name: "my name 1"
+        })
+
+      contact2 =
+        contact_fixture(%{
+          person_birthday: ~D[2000-02-15],
+          club_id: club.id,
+          person_first_name_1: "Alex",
+          person_last_name: "CAPITALNAME"
+        })
+
+      contact_fixture(%{
+        person_birthday: ~D[2001-02-15],
+        club_id: club.id,
+        person_first_name_1: "Alex",
+        person_last_name: "someting else"
+      })
+
+      contact_fixture(%{
+        person_birthday: ~D[2001-02-15],
+        club_id: club.id,
+        person_first_name_1: "John",
+        person_last_name: "last name matches"
+      })
+
+      contacts =
+        Personal.list_contacts(club.id, [asc: :person_birthday], [person_last_name: "%name%", person_first_name_1: "Alex"],
+                                                                                   [:emails, :financial_data, :notes, :phones, :postal_addresses])
+      assert contacts == [contact2, contact1]
     end
 
     test "get_contact!/1 returns the contact with given id" do
@@ -207,12 +300,57 @@ defmodule Sportyweb.PersonalTest do
     alias Sportyweb.Personal.Membership
 
     import Sportyweb.PersonalFixtures
+    import Sportyweb.OrganizationFixtures
 
     @invalid_attrs %{state: nil}
 
-    test "list_memberships/0 returns all memberships" do
-      membership = membership_fixture()
-      assert Personal.list_memberships() == [membership]
+    test "list_memberships/1 returns all memberships of a club" do
+      club = club_fixture()
+      membership_fixture(%{club_id: club.id})
+      membership_fixture(%{club_id: club.id})
+      membership_fixture()
+      assert length(Personal.list_memberships(club.id)) == 2
+    end
+
+
+    test "list_memberships/3 without filter returns all memberships in correct order" do
+      club = club_fixture()
+      first_membership = membership_fixture(%{start_date: ~D[2000-02-15], club_id: club.id})
+      middle_membership = membership_fixture(%{start_date: ~D[2001-02-15], club_id: club.id})
+      last_membership = membership_fixture(%{start_date: ~D[2003-02-15], club_id: club.id})
+
+      contacts = Personal.list_memberships(club.id, [asc: :start_date], nil)
+      assert contacts == [first_membership, middle_membership, last_membership]
+
+      contacts = Personal.list_memberships(club.id, [desc: :start_date], nil)
+      assert contacts == [last_membership, middle_membership, first_membership]
+    end
+
+    test "list_memberships/3 with order and filter returns wanted memberships in correct order" do
+      club = club_fixture()
+
+      last_membership = membership_fixture(%{start_date: ~D[2003-02-15], club_id: club.id, state: "active"})
+      first_membership = membership_fixture(%{start_date: ~D[2000-02-15], club_id: club.id, state: "active"})
+      _ = membership_fixture(%{start_date: ~D[2001-02-15], club_id: club.id, state: "pending"})
+
+      memberships =
+        Personal.list_memberships(club.id, [asc: :start_date], state: "active")
+        assert memberships == [first_membership, last_membership]
+    end
+
+    test "list_memberships_of_contact_in returns all matching meberships of a contact" do
+     contact = contact_fixture()
+     club = club_fixture()
+     department = department_fixture(%{club_id: club.id})
+     group = group_fixture(%{club_id: club.id, department_id: department.id})
+
+     club_membership  = membership_fixture(%{contact_id: contact.id, club_id: club.id})
+     department_membership  = membership_fixture(%{contact_id: contact.id, club_id: club.id, department_id: department.id})
+     group_membership  = membership_fixture(%{contact_id: contact.id, club_id: club.id, department_id: department.id, group_id: group.id})
+
+     assert Personal.list_memberships_of_contact_in_club(contact.id, club.id) == [club_membership]
+     assert Personal.list_memberships_of_contact_in_department(contact.id, department.id) == [department_membership]
+     assert Personal.list_memberships_of_contact_in_group(contact.id, group.id) == [group_membership]
     end
 
     test "get_membership!/1 returns the membership with given id" do
@@ -221,10 +359,18 @@ defmodule Sportyweb.PersonalTest do
     end
 
     test "create_membership/1 with valid data creates a membership" do
-      valid_attrs = %{state: "some state"}
+      club = club_fixture()
+      contract = contact_fixture()
+
+      valid_attrs = %{
+        club_id: club.id,
+        contact_id: contract.id,
+        start_date: ~D[2000-02-15],
+        state: "passiv"
+      }
 
       assert {:ok, %Membership{} = membership} = Personal.create_membership(valid_attrs)
-      assert membership.state == "some state"
+      assert membership.state == "passiv"
     end
 
     test "create_membership/1 with invalid data returns error changeset" do
@@ -233,10 +379,12 @@ defmodule Sportyweb.PersonalTest do
 
     test "update_membership/2 with valid data updates the membership" do
       membership = membership_fixture()
-      update_attrs = %{state: "some updated state"}
+      update_attrs = %{state: "passiv"}
 
-      assert {:ok, %Membership{} = membership} = Personal.update_membership(membership, update_attrs)
-      assert membership.state == "some updated state"
+      assert {:ok, %Membership{} = membership} =
+               Personal.update_membership(membership, update_attrs)
+
+      assert membership.state == "passiv"
     end
 
     test "update_membership/2 with invalid data returns error changeset" do

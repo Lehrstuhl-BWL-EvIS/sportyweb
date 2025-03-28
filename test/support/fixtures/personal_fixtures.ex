@@ -56,10 +56,16 @@ defmodule Sportyweb.PersonalFixtures do
   Generate a membership.
   """
   def membership_fixture(attrs \\ %{}) do
+    club = club_fixture()
+    contact = contact_fixture()
+
     {:ok, membership} =
       attrs
       |> Enum.into(%{
-        state: "some state"
+        club_id: club.id,
+        contact_id: contact.id,
+        start_date: ~D[2000-02-15],
+        state: "active"
       })
       |> Sportyweb.Personal.create_membership()
 

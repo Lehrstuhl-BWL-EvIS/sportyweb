@@ -31,6 +31,19 @@ defmodule Sportyweb.LegalTest do
       assert List.first(contracts).club_id == contract.club_id
     end
 
+    test "list_contracts/3 without filter returns all contracts in correct order" do
+      club = club_fixture()
+      first_contract = contract_fixture(%{signing_date: ~D[2000-02-15], start_date: ~D[2000-02-15], club_id: club.id})
+      middle_contract = contract_fixture(%{signing_date: ~D[2000-02-15], start_date: ~D[2001-02-15], club_id: club.id})
+      last_contract = contract_fixture(%{signing_date: ~D[2000-02-15], start_date: ~D[2003-02-15], club_id: club.id})
+
+      contracts = Legal.list_contracts(club.id, [asc: :start_date], nil)
+      assert contracts == [first_contract, middle_contract, last_contract]
+
+      contracts = Legal.list_contracts(club.id, [desc: :start_date], nil)
+      assert contracts == [last_contract, middle_contract, first_contract]
+    end
+
     test "get_contract!/1 returns the contract with given id" do
       contract = contract_fixture()
       assert Legal.get_contract!(contract.id) == contract
