@@ -70,8 +70,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
               />
             </div>
 
-            <div class="col-span-12 md:col-span-6">
-            </div>
+            <div class="col-span-12 md:col-span-6"></div>
 
             <div class="col-span-12 md:col-span-4">
               <.input field={@form[:signing_date]} type="date" label="Unterzeichnungsdatum" />

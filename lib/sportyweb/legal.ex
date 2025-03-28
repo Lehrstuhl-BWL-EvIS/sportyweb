@@ -54,14 +54,19 @@ defmodule Sportyweb.Legal do
 
   def list_contracts(club_id, order_by, filters) do
     query = from(m in Contract, where: m.club_id == ^club_id)
-    query = cond do
-      order_by == nil -> order_by(query, asc: :start_date)
-      true -> order_by(query, ^order_by)
-    end
-    query = cond do
-      filters == nil || length(filters) == 0 -> query
-      true -> where(query, ^filters)
-    end
+
+    query =
+      cond do
+        order_by == nil -> order_by(query, asc: :start_date)
+        true -> order_by(query, ^order_by)
+      end
+
+    query =
+      cond do
+        filters == nil || length(filters) == 0 -> query
+        true -> where(query, ^filters)
+      end
+
     Repo.all(query)
   end
 
@@ -71,11 +76,13 @@ defmodule Sportyweb.Legal do
   end
 
   def list_contracts_of_contact(contact_id, preloads, not_membership_only) do
-    query = if (not_membership_only) do
-      from(c in Contract, where: c.contact_id == ^contact_id and is_nil(c.membership_id))
+    query =
+      if not_membership_only do
+        from(c in Contract, where: c.contact_id == ^contact_id and is_nil(c.membership_id))
       else
-      from(c in Contract, where: c.contact_id == ^contact_id)
-    end
+        from(c in Contract, where: c.contact_id == ^contact_id)
+      end
+
     Repo.all(query)
     |> Repo.preload(preloads)
   end

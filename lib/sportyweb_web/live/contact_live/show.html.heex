@@ -47,87 +47,91 @@
 </.card>
 
 <.header level="2" class="mt-12">
-Mitgliedschaften
+  Mitgliedschaften
 </.header>
 <.card>
-    <%= if Enum.any?(@streams.memberships.inserts) do %>
-        <.table
-        id="memberships"
-        rows={@streams.memberships}
-        row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}/edit") end}
-        >
-            <:col :let={{_id, membership}} label="in">
-                {format_string_field(Membership.membership_in(membership).name)}
-            </:col>
-            <:col :let={{_id, membership}} label="Status">
-                <%= if Membership.is_active(membership) do %>
-                    <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-600" />
-                <% end %>
-                <%= if membership.state == "pending" do %>
-                    <.icon name="hero-arrow-down-on-square" class="ml-1 inline-block w-[20px] text-amber-500" />
-                <% end %>
-                <%= if membership.state == "terminated"  do %>
-                    <.icon name="hero-archive-box-x-mark" class="ml-1 inline-block w-[20px]" /> ehemalige Mitgliedschaft
-                <% end %>
-                {get_key_for_value(Membership.get_valid_states(), membership.state)}
-            </:col>
-            <:col :let={{_id, membership}} label="Verträge">
-                {length(membership.contracts)}
-            </:col>
+  <%= if Enum.any?(@streams.memberships.inserts) do %>
+    <.table
+      id="memberships"
+      rows={@streams.memberships}
+      row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}/edit") end}
+    >
+      <:col :let={{_id, membership}} label="in">
+        {format_string_field(Membership.membership_in(membership).name)}
+      </:col>
+      <:col :let={{_id, membership}} label="Status">
+        <%= if Membership.is_active(membership) do %>
+          <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-600" />
+        <% end %>
+        <%= if membership.state == "pending" do %>
+          <.icon
+            name="hero-arrow-down-on-square"
+            class="ml-1 inline-block w-[20px] text-amber-500"
+          />
+        <% end %>
+        <%= if membership.state == "terminated"  do %>
+          <.icon name="hero-archive-box-x-mark" class="ml-1 inline-block w-[20px]" />
+          ehemalige Mitgliedschaft
+        <% end %>
+        {get_key_for_value(Membership.get_valid_states(), membership.state)}
+      </:col>
+      <:col :let={{_id, membership}} label="Verträge">
+        {length(membership.contracts)}
+      </:col>
 
-            <:action :let={{_id, membership}}>
-                <.link navigate={~p"/memberships/#{membership}/edit"}>Bearbeiten</.link>
-            </:action>
-        </.table>
-    <% else %>
+      <:action :let={{_id, membership}}>
+        <.link navigate={~p"/memberships/#{membership}/edit"}>Bearbeiten</.link>
+      </:action>
+    </.table>
+  <% else %>
     <p>
-        Bisher wurden noch keine Mitgliedschaften hinterlegt.
+      Bisher wurden noch keine Mitgliedschaften hinterlegt.
     </p>
-    <% end %>
+  <% end %>
 </.card>
 
 <.header level="2" class="mt-12">
-Verträge
+  Verträge
 </.header>
 <.card>
-    <.input_grids>
-        <.input_grid>
-            <div class="col-span-12">
-                <.input
-                name="show-membership-contracts-checkbox"
-                checked={@show_membership_contracts}
-                type="checkbox"
-                phx-click="toggle-show-membership-contracts"
-                label="Verträge zu Mitgliedschaften anzeigen"
-                />
-            </div>
-        </.input_grid>
+  <.input_grids>
+    <.input_grid>
+      <div class="col-span-12">
+        <.input
+          name="show-membership-contracts-checkbox"
+          checked={@show_membership_contracts}
+          type="checkbox"
+          phx-click="toggle-show-membership-contracts"
+          label="Verträge zu Mitgliedschaften anzeigen"
+        />
+      </div>
+    </.input_grid>
 
-        <.input_grid>
-            <.table
-              id="contracts"
-              rows={@streams.contracts}
-              row_click={fn {_id, contract} -> JS.navigate(~p"/contracts/#{contract}") end}
-            >
-                <:col :if={ length(@contact.memberships) > 0 } label="Mitgliedschaft">
-                    <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
-                </:col>
-              <:col :let={{_id, contract}} label="Vertragsobjekt">
-                  <%= if Contract.get_object(contract) != nil do %>
-                    {format_string_field(Contract.print_contract_object(contract))}
-                  <% end %>
-              </:col>
-              <:col :let={{_id, contract}} label="Gebühr">
-                {format_string_field(contract.fee.name)}
-                <%= if Fee.is_archived?(contract.fee) do %>
-                  <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
-                <% end %>
-              </:col>
+    <.input_grid>
+      <.table
+        id="contracts"
+        rows={@streams.contracts}
+        row_click={fn {_id, contract} -> JS.navigate(~p"/contracts/#{contract}") end}
+      >
+        <:col :if={length(@contact.memberships) > 0} label="Mitgliedschaft">
+          <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
+        </:col>
+        <:col :let={{_id, contract}} label="Vertragsobjekt">
+          <%= if Contract.get_object(contract) != nil do %>
+            {format_string_field(Contract.print_contract_object(contract))}
+          <% end %>
+        </:col>
+        <:col :let={{_id, contract}} label="Gebühr">
+          {format_string_field(contract.fee.name)}
+          <%= if Fee.is_archived?(contract.fee) do %>
+            <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
+          <% end %>
+        </:col>
 
-              <:action :let={{_id, contract}}>
-                <.link navigate={~p"/contracts/#{contract}"}>Anzeigen</.link>
-              </:action>
-            </.table>
-        </.input_grid>
-    </.input_grids>
+        <:action :let={{_id, contract}}>
+          <.link navigate={~p"/contracts/#{contract}"}>Anzeigen</.link>
+        </:action>
+      </.table>
+    </.input_grid>
+  </.input_grids>
 </.card>

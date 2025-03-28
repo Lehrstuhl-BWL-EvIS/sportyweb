@@ -220,7 +220,6 @@ defmodule SportywebWeb.Membership.FormComponent do
         %{"key" => "set_start_date", "new_value" => new_value, "contract" => contract},
         socket
       ) do
-
     {:ok, new_date} = Date.from_iso8601(new_value)
 
     socket =

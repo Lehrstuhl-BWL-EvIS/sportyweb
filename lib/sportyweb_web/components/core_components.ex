@@ -527,7 +527,6 @@ defmodule SportywebWeb.CoreComponents do
     """
   end
 
-
   @doc """
   Renders a description (usually below) input fields.
 
@@ -749,13 +748,33 @@ defmodule SportywebWeb.CoreComponents do
               <div class="flex items-center">
                 {col[:label]}
                 <div :if={col[:sortable]}>
-                  <.icon :if={@sorting[col[:label]] != "desc" && @sorting[col[:label]] != "asc"} name="hero-arrows-up-down" class="h-3 w-3" />
-                  <.icon :if={@sorting[col[:label]] == "desc"} name="hero-arrow-up" class="h-3 w-3 text-amber-500" />
-                  <.icon :if={@sorting[col[:label]] == "asc"} name="hero-arrow-down" class="h-3 w-3 text-amber-500" />
+                  <.icon
+                    :if={@sorting[col[:label]] != "desc" && @sorting[col[:label]] != "asc"}
+                    name="hero-arrows-up-down"
+                    class="h-3 w-3"
+                  />
+                  <.icon
+                    :if={@sorting[col[:label]] == "desc"}
+                    name="hero-arrow-up"
+                    class="h-3 w-3 text-amber-500"
+                  />
+                  <.icon
+                    :if={@sorting[col[:label]] == "asc"}
+                    name="hero-arrow-down"
+                    class="h-3 w-3 text-amber-500"
+                  />
                 </div>
                 <div :if={col[:filterable]} phx-click={show_modal("#{@id}-#{col[:label]}")}>
-                  <.column_filter_dialog column_label={col[:label]} id={"#{@id}-#{col[:label]}"} current_filter={@filters[col[:label]]} />
-                  <.icon :if={@filters[col[:label]] != nil} name="hero-funnel" class="h-3 w-3 text-amber-500" />
+                  <.column_filter_dialog
+                    column_label={col[:label]}
+                    id={"#{@id}-#{col[:label]}"}
+                    current_filter={@filters[col[:label]]}
+                  />
+                  <.icon
+                    :if={@filters[col[:label]] != nil}
+                    name="hero-funnel"
+                    class="h-3 w-3 text-amber-500"
+                  />
                   <.icon :if={@filters[col[:label]] == nil} name="hero-funnel" class="h-3 w-3" />
                 </div>
               </div>

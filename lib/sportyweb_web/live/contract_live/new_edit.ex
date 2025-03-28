@@ -83,11 +83,26 @@ defmodule SportywebWeb.ContractLive.NewEdit do
       club: club,
       club_id: club.id,
       partner_department: department,
-      partner_department_id: if department == nil do nil else department.id end,
+      partner_department_id:
+        if department == nil do
+          nil
+        else
+          department.id
+        end,
       partner_group: group,
-      partner_group_id: if group == nil do nil else group.id end,
+      partner_group_id:
+        if group == nil do
+          nil
+        else
+          group.id
+        end,
       contact: contact,
-      contact_id: if contact == nil do nil else contact.id end,
+      contact_id:
+        if contact == nil do
+          nil
+        else
+          contact.id
+        end,
       signing_date: Date.utc_today()
     })
   end

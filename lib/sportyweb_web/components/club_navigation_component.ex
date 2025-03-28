@@ -74,7 +74,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
         <ul class={["mb-1 px-2", if(!@show_submenu_contacts, do: "hidden")]}>
           <li>
             <.link
-             navigate={~p"/clubs/#{@club}/contacts"}
+              navigate={~p"/clubs/#{@club}/contacts"}
               class={[
                 @classes_menu_item,
                 @classes_submenu_item,
@@ -127,7 +127,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
         </.link>
 
         <ul class={["mb-1 px-2", if(!@show_submenu_finances, do: "hidden")]}>
-        <li>
+          <li>
             <.link
               navigate={~p"/clubs/#{@club}/contracts"}
               class={[

@@ -25,6 +25,4 @@ defmodule SportywebWeb.ContractLive.Index do
     |> assign(:page_title, "Verträge")
     |> assign(:club, club)
   end
-
-
 end

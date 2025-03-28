@@ -85,6 +85,7 @@ defmodule Sportyweb.Personal.Contact do
   def age_in_years(%Contact{} = contact) do
     age_in_years(contact, Date.utc_today())
   end
+
   def age_in_years(%Contact{} = contact, at_date) do
     # Based on: https://stackoverflow.com/a/71043385
 
@@ -198,13 +199,14 @@ defmodule Sportyweb.Personal.Contact do
     changeset |> Ecto.Changeset.change(name: String.trim(name))
   end
 
-
   def get_most_relevant_email(%Contact{} = contact) do
     find_most_relevant(contact.emails)
   end
+
   def get_most_relevant_phone(%Contact{} = contact) do
     find_most_relevant(contact.phones)
   end
+
   def get_most_relevant_postal_address(%Contact{} = contact) do
     find_most_relevant(contact.postal_addresses)
   end
@@ -213,13 +215,19 @@ defmodule Sportyweb.Personal.Contact do
     number_of_information = length(information_list)
 
     cond do
-      number_of_information == 1 -> Enum.at(information_list, 0)
+      number_of_information == 1 ->
+        Enum.at(information_list, 0)
+
       true ->
         main_information = Enum.find(information_list, fn add -> add.is_main end)
+
         cond do
-          main_information != nil -> main_information
-          true -> Enum.sort_by(information_list, fn add -> add.updated_at end, :desc)
-                  |> Enum.at(0)
+          main_information != nil ->
+            main_information
+
+          true ->
+            Enum.sort_by(information_list, fn add -> add.updated_at end, :desc)
+            |> Enum.at(0)
         end
     end
   end

@@ -60,10 +60,11 @@
 </.header>
 
 <.card>
-  <.live_component 
-    id="group_membership_table" 
-    module={SportywebWeb.Membership.MembershipTable} 
+  <.live_component
+    id="group_membership_table"
+    module={SportywebWeb.Membership.MembershipTable}
     show_quick_filters={false}
-    default_filters={%{"In": @group.name}}
-    club={@club} />
+    default_filters={%{In: @group.name}}
+    club={@club}
+  />
 </.card>

@@ -25,5 +25,4 @@ defmodule SportywebWeb.MembershipLive.Index do
     |> assign(:page_title, "Mitgliedschaften")
     |> assign(:club, club)
   end
-
 end

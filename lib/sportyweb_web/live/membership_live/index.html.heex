@@ -1,15 +1,16 @@
 <.header>
-    {@page_title}
-    <:actions>
-        <.link navigate={~p"/clubs/#{@club}/memberships/new"}>
-            <.button>Mitgliedschaft hinzufügen</.button>
-        </.link>
-    </:actions>
+  {@page_title}
+  <:actions>
+    <.link navigate={~p"/clubs/#{@club}/memberships/new"}>
+      <.button>Mitgliedschaft hinzufügen</.button>
+    </.link>
+  </:actions>
 </.header>
 
 <.card>
-    <.live_component 
-        id="memberships_table" 
-        module={SportywebWeb.Membership.MembershipTable} 
-        club={@club} />
+  <.live_component
+    id="memberships_table"
+    module={SportywebWeb.Membership.MembershipTable}
+    club={@club}
+  />
 </.card>

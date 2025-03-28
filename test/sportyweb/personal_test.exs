@@ -57,10 +57,26 @@ defmodule Sportyweb.PersonalTest do
       middle_contact = contact_fixture(%{person_birthday: ~D[2001-02-15], club_id: club.id})
       oldest_contact = contact_fixture(%{person_birthday: ~D[2000-02-15], club_id: club.id})
 
-      contacts = Personal.list_contacts(club.id, [asc: :person_birthday], nil, [:emails, :financial_data, :notes, :phones, :postal_addresses])
+      contacts =
+        Personal.list_contacts(club.id, [asc: :person_birthday], nil, [
+          :emails,
+          :financial_data,
+          :notes,
+          :phones,
+          :postal_addresses
+        ])
+
       assert contacts == [oldest_contact, middle_contact, youngest_contact]
 
-      contacts = Personal.list_contacts(club.id, [desc: :person_birthday], nil, [:emails, :financial_data, :notes, :phones, :postal_addresses])
+      contacts =
+        Personal.list_contacts(club.id, [desc: :person_birthday], nil, [
+          :emails,
+          :financial_data,
+          :notes,
+          :phones,
+          :postal_addresses
+        ])
+
       assert contacts == [youngest_contact, middle_contact, oldest_contact]
     end
 
@@ -81,14 +97,21 @@ defmodule Sportyweb.PersonalTest do
           person_last_name: "CAPITALNAME"
         })
 
-        contact_fixture(%{
-          person_birthday: ~D[2001-02-15],
-          club_id: club.id,
-          person_last_name: "someting else"
-        })
+      contact_fixture(%{
+        person_birthday: ~D[2001-02-15],
+        club_id: club.id,
+        person_last_name: "someting else"
+      })
 
       contacts =
-        Personal.list_contacts(club.id, [asc: :person_birthday], [person_last_name: "%name%"], [:emails, :financial_data, :notes, :phones, :postal_addresses])
+        Personal.list_contacts(club.id, [asc: :person_birthday], [person_last_name: "%name%"], [
+          :emails,
+          :financial_data,
+          :notes,
+          :phones,
+          :postal_addresses
+        ])
+
       assert contacts == [contact2, contact1]
     end
 
@@ -126,8 +149,13 @@ defmodule Sportyweb.PersonalTest do
       })
 
       contacts =
-        Personal.list_contacts(club.id, [asc: :person_birthday], [person_last_name: "%name%", person_first_name_1: "Alex"],
-                                                                                   [:emails, :financial_data, :notes, :phones, :postal_addresses])
+        Personal.list_contacts(
+          club.id,
+          [asc: :person_birthday],
+          [person_last_name: "%name%", person_first_name_1: "Alex"],
+          [:emails, :financial_data, :notes, :phones, :postal_addresses]
+        )
+
       assert contacts == [contact2, contact1]
     end
 
@@ -312,7 +340,6 @@ defmodule Sportyweb.PersonalTest do
       assert length(Personal.list_memberships(club.id)) == 2
     end
 
-
     test "list_memberships/3 without filter returns all memberships in correct order" do
       club = club_fixture()
       first_membership = membership_fixture(%{start_date: ~D[2000-02-15], club_id: club.id})
@@ -329,28 +356,54 @@ defmodule Sportyweb.PersonalTest do
     test "list_memberships/3 with order and filter returns wanted memberships in correct order" do
       club = club_fixture()
 
-      last_membership = membership_fixture(%{start_date: ~D[2003-02-15], club_id: club.id, state: "active"})
-      first_membership = membership_fixture(%{start_date: ~D[2000-02-15], club_id: club.id, state: "active"})
+      last_membership =
+        membership_fixture(%{start_date: ~D[2003-02-15], club_id: club.id, state: "active"})
+
+      first_membership =
+        membership_fixture(%{start_date: ~D[2000-02-15], club_id: club.id, state: "active"})
+
       _ = membership_fixture(%{start_date: ~D[2001-02-15], club_id: club.id, state: "pending"})
 
       memberships =
         Personal.list_memberships(club.id, [asc: :start_date], state: "active")
-        assert memberships == [first_membership, last_membership]
+
+      assert memberships == [first_membership, last_membership]
     end
 
     test "list_memberships_of_contact_in returns all matching meberships of a contact" do
-     contact = contact_fixture()
-     club = club_fixture()
-     department = department_fixture(%{club_id: club.id})
-     group = group_fixture(%{club_id: club.id, department_id: department.id})
+      contact = contact_fixture()
+      club = club_fixture()
+      department = department_fixture(%{club_id: club.id})
+      group = group_fixture(%{club_id: club.id, department_id: department.id})
 
-     club_membership  = membership_fixture(%{contact_id: contact.id, club_id: club.id})
-     department_membership  = membership_fixture(%{contact_id: contact.id, club_id: club.id, department_id: department.id})
-     group_membership  = membership_fixture(%{contact_id: contact.id, club_id: club.id, department_id: department.id, group_id: group.id})
+      club_membership = membership_fixture(%{contact_id: contact.id, club_id: club.id})
 
-     assert Personal.list_memberships_of_contact_in_club(contact.id, club.id) == [club_membership]
-     assert Personal.list_memberships_of_contact_in_department(contact.id, department.id) == [department_membership]
-     assert Personal.list_memberships_of_contact_in_group(contact.id, group.id) == [group_membership]
+      department_membership =
+        membership_fixture(%{
+          contact_id: contact.id,
+          club_id: club.id,
+          department_id: department.id
+        })
+
+      group_membership =
+        membership_fixture(%{
+          contact_id: contact.id,
+          club_id: club.id,
+          department_id: department.id,
+          group_id: group.id
+        })
+
+      assert Personal.list_memberships_of_contact_in_club(contact.id, club.id) == [
+               club_membership
+             ]
+
+      assert Personal.list_memberships_of_contact_in_department(contact.id, department.id) == [
+               department_membership
+             ]
+
+      assert Personal.list_memberships_of_contact_in_group(contact.id, group.id) == [
+               group_membership
+             ]
     end
 
     test "get_membership!/1 returns the membership with given id" do

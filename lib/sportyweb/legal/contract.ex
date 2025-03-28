@@ -65,16 +65,21 @@ defmodule Sportyweb.Legal.Contract do
   """
   def get_object(%Contract{} = contract) do
     cond do
-      contract.membership != nil -> contract.membership
+      contract.membership != nil ->
+        contract.membership
 
       true ->
         nil
     end
   end
+
   def print_contract_object(%Contract{} = contract) do
     cond do
-      contract.membership != nil -> "Mitgliedschaft in #{Membership.membership_in(contract.membership).name}"
-      true -> nil
+      contract.membership != nil ->
+        "Mitgliedschaft in #{Membership.membership_in(contract.membership).name}"
+
+      true ->
+        nil
     end
   end
 
@@ -135,6 +140,7 @@ defmodule Sportyweb.Legal.Contract do
   defp check_deletion(%{data: %{id: nil}} = changeset) do
     changeset
   end
+
   defp check_deletion(changeset) do
     if get_change(changeset, :deleted) do
       %{changeset | action: :delete}

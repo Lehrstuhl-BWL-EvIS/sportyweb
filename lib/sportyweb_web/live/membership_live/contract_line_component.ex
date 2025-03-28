@@ -87,7 +87,6 @@ defmodule SportywebWeb.Membership.ContractLineComponent do
 
   @impl true
   def update(%{} = assigns, socket) do
-
     socket =
       socket
       |> assign(assigns)
@@ -96,7 +95,6 @@ defmodule SportywebWeb.Membership.ContractLineComponent do
 
     {:ok, socket}
   end
-
 
   defp update_contract_warnings(socket) do
     contact = socket.assigns.contact
@@ -139,9 +137,11 @@ defmodule SportywebWeb.Membership.ContractLineComponent do
             "Die Gebühr ist erst ab einem Alter von #{fee.minimum_age_in_years} Jahren gültig"
 
           min_start_date = add_years(contact.person_birthday, fee.minimum_age_in_years)
+
           action =
             %{
-              text: "Startdatum auf #{CommonHelper.format_date_field_dmy(min_start_date)} setzten",
+              text:
+                "Startdatum auf #{CommonHelper.format_date_field_dmy(min_start_date)} setzten",
               key: "set_start_date",
               new_value: min_start_date
             }
@@ -174,7 +174,8 @@ defmodule SportywebWeb.Membership.ContractLineComponent do
 
               true ->
                 %{
-                  text: "Enddatum auf #{CommonHelper.format_date_field_dmy(max_termination_date)} setzten",
+                  text:
+                    "Enddatum auf #{CommonHelper.format_date_field_dmy(max_termination_date)} setzten",
                   key: "set_termination_date",
                   new_value: max_termination_date
                 }

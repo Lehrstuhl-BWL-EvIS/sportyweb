@@ -23,18 +23,25 @@ defmodule Sportyweb.Personal do
     query = from(c in Contact, where: c.club_id == ^club_id, order_by: c.name)
     Repo.all(query)
   end
+
   def list_contacts(club_id, order_by, filters) do
     query = from(c in Contact, where: c.club_id == ^club_id)
-    query = cond do
-      order_by == nil -> order_by(query, asc: :name)
-      true -> order_by(query, ^order_by)
-    end
-    query = cond do
-      filters == nil || length(filters) == 0 -> query
-      true -> where(query, ^filter_contacts_like(filters))
-    end
+
+    query =
+      cond do
+        order_by == nil -> order_by(query, asc: :name)
+        true -> order_by(query, ^order_by)
+      end
+
+    query =
+      cond do
+        filters == nil || length(filters) == 0 -> query
+        true -> where(query, ^filter_contacts_like(filters))
+      end
+
     Repo.all(query)
   end
+
   def list_contacts(club_id, order_by, filters, preloads) do
     list_contacts(club_id, order_by, filters)
     |> Repo.preload(preloads)
@@ -42,28 +49,45 @@ defmodule Sportyweb.Personal do
 
   defp filter_contacts_like(params) do
     Enum.reduce(params, dynamic(true), fn
-      {:type, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.type, ^value))
-      {:name, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.name, ^value))
-      {:person_last_name, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.person_last_name, ^value))
-      {:person_first_name_1, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.person_first_name_1, ^value))
-      {:person_birthday, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.person_birthday, ^value))
-      {:person_gender, value}, dynamic -> dynamic([c], ^dynamic and ilike(c.person_gender, ^value))
+      {:type, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.type, ^value))
+
+      {:name, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.name, ^value))
+
+      {:person_last_name, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.person_last_name, ^value))
+
+      {:person_first_name_1, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.person_first_name_1, ^value))
+
+      {:person_birthday, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.person_birthday, ^value))
+
+      {:person_gender, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.person_gender, ^value))
     end)
   end
 
   def list_contacts_of_members(club_id, order_by, preloads) do
-    order_by = cond do
-      order_by == nil -> :name
-      true -> order_by
-    end
+    order_by =
+      cond do
+        order_by == nil -> :name
+        true -> order_by
+      end
 
-    query = from(c in Contact,
-      as: :contact,
-      where: exists(from m in Membership,
-                    where: m.club_id == ^club_id and m.contact_id == parent_as(:contact).id,
-                    select: 1
-                    ),
-      order_by: ^order_by)
+    query =
+      from(c in Contact,
+        as: :contact,
+        where:
+          exists(
+            from m in Membership,
+              where: m.club_id == ^club_id and m.contact_id == parent_as(:contact).id,
+              select: 1
+          ),
+        order_by: ^order_by
+      )
+
     Repo.all(query)
     |> Repo.preload(preloads)
   end
@@ -311,21 +335,28 @@ defmodule Sportyweb.Personal do
 
   """
   def list_memberships(club_id) do
-      query = from(m in Membership, where: m.club_id == ^club_id)
-      Repo.all(query)
-  end
-  def list_memberships(club_id, order_by, filters) do
     query = from(m in Membership, where: m.club_id == ^club_id)
-    query = cond do
-      order_by == nil -> order_by(query, asc: :state)
-      true -> order_by(query, ^order_by)
-    end
-    query = cond do
-      filters == nil || length(filters) == 0 -> query
-      true -> where(query, ^filters)
-    end
     Repo.all(query)
   end
+
+  def list_memberships(club_id, order_by, filters) do
+    query = from(m in Membership, where: m.club_id == ^club_id)
+
+    query =
+      cond do
+        order_by == nil -> order_by(query, asc: :state)
+        true -> order_by(query, ^order_by)
+      end
+
+    query =
+      cond do
+        filters == nil || length(filters) == 0 -> query
+        true -> where(query, ^filters)
+      end
+
+    Repo.all(query)
+  end
+
   def list_memberships(club_id, order_by, filters, preloads) do
     list_memberships(club_id, order_by, filters)
     |> Repo.preload(preloads)
@@ -368,20 +399,31 @@ defmodule Sportyweb.Personal do
   end
 
   def list_memberships_of_contact_in_club(contact_id, club_id) do
-    query = from(m in Membership, where: m.contact_id == ^contact_id and m.club_id == ^club_id
-                                       and is_nil(m.department_id) and is_nil(m.group_id))
+    query =
+      from(m in Membership,
+        where:
+          m.contact_id == ^contact_id and m.club_id == ^club_id and
+            is_nil(m.department_id) and is_nil(m.group_id)
+      )
+
     Repo.all(query)
   end
+
   def list_memberships_of_contact_in_department(contact_id, department_id) do
-    query = from(m in Membership, where: m.contact_id == ^contact_id and m.department_id == ^department_id
-                                         and is_nil(m.group_id))
+    query =
+      from(m in Membership,
+        where:
+          m.contact_id == ^contact_id and m.department_id == ^department_id and
+            is_nil(m.group_id)
+      )
+
     Repo.all(query)
   end
+
   def list_memberships_of_contact_in_group(contact_id, group_id) do
     query = from(m in Membership, where: m.contact_id == ^contact_id and m.group_id == ^group_id)
     Repo.all(query)
   end
-
 
   @doc """
   Creates a membership.
@@ -396,9 +438,11 @@ defmodule Sportyweb.Personal do
 
   """
   def create_membership(attrs \\ %{})
-  def create_membership(%Ecto.Changeset{}  = changeset) do
+
+  def create_membership(%Ecto.Changeset{} = changeset) do
     Repo.insert(changeset)
   end
+
   def create_membership(attrs) do
     %Membership{}
     |> Membership.changeset(attrs)
@@ -422,6 +466,7 @@ defmodule Sportyweb.Personal do
     |> Membership.changeset(attrs)
     |> Repo.update()
   end
+
   def update_membership(%Ecto.Changeset{} = changeset) do
     Repo.update(changeset)
   end

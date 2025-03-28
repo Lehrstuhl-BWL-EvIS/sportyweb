@@ -11,10 +11,12 @@ defmodule SportywebWeb.MembershipLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    membership  = Personal.get_membership!(id, [:club, :contact, :department, :group, contracts: [:fee]]);
+    membership =
+      Personal.get_membership!(id, [:club, :contact, :department, :group, contracts: [:fee]])
 
     contact_name = membership.contact.name
     community_name = Membership.membership_in(membership).name
+
     {:noreply,
      socket
      |> assign(

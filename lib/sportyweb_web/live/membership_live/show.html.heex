@@ -1,70 +1,76 @@
 <.header>
   {@page_title}
-    <:actions>
-        <.link navigate={~p"/memberships/#{@membership}/edit"}>
-        <.button>Mitgliedschaft bearbeiten</.button>
+  <:actions>
+    <.link navigate={~p"/memberships/#{@membership}/edit"}>
+      <.button>Mitgliedschaft bearbeiten</.button>
     </.link>
-    </:actions>
+  </:actions>
 </.header>
 
 <.card>
   <.list>
     <:item title="Kontakt">
-        <.link navigate={~p"/contacts/#{@membership.contact}"} class="text-indigo-600 hover:underline">
-            {format_string_field(@membership.contact.name)}
-        </.link>
+      <.link
+        navigate={~p"/contacts/#{@membership.contact}"}
+        class="text-indigo-600 hover:underline"
+      >
+        {format_string_field(@membership.contact.name)}
+      </.link>
     </:item>
-        <:item title="Mitgliedschaft in">
-            <%= if @membership.group != nil do %>
-                <.link navigate={~p"/groups/#{@membership.group}"} class="text-indigo-600 hover:underline">
-                    {format_string_field(@membership.group.name)}
-                </.link>
-            <% else %>
-                <%= if @membership.department != nil do %>
-                        <.link navigate={~p"/departments/#{@membership.department}"} class="text-indigo-600 hover:underline">
-                            {format_string_field(@membership.department.name)}
-                    </.link>
-                <% else %>
-                        <.link navigate={~p"/clubs/#{@membership.club}"} class="text-indigo-600 hover:underline">
-                            {format_string_field(@membership.club.name)}
-                    </.link>
-                <% end %>
-            <% end %>
+    <:item title="Mitgliedschaft in">
+      <%= if @membership.group != nil do %>
+        <.link navigate={~p"/groups/#{@membership.group}"} class="text-indigo-600 hover:underline">
+          {format_string_field(@membership.group.name)}
+        </.link>
+      <% else %>
+        <%= if @membership.department != nil do %>
+          <.link
+            navigate={~p"/departments/#{@membership.department}"}
+            class="text-indigo-600 hover:underline"
+          >
+            {format_string_field(@membership.department.name)}
+          </.link>
+        <% else %>
+          <.link navigate={~p"/clubs/#{@membership.club}"} class="text-indigo-600 hover:underline">
+            {format_string_field(@membership.club.name)}
+          </.link>
+        <% end %>
+      <% end %>
     </:item>
     <:item title="Status">
-        {get_key_for_value(Membership.get_valid_states(), @membership.state)}
+      {get_key_for_value(Membership.get_valid_states(), @membership.state)}
     </:item>
     <:item title="Start">
-        {format_date_field_dmy(@membership.start_date)}
+      {format_date_field_dmy(@membership.start_date)}
     </:item>
     <:item :if={@membership.termination_date != nil} title="Enddatum">
-        {format_date_field_dmy(@membership.termination_date)}
+      {format_date_field_dmy(@membership.termination_date)}
     </:item>
   </.list>
 </.card>
 
 <.header level="2" class="mt-12">
-Beitrag
+  Beitrag
 </.header>
 <.card>
-    <.input_grids>
+  <.input_grids>
     <%= for contract <- @membership.contracts do %>
-        <.input_grid>
-            <div class="col-span-12 md:col-span-2">
-                Von {format_date_field_dmy(contract.start_date)}
-            </div>
-            <div class="col-span-12 md:col-span-2">
-                Bis {format_date_field_dmy(contract.termination_date)}
-            </div>
-            <div class="col-span-12 md:col-span-6">
-                <.link navigate={~p"/fees/#{contract.fee}"} class="text-indigo-600 hover:underline">
-                {format_string_field(contract.fee.name)}
-            </.link>
-            </div>
-            <div class="col-span-12 md:col-span-2">
-                {contract.fee.amount}
-            </div>
-        </.input_grid>
+      <.input_grid>
+        <div class="col-span-12 md:col-span-2">
+          Von {format_date_field_dmy(contract.start_date)}
+        </div>
+        <div class="col-span-12 md:col-span-2">
+          Bis {format_date_field_dmy(contract.termination_date)}
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <.link navigate={~p"/fees/#{contract.fee}"} class="text-indigo-600 hover:underline">
+            {format_string_field(contract.fee.name)}
+          </.link>
+        </div>
+        <div class="col-span-12 md:col-span-2">
+          {contract.fee.amount}
+        </div>
+      </.input_grid>
     <% end %>
-</.input_grids>
+  </.input_grids>
 </.card>

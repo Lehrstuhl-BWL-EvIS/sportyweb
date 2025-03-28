@@ -157,12 +157,12 @@ defmodule SportywebWeb.Membership.MembershipTable do
   def update(%{} = assigns, socket) do
     socket = assign(socket, assigns)
 
-    filters = if Map.has_key?(assigns, :default_filters) do
-      for {k, v} <- assigns.default_filters,
-               do: {to_string(k), v}, into: %{}
-    else
-      %{}
-    end
+    filters =
+      if Map.has_key?(assigns, :default_filters) do
+        for {k, v} <- assigns.default_filters, do: {to_string(k), v}, into: %{}
+      else
+        %{}
+      end
 
     socket = sort_and_filter_data(%{}, filters, 50, socket)
     {:ok, socket}
@@ -171,18 +171,26 @@ defmodule SportywebWeb.Membership.MembershipTable do
   @impl true
   def handle_event("max_element_count_changed", %{"value" => new_value}, socket) do
     IO.inspect(Integer.parse(new_value))
-    socket = case Integer.parse(new_value) do
-      :error -> socket
-      {new_max_count, ""} ->
-        cond do
-          new_max_count == socket.assigns.max_elements_counts -> socket
-          true ->
-            sorting = socket.assigns.sorting
-            filters = socket.assigns.filters
-            sort_and_filter_data(sorting, filters, new_max_count, socket)
-        end
-      {_, _} -> socket
-    end
+
+    socket =
+      case Integer.parse(new_value) do
+        :error ->
+          socket
+
+        {new_max_count, ""} ->
+          cond do
+            new_max_count == socket.assigns.max_elements_counts ->
+              socket
+
+            true ->
+              sorting = socket.assigns.sorting
+              filters = socket.assigns.filters
+              sort_and_filter_data(sorting, filters, new_max_count, socket)
+          end
+
+        {_, _} ->
+          socket
+      end
 
     {:noreply, socket}
   end
@@ -277,8 +285,7 @@ defmodule SportywebWeb.Membership.MembershipTable do
 
         %{"In" => direction} ->
           {load_unsorted(database_filter, socket)
-           |> memory_sort(fn m -> Membership.membership_in(m).name end, direction),
-           sorting}
+           |> memory_sort(fn m -> Membership.membership_in(m).name end, direction), sorting}
 
         _ ->
           {load_unsorted(database_filter, socket), nil}
@@ -388,21 +395,26 @@ defmodule SportywebWeb.Membership.MembershipTable do
 
   defp memory_sort(memberships, to_field_function, direction) do
     case direction do
-      "asc" ->   Enum.sort_by(memberships, fn membership -> to_field_function.(membership) end, :asc)
-      "desc" -> Enum.sort_by(memberships, fn membership -> to_field_function.(membership) end, :desc)
-      _ ->  memberships
+      "asc" ->
+        Enum.sort_by(memberships, fn membership -> to_field_function.(membership) end, :asc)
+
+      "desc" ->
+        Enum.sort_by(memberships, fn membership -> to_field_function.(membership) end, :desc)
+
+      _ ->
+        memberships
     end
   end
 
   defp memory_filter(memberships, memory_filters) do
     cond do
-      length(memory_filters) == 0 ->   memberships
+      length(memory_filters) == 0 ->
+        memberships
+
       true ->
         Enum.filter(memberships, fn m ->
           Enum.all?(memory_filters, fn filter -> filter.(m) end)
         end)
     end
   end
-
-
 end

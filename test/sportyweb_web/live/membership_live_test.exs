@@ -183,5 +183,4 @@ defmodule SportywebWeb.MembershipLiveTest do
       assert html =~ "Beitrag"
     end
   end
-
 end

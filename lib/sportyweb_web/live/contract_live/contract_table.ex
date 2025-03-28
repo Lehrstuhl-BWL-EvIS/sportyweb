@@ -118,12 +118,12 @@ defmodule SportywebWeb.Contract.ContractTable do
   def update(%{} = assigns, socket) do
     socket = assign(socket, assigns)
 
-    filters = if Map.has_key?(assigns, :default_filters) do
-      for {k, v} <- assigns.default_filters,
-               do: {to_string(k), v}, into: %{}
-    else
-      %{}
-    end
+    filters =
+      if Map.has_key?(assigns, :default_filters) do
+        for {k, v} <- assigns.default_filters, do: {to_string(k), v}, into: %{}
+      else
+        %{}
+      end
 
     socket = sort_and_filter_data(%{}, filters, 50, socket)
     {:ok, socket}
@@ -132,18 +132,26 @@ defmodule SportywebWeb.Contract.ContractTable do
   @impl true
   def handle_event("max_element_count_changed", %{"value" => new_value}, socket) do
     IO.inspect(Integer.parse(new_value))
-    socket = case Integer.parse(new_value) do
-      :error -> socket
-      {new_max_count, ""} ->
-        cond do
-          new_max_count == socket.assigns.max_elements_counts -> socket
-          true ->
-            sorting = socket.assigns.sorting
-            filters = socket.assigns.filters
-            sort_and_filter_data(sorting, filters, new_max_count, socket)
-        end
-      {_, _} -> socket
-    end
+
+    socket =
+      case Integer.parse(new_value) do
+        :error ->
+          socket
+
+        {new_max_count, ""} ->
+          cond do
+            new_max_count == socket.assigns.max_elements_counts ->
+              socket
+
+            true ->
+              sorting = socket.assigns.sorting
+              filters = socket.assigns.filters
+              sort_and_filter_data(sorting, filters, new_max_count, socket)
+          end
+
+        {_, _} ->
+          socket
+      end
 
     {:noreply, socket}
   end
@@ -197,21 +205,24 @@ defmodule SportywebWeb.Contract.ContractTable do
       case sorting do
         %{"Unterzeichnung" => direction} ->
           {load_sorted(:termination_date, direction, database_filter, socket), sorting}
+
         %{"Start" => direction} ->
           {load_sorted(:start_date, direction, database_filter, socket), sorting}
+
         %{"Ende" => direction} ->
           {load_sorted(:termination_date, direction, database_filter, socket), sorting}
+
         %{"Name" => direction} ->
           {load_unsorted(database_filter, socket)
            |> memory_sort(fn m -> m.contact.name end, direction), sorting}
+
         %{"Mit" => direction} ->
           {load_unsorted(database_filter, socket)
-           |> memory_sort(fn m -> Contract.get_internal_partner(m).name end, direction),
-           sorting}
+           |> memory_sort(fn m -> Contract.get_internal_partner(m).name end, direction), sorting}
+
         %{"Status" => direction} ->
-        {load_unsorted(database_filter, socket)
-          |> memory_sort(fn m -> print_contract_state(m) end, direction),
-          sorting}
+          {load_unsorted(database_filter, socket)
+           |> memory_sort(fn m -> print_contract_state(m) end, direction), sorting}
 
         _ ->
           {load_unsorted(database_filter, socket), nil}
@@ -236,8 +247,10 @@ defmodule SportywebWeb.Contract.ContractTable do
         case filter do
           {"Unterzeichnung", filterValue} ->
             {[termination_date: filterValue], nil}
+
           {"Start", filterValue} ->
             {[start_date: filterValue], nil}
+
           {"Ende", filterValue} ->
             {[termination_date: filterValue], nil}
             {nil, fn m -> case_insensitive_contains(m.contact.name, filterValue) end}
@@ -252,10 +265,10 @@ defmodule SportywebWeb.Contract.ContractTable do
              end}
 
           {"Status", filterValue} ->
-          {nil,
-            fn m ->
-              case_insensitive_contains(print_contract_state(m), filterValue)
-            end}
+            {nil,
+             fn m ->
+               case_insensitive_contains(print_contract_state(m), filterValue)
+             end}
         end
       end)
 
@@ -298,7 +311,7 @@ defmodule SportywebWeb.Contract.ContractTable do
       :partner_department,
       :partner_group,
       :fee,
-      membership: [:club, :department, :group],
+      membership: [:club, :department, :group]
     ])
   end
 
@@ -311,21 +324,23 @@ defmodule SportywebWeb.Contract.ContractTable do
       :partner_department,
       :partner_group,
       :fee,
-      membership: [:club, :department, :group],
+      membership: [:club, :department, :group]
     ])
   end
 
   defp memory_sort(contracts, to_field_function, direction) do
     case direction do
-      "asc" ->   Enum.sort_by(contracts, fn contract -> to_field_function.(contract) end, :asc)
+      "asc" -> Enum.sort_by(contracts, fn contract -> to_field_function.(contract) end, :asc)
       "desc" -> Enum.sort_by(contracts, fn contract -> to_field_function.(contract) end, :desc)
-      _ ->  contracts
+      _ -> contracts
     end
   end
 
   defp memory_filter(contracts, memory_filters) do
     cond do
-      length(memory_filters) == 0 ->   contracts
+      length(memory_filters) == 0 ->
+        contracts
+
       true ->
         Enum.filter(contracts, fn m ->
           Enum.all?(memory_filters, fn filter -> filter.(m) end)
@@ -340,7 +355,4 @@ defmodule SportywebWeb.Contract.ContractTable do
       true -> "beendet"
     end
   end
-
-
-
 end

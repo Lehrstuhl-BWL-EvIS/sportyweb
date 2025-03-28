@@ -23,7 +23,6 @@ defmodule Sportyweb.Personal.Membership do
     timestamps(type: :utc_datetime)
   end
 
-
   def get_valid_states do
     [
       [key: "Aktiv", value: "active"],
@@ -37,7 +36,6 @@ defmodule Sportyweb.Personal.Membership do
     membership.state == "active" || membership.state == "passiv"
   end
 
-
   def membership_in(membership) do
     cond do
       membership.group != nil -> membership.group
@@ -50,17 +48,19 @@ defmodule Sportyweb.Personal.Membership do
   @doc false
   def changeset(membership, attrs \\ %{}) do
     membership
-    |> cast(attrs,
-         [
-           :club_id,
-           :contact_id,
-           :department_id,
-           :group_id,
-           :state,
-           :start_date,
-           :termination_date
-         ],
-         empty_values: ["", nil])
+    |> cast(
+      attrs,
+      [
+        :club_id,
+        :contact_id,
+        :department_id,
+        :group_id,
+        :state,
+        :start_date,
+        :termination_date
+      ],
+      empty_values: ["", nil]
+    )
     |> cast_assoc(:contracts)
     |> validate_required([
       :club_id,
@@ -69,8 +69,8 @@ defmodule Sportyweb.Personal.Membership do
       :state
     ])
     |> validate_inclusion(
-         :state,
-         get_valid_states() |> Enum.map(fn state -> state[:value] end)
-       )
+      :state,
+      get_valid_states() |> Enum.map(fn state -> state[:value] end)
+    )
   end
 end

@@ -417,7 +417,6 @@ defmodule Sportyweb.Organization do
     Group.changeset(group, attrs)
   end
 
-
   @doc """
   Creates a group_fee (many_to_many).
 
