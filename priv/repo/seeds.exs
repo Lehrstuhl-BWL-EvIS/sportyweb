@@ -904,11 +904,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
     end)
 
     # Contacts & Contracts
-    number_of_contracts =
-      cond do
-        club.name == "FC Bayern München" -> 2000
-        true -> Enum.random(20..50)
-      end
+    number_of_contracts = Enum.random(20..50)
 
     for _i <- 0..number_of_contracts do
       is_main = :rand.uniform() < 0.8
