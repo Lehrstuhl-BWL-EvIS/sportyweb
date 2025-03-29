@@ -206,7 +206,7 @@ defmodule SportywebWeb.Membership.MembershipTable do
     end
   end
 
-  @impt true
+  @impl true
   def load_data(club_id, database_sorting, database_filters) do
     Personal.list_memberships(club_id, database_sorting, database_filters, [
       :contact,

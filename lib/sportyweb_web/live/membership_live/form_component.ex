@@ -487,5 +487,4 @@ defmodule SportywebWeb.Membership.FormComponent do
     {:ok, new_date} = Date.new(date.year + years_to_add, date.month, date.day)
     new_date
   end
-
 end

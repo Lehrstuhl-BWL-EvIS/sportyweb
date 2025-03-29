@@ -7,7 +7,6 @@ defmodule SportywebWeb.Contract.ContractTable do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal
 
-
   attr :show_quick_filters, :boolean, default: true
   @impl true
   def render(assigns) do
