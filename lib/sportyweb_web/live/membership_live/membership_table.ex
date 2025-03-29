@@ -170,22 +170,18 @@ defmodule SportywebWeb.Membership.MembershipTable do
 
   @impl true
   def handle_event("max_element_count_changed", %{"value" => new_value}, socket) do
-    IO.inspect(Integer.parse(new_value))
-
     socket =
       case Integer.parse(new_value) do
         :error ->
           socket
 
         {new_max_count, ""} ->
-          cond do
-            new_max_count == socket.assigns.max_elements_counts ->
-              socket
-
-            true ->
-              sorting = socket.assigns.sorting
-              filters = socket.assigns.filters
-              sort_and_filter_data(sorting, filters, new_max_count, socket)
+          if new_max_count == socket.assigns.max_elements_counts do
+            socket
+          else
+            sorting = socket.assigns.sorting
+            filters = socket.assigns.filters
+            sort_and_filter_data(sorting, filters, new_max_count, socket)
           end
 
         {_, _} ->
@@ -201,13 +197,11 @@ defmodule SportywebWeb.Membership.MembershipTable do
         %{"value" => value, "column_label" => column_label},
         socket
       ) do
-    cond do
-      value == nil || value == "" ->
-        handle_event("remove_filter", %{"column" => column_label}, socket)
-
-      true ->
-        inputMap = Map.put(%{}, column_label, value)
-        handle_event("apply_filter", inputMap, socket)
+    if value == nil || value == "" do
+      handle_event("remove_filter", %{"column" => column_label}, socket)
+    else
+      input_map = Map.put(%{}, column_label, value)
+      handle_event("apply_filter", input_map, socket)
     end
   end
 
@@ -246,19 +240,23 @@ defmodule SportywebWeb.Membership.MembershipTable do
           {load_sorted(:state, direction, database_filter, socket), sorting}
 
         %{"Name" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(fn m -> m.contact.name end, direction), sorting}
 
         %{"Nachname" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(fn m -> m.contact.person_last_name end, direction), sorting}
 
         %{"Vorname" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(fn m -> m.contact.person_first_name_1 end, direction), sorting}
 
         %{"Abteilung" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(
              fn m ->
                if m.department != nil do
@@ -271,7 +269,8 @@ defmodule SportywebWeb.Membership.MembershipTable do
            ), sorting}
 
         %{"Gruppe" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(
              fn m ->
                if m.group != nil do
@@ -284,7 +283,8 @@ defmodule SportywebWeb.Membership.MembershipTable do
            ), sorting}
 
         %{"In" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(fn m -> Membership.membership_in(m).name end, direction), sorting}
 
         _ ->
@@ -308,33 +308,33 @@ defmodule SportywebWeb.Membership.MembershipTable do
     filter_tuples =
       Enum.map(filters, fn filter ->
         case filter do
-          {"Status", filterValue} ->
-            {[state: filterValue], nil}
+          {"Status", filter_value} ->
+            {[state: filter_value], nil}
 
-          {"Name", filterValue} ->
-            {nil, fn m -> case_insensitive_contains(m.contact.name, filterValue) end}
+          {"Name", filter_value} ->
+            {nil, fn m -> case_insensitive_contains(m.contact.name, filter_value) end}
 
-          {"Nachname", filterValue} ->
-            {nil, fn m -> case_insensitive_contains(m.contact.person_last_name, filterValue) end}
+          {"Nachname", filter_value} ->
+            {nil, fn m -> case_insensitive_contains(m.contact.person_last_name, filter_value) end}
 
-          {"Vorname", filterValue} ->
+          {"Vorname", filter_value} ->
             {nil,
-             fn m -> case_insensitive_contains(m.contact.person_first_name_1, filterValue) end}
+             fn m -> case_insensitive_contains(m.contact.person_first_name_1, filter_value) end}
 
-          {"Abteilung", filterValue} ->
+          {"Abteilung", filter_value} ->
             {nil,
              fn m ->
-               m.department != nil && case_insensitive_contains(m.department.name, filterValue)
+               m.department != nil && case_insensitive_contains(m.department.name, filter_value)
              end}
 
-          {"Gruppe", filterValue} ->
+          {"Gruppe", filter_value} ->
             {nil,
-             fn m -> m.group != nil && case_insensitive_contains(m.group.name, filterValue) end}
+             fn m -> m.group != nil && case_insensitive_contains(m.group.name, filter_value) end}
 
-          {"In", filterValue} ->
+          {"In", filter_value} ->
             {nil,
              fn m ->
-               case_insensitive_contains(Membership.membership_in(m).name, filterValue)
+               case_insensitive_contains(Membership.membership_in(m).name, filter_value)
              end}
         end
       end)
@@ -407,14 +407,12 @@ defmodule SportywebWeb.Membership.MembershipTable do
   end
 
   defp memory_filter(memberships, memory_filters) do
-    cond do
-      length(memory_filters) == 0 ->
-        memberships
-
-      true ->
-        Enum.filter(memberships, fn m ->
-          Enum.all?(memory_filters, fn filter -> filter.(m) end)
-        end)
+    if Enum.empty?(memory_filters) do
+      memberships
+    else
+      Enum.filter(memberships, fn m ->
+        Enum.all?(memory_filters, fn filter -> filter.(m) end)
+      end)
     end
   end
 end

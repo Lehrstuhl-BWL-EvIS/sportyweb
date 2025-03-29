@@ -129,70 +129,63 @@ defmodule SportywebWeb.Membership.ContractLineComponent do
     warnings = []
 
     warnings =
-      cond do
-        fee.minimum_age_in_years != nil &&
-            (start_date == nil ||
-               Contact.age_in_years(contact, start_date) < fee.minimum_age_in_years) ->
-          hint =
-            "Die Gebühr ist erst ab einem Alter von #{fee.minimum_age_in_years} Jahren gültig"
+      if fee.minimum_age_in_years != nil &&
+           (start_date == nil ||
+              Contact.age_in_years(contact, start_date) < fee.minimum_age_in_years) do
+        hint =
+          "Die Gebühr ist erst ab einem Alter von #{fee.minimum_age_in_years} Jahren gültig"
 
-          min_start_date = add_years(contact.person_birthday, fee.minimum_age_in_years)
+        min_start_date = add_years(contact.person_birthday, fee.minimum_age_in_years)
 
-          action =
-            %{
-              text:
-                "Startdatum auf #{CommonHelper.format_date_field_dmy(min_start_date)} setzten",
-              key: "set_start_date",
-              new_value: min_start_date
-            }
+        action =
+          %{
+            text: "Startdatum auf #{CommonHelper.format_date_field_dmy(min_start_date)} setzten",
+            key: "set_start_date",
+            new_value: min_start_date
+          }
 
-          warnings ++ [%{hint: hint, action: action}]
-
-        true ->
-          warnings
+        warnings ++ [%{hint: hint, action: action}]
+      else
+        warnings
       end
 
     warnings =
-      cond do
-        fee.maximum_age_in_years != nil &&
-            (termination_date == nil ||
-               Contact.age_in_years(contact, termination_date) > fee.maximum_age_in_years) ->
-          hint =
-            "Die Gebühr ist nur bis zu einem Alter von #{fee.maximum_age_in_years} Jahren gültig"
+      if fee.maximum_age_in_years != nil &&
+           (termination_date == nil ||
+              Contact.age_in_years(contact, termination_date) > fee.maximum_age_in_years) do
+        hint =
+          "Die Gebühr ist nur bis zu einem Alter von #{fee.maximum_age_in_years} Jahren gültig"
 
-          # propose day before birthday as termination_date
-          max_termination_date = add_years(contact.person_birthday, fee.maximum_age_in_years + 1)
-          max_termination_date = Date.add(max_termination_date, -1)
+        # propose day before birthday as termination_date
+        max_termination_date = add_years(contact.person_birthday, fee.maximum_age_in_years + 1)
+        max_termination_date = Date.add(max_termination_date, -1)
 
-          action =
-            cond do
-              start_date != nil && Date.before?(max_termination_date, start_date) ->
-                nil
+        action =
+          cond do
+            start_date != nil && Date.before?(max_termination_date, start_date) ->
+              nil
 
-              Date.before?(max_termination_date, Date.utc_today()) ->
-                nil
+            Date.before?(max_termination_date, Date.utc_today()) ->
+              nil
 
-              true ->
-                %{
-                  text:
-                    "Enddatum auf #{CommonHelper.format_date_field_dmy(max_termination_date)} setzten",
-                  key: "set_termination_date",
-                  new_value: max_termination_date
-                }
-            end
+            true ->
+              %{
+                text:
+                  "Enddatum auf #{CommonHelper.format_date_field_dmy(max_termination_date)} setzten",
+                key: "set_termination_date",
+                new_value: max_termination_date
+              }
+          end
 
-          warnings ++ [%{hint: hint, action: action}]
-
-        true ->
-          warnings
+        warnings ++ [%{hint: hint, action: action}]
+      else
+        warnings
       end
 
-    cond do
-      length(warnings) == 0 ->
-        nil
-
-      true ->
-        warnings
+    if Enum.empty?(warnings) do
+      nil
+    else
+      warnings
     end
   end
 
@@ -204,8 +197,8 @@ defmodule SportywebWeb.Membership.ContractLineComponent do
   end
 
   def add_years(%Date{} = date, years_to_add) do
-    {:ok, newDate} = Date.new(date.year + years_to_add, date.month, date.day)
-    newDate
+    {:ok, new_date} = Date.new(date.year + years_to_add, date.month, date.day)
+    new_date
   end
 
   def print_contract(contract) do

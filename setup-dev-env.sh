@@ -21,9 +21,9 @@ set -o pipefail
 echo "- Setup Development Environment: Start"
 
 #echo "- Install dependencies"
-#mix deps.get
-#mix assets.setup
-#mix assets.build
+mix deps.get
+mix assets.setup
+mix assets.build
 
 echo "- Drop databases (Dev & Test)"
 MIX_ENV=dev  mix ecto.drop

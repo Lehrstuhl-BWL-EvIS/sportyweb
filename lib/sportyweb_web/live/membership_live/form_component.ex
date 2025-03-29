@@ -283,9 +283,9 @@ defmodule SportywebWeb.Membership.FormComponent do
         contracts =
           if contract_to_delete != nil && contract_to_delete.data != nil &&
                contract_to_delete.data.id != nil do
-            oldValue = Changeset.get_change(changeset, :deleted)
-            newValue = if oldValue != true, do: true, else: false
-            contract_to_delete = Changeset.change(contract_to_delete, deleted: newValue)
+            old_value = Changeset.get_change(changeset, :deleted)
+            new_value = if old_value != true, do: true, else: false
+            contract_to_delete = Changeset.change(contract_to_delete, deleted: new_value)
             List.replace_at(contracts, index, contract_to_delete)
           else
             List.delete_at(contracts, index)
@@ -306,7 +306,8 @@ defmodule SportywebWeb.Membership.FormComponent do
       |> struct!(action: :validate)
 
     socket =
-      assign(socket, form: to_form(changeset))
+      socket
+      |> assign(form: to_form(changeset))
       |> sync_contracts()
       |> update_fee_options()
       |> update_group_options()
@@ -330,23 +331,18 @@ defmodule SportywebWeb.Membership.FormComponent do
       |> update_duplicated_membership_hint()
 
     socket =
-      cond do
-        changeset.valid? == false ->
-          IO.puts("changes are not valid")
-          IO.inspect(changeset)
-
-          socket
-          |> update(:form, fn %{source: changeset} ->
-            changeset = struct!(changeset, action: :validate)
-            to_form(changeset)
-          end)
-          |> put_flash(:error, "Die Eingabe ist nicht gültig")
-
-        true ->
-          case socket.assigns.membership.id do
-            nil -> create_membership(socket, changeset)
-            _ -> update_membership(socket, changeset)
-          end
+      if changeset.valid? == false do
+        socket
+        |> update(:form, fn %{source: changeset} ->
+          changeset = struct!(changeset, action: :validate)
+          to_form(changeset)
+        end)
+        |> put_flash(:error, "Die Eingabe ist nicht gültig")
+      else
+        case socket.assigns.membership.id do
+          nil -> create_membership(socket, changeset)
+          _ -> update_membership(socket, changeset)
+        end
       end
 
     {:noreply, socket}
@@ -463,20 +459,18 @@ defmodule SportywebWeb.Membership.FormComponent do
     duplicated_memberships =
       Enum.filter(matching_memberships, fn m -> m.id !== edited_membership_id end)
 
-    cond do
-      length(duplicated_memberships) == 0 ->
-        assign(socket, :duplicated_membership_error, nil)
+    if Enum.empty?(duplicated_memberships) do
+      assign(socket, :duplicated_membership_error, nil)
+    else
+      other_id = Enum.at(duplicated_memberships, 0).id
+      contact_name = contact.name
+      object_name = object.name
 
-      true ->
-        other_id = Enum.at(duplicated_memberships, 0).id
-        contact_name = contact.name
-        object_name = object.name
-
-        assign(socket, :duplicated_membership_error, %{
-          other_id: other_id,
-          contact_name: contact_name,
-          object_name: object_name
-        })
+      assign(socket, :duplicated_membership_error, %{
+        other_id: other_id,
+        contact_name: contact_name,
+        object_name: object_name
+      })
     end
   end
 
@@ -487,7 +481,8 @@ defmodule SportywebWeb.Membership.FormComponent do
       department_id = get_value(changeset, :department_id)
 
       contract_changeset =
-        Changeset.get_assoc(changeset, :contracts)
+        changeset
+        |> Changeset.get_assoc(:contracts)
         |> Enum.map(fn contract_changeset ->
           contract_changeset
           |> Changeset.put_change(:contact_id, contact_id)
@@ -508,7 +503,8 @@ defmodule SportywebWeb.Membership.FormComponent do
       contracts = List.replace_at(contracts, contract_index, contract_to_change)
 
       changeset =
-        Changeset.put_assoc(changeset, :contracts, contracts)
+        changeset
+        |> Changeset.put_assoc(:contracts, contracts)
         |> struct!(action: :validate)
 
       to_form(changeset)
@@ -527,8 +523,8 @@ defmodule SportywebWeb.Membership.FormComponent do
   end
 
   def add_years(%Date{} = date, years_to_add) do
-    {:ok, newDate} = Date.new(date.year + years_to_add, date.month, date.day)
-    newDate
+    {:ok, new_date} = Date.new(date.year + years_to_add, date.month, date.day)
+    new_date
   end
 
   def print_contact(%Contact{} = contact) do

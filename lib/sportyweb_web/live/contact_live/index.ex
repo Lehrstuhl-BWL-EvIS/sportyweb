@@ -34,22 +34,18 @@ defmodule SportywebWeb.ContactLive.Index do
 
   @impl true
   def handle_event("max_elements_counts_changed", %{"value" => new_value}, socket) do
-    IO.inspect(Integer.parse(new_value))
-
     socket =
       case Integer.parse(new_value) do
         :error ->
           socket
 
         {new_max_count, ""} ->
-          cond do
-            new_max_count == socket.assigns.max_elements_counts ->
-              socket
-
-            true ->
-              sorting = socket.assigns.sorting
-              filters = socket.assigns.filters
-              sort_and_filter_data(sorting, filters, new_max_count, socket)
+          if new_max_count == socket.assigns.max_elements_counts do
+            socket
+          else
+            sorting = socket.assigns.sorting
+            filters = socket.assigns.filters
+            sort_and_filter_data(sorting, filters, new_max_count, socket)
           end
 
         {_, _} ->
@@ -65,13 +61,11 @@ defmodule SportywebWeb.ContactLive.Index do
         %{"value" => value, "column_label" => column_label},
         socket
       ) do
-    cond do
-      value == nil || value == "" ->
-        handle_event("remove_filter", %{"column" => column_label}, socket)
-
-      true ->
-        inputMap = Map.put(%{}, column_label, value)
-        handle_event("apply_filter", inputMap, socket)
+    if value == nil || value == "" do
+      handle_event("remove_filter", %{"column" => column_label}, socket)
+    else
+      input_map = Map.put(%{}, column_label, value)
+      handle_event("apply_filter", input_map, socket)
     end
   end
 
@@ -134,32 +128,39 @@ defmodule SportywebWeb.ContactLive.Index do
           {load_sorted(:person_gender, direction, database_filter, socket), sorting}
 
         %{"Mitglied" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(
              fn c ->
-               if length(c.memberships) > 0 do
-                 "true"
-               else
+               if Enum.empty?(c.memberships) do
                  "false"
+               else
+                 "true"
                end
              end,
              direction
            ), sorting}
 
         %{"Adresse" => direction} ->
-          {load_unsorted(database_filter, socket)
-           |> memory_sort(
-             fn c -> PostalAddress.as_text(Contact.get_most_relevant_postal_address(c)) end,
-             direction
-           ), sorting}
+          {
+            database_filter
+            |> load_unsorted(socket)
+            |> memory_sort(
+              fn c -> PostalAddress.as_text(Contact.get_most_relevant_postal_address(c)) end,
+              direction
+            ),
+            sorting
+          }
 
         %{"E-Mail" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(fn c -> Contact.get_most_relevant_email(c).address end, direction),
            sorting}
 
         %{"Telefonnummer" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(fn c -> Contact.get_most_relevant_phone(c).number end, direction),
            sorting}
 
@@ -184,46 +185,48 @@ defmodule SportywebWeb.ContactLive.Index do
     filter_tuples =
       Enum.map(filters, fn filter ->
         case filter do
-          {"Art", filterValue} ->
-            {[type: "%#{filterValue}%"], nil}
+          {"Art", filter_value} ->
+            {[type: "%#{filter_value}%"], nil}
 
-          {"Name", filterValue} ->
-            {[name: "%#{filterValue}%"], nil}
+          {"Name", filter_value} ->
+            {[name: "%#{filter_value}%"], nil}
 
-          {"Nachname", filterValue} ->
-            {[person_last_name: "%#{filterValue}%"], nil}
+          {"Nachname", filter_value} ->
+            {[person_last_name: "%#{filter_value}%"], nil}
 
-          {"Vorname", filterValue} ->
-            {[person_first_name_1: "%#{filterValue}%"], nil}
+          {"Vorname", filter_value} ->
+            {[person_first_name_1: "%#{filter_value}%"], nil}
 
-          {"Geburtsdatum", filterValue} ->
-            {[person_birthday: "%#{filterValue}%"], nil}
+          {"Geburtsdatum", filter_value} ->
+            {[person_birthday: "%#{filter_value}%"], nil}
 
-          {"Geschlecht", filterValue} ->
-            {[person_gender: "%#{filterValue}%"], nil}
+          {"Geschlecht", filter_value} ->
+            {[person_gender: "%#{filter_value}%"], nil}
 
-          {"Adresse", filterValue} ->
+          {"Adresse", filter_value} ->
             {nil,
              fn c ->
                String.contains?(
                  PostalAddress.as_text(Contact.get_most_relevant_postal_address(c)),
-                 filterValue
+                 filter_value
                )
              end}
 
-          {"Mitglied", filterValue} ->
-            case filterValue do
-              "true" -> {nil, fn c -> length(c.memberships) > 0 end}
-              "false" -> {nil, fn c -> length(c.memberships) == 0 end}
+          {"Mitglied", filter_value} ->
+            case filter_value do
+              "true" -> {nil, fn c -> !Enum.empty?(c.memberships) end}
+              "false" -> {nil, fn c -> Enum.empty?(c.memberships) end}
             end
 
-          {"E-Mail", filterValue} ->
+          {"E-Mail", filter_value} ->
             {nil,
-             fn c -> String.contains?(Contact.get_most_relevant_email(c).address, filterValue) end}
+             fn c ->
+               String.contains?(Contact.get_most_relevant_email(c).address, filter_value)
+             end}
 
-          {"Telefonnummer", filterValue} ->
+          {"Telefonnummer", filter_value} ->
             {nil,
-             fn c -> String.contains?(Contact.get_most_relevant_phone(c).number, filterValue) end}
+             fn c -> String.contains?(Contact.get_most_relevant_phone(c).number, filter_value) end}
         end
       end)
 
@@ -282,12 +285,10 @@ defmodule SportywebWeb.ContactLive.Index do
   end
 
   defp memory_filter(contacts, memory_filters) do
-    cond do
-      length(memory_filters) == 0 ->
-        contacts
-
-      true ->
-        Enum.filter(contacts, fn c -> Enum.all?(memory_filters, fn filter -> filter.(c) end) end)
+    if Enum.empty?(memory_filters) do
+      contacts
+    else
+      Enum.filter(contacts, fn c -> Enum.all?(memory_filters, fn filter -> filter.(c) end) end)
     end
   end
 end

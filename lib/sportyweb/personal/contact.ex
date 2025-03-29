@@ -214,21 +214,18 @@ defmodule Sportyweb.Personal.Contact do
   defp find_most_relevant(information_list) do
     number_of_information = length(information_list)
 
-    cond do
-      number_of_information == 1 ->
-        Enum.at(information_list, 0)
+    if number_of_information == 1 do
+      Enum.at(information_list, 0)
+    else
+      main_information = Enum.find(information_list, fn add -> add.is_main end)
 
-      true ->
-        main_information = Enum.find(information_list, fn add -> add.is_main end)
-
-        cond do
-          main_information != nil ->
-            main_information
-
-          true ->
-            Enum.sort_by(information_list, fn add -> add.updated_at end, :desc)
-            |> Enum.at(0)
-        end
+      if main_information != nil do
+        main_information
+      else
+        information_list
+        |> Enum.sort_by(fn add -> add.updated_at end, :desc)
+        |> Enum.at(0)
+      end
     end
   end
 end

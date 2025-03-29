@@ -56,22 +56,25 @@ defmodule Sportyweb.Legal do
     query = from(m in Contract, where: m.club_id == ^club_id)
 
     query =
-      cond do
-        order_by == nil -> order_by(query, asc: :start_date)
-        true -> order_by(query, ^order_by)
+      if order_by == nil do
+        order_by(query, asc: :start_date)
+      else
+        order_by(query, ^order_by)
       end
 
     query =
-      cond do
-        filters == nil || length(filters) == 0 -> query
-        true -> where(query, ^filters)
+      if filters == nil || Enum.empty?(filters) do
+        query
+      else
+        where(query, ^filters)
       end
 
     Repo.all(query)
   end
 
   def list_contracts(club_id, order_by, filters, preloads) do
-    list_contracts(club_id, order_by, filters)
+    club_id
+    |> list_contracts(order_by, filters)
     |> Repo.preload(preloads)
   end
 
@@ -83,7 +86,8 @@ defmodule Sportyweb.Legal do
         from(c in Contract, where: c.contact_id == ^contact_id)
       end
 
-    Repo.all(query)
+    query
+    |> Repo.all()
     |> Repo.preload(preloads)
   end
 

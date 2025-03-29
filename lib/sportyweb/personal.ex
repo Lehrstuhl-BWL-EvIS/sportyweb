@@ -28,22 +28,25 @@ defmodule Sportyweb.Personal do
     query = from(c in Contact, where: c.club_id == ^club_id)
 
     query =
-      cond do
-        order_by == nil -> order_by(query, asc: :name)
-        true -> order_by(query, ^order_by)
+      if order_by == nil do
+        order_by(query, asc: :name)
+      else
+        order_by(query, ^order_by)
       end
 
     query =
-      cond do
-        filters == nil || length(filters) == 0 -> query
-        true -> where(query, ^filter_contacts_like(filters))
+      if filters == nil || Enum.empty?(filters) do
+        query
+      else
+        where(query, ^filter_contacts_like(filters))
       end
 
     Repo.all(query)
   end
 
   def list_contacts(club_id, order_by, filters, preloads) do
-    list_contacts(club_id, order_by, filters)
+    club_id
+    |> list_contacts(order_by, filters)
     |> Repo.preload(preloads)
   end
 
@@ -71,9 +74,10 @@ defmodule Sportyweb.Personal do
 
   def list_contacts_of_members(club_id, order_by, preloads) do
     order_by =
-      cond do
-        order_by == nil -> :name
-        true -> order_by
+      if order_by == nil do
+        :name
+      else
+        order_by
       end
 
     query =
@@ -88,7 +92,8 @@ defmodule Sportyweb.Personal do
         order_by: ^order_by
       )
 
-    Repo.all(query)
+    query
+    |> Repo.all()
     |> Repo.preload(preloads)
   end
 
@@ -343,22 +348,25 @@ defmodule Sportyweb.Personal do
     query = from(m in Membership, where: m.club_id == ^club_id)
 
     query =
-      cond do
-        order_by == nil -> order_by(query, asc: :state)
-        true -> order_by(query, ^order_by)
+      if order_by == nil do
+        order_by(query, asc: :state)
+      else
+        order_by(query, ^order_by)
       end
 
     query =
-      cond do
-        filters == nil || length(filters) == 0 -> query
-        true -> where(query, ^filters)
+      if filters == nil || Enum.empty?(filters) do
+        query
+      else
+        where(query, ^filters)
       end
 
     Repo.all(query)
   end
 
   def list_memberships(club_id, order_by, filters, preloads) do
-    list_memberships(club_id, order_by, filters)
+    club_id
+    |> list_memberships(order_by, filters)
     |> Repo.preload(preloads)
   end
 

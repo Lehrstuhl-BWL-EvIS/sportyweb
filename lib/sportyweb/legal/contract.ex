@@ -64,22 +64,18 @@ defmodule Sportyweb.Legal.Contract do
         such functions pop up over time.
   """
   def get_object(%Contract{} = contract) do
-    cond do
-      contract.membership != nil ->
-        contract.membership
-
-      true ->
-        nil
+    if contract.membership != nil do
+      contract.membership
+    else
+      nil
     end
   end
 
   def print_contract_object(%Contract{} = contract) do
-    cond do
-      contract.membership != nil ->
-        "Mitgliedschaft in #{Membership.membership_in(contract.membership).name}"
-
-      true ->
-        nil
+    if contract.membership != nil do
+      "Mitgliedschaft in #{Membership.membership_in(contract.membership).name}"
+    else
+      nil
     end
   end
 

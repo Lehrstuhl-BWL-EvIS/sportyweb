@@ -131,22 +131,18 @@ defmodule SportywebWeb.Contract.ContractTable do
 
   @impl true
   def handle_event("max_element_count_changed", %{"value" => new_value}, socket) do
-    IO.inspect(Integer.parse(new_value))
-
     socket =
       case Integer.parse(new_value) do
         :error ->
           socket
 
         {new_max_count, ""} ->
-          cond do
-            new_max_count == socket.assigns.max_elements_counts ->
-              socket
-
-            true ->
-              sorting = socket.assigns.sorting
-              filters = socket.assigns.filters
-              sort_and_filter_data(sorting, filters, new_max_count, socket)
+          if new_max_count == socket.assigns.max_elements_counts do
+            socket
+          else
+            sorting = socket.assigns.sorting
+            filters = socket.assigns.filters
+            sort_and_filter_data(sorting, filters, new_max_count, socket)
           end
 
         {_, _} ->
@@ -162,13 +158,11 @@ defmodule SportywebWeb.Contract.ContractTable do
         %{"value" => value, "column_label" => column_label},
         socket
       ) do
-    cond do
-      value == nil || value == "" ->
-        handle_event("remove_filter", %{"column" => column_label}, socket)
-
-      true ->
-        inputMap = Map.put(%{}, column_label, value)
-        handle_event("apply_filter", inputMap, socket)
+    if value == nil || value == "" do
+      handle_event("remove_filter", %{"column" => column_label}, socket)
+    else
+      input_map = Map.put(%{}, column_label, value)
+      handle_event("apply_filter", input_map, socket)
     end
   end
 
@@ -213,15 +207,18 @@ defmodule SportywebWeb.Contract.ContractTable do
           {load_sorted(:termination_date, direction, database_filter, socket), sorting}
 
         %{"Name" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(fn m -> m.contact.name end, direction), sorting}
 
         %{"Mit" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(fn m -> Contract.get_internal_partner(m).name end, direction), sorting}
 
         %{"Status" => direction} ->
-          {load_unsorted(database_filter, socket)
+          {database_filter
+           |> load_unsorted(socket)
            |> memory_sort(fn m -> print_contract_state(m) end, direction), sorting}
 
         _ ->
@@ -245,29 +242,29 @@ defmodule SportywebWeb.Contract.ContractTable do
     filter_tuples =
       Enum.map(filters, fn filter ->
         case filter do
-          {"Unterzeichnung", filterValue} ->
-            {[termination_date: filterValue], nil}
+          {"Unterzeichnung", filter_value} ->
+            {[termination_date: filter_value], nil}
 
-          {"Start", filterValue} ->
-            {[start_date: filterValue], nil}
+          {"Start", filter_value} ->
+            {[start_date: filter_value], nil}
 
-          {"Ende", filterValue} ->
-            {[termination_date: filterValue], nil}
-            {nil, fn m -> case_insensitive_contains(m.contact.name, filterValue) end}
+          {"Ende", filter_value} ->
+            {[termination_date: filter_value], nil}
+            {nil, fn m -> case_insensitive_contains(m.contact.name, filter_value) end}
 
-          {"Name", filterValue} ->
-            {nil, fn m -> case_insensitive_contains(m.contact.name, filterValue) end}
+          {"Name", filter_value} ->
+            {nil, fn m -> case_insensitive_contains(m.contact.name, filter_value) end}
 
-          {"Mit", filterValue} ->
+          {"Mit", filter_value} ->
             {nil,
              fn m ->
-               case_insensitive_contains(Contract.get_internal_partner(m).name, filterValue)
+               case_insensitive_contains(Contract.get_internal_partner(m).name, filter_value)
              end}
 
-          {"Status", filterValue} ->
+          {"Status", filter_value} ->
             {nil,
              fn m ->
-               case_insensitive_contains(print_contract_state(m), filterValue)
+               case_insensitive_contains(print_contract_state(m), filter_value)
              end}
         end
       end)
@@ -337,14 +334,12 @@ defmodule SportywebWeb.Contract.ContractTable do
   end
 
   defp memory_filter(contracts, memory_filters) do
-    cond do
-      length(memory_filters) == 0 ->
-        contracts
-
-      true ->
-        Enum.filter(contracts, fn m ->
-          Enum.all?(memory_filters, fn filter -> filter.(m) end)
-        end)
+    if Enum.empty?(memory_filters) do
+      contracts
+    else
+      Enum.filter(contracts, fn m ->
+        Enum.all?(memory_filters, fn filter -> filter.(m) end)
+      end)
     end
   end
 
