@@ -1,5 +1,6 @@
 defmodule SportywebWeb.Membership.MembershipTable do
   use SportywebWeb, :live_component
+  use SportywebWeb.SortAndFilterTableHelper
 
   import SportywebWeb.CommonHelper
 
@@ -8,6 +9,7 @@ defmodule SportywebWeb.Membership.MembershipTable do
   alias Sportyweb.Legal.Contract
 
   attr :show_quick_filters, :boolean, default: true
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -51,11 +53,11 @@ defmodule SportywebWeb.Membership.MembershipTable do
         </.input_grids>
       </div>
 
-      <div class="overflow-auto max-w-full max-h-[600px]">
+      <div class="overflow-auto max-w-full max-h-[550px]">
         <.table
-          filter_sort_target={@myself}
           id="memberships"
-          rows={@streams.memberships}
+          filter_sort_target={@myself}
+          rows={@streams.elements}
           sorting={@sorting}
           filters={@filters}
           row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}") end}
@@ -154,224 +156,58 @@ defmodule SportywebWeb.Membership.MembershipTable do
   end
 
   @impl true
-  def update(%{} = assigns, socket) do
-    socket = assign(socket, assigns)
-
-    filters =
-      if Map.has_key?(assigns, :default_filters) do
-        for {k, v} <- assigns.default_filters, do: {to_string(k), v}, into: %{}
-      else
-        %{}
-      end
-
-    socket = sort_and_filter_data(%{}, filters, 50, socket)
-    {:ok, socket}
-  end
-
-  @impl true
-  def handle_event("max_element_count_changed", %{"value" => new_value}, socket) do
-    socket =
-      case Integer.parse(new_value) do
-        :error ->
-          socket
-
-        {new_max_count, ""} ->
-          if new_max_count == socket.assigns.max_elements_counts do
-            socket
-          else
-            sorting = socket.assigns.sorting
-            filters = socket.assigns.filters
-            sort_and_filter_data(sorting, filters, new_max_count, socket)
-          end
-
-        {_, _} ->
-          socket
-      end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event(
-        "quick_filter_changed",
-        %{"value" => value, "column_label" => column_label},
-        socket
-      ) do
-    if value == nil || value == "" do
-      handle_event("remove_filter", %{"column" => column_label}, socket)
-    else
-      input_map = Map.put(%{}, column_label, value)
-      handle_event("apply_filter", input_map, socket)
+  def column_to_database_field(column_name) do
+    case column_name do
+      "Status" -> :state
+      "Name" -> nil
+      "Nachname" -> nil
+      "Vorname" -> nil
+      "Abteilung" -> nil
+      "Gruppe" -> nil
+      "In" -> nil
     end
   end
 
   @impl true
-  def handle_event("apply_filter", %{} = filter, socket) do
-    sorting = socket.assigns.sorting
-    max_elements_counts = socket.assigns.max_elements_counts
-    merged_filters = Map.merge(socket.assigns.filters, filter)
-    socket = sort_and_filter_data(sorting, merged_filters, max_elements_counts, socket)
-    {:noreply, socket}
-  end
+  def column_to_getter(column_name) do
+    case column_name do
+      "Status" ->
+        fn m -> m.state end
 
-  @impl true
-  def handle_event("remove_filter", %{"column" => column}, socket) do
-    sorting = socket.assigns.sorting
-    max_elements_counts = socket.assigns.max_elements_counts
-    cleaned_filters = Map.delete(socket.assigns.filters, column)
-    socket = sort_and_filter_data(sorting, cleaned_filters, max_elements_counts, socket)
-    {:noreply, socket}
-  end
+      "Name" ->
+        fn m -> m.contact.name end
 
-  @impl true
-  def handle_event("apply_sorting", %{} = sorting, socket) do
-    filters = socket.assigns.filters
-    max_elements_counts = socket.assigns.max_elements_counts
-    socket = sort_and_filter_data(sorting, filters, max_elements_counts, socket)
-    {:noreply, socket}
-  end
+      "Nachname" ->
+        fn m -> m.contact.person_last_name end
 
-  defp sort_and_filter_data(sorting, filters, max_elements_counts, socket) do
-    {database_filter, memory_filters, all_valid_filters} = separate_filter(filters)
+      "Vorname" ->
+        fn m -> m.contact.person_first_name_1 end
 
-    {memberships, used_sorting} =
-      case sorting do
-        %{"Status" => direction} ->
-          {load_sorted(:state, direction, database_filter, socket), sorting}
-
-        %{"Name" => direction} ->
-          {database_filter
-           |> load_unsorted(socket)
-           |> memory_sort(fn m -> m.contact.name end, direction), sorting}
-
-        %{"Nachname" => direction} ->
-          {database_filter
-           |> load_unsorted(socket)
-           |> memory_sort(fn m -> m.contact.person_last_name end, direction), sorting}
-
-        %{"Vorname" => direction} ->
-          {database_filter
-           |> load_unsorted(socket)
-           |> memory_sort(fn m -> m.contact.person_first_name_1 end, direction), sorting}
-
-        %{"Abteilung" => direction} ->
-          {database_filter
-           |> load_unsorted(socket)
-           |> memory_sort(
-             fn m ->
-               if m.department != nil do
-                 m.department.name
-               else
-                 nil
-               end
-             end,
-             direction
-           ), sorting}
-
-        %{"Gruppe" => direction} ->
-          {database_filter
-           |> load_unsorted(socket)
-           |> memory_sort(
-             fn m ->
-               if m.group != nil do
-                 m.group.name
-               else
-                 nil
-               end
-             end,
-             direction
-           ), sorting}
-
-        %{"In" => direction} ->
-          {database_filter
-           |> load_unsorted(socket)
-           |> memory_sort(fn m -> Membership.membership_in(m).name end, direction), sorting}
-
-        _ ->
-          {load_unsorted(database_filter, socket), nil}
-      end
-
-    memberships = memory_filter(memberships, memory_filters)
-    all_element_count = length(memberships)
-    memberships = Enum.take(memberships, max_elements_counts)
-
-    socket
-    |> assign(:sorting, used_sorting)
-    |> assign(:filters, all_valid_filters)
-    |> assign(:all_element_count, all_element_count)
-    |> assign(:max_elements_counts, max_elements_counts)
-    |> assign(:shown_element_count, length(memberships))
-    |> stream(:memberships, memberships)
-  end
-
-  defp separate_filter(filters) do
-    filter_tuples =
-      Enum.map(filters, fn filter ->
-        case filter do
-          {"Status", filter_value} ->
-            {[state: filter_value], nil}
-
-          {"Name", filter_value} ->
-            {nil, fn m -> case_insensitive_contains(m.contact.name, filter_value) end}
-
-          {"Nachname", filter_value} ->
-            {nil, fn m -> case_insensitive_contains(m.contact.person_last_name, filter_value) end}
-
-          {"Vorname", filter_value} ->
-            {nil,
-             fn m -> case_insensitive_contains(m.contact.person_first_name_1, filter_value) end}
-
-          {"Abteilung", filter_value} ->
-            {nil,
-             fn m ->
-               m.department != nil && case_insensitive_contains(m.department.name, filter_value)
-             end}
-
-          {"Gruppe", filter_value} ->
-            {nil,
-             fn m -> m.group != nil && case_insensitive_contains(m.group.name, filter_value) end}
-
-          {"In", filter_value} ->
-            {nil,
-             fn m ->
-               case_insensitive_contains(Membership.membership_in(m).name, filter_value)
-             end}
+      "Abteilung" ->
+        fn m ->
+          if m.department == nil do
+            nil
+          else
+            m.department.name
+          end
         end
-      end)
 
-    # as long as each filter was mappend in cond above thery are valid
-    all_valid_filters = filters
+      "Gruppe" ->
+        fn m ->
+          if m.group == nil do
+            nil
+          else
+            m.group.name
+          end
+        end
 
-    database_filters =
-      filter_tuples
-      |> Enum.map(fn {database_filter, _} -> database_filter end)
-      |> Enum.filter(fn filter -> filter != nil end)
-
-    memory_filters =
-      filter_tuples
-      |> Enum.map(fn {_, memory_filter} -> memory_filter end)
-      |> Enum.filter(fn filter -> filter != nil end)
-
-    database_filter = List.flatten(database_filters)
-    {database_filter, memory_filters, all_valid_filters}
+      "In" ->
+        fn m -> Membership.membership_in(m).name end
+    end
   end
 
-  defp case_insensitive_contains(string, content) when is_binary(string) and is_binary(content) do
-    string = String.downcase(string)
-    content = String.downcase(content)
-    String.contains?(string, content)
-  end
-
-  defp load_sorted(column_database_field, direction, database_filters, socket) do
-    database_sorting =
-      case direction do
-        "asc" -> [asc: column_database_field]
-        "desc" -> [desc: column_database_field]
-        _ -> nil
-      end
-
-    club_id = socket.assigns.club.id
-
+  @impt true
+  def load_data(club_id, database_sorting, database_filters) do
     Personal.list_memberships(club_id, database_sorting, database_filters, [
       :contact,
       :club,
@@ -379,40 +215,5 @@ defmodule SportywebWeb.Membership.MembershipTable do
       :group,
       contracts: [:fee]
     ])
-  end
-
-  defp load_unsorted(database_filters, socket) do
-    club_id = socket.assigns.club.id
-
-    Personal.list_memberships(club_id, nil, database_filters, [
-      :contact,
-      :club,
-      :department,
-      :group,
-      contracts: [:fee]
-    ])
-  end
-
-  defp memory_sort(memberships, to_field_function, direction) do
-    case direction do
-      "asc" ->
-        Enum.sort_by(memberships, fn membership -> to_field_function.(membership) end, :asc)
-
-      "desc" ->
-        Enum.sort_by(memberships, fn membership -> to_field_function.(membership) end, :desc)
-
-      _ ->
-        memberships
-    end
-  end
-
-  defp memory_filter(memberships, memory_filters) do
-    if Enum.empty?(memory_filters) do
-      memberships
-    else
-      Enum.filter(memberships, fn m ->
-        Enum.all?(memory_filters, fn filter -> filter.(m) end)
-      end)
-    end
   end
 end

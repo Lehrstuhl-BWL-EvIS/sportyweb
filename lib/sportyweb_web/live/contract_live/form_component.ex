@@ -1,14 +1,13 @@
 defmodule SportywebWeb.ContractLive.FormComponent do
   use SportywebWeb, :live_component
 
-  alias SportywebWeb.CommonHelper
+  import SportywebWeb.CommonHelper
+  import SportywebWeb.ContractHelper
 
   alias Ecto.Changeset
-  alias Sportyweb.Finance
   alias Sportyweb.Legal
   alias Sportyweb.Organization
   alias Sportyweb.Personal
-  alias Sportyweb.Personal.Contact
 
   @impl true
   def render(assigns) do
@@ -124,7 +123,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
     </div>
     <div :if={@read_only}>
       <.label>{@label}</.label>
-      {print_wanted_element(@options, @form[@field].value, @print_function)}
+      {print_element_with_id(@options, @form[@field].value, @print_function)}
       <.error :for={msg <- Enum.map(@form[@field].errors, &translate_error(&1))}>{msg}</.error>
     </div>
     """
@@ -160,7 +159,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
      |> assign(groups: groups)
      |> assign(contacts: contacts)
      |> assign(:form, to_form(Legal.change_contract(contract)))
-     |> update_fee_options()}
+     |> update_fees()}
   end
 
   @impl true
@@ -181,7 +180,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
          |> put_flash(:info, "Mitgliedschaftsvertrag erfolgreich aktualisiert")
          |> push_navigate(to: socket.assigns.navigate)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
@@ -199,71 +198,8 @@ defmodule SportywebWeb.ContractLive.FormComponent do
          |> put_flash(:info, "Mitgliedschaftsvertrag erfolgreich erstellt")
          |> push_navigate(to: socket.assigns.navigate)}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  defp update_fee_options(socket) do
-    group =
-      case get_form_value(socket, :group_id) do
-        nil -> nil
-        group_id -> find_by_id(socket.assigns.groups, group_id)
-      end
-
-    department =
-      case get_form_value(socket, :department_id) do
-        nil -> nil
-        department_id -> find_by_id(socket.assigns.departments, department_id)
-      end
-
-    fees =
-      cond do
-        group != nil ->
-          group.fees
-
-        department != nil ->
-          department.fees
-
-        true ->
-          Finance.list_general_fees(socket.assigns.club.id, "club")
-      end
-
-    assign(socket, fees: fees)
-  end
-
-  def get_form_value(socket, field) do
-    get_value(socket.assigns.form.source, field)
-  end
-
-  def get_value(%Changeset{} = changeset, field) do
-    case Changeset.get_change(changeset, field) do
-      nil -> Changeset.get_field(changeset, field)
-      value -> value
-    end
-  end
-
-  def print_contact(%Contact{} = contact) do
-    if Contact.is_person?(contact) do
-      age_in_years = Contact.age_in_years(contact)
-      gender = CommonHelper.get_key_for_value(Contact.get_valid_genders(), contact.person_gender)
-      "#{contact.name} (#{age_in_years}, #{gender})"
-    else
-      contact.name
-    end
-  end
-
-  def find_by_id(elements, wanted_id) do
-    Enum.find(elements, fn e -> e.id == wanted_id end)
-  end
-
-  def print_wanted_element(elements, wanted_id, print_function) do
-    res =
-      case find_by_id(elements, wanted_id) do
-        nil -> nil
-        elements -> print_function.(elements)
-      end
-
-    CommonHelper.format_string_field(res)
   end
 end

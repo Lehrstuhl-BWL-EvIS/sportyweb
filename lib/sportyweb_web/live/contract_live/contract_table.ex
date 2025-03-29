@@ -1,10 +1,12 @@
 defmodule SportywebWeb.Contract.ContractTable do
   use SportywebWeb, :live_component
+  use SportywebWeb.SortAndFilterTableHelper
 
   import SportywebWeb.CommonHelper
 
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal
+
 
   attr :show_quick_filters, :boolean, default: true
   @impl true
@@ -54,7 +56,7 @@ defmodule SportywebWeb.Contract.ContractTable do
         <.table
           filter_sort_target={@myself}
           id="contracts"
-          rows={@streams.contracts}
+          rows={@streams.elements}
           sorting={@sorting}
           filters={@filters}
           row_click={fn {_id, contract} -> JS.navigate(~p"/contracts/#{contract}") end}
@@ -115,193 +117,31 @@ defmodule SportywebWeb.Contract.ContractTable do
   end
 
   @impl true
-  def update(%{} = assigns, socket) do
-    socket = assign(socket, assigns)
-
-    filters =
-      if Map.has_key?(assigns, :default_filters) do
-        for {k, v} <- assigns.default_filters, do: {to_string(k), v}, into: %{}
-      else
-        %{}
-      end
-
-    socket = sort_and_filter_data(%{}, filters, 50, socket)
-    {:ok, socket}
-  end
-
-  @impl true
-  def handle_event("max_element_count_changed", %{"value" => new_value}, socket) do
-    socket =
-      case Integer.parse(new_value) do
-        :error ->
-          socket
-
-        {new_max_count, ""} ->
-          if new_max_count == socket.assigns.max_elements_counts do
-            socket
-          else
-            sorting = socket.assigns.sorting
-            filters = socket.assigns.filters
-            sort_and_filter_data(sorting, filters, new_max_count, socket)
-          end
-
-        {_, _} ->
-          socket
-      end
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event(
-        "quick_filter_changed",
-        %{"value" => value, "column_label" => column_label},
-        socket
-      ) do
-    if value == nil || value == "" do
-      handle_event("remove_filter", %{"column" => column_label}, socket)
-    else
-      input_map = Map.put(%{}, column_label, value)
-      handle_event("apply_filter", input_map, socket)
+  def column_to_database_field(column_name) do
+    case column_name do
+      "Unterzeichnung" -> :signing_date
+      "Start" -> :start_date
+      "Ende" -> :termination_date
+      "Kontakt" -> nil
+      "Mit" -> nil
+      "Status" -> nil
     end
   end
 
   @impl true
-  def handle_event("apply_filter", %{} = filter, socket) do
-    sorting = socket.assigns.sorting
-    max_elements_counts = socket.assigns.max_elements_counts
-    merged_filters = Map.merge(socket.assigns.filters, filter)
-    socket = sort_and_filter_data(sorting, merged_filters, max_elements_counts, socket)
-    {:noreply, socket}
+  def column_to_getter(column_name) do
+    case column_name do
+      "Unterzeichnung" -> fn c -> c.signing_date end
+      "Sart" -> fn c -> c.start_date end
+      "Ende" -> fn c -> c.termination_date end
+      "Kontakt" -> fn c -> c.contact.name end
+      "Mit" -> fn m -> Contract.get_internal_partner(m).name end
+      "Status" -> fn m -> print_contract_state(m) end
+    end
   end
 
   @impl true
-  def handle_event("remove_filter", %{"column" => column}, socket) do
-    sorting = socket.assigns.sorting
-    max_elements_counts = socket.assigns.max_elements_counts
-    cleaned_filters = Map.delete(socket.assigns.filters, column)
-    socket = sort_and_filter_data(sorting, cleaned_filters, max_elements_counts, socket)
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("apply_sorting", %{} = sorting, socket) do
-    filters = socket.assigns.filters
-    max_elements_counts = socket.assigns.max_elements_counts
-    socket = sort_and_filter_data(sorting, filters, max_elements_counts, socket)
-    {:noreply, socket}
-  end
-
-  defp sort_and_filter_data(sorting, filters, max_elements_counts, socket) do
-    {database_filter, memory_filters, all_valid_filters} = separate_filter(filters)
-
-    {contracts, used_sorting} =
-      case sorting do
-        %{"Unterzeichnung" => direction} ->
-          {load_sorted(:termination_date, direction, database_filter, socket), sorting}
-
-        %{"Start" => direction} ->
-          {load_sorted(:start_date, direction, database_filter, socket), sorting}
-
-        %{"Ende" => direction} ->
-          {load_sorted(:termination_date, direction, database_filter, socket), sorting}
-
-        %{"Name" => direction} ->
-          {database_filter
-           |> load_unsorted(socket)
-           |> memory_sort(fn m -> m.contact.name end, direction), sorting}
-
-        %{"Mit" => direction} ->
-          {database_filter
-           |> load_unsorted(socket)
-           |> memory_sort(fn m -> Contract.get_internal_partner(m).name end, direction), sorting}
-
-        %{"Status" => direction} ->
-          {database_filter
-           |> load_unsorted(socket)
-           |> memory_sort(fn m -> print_contract_state(m) end, direction), sorting}
-
-        _ ->
-          {load_unsorted(database_filter, socket), nil}
-      end
-
-    contracts = memory_filter(contracts, memory_filters)
-    all_element_count = length(contracts)
-    contracts = Enum.take(contracts, max_elements_counts)
-
-    socket
-    |> assign(:sorting, used_sorting)
-    |> assign(:filters, all_valid_filters)
-    |> assign(:all_element_count, all_element_count)
-    |> assign(:max_elements_counts, max_elements_counts)
-    |> assign(:shown_element_count, length(contracts))
-    |> stream(:contracts, contracts)
-  end
-
-  defp separate_filter(filters) do
-    filter_tuples =
-      Enum.map(filters, fn filter ->
-        case filter do
-          {"Unterzeichnung", filter_value} ->
-            {[termination_date: filter_value], nil}
-
-          {"Start", filter_value} ->
-            {[start_date: filter_value], nil}
-
-          {"Ende", filter_value} ->
-            {[termination_date: filter_value], nil}
-            {nil, fn m -> case_insensitive_contains(m.contact.name, filter_value) end}
-
-          {"Name", filter_value} ->
-            {nil, fn m -> case_insensitive_contains(m.contact.name, filter_value) end}
-
-          {"Mit", filter_value} ->
-            {nil,
-             fn m ->
-               case_insensitive_contains(Contract.get_internal_partner(m).name, filter_value)
-             end}
-
-          {"Status", filter_value} ->
-            {nil,
-             fn m ->
-               case_insensitive_contains(print_contract_state(m), filter_value)
-             end}
-        end
-      end)
-
-    # as long as each filter was mappend in cond above thery are valid
-    all_valid_filters = filters
-
-    database_filters =
-      filter_tuples
-      |> Enum.map(fn {database_filter, _} -> database_filter end)
-      |> Enum.filter(fn filter -> filter != nil end)
-
-    memory_filters =
-      filter_tuples
-      |> Enum.map(fn {_, memory_filter} -> memory_filter end)
-      |> Enum.filter(fn filter -> filter != nil end)
-
-    database_filter = List.flatten(database_filters)
-    {database_filter, memory_filters, all_valid_filters}
-  end
-
-  defp case_insensitive_contains(string, content) when is_binary(string) and is_binary(content) do
-    string = String.downcase(string)
-    content = String.downcase(content)
-    String.contains?(string, content)
-  end
-
-  defp load_sorted(column_database_field, direction, database_filters, socket) do
-    database_sorting =
-      case direction do
-        "asc" -> [asc: column_database_field]
-        "desc" -> [desc: column_database_field]
-        _ -> nil
-      end
-
-    club_id = socket.assigns.club.id
-
+  def load_data(club_id, database_sorting, database_filters) do
     Legal.list_contracts(club_id, database_sorting, database_filters, [
       :contact,
       :club,
@@ -310,37 +150,6 @@ defmodule SportywebWeb.Contract.ContractTable do
       :fee,
       membership: [:club, :department, :group]
     ])
-  end
-
-  defp load_unsorted(database_filters, socket) do
-    club_id = socket.assigns.club.id
-
-    Legal.list_contracts(club_id, nil, database_filters, [
-      :contact,
-      :club,
-      :partner_department,
-      :partner_group,
-      :fee,
-      membership: [:club, :department, :group]
-    ])
-  end
-
-  defp memory_sort(contracts, to_field_function, direction) do
-    case direction do
-      "asc" -> Enum.sort_by(contracts, fn contract -> to_field_function.(contract) end, :asc)
-      "desc" -> Enum.sort_by(contracts, fn contract -> to_field_function.(contract) end, :desc)
-      _ -> contracts
-    end
-  end
-
-  defp memory_filter(contracts, memory_filters) do
-    if Enum.empty?(memory_filters) do
-      contracts
-    else
-      Enum.filter(contracts, fn m ->
-        Enum.all?(memory_filters, fn filter -> filter.(m) end)
-      end)
-    end
   end
 
   def print_contract_state(%Contract{} = contract) do

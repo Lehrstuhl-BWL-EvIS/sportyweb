@@ -92,4 +92,25 @@ defmodule SportywebWeb.CommonHelper do
       _ -> "-"
     end
   end
+
+  def get_changeset_value(%Ecto.Changeset{} = changeset, field) do
+    case Ecto.Changeset.get_change(changeset, field) do
+      nil -> Ecto.Changeset.get_field(changeset, field)
+      value -> value
+    end
+  end
+
+  def find_by_id(elements, wanted_id) do
+    Enum.find(elements, fn e -> e.id == wanted_id end)
+  end
+
+  def print_element_with_id(elements, wanted_id, print_function) do
+    res =
+      case find_by_id(elements, wanted_id) do
+        nil -> nil
+        elements -> print_function.(elements)
+      end
+
+    format_string_field(res)
+  end
 end

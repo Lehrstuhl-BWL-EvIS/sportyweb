@@ -1,14 +1,14 @@
 defmodule SportywebWeb.Membership.FormComponent do
   use SportywebWeb, :live_component
 
+  import SportywebWeb.CommonHelper
+  import SportywebWeb.ContractHelper
+
   alias Ecto.Changeset
-  alias Sportyweb.Finance
   alias Sportyweb.Organization
   alias Sportyweb.Personal
-  alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.Membership
   alias Sportyweb.Legal.Contract
-  alias SportywebWeb.CommonHelper
 
   @impl true
   def render(assigns) do
@@ -170,7 +170,7 @@ defmodule SportywebWeb.Membership.FormComponent do
     </div>
     <div :if={@read_only}>
       <.label>{@label}</.label>
-      {print_wanted_element(@options, @form[@field].value, @print_function)}
+      {print_element_with_id(@options, @form[@field].value, @print_function)}
       <.error :for={msg <- Enum.map(@form[@field].errors, &translate_error(&1))}>{msg}</.error>
     </div>
     """
@@ -207,7 +207,7 @@ defmodule SportywebWeb.Membership.FormComponent do
       |> assign(duplicated_membership_error: nil)
       |> assign(contract_warnings: %{})
       |> assign(form: to_form(Membership.changeset(membership)))
-      |> update_fee_options()
+      |> update_fees()
       |> update_group_options()
       |> update_duplicated_membership_hint()
 
@@ -309,7 +309,7 @@ defmodule SportywebWeb.Membership.FormComponent do
       socket
       |> assign(form: to_form(changeset))
       |> sync_contracts()
-      |> update_fee_options()
+      |> update_fees()
       |> update_group_options()
       |> update_duplicated_membership_hint()
 
@@ -326,7 +326,7 @@ defmodule SportywebWeb.Membership.FormComponent do
       socket
       |> assign(form: to_form(changeset))
       |> sync_contracts()
-      |> update_fee_options()
+      |> update_fees()
       |> update_group_options()
       |> update_duplicated_membership_hint()
 
@@ -377,7 +377,7 @@ defmodule SportywebWeb.Membership.FormComponent do
   end
 
   defp update_group_options(socket) do
-    department_id = get_form_value(socket, :group_id)
+    department_id = get_changeset_value(socket.assigns.form.source, :group_id)
 
     groups =
       if department_id == nil do
@@ -389,56 +389,28 @@ defmodule SportywebWeb.Membership.FormComponent do
     assign(socket, groups: groups)
   end
 
-  defp update_fee_options(socket) do
-    group =
-      case get_form_value(socket, :group_id) do
-        nil -> nil
-        group_id -> find_by_id(socket.assigns.groups, group_id)
-      end
-
-    department =
-      case get_form_value(socket, :department_id) do
-        nil -> nil
-        department_id -> find_by_id(socket.assigns.departments, department_id)
-      end
-
-    fees =
-      cond do
-        group != nil ->
-          group.fees
-
-        department != nil ->
-          department.fees
-
-        true ->
-          Finance.list_general_fees(socket.assigns.club.id, "club")
-      end
-
-    assign(socket, fees: fees)
-  end
-
   defp update_duplicated_membership_hint(socket) do
     contact =
-      case get_form_value(socket, :contact_id) do
+      case get_changeset_value(socket.assigns.form.source, :contact_id) do
         nil -> nil
         contact_id -> find_by_id(socket.assigns.contacts, contact_id)
       end
 
     group =
-      case get_form_value(socket, :group_id) do
+      case get_changeset_value(socket.assigns.form.source, :group_id) do
         nil -> nil
         group_id -> find_by_id(socket.assigns.groups, group_id)
       end
 
     department =
-      case get_form_value(socket, :department_id) do
+      case get_changeset_value(socket.assigns.form.source, :department_id) do
         nil -> nil
         department_id -> find_by_id(socket.assigns.departments, department_id)
       end
 
     club = socket.assigns.club
 
-    edited_membership_id = get_form_value(socket, :id)
+    edited_membership_id = get_changeset_value(socket.assigns.form.source, :id)
 
     {matching_memberships, object} =
       cond do
@@ -476,9 +448,9 @@ defmodule SportywebWeb.Membership.FormComponent do
 
   defp sync_contracts(socket) do
     update(socket, :form, fn %{source: changeset} ->
-      contact_id = get_value(changeset, :contact_id)
-      group_id = get_value(changeset, :group_id)
-      department_id = get_value(changeset, :department_id)
+      contact_id = get_changeset_value(changeset, :contact_id)
+      group_id = get_changeset_value(changeset, :group_id)
+      department_id = get_changeset_value(changeset, :department_id)
 
       contract_changeset =
         changeset
@@ -511,43 +483,9 @@ defmodule SportywebWeb.Membership.FormComponent do
     end)
   end
 
-  def get_form_value(socket, field) do
-    get_value(socket.assigns.form.source, field)
-  end
-
-  def get_value(%Changeset{} = changeset, field) do
-    case Changeset.get_change(changeset, field) do
-      nil -> Changeset.get_field(changeset, field)
-      value -> value
-    end
-  end
-
   def add_years(%Date{} = date, years_to_add) do
     {:ok, new_date} = Date.new(date.year + years_to_add, date.month, date.day)
     new_date
   end
 
-  def print_contact(%Contact{} = contact) do
-    if Contact.is_person?(contact) do
-      age_in_years = Contact.age_in_years(contact)
-      gender = CommonHelper.get_key_for_value(Contact.get_valid_genders(), contact.person_gender)
-      "#{contact.name} (#{age_in_years}, #{gender})"
-    else
-      contact.name
-    end
-  end
-
-  def find_by_id(elements, wanted_id) do
-    Enum.find(elements, fn e -> e.id == wanted_id end)
-  end
-
-  def print_wanted_element(elements, wanted_id, print_function) do
-    res =
-      case find_by_id(elements, wanted_id) do
-        nil -> nil
-        elements -> print_function.(elements)
-      end
-
-    CommonHelper.format_string_field(res)
-  end
 end
