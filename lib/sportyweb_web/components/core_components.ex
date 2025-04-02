@@ -767,6 +767,7 @@ defmodule SportywebWeb.CoreComponents do
                 <div :if={col[:filterable]} phx-click={show_modal("#{@id}-#{col[:label]}")}>
                   <.column_filter_dialog
                     column_label={col[:label]}
+                    filter_sort_target={@filter_sort_target}
                     id={"#{@id}-#{col[:label]}"}
                     current_filter={@filters[col[:label]]}
                   />

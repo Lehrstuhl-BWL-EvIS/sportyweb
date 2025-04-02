@@ -44,6 +44,11 @@ defmodule SportywebWeb.SortAndFilterTableHelper do
       end
 
       @impl true
+      def handle_event("quick_filter_changed", %{"column_label" => column_label} = map, socket ) do
+        handle_event("remove_filter", %{"column" => column_label}, socket)
+      end
+
+      @impl true
       def handle_event("max_element_count_changed", %{"value" => new_value}, socket) do
         SortAndFilterTableHelper.update_max_elements(new_value, wrap_callbacks(), socket)
       end
@@ -203,7 +208,7 @@ defmodule SportywebWeb.SortAndFilterTableHelper do
           case direction do
             "asc" -> [asc: database_field]
             "desc" -> [desc: database_field]
-            true -> nil
+            _ -> nil
           end
 
         {database_sorting, nil}
@@ -238,7 +243,7 @@ defmodule SportywebWeb.SortAndFilterTableHelper do
           getter = column_to_getter.(column_name)
           {nil, fn m -> case_insensitive_contains(getter.(m), filter_value) end}
         else
-          {[String.to_existing_atom(database_field), filter_value], nil}
+          {[{database_field, filter_value}], nil}
         end
       end)
 
@@ -272,4 +277,9 @@ defmodule SportywebWeb.SortAndFilterTableHelper do
     content = String.downcase(content)
     String.contains?(string, content)
   end
+
+  defp case_insensitive_contains(nil, _) do
+    false
+  end
+
 end
