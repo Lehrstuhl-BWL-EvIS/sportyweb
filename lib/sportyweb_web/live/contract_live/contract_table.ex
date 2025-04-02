@@ -70,7 +70,7 @@ defmodule SportywebWeb.Contract.ContractTable do
             {format_string_field(Contract.print_contract_object(contract))}
           </:col>
           <:col :let={{_id, contract}} label="Unterzeichnung" sortable filterable>
-            {format_date_field_dmy(contract.termination_date)}
+            {format_date_field_dmy(contract.signing_date)}
           </:col>
           <:col :let={{_id, contract}} label="Start" sortable filterable>
             {format_date_field_dmy(contract.start_date)}
