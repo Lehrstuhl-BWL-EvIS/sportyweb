@@ -50,26 +50,30 @@ defmodule Sportyweb.Personal do
     |> Repo.preload(preloads)
   end
 
-  defp filter_contacts_like(params) do
-    Enum.reduce(params, dynamic(true), fn
+  defp filter_contacts_like(filters) do
+    Enum.reduce(filters, dynamic(true), fn
       {:type, value}, dynamic ->
-        dynamic([c], ^dynamic and ilike(c.type, ^value))
+        dynamic([c], ^dynamic and ilike(c.type, ^prepare_for_like(value)))
 
       {:name, value}, dynamic ->
-        dynamic([c], ^dynamic and ilike(c.name, ^value))
+        dynamic([c], ^dynamic and ilike(c.name, ^prepare_for_like(value)))
 
       {:person_last_name, value}, dynamic ->
-        dynamic([c], ^dynamic and ilike(c.person_last_name, ^value))
+        dynamic([c], ^dynamic and ilike(c.person_last_name, ^prepare_for_like(value)))
 
       {:person_first_name_1, value}, dynamic ->
-        dynamic([c], ^dynamic and ilike(c.person_first_name_1, ^value))
+        dynamic([c], ^dynamic and ilike(c.person_first_name_1, ^prepare_for_like(value)))
 
       {:person_birthday, value}, dynamic ->
-        dynamic([c], ^dynamic and ilike(c.person_birthday, ^value))
+        dynamic([c], ^dynamic and ilike(c.person_birthday, ^prepare_for_like(value)))
 
       {:person_gender, value}, dynamic ->
-        dynamic([c], ^dynamic and ilike(c.person_gender, ^value))
+        dynamic([c], ^dynamic and ilike(c.person_gender, ^prepare_for_like(value)))
     end)
+  end
+
+  defp prepare_for_like(value) do
+    "%#{value}%"
   end
 
   def list_contacts_of_members(club_id, order_by, preloads) do
