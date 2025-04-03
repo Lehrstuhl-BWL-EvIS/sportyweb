@@ -124,7 +124,15 @@ defmodule Sportyweb.MixProject do
       # TimeZoneDatabase for DateTime (which per default only supports UTC)
       # https://hexdocs.pm/tzdata/readme.html
       # https://github.com/lau/tzdata
-      {:tzdata, "~> 1.1"}
+      {:tzdata, "~> 1.1"},
+
+      # ExAWS for saving files to S3 Buckets
+      # https://hexdocs.pm/ex_aws/ExAws.html
+      # https://github.com/ex-aws/ex_aws
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:hackney, "~> 1.9"},
+      {:sweet_xml, "~> 0.6"},
     ]
   end
 

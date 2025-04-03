@@ -48,9 +48,23 @@ config :sportyweb, Sportyweb.Scheduler,
 
 # Custom: Configures the document backend
 config :sportyweb, Sportyweb.Documents,
-  storage_backend: Sportyweb.Documents.Storage.Local,
-  upload_dir: "priv/static/uploads/documents",
-  thumbnail_dir: "priv/static/uploads/documents/thumbnails"
+  storage_backend: Sportyweb.Documents.Storage.Local, # Either .Local or .S3
+  upload_dir: "uploads/documents", # Upload dir if Local backend is used
+  s3_bucket: "dboth", # S3 Bucket if S3 backend is used
+  allowed_content_types: ["application/pdf"],
+  text_extractor_lang: "deu"
+
+
+config :ex_aws,
+  access_key_id: "",
+  secret_access_key: "",
+  region: "eu-central",  # some providers ignore this
+  s3: [
+    scheme: "https://",
+    host: "fsn1.your-objectstorage.com",  # provider-specific endpoint
+    region: "eu-central",
+    path_style: true # Some providers need true here (e.g. Hetzner), some don't (e.g. AWS)
+  ]
 
 # Configure esbuild (the version is required)
 config :esbuild,
