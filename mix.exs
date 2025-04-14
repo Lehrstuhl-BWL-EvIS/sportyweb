@@ -133,6 +133,12 @@ defmodule Sportyweb.MixProject do
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.6"},
+
+      # Time formatting
+      # https://hexdocs.pm/timex/Timex.html
+      # https://github.com/bitwalker/timex
+      {:timex, "~> 3.7"}
+
     ]
   end
 

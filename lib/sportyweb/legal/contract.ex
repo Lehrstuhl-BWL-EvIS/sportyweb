@@ -13,6 +13,7 @@ defmodule Sportyweb.Legal.Contract do
   alias Sportyweb.Organization.Group
   alias Sportyweb.Organization.GroupContract
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.Documents.ContractDocument
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -25,7 +26,7 @@ defmodule Sportyweb.Legal.Contract do
     many_to_many :departments, Department, join_through: DepartmentContract
     many_to_many :groups, Group, join_through: GroupContract
 
-    has_many :contract_documents, Sportyweb.Documents.ContractDocument
+    has_many :contract_documents, ContractDocument
     has_many :documents, through: [:contract_documents, :document]
 
     field :signing_date, :date, default: nil

@@ -12,6 +12,7 @@ defmodule Sportyweb.Asset.Equipment do
   alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
+  alias Sportyweb.Documents.EquipmentDocument
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -21,7 +22,7 @@ defmodule Sportyweb.Asset.Equipment do
     many_to_many :fees, Fee, join_through: EquipmentFee
     many_to_many :notes, Note, join_through: EquipmentNote
     many_to_many :phones, Phone, join_through: EquipmentPhone
-    has_many :equipment_documents, Sportyweb.Documents.EquipmentDocument
+    has_many :equipment_documents, EquipmentDocument
     has_many :documents, through: [:equipment_documents, :document]
 
     field :name, :string, default: ""
