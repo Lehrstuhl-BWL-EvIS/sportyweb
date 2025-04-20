@@ -8,7 +8,6 @@ defmodule Sportyweb.Organization.Club do
   alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization.Club
-  alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.ClubEmail
   alias Sportyweb.Organization.ClubFinancialData
   alias Sportyweb.Organization.ClubNote
@@ -35,7 +34,7 @@ defmodule Sportyweb.Organization.Club do
     # This line has to be below "has_many :all_contracts"!
     has_many :transactions, through: [:all_contracts, :transactions]
     has_many :locations, Location, preload_order: [asc: :name]
-    many_to_many :contracts, Contract, join_through: ClubContract
+    has_many :contracts, Contract
     many_to_many :emails, Email, join_through: ClubEmail
     many_to_many :financial_data, FinancialData, join_through: ClubFinancialData
     many_to_many :notes, Note, join_through: ClubNote

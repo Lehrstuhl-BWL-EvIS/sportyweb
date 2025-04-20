@@ -11,6 +11,11 @@ defmodule Sportyweb.Repo.Migrations.CreateContracts do
       add :archive_date, :date, null: true
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
+      add :department_id, references(:departments, on_delete: :delete_all, type: :binary_id),
+        null: true
+
+      add :group_id, references(:groups, on_delete: :delete_all, type: :binary_id), null: true
+
       add :contact_id, references(:contacts, on_delete: :delete_all, type: :binary_id),
         null: false
 
@@ -20,6 +25,8 @@ defmodule Sportyweb.Repo.Migrations.CreateContracts do
     end
 
     create index(:contracts, [:club_id])
+    create index(:contracts, [:department_id])
+    create index(:contracts, [:group_id])
     create index(:contracts, [:contact_id])
     create index(:contracts, [:fee_id])
   end

@@ -51,7 +51,8 @@ defmodule SportywebWeb.DepartmentLive.ContractNew do
       club_id: club.id,
       club: club,
       signing_date: Date.utc_today(),
-      departments: [department]
+      department: department,
+      department_id: department.id
     })
     |> assign(:department, department)
     |> assign(:club, club)

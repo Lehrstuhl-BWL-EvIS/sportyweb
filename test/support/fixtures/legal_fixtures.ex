@@ -33,4 +33,24 @@ defmodule Sportyweb.LegalFixtures do
 
     contract
   end
+
+  @doc """
+  Generate a membership.
+  """
+  def membership_fixture(attrs \\ %{}) do
+    contract = contract_fixture()
+
+    {:ok, membership} =
+      attrs
+      |> Enum.into(%{
+        club_id: contract.club_id,
+        contact_id: contract.contact_id,
+        department_id: contract.department_id,
+        group_id: contract.group_id,
+        contract_id: contract.id
+      })
+      |> Sportyweb.Legal.create_membership()
+
+    membership
+  end
 end

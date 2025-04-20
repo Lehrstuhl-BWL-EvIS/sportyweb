@@ -8,6 +8,7 @@ defmodule Sportyweb.Legal do
 
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.Membership
   alias Sportyweb.Personal.Contact
 
   @doc """
@@ -190,5 +191,148 @@ defmodule Sportyweb.Legal do
   """
   def change_contract(%Contract{} = contract, attrs \\ %{}) do
     Contract.changeset(contract, attrs)
+  end
+
+  @doc """
+  Returns a list of all memberships. Preloads associations.
+
+  ## Examples
+
+      iex> list_memberships([:contact])
+      [%Membership{}, ...]
+
+  """
+  def list_all_memberships(preloads) do
+    Membership
+    |> Repo.all()
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
+  Returns a clubs list of memberships.
+
+  ## Examples
+
+      iex> list_memberships(1)
+      [%Membership{}, ...]
+
+  """
+  def list_memberships(club_id) do
+    query = from(c in Membership, where: c.club_id == ^club_id)
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns a clubs list of memberships. Preloads associations.
+
+  ## Examples
+
+      iex> list_memberships(1, [:club])
+      [%Membership{}, ...]
+
+  """
+  def list_memberships(club_id, preloads) do
+    Repo.preload(list_memberships(club_id), preloads)
+  end
+
+  @doc """
+  Gets a single membership.
+
+  Raises `Ecto.NoResultsError` if the Membership does not exist.
+
+  ## Examples
+
+      iex> get_membership!(123)
+      %Membership{}
+
+      iex> get_membership!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_membership!(id), do: Repo.get!(Membership, id)
+
+  @doc """
+  Gets a single membership. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Membership does not exist.
+
+  ## Examples
+
+      iex> get_membership!(123, [:club])
+      %Membership{}
+
+      iex> get_membership!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_membership!(id, preloads) do
+    Membership
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
+  Creates a membership.
+
+  ## Examples
+
+      iex> create_membership(%{field: value})
+      {:ok, %Membership{}}
+
+      iex> create_membership(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_membership(attrs \\ %{}) do
+    %Membership{}
+    |> Membership.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a membership.
+
+  ## Examples
+
+      iex> update_membership(membership, %{field: new_value})
+      {:ok, %Membership{}}
+
+      iex> update_membership(membership, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_membership(%Membership{} = membership, attrs) do
+    membership
+    |> Membership.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a membership.
+
+  ## Examples
+
+      iex> delete_membership(membership)
+      {:ok, %Membership{}}
+
+      iex> delete_membership(membership)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_membership(%Membership{} = membership) do
+    Repo.delete(membership)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking membership changes.
+
+  ## Examples
+
+      iex> change_membership(membership)
+      %Ecto.Changeset{data: %Membership{}}
+
+  """
+  def change_membership(%Membership{} = membership, attrs \\ %{}) do
+    Membership.changeset(membership, attrs)
   end
 end

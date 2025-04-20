@@ -49,8 +49,7 @@ defmodule SportywebWeb.ClubLive.ContractNew do
     |> assign(:contract, %Contract{
       club_id: club.id,
       club: club,
-      signing_date: Date.utc_today(),
-      clubs: [club]
+      signing_date: Date.utc_today()
     })
     |> assign(:club, club)
   end

@@ -87,4 +87,83 @@ defmodule Sportyweb.LegalTest do
       assert %Ecto.Changeset{} = Legal.change_contract(contract)
     end
   end
+
+  describe "memberships" do
+    alias Sportyweb.Legal.Membership
+
+    import Sportyweb.FinanceFixtures
+    import Sportyweb.LegalFixtures
+    import Sportyweb.OrganizationFixtures
+    import Sportyweb.PersonalFixtures
+
+    @invalid_attrs %{
+      club_id: nil,
+      contact_id: nil,
+      contract_id: nil
+    }
+
+    test "list_memberships/1 returns all memberships of a given club" do
+      membership = membership_fixture()
+      assert Legal.list_memberships(membership.club_id) == [membership]
+    end
+
+    test "list_memberships/2 returns all memberships of a given club with preloaded associations" do
+      membership = membership_fixture()
+
+      memberships = Legal.list_memberships(membership.club_id, [:club])
+      assert List.first(memberships).club_id == membership.club_id
+    end
+
+    test "get_membership!/1 returns the membership with given id" do
+      membership = membership_fixture()
+      assert Legal.get_membership!(membership.id) == membership
+    end
+
+    test "get_membership!/2 returns the membership with given id and contains a preloaded club" do
+      membership = membership_fixture()
+
+      assert %Membership{} = Legal.get_membership!(membership.id, [:club])
+      assert Legal.get_membership!(membership.id, [:club]).club.id == membership.club_id
+    end
+
+    test "create_membership/1 with valid data creates a membership" do
+      contract = contract_fixture()
+
+      valid_attrs = %{
+        club_id: contract.club_id,
+        contact_id: contract.contact_id,
+        contract_id: contract.id
+      }
+
+      assert {:ok, %Membership{}} = Legal.create_membership(valid_attrs)
+    end
+
+    test "create_membership/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Legal.create_membership(@invalid_attrs)
+    end
+
+    test "update_membership/2 with valid data updates the membership" do
+      membership = membership_fixture()
+      update_attrs = %{}
+
+      assert {:ok, %Membership{}} = Legal.update_membership(membership, update_attrs)
+    end
+
+    test "update_membership/2 with invalid data returns error changeset" do
+      membership = membership_fixture()
+      assert {:error, %Ecto.Changeset{}} = Legal.update_membership(membership, @invalid_attrs)
+      assert membership == Legal.get_membership!(membership.id)
+    end
+
+    test "delete_membership/1 deletes the membership" do
+      membership = membership_fixture()
+      assert {:ok, %Membership{}} = Legal.delete_membership(membership)
+      assert_raise Ecto.NoResultsError, fn -> Legal.get_membership!(membership.id) end
+    end
+
+    test "change_membership/1 returns a membership changeset" do
+      membership = membership_fixture()
+      assert %Ecto.Changeset{} = Legal.change_membership(membership)
+    end
+  end
 end

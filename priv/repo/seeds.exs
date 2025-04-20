@@ -22,6 +22,7 @@ alias Sportyweb.Finance
 alias Sportyweb.Finance.Fee
 alias Sportyweb.Finance.Subsidy
 alias Sportyweb.Legal.Contract
+alias Sportyweb.Legal.Membership
 alias Sportyweb.Organization
 alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
@@ -222,32 +223,35 @@ defmodule Sportyweb.ContactSeedHelper do
     contract_ration = if is_person, do: 0.9, else: 0.3
 
     if :rand.uniform() < contract_ration do
-      add_contract(club, nil, nil, contact)
+      add_membership(club, nil, nil, contact)
 
       for department <- club.departments do
         number_of_departments = length(club.departments)
 
         if :rand.uniform() < 2 / number_of_departments do
           # make members of club be members in two departments by average
-          add_contract(club, department, nil, contact)
+          add_membership(club, department, nil, contact)
 
           if !Enum.empty?(department.groups) && :rand.uniform() < 0.6 do
             # make most members of a department member in one of the department's groups
             group = Enum.random(department.groups)
-            add_contract(club, department, group, contact)
+            add_membership(club, department, group, contact)
           end
         end
       end
     end
   end
 
-  defp add_contract(club, department, group, contact) do
+  defp add_membership(club, department, group, contact) do
     fees =
       cond do
         group != nil -> Finance.list_contract_fee_options(group, contact.id)
         department != nil -> Finance.list_contract_fee_options(department, contact.id)
         true -> Finance.list_contract_fee_options(club, contact.id)
       end
+
+    department_id = if department != nil, do: department.id, else: nil
+    group_id = if group != nil, do: group.id, else: nil
 
     fee = Enum.random(fees)
 
@@ -258,6 +262,10 @@ defmodule Sportyweb.ContactSeedHelper do
       Repo.insert!(%Contract{
         club_id: club.id,
         club: club,
+        department_id: department_id,
+        department: department,
+        group_id: group_id,
+        group: group,
         contact_id: contact.id,
         contact: contact,
         fee_id: fee.id,
@@ -268,11 +276,21 @@ defmodule Sportyweb.ContactSeedHelper do
         archive_date: termination_date
       })
 
-    cond do
-      group != nil -> Organization.create_group_contract(group, contract)
-      department != nil -> Organization.create_department_contract(department, contract)
-      true -> Organization.create_club_contract(club, contract)
-    end
+    membership =
+      Repo.insert!(%Membership{
+        club_id: club.id,
+        club: club,
+        department_id: department_id,
+        department: department,
+        group_id: group_id,
+        group: group,
+        contact_id: contact.id,
+        contact: contact,
+        contract: contract,
+        contract_id: contract.id
+      })
+
+    {contract, membership}
   end
 end
 

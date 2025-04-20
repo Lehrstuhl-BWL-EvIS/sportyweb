@@ -21,7 +21,13 @@ defmodule SportywebWeb.ContactLive.Show do
         :notes,
         :phones,
         :postal_addresses,
-        contracts: [:clubs, :departments, :groups, fee: :internal_events]
+        contracts: [
+          :club,
+          :department,
+          :group,
+          :membership,
+          fee: :internal_events
+        ]
       ])
 
     {:noreply,

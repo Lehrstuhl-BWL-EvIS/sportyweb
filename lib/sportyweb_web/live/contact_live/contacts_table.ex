@@ -4,7 +4,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
 
   import SportywebWeb.CommonHelper
 
-  alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.Membership
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Polymorphic.PostalAddress
@@ -62,7 +62,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
           row_click={fn {_id, contact} -> JS.navigate(~p"/contacts/#{contact}") end}
         >
           <:col :let={{_id, contact}} label="Mitglied">
-            <%= if length(contact.contracts) > 0 do %>
+            <%= if length(contact.memberships) > 0 do %>
               <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-600" />
             <% end %>
           </:col>
@@ -171,7 +171,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
 
       "Mitglied" ->
         fn c ->
-          if Enum.empty?(c.contracts), do: "false", else: "true"
+          if Enum.empty?(c.memberships), do: "false", else: "true"
         end
 
       "In" ->
@@ -194,17 +194,16 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       :postal_addresses,
       :emails,
       :phones,
-      contracts: [:clubs, :departments, :groups]
+      memberships: [:club, :department, :group, :contact]
     ])
   end
 
   def print_memberships(contact) do
-    if Enum.empty?(contact.contracts) do
+    if Enum.empty?(contact.memberships) do
       nil
     else
-      contact.contracts
-      |> Enum.filter(fn c -> Contract.is_in_use?(c) end)
-      |> Enum.map_join(",", fn c -> Contract.get_object(c).name end)
+      contact.memberships
+      |> Enum.map_join(",", fn m -> Membership.get_organization(m).name end)
     end
   end
 end
