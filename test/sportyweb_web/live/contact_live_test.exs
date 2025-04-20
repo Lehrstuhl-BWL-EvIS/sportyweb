@@ -74,6 +74,8 @@ defmodule SportywebWeb.ContactLiveTest do
 
       assert html =~ "Kontakte"
       assert html =~ contact.name
+      assert html =~ "<table"
+      assert html =~ "Es werden 1 von 1 passenden Kontakten angezeigt"
     end
   end
 

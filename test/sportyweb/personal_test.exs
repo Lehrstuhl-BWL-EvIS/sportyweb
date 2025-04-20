@@ -26,16 +26,124 @@ defmodule Sportyweb.PersonalTest do
       assert List.first(Personal.list_contacts(contact.club_id)).id == contact.id
     end
 
-    test "list_contacts/2 returns all contacts of a given club with preloaded associations" do
+    test "list_contacts/4 without order or filter returns all contacts of a given club with preloaded associations" do
       contact = contact_fixture()
 
-      assert Personal.list_contacts(contact.club_id, [
+      assert Personal.list_contacts(contact.club_id, nil, nil, [
                :emails,
                :financial_data,
                :notes,
                :phones,
                :postal_addresses
              ]) == [contact]
+    end
+
+    test "list_contacts/4 without filter returns all contacts in correct order" do
+      club = club_fixture()
+      youngest_contact = contact_fixture(%{person_birthday: ~D[2003-02-15], club_id: club.id})
+      middle_contact = contact_fixture(%{person_birthday: ~D[2001-02-15], club_id: club.id})
+      oldest_contact = contact_fixture(%{person_birthday: ~D[2000-02-15], club_id: club.id})
+
+      contacts =
+        Personal.list_contacts(club.id, [asc: :person_birthday], nil, [
+          :emails,
+          :financial_data,
+          :notes,
+          :phones,
+          :postal_addresses
+        ])
+
+      assert contacts == [oldest_contact, middle_contact, youngest_contact]
+
+      contacts =
+        Personal.list_contacts(club.id, [desc: :person_birthday], nil, [
+          :emails,
+          :financial_data,
+          :notes,
+          :phones,
+          :postal_addresses
+        ])
+
+      assert contacts == [youngest_contact, middle_contact, oldest_contact]
+    end
+
+    test "list_contacts/4 with order and filter returns wanted contacts in correct order" do
+      club = club_fixture()
+
+      contact1 =
+        contact_fixture(%{
+          person_birthday: ~D[2003-02-15],
+          club_id: club.id,
+          person_last_name: "my name 1"
+        })
+
+      contact2 =
+        contact_fixture(%{
+          person_birthday: ~D[2000-02-15],
+          club_id: club.id,
+          person_last_name: "CAPITALNAME"
+        })
+
+      contact_fixture(%{
+        person_birthday: ~D[2001-02-15],
+        club_id: club.id,
+        person_last_name: "someting else"
+      })
+
+      contacts =
+        Personal.list_contacts(club.id, [asc: :person_birthday], [person_last_name: "%name%"], [
+          :emails,
+          :financial_data,
+          :notes,
+          :phones,
+          :postal_addresses
+        ])
+
+      assert contacts == [contact2, contact1]
+    end
+
+    test "list_contacts/4 works with multiple filters" do
+      club = club_fixture()
+
+      contact1 =
+        contact_fixture(%{
+          person_birthday: ~D[2003-02-15],
+          club_id: club.id,
+          person_first_name_1: "Alex",
+          person_last_name: "my name 1"
+        })
+
+      contact2 =
+        contact_fixture(%{
+          person_birthday: ~D[2000-02-15],
+          club_id: club.id,
+          person_first_name_1: "Alex",
+          person_last_name: "CAPITALNAME"
+        })
+
+      contact_fixture(%{
+        person_birthday: ~D[2001-02-15],
+        club_id: club.id,
+        person_first_name_1: "Alex",
+        person_last_name: "someting else"
+      })
+
+      contact_fixture(%{
+        person_birthday: ~D[2001-02-15],
+        club_id: club.id,
+        person_first_name_1: "John",
+        person_last_name: "last name matches"
+      })
+
+      contacts =
+        Personal.list_contacts(
+          club.id,
+          [asc: :person_birthday],
+          [person_last_name: "%name%", person_first_name_1: "Alex"],
+          [:emails, :financial_data, :notes, :phones, :postal_addresses]
+        )
+
+      assert contacts == [contact2, contact1]
     end
 
     test "get_contact!/1 returns the contact with given id" do
