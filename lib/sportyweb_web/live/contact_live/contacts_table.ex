@@ -10,6 +10,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
   alias Sportyweb.Polymorphic.PostalAddress
 
   attr :show_quick_filters, :boolean, default: true
+  attr :only_members_of, :string, default: nil
 
   @impl true
   def render(assigns) do
@@ -189,13 +190,21 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
   end
 
   @impl true
-  def load_data(club_id, database_sorting, database_filters) do
-    Personal.list_contacts(club_id, database_sorting, database_filters, [
-      :postal_addresses,
-      :emails,
-      :phones,
-      memberships: [:club, :department, :group, :contact]
-    ])
+  def load_data(club_id, database_sorting, database_filters, socket) do
+    only_members_of = socket.assigns[:only_members_of]
+
+    Personal.list_contacts(
+      club_id,
+      database_sorting,
+      database_filters,
+      [
+        :postal_addresses,
+        :emails,
+        :phones,
+        memberships: [:club, :department, :group, :contact]
+      ],
+      only_members_of
+    )
   end
 
   def print_memberships(contact) do
@@ -203,7 +212,9 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       nil
     else
       contact.memberships
-      |> Enum.map_join(",", fn m -> Membership.get_organization(m).name end)
+      |> Enum.sort_by(fn m -> m.group_id end)
+      |> Enum.sort_by(fn m -> m.department_id end)
+      |> Enum.map_join(", ", fn m -> Membership.get_organization(m).name end)
     end
   end
 end

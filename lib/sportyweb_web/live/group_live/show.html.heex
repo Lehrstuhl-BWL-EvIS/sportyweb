@@ -64,7 +64,7 @@
     id="group_membership_table"
     module={SportywebWeb.ContactLive.ContactsTableComponent}
     show_quick_filters={false}
-    default_filters={%{In: @group.name}}
+    only_members_of={@group.id}
     club={@club}
   />
 </.card>

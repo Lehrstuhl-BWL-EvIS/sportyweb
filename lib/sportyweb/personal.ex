@@ -7,6 +7,7 @@ defmodule Sportyweb.Personal do
   alias Sportyweb.Repo
 
   alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.Membership
   alias Sportyweb.Personal.Contact
 
   @doc """
@@ -23,8 +24,47 @@ defmodule Sportyweb.Personal do
     Repo.all(query)
   end
 
-  def list_contacts(club_id, order_by, filters) do
-    query = from(c in Contact, where: c.club_id == ^club_id)
+  defp filter_only_memberships_in(club_id, only_members_of, preloads) do
+    query =
+      from(c in Contact,
+        join: m in Membership,
+        on: m.contact_id == c.id,
+        where:
+          c.club_id == ^club_id and
+            (m.club_id == ^only_members_of or m.department_id == ^only_members_of or
+               m.group_id == ^only_members_of)
+      )
+
+    preloads =
+      if preloads == nil do
+        nil
+      else
+        membership_query =
+          from m in Membership,
+            where:
+              m.club_id == ^only_members_of or m.department_id == ^only_members_of or
+                m.group_id == ^only_members_of
+
+        Enum.map(preloads, fn p ->
+          case p do
+            :memberships -> {:memberships, membership_query}
+            {:memberships, l} -> {:memberships, {membership_query, l}}
+            _ -> p
+          end
+        end)
+      end
+
+    {query, preloads}
+  end
+
+  def list_contacts(club_id, order_by, filters, preloads \\ nil, only_members_of \\ nil) do
+    {query, preloads} =
+      if only_members_of == nil do
+        query = from(c in Contact, where: c.club_id == ^club_id)
+        {query, preloads}
+      else
+        filter_only_memberships_in(club_id, only_members_of, preloads)
+      end
 
     query =
       if order_by == nil do
@@ -40,13 +80,13 @@ defmodule Sportyweb.Personal do
         where(query, ^filter_contacts_like(filters))
       end
 
-    Repo.all(query)
-  end
+    all = Repo.all(query)
 
-  def list_contacts(club_id, order_by, filters, preloads) do
-    club_id
-    |> list_contacts(order_by, filters)
-    |> Repo.preload(preloads)
+    if preloads == nil do
+      all
+    else
+      all |> Repo.preload(preloads)
+    end
   end
 
   defp filter_contacts_like(filters) do

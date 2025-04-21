@@ -210,7 +210,6 @@ defmodule Sportyweb.OrganizationTest do
     alias Sportyweb.Organization.GroupFee
 
     import Sportyweb.FinanceFixtures
-    import Sportyweb.LegalFixtures
     import Sportyweb.OrganizationFixtures
     import Sportyweb.PolymorphicFixtures
 

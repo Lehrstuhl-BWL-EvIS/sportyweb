@@ -4,7 +4,12 @@ defmodule SportywebWeb.SortAndFilterTableHelper do
 
   @callback column_to_database_field(column_name :: String.t()) :: any
   @callback column_to_getter(column_name :: String.t()) :: any
-  @callback load_data(club_id :: String.t(), sort_by :: any, database_filters :: []) :: any
+  @callback load_data(
+              club_id :: String.t(),
+              sort_by :: any,
+              database_filters :: [],
+              socket :: Phoenix.LiveView.Socket
+            ) :: any
 
   defmacro __using__(_) do
     quote do
@@ -15,7 +20,7 @@ defmodule SportywebWeb.SortAndFilterTableHelper do
         [
           column_to_database_field: &column_to_database_field/1,
           column_to_getter: &column_to_getter/1,
-          load_data: &load_data/3
+          load_data: &load_data/4
         ]
       end
 
@@ -177,7 +182,7 @@ defmodule SportywebWeb.SortAndFilterTableHelper do
 
     all_matching_elements =
       club_id
-      |> callbacks[:load_data].(database_sort_by, database_filters)
+      |> callbacks[:load_data].(database_sort_by, database_filters, socket)
       |> memory_filter(memory_filters)
       |> memory_sort(memory_sort_by)
 
