@@ -196,7 +196,6 @@ defmodule SportywebWeb.SortAndFilterTableHelper do
     |> Component.assign(:max_elements_counts, max_elements_counts)
     |> Component.assign(:shown_element_count, length(elements))
     |> LiveView.stream(:elements, elements)
-    |> Component.assign(:loading, false)
   end
 
   def map_sorting(%{} = sorting, column_to_database_field, column_to_getter) do

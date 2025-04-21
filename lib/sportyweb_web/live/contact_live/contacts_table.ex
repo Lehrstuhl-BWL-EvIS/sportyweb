@@ -112,9 +112,6 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       </div>
 
       <div class="text-zinc-500 ">
-        <%= if @loading do %>
-          loading
-        <% end %>
         <%= if @all_element_count == 0 do %>
           Es wurden keine passende Kontakte gefunden
         <% else %>
@@ -201,7 +198,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
         :postal_addresses,
         :emails,
         :phones,
-        memberships: [:club, :department, :group, :contact]
+        memberships: [:club, :department, :group]
       ],
       only_members_of
     )

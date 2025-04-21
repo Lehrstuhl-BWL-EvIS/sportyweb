@@ -6,7 +6,6 @@ defmodule Sportyweb.OrganizationTest do
   describe "clubs" do
     alias Sportyweb.Organization.Club
 
-    import Sportyweb.LegalFixtures
     import Sportyweb.OrganizationFixtures
     import Sportyweb.PolymorphicFixtures
 
@@ -105,7 +104,6 @@ defmodule Sportyweb.OrganizationTest do
     alias Sportyweb.Organization.DepartmentFee
 
     import Sportyweb.FinanceFixtures
-    import Sportyweb.LegalFixtures
     import Sportyweb.OrganizationFixtures
     import Sportyweb.PolymorphicFixtures
 
