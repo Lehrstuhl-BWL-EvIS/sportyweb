@@ -1,93 +1,126 @@
 <.header>
-    Mitgliedschaft bearbeiten
+  Mitgliedschaft bearbeiten
 </.header>
 
 <.card class="mb-5">
-    <.input_grids>
-        <.input_grid>
-            <div class="col-span-12 md:col-span-4">
-                <.label>Kontakt</.label>
-                <.link navigate={~p"/contacts/#{@membership.contact}"} class="text-indigo-600 hover:underline">
-                    {@membership.contact.name}
-                </.link>
-            </div>
-            <div class="col-span-12 md:col-span-4">
-                <.label>Alter</.label>
-                {Contact.age_in_years(@membership.contact)}
-            </div>
-            <div class="col-span-12 md:col-span-4">
-                <.label>Geschlecht</.label>
-                {get_key_for_value(Contact.get_valid_genders(), @membership.contact.person_gender)}
-            </div>
+  <.input_grids>
+    <.input_grid>
+      <div class="col-span-12 md:col-span-4">
+        <.label>Kontakt</.label>
+        <.link
+          navigate={~p"/contacts/#{@membership.contact}"}
+          class="text-indigo-600 hover:underline"
+        >
+          {@membership.contact.name}
+        </.link>
+      </div>
+      <div class="col-span-12 md:col-span-4">
+        <.label>Alter</.label>
+        {Contact.age_in_years(@membership.contact)}
+      </div>
+      <div class="col-span-12 md:col-span-4">
+        <.label>Geschlecht</.label>
+        {get_key_for_value(Contact.get_valid_genders(), @membership.contact.person_gender)}
+      </div>
 
-            <div class="col-span-12 md:col-span-4">
-                <.label>Seit dem</.label>
-                {format_date_field_dmy(@membership.contract.start_date)}
-            </div>
+      <div class="col-span-12 md:col-span-4">
+        <.label>Seit dem</.label>
+        {format_date_field_dmy(@membership.contract.start_date)}
+      </div>
 
-            <div class="col-span-12 md:col-span-4">
-                <.label>In</.label>
-                {Membership.get_organization(@membership).name}
-            </div>
+      <div class="col-span-12 md:col-span-4">
+        <.label>In</.label>
+        {Membership.get_organization(@membership).name}
+      </div>
 
-            <div class="col-span-12 md:col-span-4">
-                <.label>&nbsp;</.label>
-                <.link navigate={~p"/contracts/#{@membership.contract}"} class="text-indigo-600 hover:underline">
-                    Zum Vertrag</.link>
-            </div>
-
-        </.input_grid>
-    </.input_grids>
+      <div class="col-span-12 md:col-span-4">
+        <.label>&nbsp;</.label>
+        <.link
+          navigate={~p"/contracts/#{@membership.contract}"}
+          class="text-indigo-600 hover:underline"
+        >
+          Zum Vertrag
+        </.link>
+      </div>
+    </.input_grid>
+  </.input_grids>
 </.card>
-
 
 <.card class="mb-5">
-    <.simple_form for={@contract_form} id="membership-fee-update-form" phx-change="validate-contract-form"
-        phx-submit="save-fee">
-        <.input_grids>
-            <.input_grid>
-                <div class="col-span-12 md:col-span-8">
-                    <.input field={@contract_form[:fee_id]} type="select" label="Beitrag" options={@fee_options |>
-                        Enum.map(&{"#{&1.name}: #{&1.amount}", &1.id})}
-                        prompt="Bitte auswählen"
-                        />
-                </div>
+  <.simple_form
+    for={@contract_form}
+    id="membership-fee-update-form"
+    phx-change="validate-contract-form"
+    phx-submit="save-fee"
+  >
+    <.input_grids>
+      <.input_grid>
+        <div class="col-span-12 md:col-span-8">
+          <.input
+            field={@contract_form[:fee_id]}
+            type="select"
+            label="Beitrag"
+            options={
+              @fee_options
+              |> Enum.map(&{"#{&1.name}: #{&1.amount}", &1.id})
+            }
+            prompt="Bitte auswählen"
+          />
+        </div>
 
-                <div class="col-span-12 md:col-span-1">
-                </div>
+        <div class="col-span-12 md:col-span-1"></div>
 
-                <div class="col-span-12 md:col-span-3">
-                    <.label>&nbsp</.label>
-                    <.button phx-disable-with="Speichern...">Beitrag ändern</.button>
-                </div>
-            </.input_grid>
-        </.input_grids>
-    </.simple_form>
+        <div class="col-span-12 md:col-span-3">
+          <.label>&nbsp</.label>
+          <.button phx-disable-with="Speichern...">Beitrag ändern</.button>
+        </div>
+      </.input_grid>
+    </.input_grids>
+  </.simple_form>
 </.card>
 
+<.card class="mb-5">
+  <.simple_form
+    for={@contract_form}
+    id="membership-termination-form"
+    phx-change="validate-contract-form"
+    phx-submit="save-termination"
+  >
+    <.input_grids>
+      <.input_grid>
+        <div class="col-span-12 md:col-span-4">
+          <.input field={@contract_form[:termination_date]} type="date" label="Kündigungsdatum" />
+        </div>
 
-<.card>
-    <.simple_form for={@contract_form} id="membership-termination-form" phx-change="validate-contract-form"
-        phx-submit="save-termination">
-        <.input_grids>
-            <.input_grid>
-                <div class="col-span-12 md:col-span-4">
-                    <.input field={@contract_form[:termination_date]} type="date" label="Kündigungsdatum" />
-                </div>
+        <div class="col-span-12 md:col-span-4">
+          <.input field={@contract_form[:archive_date]} type="date" label="Kündigung zum" />
+        </div>
 
-                <div class="col-span-12 md:col-span-4">
-                    <.input field={@contract_form[:archive_date]} type="date" label="Kündigung zum" />
-                </div>
+        <div class="col-span-12 md:col-span-1"></div>
 
-                <div class="col-span-12 md:col-span-1">
-                </div>
-
-                <div class="col-span-12 md:col-span-3">
-                    <.label>&nbsp</.label>
-                    <.button phx-disable-with="Speichern...">Mitgliedschaft kündigen</.button>
-                </div>
-            </.input_grid>
-
-        </.input_grids>
-    </.simple_form>
+        <div class="col-span-12 md:col-span-3">
+          <.label>&nbsp</.label>
+          <.button phx-disable-with="Speichern...">Mitgliedschaft kündigen</.button>
+        </div>
+      </.input_grid>
+    </.input_grids>
+  </.simple_form>
 </.card>
+
+<.input_grids>
+  <.input_grid>
+    <div class="col-span-12 md:col-span-9">
+      <.cancel_button navigate={~p"/contacts/#{@membership.contact}"}>Zurück</.cancel_button>
+    </div>
+    <div class="col-span-12 md:col-span-3">
+      <.button
+        :if={@membership}
+        class="bg-rose-700 hover:bg-rose-800"
+        phx-click={JS.push("delete", value: %{id: @membership.id})}
+        data-confirm="Mitgliedschaft unwiderruflich löschen? Üblicherweise sollten Mitgliedschaften gekündigt werden."
+      >
+        Mitgliedschaft löschen
+      </.button>
+    </div>
+  </.input_grid>
+</.input_grids>

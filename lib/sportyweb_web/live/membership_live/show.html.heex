@@ -8,7 +8,10 @@
       {Membership.get_organization(@membership).name}
     </:item>
     <:item title="Kontakt">
-      <.link navigate={~p"/contacts/#{@membership.contact}"} class="text-indigo-600 hover:underline">
+      <.link
+        navigate={~p"/contacts/#{@membership.contact}"}
+        class="text-indigo-600 hover:underline"
+      >
         {format_string_field(@membership.contact.name)}
       </.link>
     </:item>
@@ -22,13 +25,18 @@
 </.card>
 
 <.card>
-    <.list>
+  <.list>
     <:item title="Gebühr">
-        {@membership.contract.fee.name}: {@membership.contract.fee.amount}
+      {@membership.contract.fee.name}: {@membership.contract.fee.amount}
     </:item>
 
     <:item title="Vertrag">
-        <.link navigate={~p"/contracts/#{@membership.contract}"} class="text-indigo-600 hover:underline">Vertrag anzeigen</.link>
+      <.link
+        navigate={~p"/contracts/#{@membership.contract}"}
+        class="text-indigo-600 hover:underline"
+      >
+        Vertrag anzeigen
+      </.link>
     </:item>
-    </.list>
+  </.list>
 </.card>

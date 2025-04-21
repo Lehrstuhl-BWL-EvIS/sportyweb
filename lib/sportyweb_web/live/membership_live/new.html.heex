@@ -1,0 +1,82 @@
+<.header>
+  Mitgliedschaft anlegen
+</.header>
+
+<.card :if={@contact != nil} class="mb-5">
+  <.simple_form
+    for={@contract_form}
+    id="new-membership-form"
+    phx-change="validate"
+    phx-submit="save"
+  >
+    <.input_grids>
+      <.input_grid>
+        <div class="col-span-12 md:col-span-6">
+          <.label>Kontakt</.label>
+          {@contact.name}
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <%= if @duplicated_membership_error !=nil do %>
+            <.warn>
+              Es besteht bereits eine Mitgliedschaft von {@duplicated_membership_error.contact_name} in {@duplicated_membership_error.organization_name}
+            </.warn>
+            <.button type="button">
+              <.link navigate={~p"/memberships/#{@duplicated_membership_error.other_id}/edit"}>
+                Zur bestehenden Mitgliedschaft
+              </.link>
+            </.button>
+          <% end %>
+        </div>
+
+        <div class="col-span-12 md:col-span-6">
+          <.input
+            field={@contract_form[:department_id]}
+            type="select"
+            options={
+              @departments
+              |> Enum.map(&{&1.name, &1.id})
+            }
+            label="Abteilung"
+            prompt="-"
+          />
+        </div>
+        <div class="col-span-12 md:col-span-6">
+          <.input
+            field={@contract_form[:group_id]}
+            type="select"
+            options={@groups |> Enum.map(&{&1.name, &1.id})}
+            label="Gruppe"
+            prompt="-"
+          />
+        </div>
+
+        <div class="col-span-12 md:col-span-4">
+          <.input field={@contract_form[:signing_date]} type="date" label="Unterzeichnungsdatum" />
+        </div>
+        <div class="col-span-12 md:col-span-4">
+          <.input field={@contract_form[:start_date]} type="date" label="Mitgliedschaft ab" />
+        </div>
+
+        <div class="col-span-12 md:col-span-4">
+          <.input
+            field={@contract_form[:fee_id]}
+            type="select"
+            label="Beitrag"
+            options={
+              @fees
+              |> Enum.map(&{"#{&1.name}: #{&1.amount}", &1.id})
+            }
+            prompt="Bitte auswählen"
+          />
+        </div>
+      </.input_grid>
+    </.input_grids>
+
+    <:actions>
+      <div>
+        <.button phx-disable-with="Speichern...">Speichern</.button>
+        <.cancel_button navigate={~p"/contacts/#{@contact}"}>Abbrechen</.cancel_button>
+      </div>
+    </:actions>
+  </.simple_form>
+</.card>

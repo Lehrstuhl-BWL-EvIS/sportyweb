@@ -199,7 +199,7 @@ defmodule SportywebWeb.Router do
       # Memberships
       live "/memberships", MembershipLive.Index, :index_root
       live "/memberships/:id/edit", MembershipLive.Edit, :edit
-      live "/memberships/:id", MembershipLive.Show, :show
+      live "/clubs/:club_id/memberships/new", MembershipLive.New, :new
 
       # Transaction (Each belongs to a contract)
 

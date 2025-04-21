@@ -58,7 +58,15 @@
     <.table
       id="contracts"
       rows={@streams.contracts}
-      row_click={fn {_id, contract} -> if Contract.print_object(contract) == "Mitgliedschaft" do JS.navigate(~p"/memberships/#{contract.membership}/edit") else JS.navigate(~p"/contracts/#{contract}") end end}
+      row_click={
+        fn {_id, contract} ->
+          if Contract.print_object(contract) == "Mitgliedschaft" do
+            JS.navigate(~p"/memberships/#{contract.membership}/edit")
+          else
+            JS.navigate(~p"/contracts/#{contract}")
+          end
+        end
+      }
     >
       <:col :let={{_id, contract}}>
         <%= case Contract.get_state(contract) do %>
@@ -86,11 +94,13 @@
       </:col>
 
       <:action :let={{_id, contract}}>
-            <%= if Contract.print_object(contract) == "Mitgliedschaft" do %>
-                <.link navigate={~p"/memberships/#{contract.membership}/edit"}>Mitgliedschaft anzeigen</.link>
-            <% else %>
-                <.link navigate={~p"/contracts/#{contract}"}>Vertrag anzeigen</.link>
-            <% end %>
+        <%= if Contract.print_object(contract) == "Mitgliedschaft" do %>
+          <.link navigate={~p"/memberships/#{contract.membership}/edit"}>
+            Mitgliedschaft bearbeiten
+          </.link>
+        <% else %>
+          <.link navigate={~p"/contracts/#{contract}"}>Vertrag anzeigen</.link>
+        <% end %>
       </:action>
     </.table>
   <% else %>
@@ -98,4 +108,8 @@
       Bisher wurde noch kein Vertrag erstellt.
     </p>
   <% end %>
+
+  <.link navigate={~p"/clubs/#{@club}/memberships/new?contact=#{@contact}"}>
+    <.icon name="hero-plus-circle" /> Mitgliedschaft hinzufügen
+  </.link>
 </.card>

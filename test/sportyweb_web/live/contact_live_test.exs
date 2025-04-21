@@ -106,7 +106,7 @@ defmodule SportywebWeb.ContactLiveTest do
         new_live
         |> form("#contact-form", contact: @create_attrs)
         |> render_submit()
-        |> follow_redirect(conn, ~p"/clubs/#{club}/contacts")
+        |> follow_redirect(conn)
 
       assert html =~ "Kontakt erfolgreich erstellt"
       assert html =~ "some person_last_name, some person_first_name_1 some person_first_name_2"

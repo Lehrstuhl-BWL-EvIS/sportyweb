@@ -11,7 +11,8 @@ defmodule SportywebWeb.MembershipLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    membership = Legal.get_membership!(id, [:club, :department, :group, :contact, contract: [:fee]])
+    membership =
+      Legal.get_membership!(id, [:club, :department, :group, :contact, contract: [:fee]])
 
     {:noreply,
      socket

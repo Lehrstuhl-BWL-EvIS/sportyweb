@@ -46,6 +46,22 @@ defmodule SportywebWeb.MembershipLive.Edit do
   end
 
   @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    membership = Legal.get_membership!(id, [:contract, :contact])
+
+    case Legal.delete_membership(membership) do
+      {:ok, _membership} ->
+        case Legal.delete_contract(membership.contract) do
+          {:ok, _contract} ->
+            {:noreply,
+             socket
+             |> put_flash(:info, "Mitgliedschaft wurde gelöscht")
+             |> push_navigate(to: ~p"/contacts/#{membership.contact.id}")}
+        end
+    end
+  end
+
+  @impl true
   def handle_event("save-fee", %{"contract" => %{"fee_id" => fee}}, socket) do
     contract = socket.assigns.membership.contract
 
@@ -61,7 +77,9 @@ defmodule SportywebWeb.MembershipLive.Edit do
   @impl true
   def handle_event(
         "save-termination",
-        %{"contract" => %{"archive_date" => archive_date, "termination_date" => termination_date}},
+        %{
+          "contract" => %{"archive_date" => archive_date, "termination_date" => termination_date}
+        },
         socket
       ) do
     contract = socket.assigns.membership.contract

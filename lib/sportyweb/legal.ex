@@ -218,7 +218,19 @@ defmodule Sportyweb.Legal do
 
   """
   def list_memberships(club_id) do
-    query = from(c in Membership, where: c.club_id == ^club_id)
+    query = from(m in Membership, where: m.club_id == ^club_id)
+    Repo.all(query)
+  end
+
+  def list_memberships_of_contract_in(contact_id, organization_id) do
+    query =
+      from(m in Membership,
+        where:
+          m.contact_id == ^contact_id and
+            (m.club_id == ^organization_id or m.department_id == ^organization_id or
+               m.group_id == ^organization_id)
+      )
+
     Repo.all(query)
   end
 

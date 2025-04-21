@@ -190,11 +190,11 @@ defmodule SportywebWeb.ContactLive.FormComponent do
 
   defp save_contact(socket, :edit, contact_params) do
     case Personal.update_contact(socket.assigns.contact, contact_params) do
-      {:ok, _contact} ->
+      {:ok, contact} ->
         {:noreply,
          socket
          |> put_flash(:info, "Kontakt erfolgreich aktualisiert")
-         |> push_navigate(to: socket.assigns.navigate)}
+         |> push_navigate(to: ~p"/contacts/#{contact}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -208,11 +208,11 @@ defmodule SportywebWeb.ContactLive.FormComponent do
       })
 
     case Personal.create_contact(contact_params) do
-      {:ok, _contact} ->
+      {:ok, contact} ->
         {:noreply,
          socket
          |> put_flash(:info, "Kontakt erfolgreich erstellt")
-         |> push_navigate(to: socket.assigns.navigate)}
+         |> push_navigate(to: ~p"/contacts/#{contact}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
