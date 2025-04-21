@@ -192,12 +192,14 @@ defmodule SportywebWeb.Router do
            :show_subsidies_single
 
       # Contracts (Polymorphic)
-
       live "/contracts", ContractLive.Index, :index_root
-
       live "/contracts/:id/edit", ContractLive.NewEdit, :edit
-
       live "/contracts/:id", ContractLive.Show, :show
+
+      # Memberships
+      live "/memberships", MembershipLive.Index, :index_root
+      live "/memberships/:id/edit", MembershipLive.Edit, :edit
+      live "/memberships/:id", MembershipLive.Show, :show
 
       # Transaction (Each belongs to a contract)
 

@@ -58,7 +58,7 @@
     <.table
       id="contracts"
       rows={@streams.contracts}
-      row_click={fn {_id, contract} -> JS.navigate(~p"/contracts/#{contract}") end}
+      row_click={fn {_id, contract} -> if Contract.print_object(contract) == "Mitgliedschaft" do JS.navigate(~p"/memberships/#{contract.membership}/edit") else JS.navigate(~p"/contracts/#{contract}") end end}
     >
       <:col :let={{_id, contract}}>
         <%= case Contract.get_state(contract) do %>
@@ -86,7 +86,11 @@
       </:col>
 
       <:action :let={{_id, contract}}>
-        <.link navigate={~p"/contracts/#{contract}"}>Anzeigen</.link>
+            <%= if Contract.print_object(contract) == "Mitgliedschaft" do %>
+                <.link navigate={~p"/memberships/#{contract.membership}/edit"}>Mitgliedschaft anzeigen</.link>
+            <% else %>
+                <.link navigate={~p"/contracts/#{contract}"}>Vertrag anzeigen</.link>
+            <% end %>
       </:action>
     </.table>
   <% else %>
