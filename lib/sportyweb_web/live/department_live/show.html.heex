@@ -97,11 +97,11 @@
 </.header>
 
 <.card>
-  <%= if Enum.any?(@department.contacts) do %>
-    <SportywebWeb.ContactLive.IndexTableComponent.render contacts={@department.contacts} />
-  <% else %>
-    <p>
-      Bisher wurde noch kein Mitglied erstellt.
-    </p>
-  <% end %>
+  <.live_component
+    id="group_membership_table"
+    module={SportywebWeb.ContactLive.ContactsTableComponent}
+    show_quick_filters={false}
+    default_filters={%{In: @department.name}}
+    club={@club}
+  />
 </.card>
