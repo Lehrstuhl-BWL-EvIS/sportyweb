@@ -32,7 +32,8 @@ defmodule Sportyweb.Personal do
         where:
           c.club_id == ^club_id and
             (m.club_id == ^only_members_of or m.department_id == ^only_members_of or
-               m.group_id == ^only_members_of)
+               m.group_id == ^only_members_of),
+        distinct: c.id
       )
 
     preloads =
