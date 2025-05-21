@@ -127,6 +127,8 @@ defmodule SportywebWeb.UserAuth do
     * `:redirect_if_user_is_authenticated` - Authenticates the user from the session.
       Redirects to signed_in_path if there's a logged user.
 
+    * `:public_access` - Route with public accesss.
+
   ## Examples
 
   Use the `on_mount` lifecycle macro in LiveViews to mount or authenticate
@@ -177,6 +179,10 @@ defmodule SportywebWeb.UserAuth do
     end
   end
 
+  def on_mount(:public_access, _params, _session, socket) do
+    {:cont, Phoenix.Component.assign(socket, :current_user,false)}
+  end
+
   defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       if user_token = session["user_token"] do
@@ -196,6 +202,13 @@ defmodule SportywebWeb.UserAuth do
     else
       conn
     end
+  end
+
+  @doc """
+  Used for routes that require no authentication.
+  """
+  def public_access(conn, _opts) do
+    conn
   end
 
   @doc """

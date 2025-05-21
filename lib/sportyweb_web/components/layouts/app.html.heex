@@ -1,7 +1,15 @@
-<div class="min-h-full">
+<div class={
+    if show_full_width(assigns),
+      do: "h-screen flex flex-col",
+      else: "min-h-full"
+  }>
   <!-- When the mobile menu is open, add `overflow-hidden` to the `body` element to prevent double scrollbars -->
   <header class="bg-white shadow-sm lg:static lg:overflow-y-visible">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class={
+    if show_full_width(assigns),
+      do: "mx-auto px-4 sm:px-6 lg:px-8",
+      else: "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+  }>
       <div class="h-16 relative flex justify-between">
         <div class="flex items-center">
           <.link navigate={~p"/clubs"} class="flex items-center">
@@ -150,8 +158,16 @@
     <% end %>
   </header>
 
-  <div class="py-10">
-    <div class="mx-auto max-w-7xl sm:px-6 lg:grid lg:grid-cols-12 lg:gap-8 lg:px-8">
+  <div class={
+    if show_full_width(assigns),
+      do: "flex-1 overflow-hidden",
+      else: "py-10"
+  }>
+    <div class={
+      if show_full_width(assigns),
+        do: "h-full lg:grid lg:grid-cols-12 lg:gap-8",
+        else: "mx-auto max-w-7xl sm:px-6 lg:grid lg:grid-cols-12 lg:gap-8 lg:px-8"
+    }>
       <%= if show_club_navigation(assigns) do %>
         <div class="hidden lg:block lg:col-span-3 pt-14">
           <.live_component
@@ -163,8 +179,8 @@
         </div>
       <% end %>
       <!-- Set the col-span classes based on whether a user is logged in, in which case the navigation (sidebar) is visible. -->
-      <main class={"lg:block #{if show_club_navigation(assigns), do: ~c"lg:col-span-9", else: ~c"lg:col-span-12"}"}>
-        <div>
+      <main class={"h-full lg:block #{if show_club_navigation(assigns), do: ~c"lg:col-span-9", else: ~c"lg:col-span-12"} #{if show_full_width(assigns), do: ~c"overflow-hidden", else: ~c""}"}>
+        <div class={"h-full #{if show_full_width(assigns), do: ~c"overflow-hidden", else: ~c""}"}>
           <.flash_group flash={@flash} />
           {@inner_content}
         </div>

@@ -1,0 +1,32 @@
+<div>
+  <.header>
+    {@page_title}
+  </.header>
+  <.card>
+    <.simple_form
+      for={@form_document}
+      id="document-form"
+      phx-change="validate"
+      phx-submit="save"
+      as="document"
+    >
+      <.document_form_fields
+        form_document={@form_document}
+        form_extension={@form_extension}
+        extension_form_component={@extension_form_component}
+        extension_module={@extension_module}
+        extension_changeset={@extension_changeset}
+        with_upload={true}
+        readonly={false}
+        uploads={@uploads}
+      />
+
+      <:actions>
+        <div>
+          <.button phx-disable-with="Speichern...">Speichern</.button>
+          <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
+        </div>
+      </:actions>
+    </.simple_form>
+  </.card>
+</div>

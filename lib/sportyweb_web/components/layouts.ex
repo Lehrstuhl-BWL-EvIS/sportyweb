@@ -25,4 +25,8 @@ defmodule SportywebWeb.Layouts do
   def show_club_navigation(_assigns) do
     false
   end
+
+def show_full_width(%{full_width: true}), do: true
+def show_full_width(_), do: false
+
 end
