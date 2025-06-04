@@ -18,8 +18,9 @@ defmodule Sportyweb.Documents do
 
   """
   def list_documents(club_id) do
-    query = from(e in Document, where: e.club_id == ^club_id)
-    Repo.all(query)
+    Document
+    |> where([d], d.club_id == ^club_id and is_nil(d.deleted_at))
+    |> Repo.all()
   end
 
   @doc """
@@ -47,9 +48,12 @@ defmodule Sportyweb.Documents do
 
       iex> get_document!(456)
       ** (Ecto.NoResultsError)
-
   """
-  def get_document!(id), do: Repo.get!(Document, id)
+  def get_document!(id) do
+    Document
+    |> where([d], d.id == ^id and is_nil(d.deleted_at))
+    |> Repo.one!()
+  end
 
   @doc """
   Gets a single document. Preloads associations.
@@ -67,13 +71,20 @@ defmodule Sportyweb.Documents do
   """
   def get_document!(id, preloads) do
     Document
-    |> Repo.get!(id)
+    |> where([d], d.id == ^id and is_nil(d.deleted_at))
+    |> Repo.one!()
     |> Repo.preload(preloads)
   end
 
   @document_types [
     {:contact_document, Sportyweb.Documents.ContactDocument},
-    {:club_document, Sportyweb.Organization.ClubDocument}
+    {:club_document, Sportyweb.Documents.ClubDocument},
+    {:contract_document, Sportyweb.Documents.ContractDocument},
+    {:department_document, Sportyweb.Documents.DepartmentDocument},
+    {:equipment_document, Sportyweb.Documents.EquipmentDocument},
+    {:event_document, Sportyweb.Documents.EventDocument},
+    {:group_document, Sportyweb.Documents.GroupDocument},
+    {:location_document, Sportyweb.Documents.LocationDocument},
   ]
 
   def get_document_extension(%Document{id: document_id}) do

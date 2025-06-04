@@ -11,12 +11,14 @@ defmodule SportywebWeb.DocumentListComponent do
      |> assign(assigns)}
   end
 
+  # Handle grouping logic
   defp grouped_documents(documents, false), do: [{"", documents}]
 
   defp grouped_documents(documents, true) do
     Enum.group_by(documents, &Map.get(&1, :type))
   end
 
+  # Label for group logic
   defp label_for_group(nil, _), do: nil
 
   defp label_for_group(document_module, value) do
@@ -34,5 +36,13 @@ defmodule SportywebWeb.DocumentListComponent do
     end
   end
 
+  # Generate stable toggle IDs for collapsible groups
   defp toggle_id(group), do: "doc-group-#{group || "ungrouped"}"
+
+  # Helper to format inserted_at to Europe/Berlin
+  defp formatted_inserted_at(datetime) do
+    datetime
+    |> Timex.Timezone.convert("Europe/Berlin")
+    |> Timex.format!("%d.%m.%Y %H:%M:%S", :strftime)
+  end
 end
