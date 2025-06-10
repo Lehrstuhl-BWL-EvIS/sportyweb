@@ -2,6 +2,8 @@ defmodule SportywebWeb.ClubLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Organization
+  alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.ClubDocument
 
   @impl true
   def mount(_params, _session, socket) do
@@ -18,7 +20,7 @@ defmodule SportywebWeb.ClubLive.Show do
         :notes,
         :phones,
         :location,
-        club_documents: [:document]
+        club_documents: Document.with_active_documents(ClubDocument)
       ])
 
     {:noreply,

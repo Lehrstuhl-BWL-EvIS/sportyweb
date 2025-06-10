@@ -1,0 +1,43 @@
+<.header>{@page_title}</.header>
+
+<form phx-change="search" class="mb-3" phx-debounce="300">
+  <.input
+    type="text"
+    name="q"
+    value={@search_q}
+    placeholder="Suche in Titel, Beschreibung und Inhalt…"
+    autocomplete="off"
+  />
+</form>
+
+<%= if Enum.any?(@extensions_config, fn %{key: key} ->
+       Map.get(@extensions_by_type, key, []) != []
+     end) do %>
+
+  <.card class="px-1">
+    <%= for %{key: key, title: title, component: component} <- @extensions_config do %>
+      <% docs = Map.get(@extensions_by_type, key, []) %>
+      <%= if docs != [] do %>
+        <div class="mb-3 last:mb-0">
+          <h3 class="text-md font-bold text-zinc-800 mb-2"><%= title %></h3>
+
+          <.live_component
+            module={SportywebWeb.DocumentListComponent}
+            id={"documents-#{key}"}
+            documents={docs}
+            get_entity={DocumentConfig.get_config(to_string(key)).get_entity}
+            group_by_type={true}
+            document_module={component}
+          />
+        </div>
+      <% end %>
+    <% end %>
+  </.card>
+
+<% else %>
+
+  <.card class="px-1">
+    <p class="text-center text-zinc-600 py-4">Keine Dokumente gefunden</p>
+  </.card>
+
+<% end %>

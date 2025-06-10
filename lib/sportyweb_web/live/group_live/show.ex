@@ -2,6 +2,8 @@ defmodule SportywebWeb.GroupLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Organization
+  alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.GroupDocument
 
   @impl true
   def mount(_params, _session, socket) do
@@ -18,7 +20,7 @@ defmodule SportywebWeb.GroupLive.Show do
         :phones,
         department: :club,
         fees: :internal_events,
-        group_documents: [:document]
+        group_documents: Document.with_active_documents(GroupDocument)
       ])
 
     {:noreply,

@@ -3,6 +3,8 @@ defmodule SportywebWeb.EventLive.Show do
 
   alias Sportyweb.Calendar
   alias Sportyweb.Calendar.Event
+  alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.EventDocument
 
   @impl true
   def mount(_params, _session, socket) do
@@ -20,7 +22,7 @@ defmodule SportywebWeb.EventLive.Show do
         :postal_addresses,
         :locations,
         fees: :internal_events,
-        event_documents: [:document]
+        event_documents: Document.with_active_documents(EventDocument)
       ])
 
     {:noreply,

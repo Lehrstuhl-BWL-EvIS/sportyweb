@@ -5,6 +5,8 @@ defmodule SportywebWeb.ContactLive.Show do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.ContactDocument
 
   @impl true
   def mount(_params, _session, socket) do
@@ -21,7 +23,7 @@ defmodule SportywebWeb.ContactLive.Show do
         :notes,
         :phones,
         :postal_addresses,
-        contact_documents: [:document],
+        contact_documents: Document.with_active_documents(ContactDocument),
         contracts: [:clubs, :departments, :groups, fee: :internal_events]
       ])
 

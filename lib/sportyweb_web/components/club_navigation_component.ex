@@ -145,6 +145,17 @@ defmodule SportywebWeb.ClubNavigationComponent do
         </ul>
 
         <.link
+          navigate={~p"/clubs/#{@club}/documents"}
+          class={[
+            @classes_menu_item,
+            if(@club_navigation_current_item == :documents, do: @classes_menu_item_active)
+          ]}
+        >
+          <.icon name="hero-document" class={@classes_icon} />
+          <span class="truncate">Dokumente</span>
+        </.link>
+
+        <.link
           navigate={~p"/clubs/#{@club}/roles"}
           class={[
             @classes_menu_item,

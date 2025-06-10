@@ -193,6 +193,107 @@ erDiagram
     timestamp inserted_at
     timestamp updated_at
   }
+  club_documents {
+    uuid id PK
+    varchar type
+    uuid club_id
+    uuid document_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  contact_documents {
+    uuid id PK
+    varchar type
+    uuid contact_id
+    uuid document_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  contract_documents {
+    uuid id PK
+    varchar type
+    uuid contract_id
+    uuid document_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  department_documents {
+    uuid id PK
+    varchar type
+    uuid department_id
+    uuid document_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  documents {
+    uuid id PK
+    varchar title
+    varchar description
+    varchar filename
+    varchar content_type
+    integer byte_size
+    varchar storage_path
+    varchar thumbnail_path
+    varchar checksum
+    varchar fulltext
+    boolean locked
+    boolean public
+    timestamp deleted_at
+    uuid club_id
+    uuid uploaded_by_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  document_comments {
+    uuid id PK
+    varchar comment
+    uuid document_id
+    uuid commented_by_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  document_log_entries {
+    uuid id PK
+    varchar action
+    jsonb changes
+    jsonb extension_changes
+    uuid document_id
+    uuid changed_by_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  equipment_documents {
+    uuid id PK
+    varchar type
+    uuid equipment_id
+    uuid document_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  event_documents {
+    uuid id PK
+    varchar type
+    uuid event_id
+    uuid document_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  group_documents {
+    uuid id PK
+    varchar type
+    uuid group_id
+    uuid document_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
+  location_documents {
+    uuid id PK
+    varchar type
+    uuid location_id
+    uuid document_id
+    timestamp inserted_at
+    timestamp updated_at
+  }
   fees {
     uuid id PK
     uuid club_id
@@ -565,6 +666,7 @@ erDiagram
   applicationroles ||--|{ userapplicationroles : ""
   clubroles ||--|{ userclubroles : ""
   clubs ||--|{ club_contracts : ""
+  clubs ||--|{ club_documents : ""
   clubs ||--|{ club_emails : ""
   clubs ||--|{ club_financial_data : ""
   clubs ||--|{ club_notes : ""
@@ -573,12 +675,14 @@ erDiagram
   clubs ||--|{ contacts : ""
   clubs ||--|{ contracts : ""
   clubs ||--|{ departments : ""
+  clubs ||--|{ documents : ""
   clubs ||--|{ events : ""
   clubs ||--|{ fees : ""
   clubs ||--|{ locations : ""
   clubs ||--|{ subsidies : ""
   clubs ||--|{ userclubroles : ""
   contact_groups ||--|{ contact_group_contacts : ""
+  contacts ||--|{ contact_documents : ""
   contacts ||--|{ contact_emails : ""
   contacts ||--|{ contact_financial_data : ""
   contacts ||--|{ contact_group_contacts : ""
@@ -587,11 +691,13 @@ erDiagram
   contacts ||--|{ contact_postal_addresses : ""
   contacts ||--|{ contracts : ""
   contracts ||--|{ club_contracts : ""
+  contracts ||--|{ contract_documents : ""
   contracts ||--|{ department_contracts : ""
   contracts ||--|{ group_contracts : ""
   contracts ||--|{ transactions : ""
   departmentroles ||--|{ userdepartmentroles : ""
   departments ||--|{ department_contracts : ""
+  departments ||--|{ department_documents : ""
   departments ||--|{ department_emails : ""
   departments ||--|{ department_fees : ""
   departments ||--|{ department_notes : ""
@@ -599,6 +705,16 @@ erDiagram
   departments ||--|{ event_departments : ""
   departments ||--|{ groups : ""
   departments ||--|{ userdepartmentroles : ""
+  documents ||--|{ club_documents : ""
+  documents ||--|{ contact_documents : ""
+  documents ||--|{ contract_documents : ""
+  documents ||--|{ department_documents : ""
+  documents ||--|{ document_comments : ""
+  documents ||--|{ document_log_entries : ""
+  documents ||--|{ equipment_documents : ""
+  documents ||--|{ event_documents : ""
+  documents ||--|{ group_documents : ""
+  documents ||--|{ location_documents : ""
   emails ||--|{ club_emails : ""
   emails ||--|{ contact_emails : ""
   emails ||--|{ department_emails : ""
@@ -606,12 +722,14 @@ erDiagram
   emails ||--|{ event_emails : ""
   emails ||--|{ group_emails : ""
   emails ||--|{ location_emails : ""
+  equipment ||--|{ equipment_documents : ""
   equipment ||--|{ equipment_emails : ""
   equipment ||--|{ equipment_fees : ""
   equipment ||--|{ equipment_notes : ""
   equipment ||--|{ equipment_phones : ""
   equipment ||--|{ event_equipment : ""
   events ||--|{ event_departments : ""
+  events ||--|{ event_documents : ""
   events ||--|{ event_emails : ""
   events ||--|{ event_equipment : ""
   events ||--|{ event_fees : ""
@@ -633,6 +751,7 @@ erDiagram
   financial_data ||--|{ contact_financial_data : ""
   groups ||--|{ event_groups : ""
   groups ||--|{ group_contracts : ""
+  groups ||--|{ group_documents : ""
   groups ||--|{ group_emails : ""
   groups ||--|{ group_fees : ""
   groups ||--|{ group_notes : ""
@@ -642,6 +761,7 @@ erDiagram
   locations ||--|{ clubs : ""
   locations ||--|{ equipment : ""
   locations ||--|{ event_locations : ""
+  locations ||--|{ location_documents : ""
   locations ||--|{ location_emails : ""
   locations ||--|{ location_fees : ""
   locations ||--|{ location_notes : ""
@@ -670,6 +790,9 @@ erDiagram
   subsidies ||--|{ fees : ""
   subsidies ||--|{ subsidy_internal_events : ""
   subsidies ||--|{ subsidy_notes : ""
+  users ||--|{ document_comments : ""
+  users ||--|{ document_log_entries : ""
+  users ||--|{ documents : ""
   users ||--|{ userapplicationroles : ""
   users ||--|{ userclubroles : ""
   users ||--|{ userdepartmentroles : ""

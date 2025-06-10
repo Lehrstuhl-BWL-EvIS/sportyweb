@@ -4,6 +4,8 @@ defmodule SportywebWeb.ContractLive.Show do
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Finance.Fee
+  alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.ContractDocument
 
   @impl true
   def mount(_params, _session, socket) do
@@ -12,7 +14,7 @@ defmodule SportywebWeb.ContractLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    contract = Legal.get_contract!(id, [:club, :clubs, :contact, :departments, :fee, :groups, contract_documents: [:document]])
+    contract = Legal.get_contract!(id, [:club, :clubs, :contact, :departments, :fee, :groups, contract_documents: Document.with_active_documents(ContractDocument)])
     contract_object = Contract.get_object(contract)
 
     {:noreply,
