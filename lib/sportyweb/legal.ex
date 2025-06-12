@@ -193,20 +193,6 @@ defmodule Sportyweb.Legal do
     Contract.changeset(contract, attrs)
   end
 
-  @doc """
-  Returns a list of all memberships. Preloads associations.
-
-  ## Examples
-
-      iex> list_memberships([:contact])
-      [%Membership{}, ...]
-
-  """
-  def list_all_memberships(preloads) do
-    Membership
-    |> Repo.all()
-    |> Repo.preload(preloads)
-  end
 
   @doc """
   Returns a clubs list of memberships.
@@ -221,6 +207,13 @@ defmodule Sportyweb.Legal do
     query = from(m in Membership, where: m.club_id == ^club_id)
     Repo.all(query)
   end
+
+  def list_memberships(membership_ids, preloads) do
+    query = from(m in Membership, where: m.id in ^membership_ids)
+    Repo.all(query)
+    |> Repo.preload(preloads)
+  end
+
 
   def list_memberships_of_contact_in(contact_id, organization_id) do
     query =

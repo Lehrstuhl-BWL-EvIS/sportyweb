@@ -250,11 +250,19 @@ defmodule Sportyweb.ContactSeedHelper do
         true -> Finance.list_contract_fee_options(club, contact.id)
       end
 
+
     department_id = if department != nil, do: department.id, else: nil
     group_id = if group != nil, do: group.id, else: nil
     preconditional_membership_id =  if preconditional_membership != nil , do: preconditional_membership.id, else: nil
 
     fee = Enum.random(fees)
+    state = if preconditional_membership != nil do
+      preconditional_membership.state
+    else
+      Membership.get_valid_states()
+      |> Enum.map(fn state -> state[:value] end)
+      |> Enum.random()
+    end
 
     archive_date = if :rand.uniform() > 0.8, do: ~D[2025-03-01], else: nil
     termination_date = if archive_date == nil, do: nil, else: ~D[2025-12-31]
@@ -290,7 +298,8 @@ defmodule Sportyweb.ContactSeedHelper do
         contract: contract,
         contract_id: contract.id,
         preconditional_membership_id: preconditional_membership_id,
-        preconditional_membership: preconditional_membership
+        preconditional_membership: preconditional_membership,
+        state: state
       })
 
     {contract, membership}

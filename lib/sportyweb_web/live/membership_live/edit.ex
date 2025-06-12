@@ -16,7 +16,7 @@ defmodule SportywebWeb.MembershipLive.Edit do
     membership =
       Legal.get_membership!(id, [
         :club,
-        :contact,
+        contact: [:emails],
         preconditional_membership: [:club, :department, :group],
         following_memberships: [:club, :department, :group],
         department: [:fees],
@@ -26,6 +26,7 @@ defmodule SportywebWeb.MembershipLive.Edit do
 
     other_memberships =  Legal.list_memberships_of_contact(membership.contact.id, [:club, :department, :group])
       |> Enum.filter(fn m -> m.id != membership.id end)
+    following_memberships = get_all_following_memberships(membership)
 
     organization = Membership.get_organization(membership)
     fee_options = Finance.list_contract_fee_options(organization, membership.contact.id)
@@ -38,6 +39,7 @@ defmodule SportywebWeb.MembershipLive.Edit do
       |> assign(:fee_options, fee_options)
       |> assign(:club, membership.club)
       |> assign(:other_memberships, other_memberships)
+      |> assign(:following_memberships, following_memberships)
       |>assign(:membership_form, to_form(Legal.change_membership(membership)))
       |> assign(:preconditional_membership_form, to_form(%{"preconditional_membership_id" => membership.preconditional_membership_id}))
       |> assign_new(:contract_form, fn ->
@@ -122,18 +124,25 @@ defmodule SportywebWeb.MembershipLive.Edit do
     end
   end
 
-  def get_change_verb(old_state, new_state) do
-    case {old_state, new_state} do
-      {"PENDING", "ACTIVE"} -> "annehmen"
-      {"REJECTED", "ACTIVE"} -> "annehmen"
-      {"PENDING", "REJECTED"} -> "ablehnen"
-      {_, "PAUSED"} -> "pausieren"
-      {"PAUSED", "ACTIVE"} -> "reaktivieren"
-      {_, "TERMINATED"} -> "kündigen"
-      {_, "SUSPENDED"} -> "ausschließen"
-      {_, "DECEASED"} -> "verstorben"
-      _ -> raise "no verb implemented for change from #{old_state} to #{new_state}"
-    end
+  defp get_all_following_memberships(membership) do
+    recursive_get_following_memberships([membership], membership.following_memberships)
+    |> Enum.filter(fn m -> m.id != membership.id end)
+  end
+  defp recursive_get_following_memberships(found_memberships, []), do: found_memberships
+  defp recursive_get_following_memberships(found_memberships, memberships_to_check) do
+    memberships_ids_to_load = memberships_to_check
+    |> Enum.map(fn m -> m.id end)
+    |> Enum.uniq()
+    |> Enum.filter(fn m ->
+      # seems to be a loop of memberships
+      # -> do not continue loading, following membership was loaded before
+      Enum.find(found_memberships, fn  o -> o.id == m end) == nil
+    end)
+
+    next_memberships = Legal.list_memberships(memberships_ids_to_load, [:following_memberships])
+    found_memberships = Enum.concat(found_memberships, next_memberships)
+    memberships_to_check = Enum.flat_map(next_memberships, fn m -> m.following_memberships end)
+    recursive_get_following_memberships(found_memberships, memberships_to_check)
   end
 
 end

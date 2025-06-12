@@ -83,22 +83,30 @@
 
 
 <.card class="mb-5">
-  <.simple_form
+    <.input_grids>
+      <.input_grid>
+        <div class="col-span-12 md:col-span-12">
+            Status: {get_key_for_value(Membership.get_valid_states(), @membership.state)}
+        </div>
+        <%= for state <- get_next_states(@membership) do %>
+            <div class="col-span-12 md:col-span-2">
+                <.live_component
+                id={"change_state_to_#{state}_component"}
+                module={SportywebWeb.MembershipLive.ChangeStateComponent}
+                membership={@membership}
+                new_state={state}
+                following_memberships={@following_memberships}
+                />
+            </div>
+        <% end %>
+      </.input_grid>
+
+    <.simple_form
     for={@contract_form}
     id="membership-termination-form"
     phx-change="validate-contract-form"
     phx-submit="save-termination"
-  >
-    <.input_grids>
-      <.input_grid>
-        <div class="col-span-12 md:col-span-4">
-            {get_key_for_value(Membership.get_valid_states(), @membership.state)}
-        </div>
-        <%= for state <- get_next_states(@membership) do %>
-            {get_change_verb(@membership.state, state)}
-        <% end %>
-      </.input_grid>
-
+    >
       <.input_grid>
         <div class="col-span-12 md:col-span-4">
           <.input field={@contract_form[:termination_date]} type="date" label="Kündigungsdatum" />
@@ -115,8 +123,8 @@
           <.button phx-disable-with="Speichern...">Mitgliedschaft kündigen</.button>
         </div>
       </.input_grid>
-    </.input_grids>
   </.simple_form>
+    </.input_grids>
 </.card>
 
 
