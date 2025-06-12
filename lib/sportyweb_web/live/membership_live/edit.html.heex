@@ -92,6 +92,15 @@
     <.input_grids>
       <.input_grid>
         <div class="col-span-12 md:col-span-4">
+            {get_key_for_value(Membership.get_valid_states(), @membership.state)}
+        </div>
+        <%= for state <- get_next_states(@membership) do %>
+            {get_change_verb(@membership.state, state)}
+        <% end %>
+      </.input_grid>
+
+      <.input_grid>
+        <div class="col-span-12 md:col-span-4">
           <.input field={@contract_form[:termination_date]} type="date" label="Kündigungsdatum" />
         </div>
 

@@ -20,7 +20,21 @@ defmodule Sportyweb.Legal.Membership do
     belongs_to :preconditional_membership, Membership
     has_many :following_memberships, Membership, foreign_key: :preconditional_membership_id
 
+    field :state, :string, default: "ACTIVE"
+
     timestamps(type: :utc_datetime)
+  end
+
+  def get_valid_states do
+    [
+      [key: "beantragt", value: "PENDING"],
+      [key: "abgelehnt", value: "REJECTED"],
+      [key: "aktiv", value: "ACTIVE"],
+      [key: "pausiert", value: "PAUSED"],
+      [key: "gekündigt", value: "TERMINATED"],
+      [key: "verstorben", value: "DECEASED"],
+      [key: "ausgeschlossen", value: "SUSPENDED"],
+    ]
   end
 
   def get_organization(%Membership{} = membership) do
@@ -47,14 +61,20 @@ defmodule Sportyweb.Legal.Membership do
         :department_id,
         :group_id,
         :contract_id,
-        :preconditional_membership_id
+        :preconditional_membership_id,
+        :state
       ],
       empty_values: ["", nil]
     )
     |> validate_required([
       :club_id,
       :contract_id,
-      :contact_id
+      :contact_id,
+      :state
     ])
+    |> validate_inclusion(
+         :state,
+         get_valid_states() |> Enum.map(fn state -> state[:value] end)
+    )
   end
 end

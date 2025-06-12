@@ -108,12 +108,13 @@ defmodule SportywebWeb.MembershipLive.New do
   end
 
   @impl true
-  def handle_event("save", %{"contract" => contract_params, "preconditional_membership_id" => preconditional_membership_id}, socket) do
+  def handle_event("save", %{"contract" => contract_params, "preconditional_membership_id" => preconditional_membership_id, "membership_accepted" => membership_accepted}, socket) do
     contract_params =
       Enum.into(contract_params, %{
         "club_id" => socket.assigns.club.id,
         "contact_id" => socket.assigns.contact.id
       })
+    membership_state = if membership_accepted == true, do: "ACTIVE", else:  "PENDING"
 
     case Legal.create_contract(contract_params) do
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -126,7 +127,8 @@ defmodule SportywebWeb.MembershipLive.New do
           group_id: contract.group_id,
           contact_id: contract.contact_id,
           contract_id: contract.id,
-          preconditional_membership_id: preconditional_membership_id
+          preconditional_membership_id: preconditional_membership_id,
+          state: membership_state
         }
 
         case Legal.create_membership(membership) do

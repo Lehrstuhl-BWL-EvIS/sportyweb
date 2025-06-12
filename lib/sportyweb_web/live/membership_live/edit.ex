@@ -112,4 +112,28 @@ defmodule SportywebWeb.MembershipLive.Edit do
     end
   end
 
+  def get_next_states(membership) do
+    case membership.state do
+      "PENDING" -> ["ACTIVE", "REJECTED"]
+      "REJECTED"  -> ["ACTIVE"]
+      "ACTIVE" -> ["PAUSED", "TERMINATED", "DECEASED", "SUSPENDED"]
+      "PAUSED" -> ["ACTIVE", "TERMINATED", "DECEASED", "SUSPENDED"]
+        _ -> ["TERMINATED", "DECEASED", "SUSPENDED"]
+    end
+  end
+
+  def get_change_verb(old_state, new_state) do
+    case {old_state, new_state} do
+      {"PENDING", "ACTIVE"} -> "annehmen"
+      {"REJECTED", "ACTIVE"} -> "annehmen"
+      {"PENDING", "REJECTED"} -> "ablehnen"
+      {_, "PAUSED"} -> "pausieren"
+      {"PAUSED", "ACTIVE"} -> "reaktivieren"
+      {_, "TERMINATED"} -> "kündigen"
+      {_, "SUSPENDED"} -> "ausschließen"
+      {_, "DECEASED"} -> "verstorben"
+      _ -> raise "no verb implemented for change from #{old_state} to #{new_state}"
+    end
+  end
+
 end
