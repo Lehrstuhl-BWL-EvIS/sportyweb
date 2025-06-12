@@ -222,7 +222,7 @@ defmodule Sportyweb.Legal do
     Repo.all(query)
   end
 
-  def list_memberships_of_contract_in(contact_id, organization_id) do
+  def list_memberships_of_contact_in(contact_id, organization_id) do
     query =
       from(m in Membership,
         where:
@@ -232,6 +232,13 @@ defmodule Sportyweb.Legal do
       )
 
     Repo.all(query)
+  end
+
+  def list_memberships_of_contact(contact_id, preloads) do
+    query =
+      from(m in Membership, where: m.contact_id == ^contact_id)
+    Repo.all(query)
+    |> Repo.preload(preloads)
   end
 
   @doc """

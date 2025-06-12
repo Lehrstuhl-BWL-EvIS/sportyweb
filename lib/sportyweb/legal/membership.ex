@@ -17,6 +17,8 @@ defmodule Sportyweb.Legal.Membership do
     belongs_to :group, Group
     belongs_to :contact, Contact
     belongs_to :contract, Contract
+    belongs_to :preconditional_membership, Membership
+    has_many :following_memberships, Membership, foreign_key: :preconditional_membership_id
 
     timestamps(type: :utc_datetime)
   end
@@ -35,8 +37,8 @@ defmodule Sportyweb.Legal.Membership do
   end
 
   @doc false
-  def changeset(contract, attrs) do
-    contract
+  def changeset(membership, attrs) do
+    membership
     |> cast(
       attrs,
       [
@@ -44,7 +46,8 @@ defmodule Sportyweb.Legal.Membership do
         :contact_id,
         :department_id,
         :group_id,
-        :contract_id
+        :contract_id,
+        :preconditional_membership_id
       ],
       empty_values: ["", nil]
     )

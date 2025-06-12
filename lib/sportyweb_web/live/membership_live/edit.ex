@@ -17,10 +17,15 @@ defmodule SportywebWeb.MembershipLive.Edit do
       Legal.get_membership!(id, [
         :club,
         :contact,
+        preconditional_membership: [:club, :department, :group],
+        following_memberships: [:club, :department, :group],
         department: [:fees],
         group: [:fees],
         contract: [:fee]
       ])
+
+    other_memberships =  Legal.list_memberships_of_contact(membership.contact.id, [:club, :department, :group])
+      |> Enum.filter(fn m -> m.id != membership.id end)
 
     organization = Membership.get_organization(membership)
     fee_options = Finance.list_contract_fee_options(organization, membership.contact.id)
@@ -32,6 +37,9 @@ defmodule SportywebWeb.MembershipLive.Edit do
       |> assign(:membership, membership)
       |> assign(:fee_options, fee_options)
       |> assign(:club, membership.club)
+      |> assign(:other_memberships, other_memberships)
+      |>assign(:membership_form, to_form(Legal.change_membership(membership)))
+      |> assign(:preconditional_membership_form, to_form(%{"preconditional_membership_id" => membership.preconditional_membership_id}))
       |> assign_new(:contract_form, fn ->
         to_form(Legal.change_contract(membership.contract))
       end)
@@ -93,4 +101,15 @@ defmodule SportywebWeb.MembershipLive.Edit do
         {:noreply, assign(socket, contract_form: to_form(changeset))}
     end
   end
+
+  @impl true
+  def handle_event("preconditional_membership_submitted", %{"membership" => membership}, socket) do
+    case Legal.update_membership(socket.assigns.membership, membership) do
+      {:ok, _contract} ->
+        {:noreply, socket |> put_flash(:info, "Verknüpfung aktualisiert")}
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, membership_form: to_form(changeset))}
+    end
+  end
+
 end

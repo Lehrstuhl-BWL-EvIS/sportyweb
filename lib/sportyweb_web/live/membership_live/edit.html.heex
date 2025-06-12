@@ -5,6 +5,26 @@
 <.card class="mb-5">
   <.input_grids>
     <.input_grid>
+        <div class="col-span-12 md:col-span-4">
+            <.label>In</.label>
+            {Membership.get_organization(@membership).name}
+        </div>
+
+        <div class="col-span-12 md:col-span-4">
+            <.label>Seit dem</.label>
+            {format_date_field_dmy(@membership.contract.start_date)}
+        </div>
+
+        <div class="col-span-12 md:col-span-4">
+            <.label>&nbsp;</.label>
+        <.link
+            navigate={~p"/contracts/#{@membership.contract}"}
+            class="text-indigo-600 hover:underline"
+        >
+            Zum Vertrag
+        </.link>
+        </div>
+
       <div class="col-span-12 md:col-span-4">
         <.label>Kontakt</.label>
         <.link
@@ -23,25 +43,6 @@
         {get_key_for_value(Contact.get_valid_genders(), @membership.contact.person_gender)}
       </div>
 
-      <div class="col-span-12 md:col-span-4">
-        <.label>Seit dem</.label>
-        {format_date_field_dmy(@membership.contract.start_date)}
-      </div>
-
-      <div class="col-span-12 md:col-span-4">
-        <.label>In</.label>
-        {Membership.get_organization(@membership).name}
-      </div>
-
-      <div class="col-span-12 md:col-span-4">
-        <.label>&nbsp;</.label>
-        <.link
-          navigate={~p"/contracts/#{@membership.contract}"}
-          class="text-indigo-600 hover:underline"
-        >
-          Zum Vertrag
-        </.link>
-      </div>
     </.input_grid>
   </.input_grids>
 </.card>
@@ -79,6 +80,8 @@
   </.simple_form>
 </.card>
 
+
+
 <.card class="mb-5">
   <.simple_form
     for={@contract_form}
@@ -105,6 +108,52 @@
       </.input_grid>
     </.input_grids>
   </.simple_form>
+</.card>
+
+
+<.card class="mb-5">
+    <.input_grids>
+    <.simple_form
+        for={@membership_form}
+        id="preconditional_membership_form"
+        phx-submit="preconditional_membership_submitted"
+        >
+            <.input_grid>
+                <div class="col-span-12 md:col-span-8">
+                    <.input
+                    field={@membership_form[:preconditional_membership_id]}
+                    type="select"
+                    label="geknüpft an"
+                    options={
+                        @other_memberships
+                        |> Enum.map(&{"Mitgliedschaft in #{Membership.get_organization(&1).name}", &1.id})
+                    }
+                    prompt="an keine andere Mitgliedschaft geknüpft"
+                    />
+                </div>
+
+                <div class="col-span-12 md:col-span-1"></div>
+
+                <div class="col-span-12 md:col-span-3">
+                    <.label>&nbsp</.label>
+                <.button phx-disable-with="Speichern...">Verknüpfung ändern</.button>
+                </div>
+            </.input_grid>
+    </.simple_form>
+
+        <.input_grid :if={!Enum.empty?(@membership.following_memberships)}>
+            <%= for membership <- @membership.following_memberships do %>
+                <div class="col-span-12 md:col-span-4">
+                    Voraussetzung für
+                </div>
+                <div class="col-span-12 md:col-span-8">
+                    <.cancel_button navigate={~p"/memberships/#{membership}/edit"}>
+                    Mitgliedschaft in {Membership.get_organization(membership).name}
+                    </.cancel_button>
+                </div>
+            <% end %>
+        </.input_grid>
+    </.input_grids>
 </.card>
 
 <.input_grids>

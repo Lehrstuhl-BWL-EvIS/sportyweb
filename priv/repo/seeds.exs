@@ -223,26 +223,26 @@ defmodule Sportyweb.ContactSeedHelper do
     contract_ration = if is_person, do: 0.9, else: 0.3
 
     if :rand.uniform() < contract_ration do
-      add_membership(club, nil, nil, contact)
+    {_, club_membership} = add_membership(club, nil, nil, contact, nil)
 
       for department <- club.departments do
         number_of_departments = length(club.departments)
 
         if :rand.uniform() < 2 / number_of_departments do
           # make members of club be members in two departments by average
-          add_membership(club, department, nil, contact)
+          {_, department_membership} = add_membership(club, department, nil, contact, club_membership)
 
           if !Enum.empty?(department.groups) && :rand.uniform() < 0.6 do
             # make most members of a department member in one of the department's groups
             group = Enum.random(department.groups)
-            add_membership(club, department, group, contact)
+            {_, _} = add_membership(club, department, group, contact, department_membership)
           end
         end
       end
     end
   end
 
-  defp add_membership(club, department, group, contact) do
+  defp add_membership(club, department, group, contact, preconditional_membership) do
     fees =
       cond do
         group != nil -> Finance.list_contract_fee_options(group, contact.id)
@@ -252,6 +252,7 @@ defmodule Sportyweb.ContactSeedHelper do
 
     department_id = if department != nil, do: department.id, else: nil
     group_id = if group != nil, do: group.id, else: nil
+    preconditional_membership_id =  if preconditional_membership != nil , do: preconditional_membership.id, else: nil
 
     fee = Enum.random(fees)
 
@@ -287,7 +288,9 @@ defmodule Sportyweb.ContactSeedHelper do
         contact_id: contact.id,
         contact: contact,
         contract: contract,
-        contract_id: contract.id
+        contract_id: contract.id,
+        preconditional_membership_id: preconditional_membership_id,
+        preconditional_membership: preconditional_membership
       })
 
     {contract, membership}

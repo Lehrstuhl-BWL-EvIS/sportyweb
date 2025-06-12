@@ -17,6 +17,9 @@ defmodule Sportyweb.Repo.Migrations.CreateMemberships do
       add :contract_id, references(:contracts, on_delete: :delete_all, type: :binary_id),
         null: false
 
+      add :preconditional_membership_id, references(:memberships, on_delete: :delete_all, type: :binary_id),
+          null: true
+
       timestamps(type: :utc_datetime)
     end
 

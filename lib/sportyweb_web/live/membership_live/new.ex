@@ -2,8 +2,9 @@ defmodule SportywebWeb.MembershipLive.New do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Finance
-  alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal
+  alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.Membership
   alias Sportyweb.Organization
   alias Sportyweb.Personal
 
@@ -61,6 +62,7 @@ defmodule SportywebWeb.MembershipLive.New do
     contract = %Contract{
       club: club,
       club_id: club.id,
+      signing_date: Date.utc_today(),
       start_date: Date.utc_today(),
       department: department,
       department_id: if(department == nil, do: nil, else: department.id),
@@ -72,12 +74,15 @@ defmodule SportywebWeb.MembershipLive.New do
 
     contract_changeset = Legal.change_contract(contract)
 
+    other_memberships = if contact == nil, do: [], else: Legal.list_memberships_of_contact(contact.id, [:club, :department, :group])
+
     socket
     |> assign(club: club)
     |> assign(contact: contact)
     |> assign(departments: departments)
     |> assign(groups: groups)
     |> assign(contract: contract)
+    |> assign(other_memberships: other_memberships)
     |> assign(page_title: "Neue Mitgliedschaft anlegen")
     |> assign(contract_form: to_form(contract_changeset))
     |> update_group_options(%{"department_id" => contract.department_id})
@@ -103,7 +108,7 @@ defmodule SportywebWeb.MembershipLive.New do
   end
 
   @impl true
-  def handle_event("save", %{"contract" => contract_params}, socket) do
+  def handle_event("save", %{"contract" => contract_params, "preconditional_membership_id" => preconditional_membership_id}, socket) do
     contract_params =
       Enum.into(contract_params, %{
         "club_id" => socket.assigns.club.id,
@@ -120,7 +125,8 @@ defmodule SportywebWeb.MembershipLive.New do
           department_id: contract.department_id,
           group_id: contract.group_id,
           contact_id: contract.contact_id,
-          contract_id: contract.id
+          contract_id: contract.id,
+          preconditional_membership_id: preconditional_membership_id
         }
 
         case Legal.create_membership(membership) do
@@ -182,31 +188,24 @@ defmodule SportywebWeb.MembershipLive.New do
        }) do
     contact = socket.assigns.contact
 
-    organization =
+    matching_memberships =
       cond do
         group_id != nil && group_id != "" ->
-          find_by_id(socket.assigns.groups, group_id)
-
+          Enum.filter(socket.assigns.other_memberships, fn m -> m.group_id == group_id end)
         department_id != nil && department_id != "" ->
-          find_by_id(socket.assigns.departments, department_id)
+          Enum.filter(socket.assigns.other_memberships, fn m -> m.department_id == department_id end)
 
         true ->
-          socket.assigns.club
+         socket.assigns.other_memberships
       end
 
-    other_memberships =
-      if contact == nil do
-        []
-      else
-        Legal.list_memberships_of_contract_in(contact.id, organization.id)
-      end
-
-    if Enum.empty?(other_memberships) do
+    if Enum.empty?(matching_memberships) do
       assign(socket, :duplicated_membership_error, nil)
     else
-      other_id = Enum.at(other_memberships, 0).id
+      other_membership = Enum.at(matching_memberships, 0)
+      other_id = other_membership.id
       contact_name = contact.name
-      organization_name = organization.name
+      organization_name = Membership.get_organization(other_membership).name
 
       error_details = %{
         other_id: other_id,

@@ -51,7 +51,7 @@
         </div>
 
         <div class="col-span-12 md:col-span-4">
-          <.input field={@contract_form[:signing_date]} type="date" label="Unterzeichnungsdatum" />
+          <.input field={@contract_form[:signing_date]} type="date" label="Aufnahmedatum" />
         </div>
         <div class="col-span-12 md:col-span-4">
           <.input field={@contract_form[:start_date]} type="date" label="Mitgliedschaft ab" />
@@ -70,6 +70,24 @@
           />
         </div>
       </.input_grid>
+
+        <.input_grid>
+            <div class="col-span-12 md:col-span-8">
+                <.input
+                    name="preconditional_membership_id"
+                    value="nil"
+                    type="select"
+                    label="geknüpft an"
+                    options={
+                        @other_memberships
+                        |> Enum.map(&{"Mitgliedschaft in #{Membership.get_organization(&1).name}", &1.id})
+                    }
+                    prompt="an keine andere Mitgliedschaft geknüpft "
+                />
+            </div>
+        </.input_grid>
+
+
     </.input_grids>
 
     <:actions>
