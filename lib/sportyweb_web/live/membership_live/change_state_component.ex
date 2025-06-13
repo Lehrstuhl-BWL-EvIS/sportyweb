@@ -4,6 +4,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Legal.Membership
   alias Sportyweb.Legal
+  alias Sportyweb.Person.ContactChangeNotifier
 
   @impl true
   def render(assigns) do
@@ -214,7 +215,6 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     |> assign(:fee_id_error, fee_id_error)
     |> assign(:allow_save, signing_date_error == nil && start_date_error == nil && fee_id_error == nil)
 
-    IO.puts("allow_save: #{socket.assigns.allow_save}")
     {:noreply, socket}
   end
 
@@ -307,7 +307,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   @impl true
   def handle_event("save_dialog", %{"new_state" => "TERMINATED", "termination_date" => termination_date, "archive_date" => archive_date} = args, socket ) do
     organization_name = Membership.print_organization(socket.assigns.membership)
-    message = "Ihr Aufnahmeantrag für #{organization_name} wurde gekündigt."
+    message = "Ihre Mitgliedschaft in #{organization_name} wurde gekündigt."
     membership_change = %{state: "TERMINATED"}
     contract_change = %{termination_date: termination_date, archive_date: archive_date, reactivation_date: nil}
     execute_update(message, membership_change, contract_change, args, socket)
@@ -407,9 +407,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
       if Enum.empty?(contact.emails) do
         raise "no e-mail known of #{contact.name}"
       else
-        email = Contact.get_most_relevant_email(contact).address
-        # TODO
-        IO.inspect("e-mail to #{email}: #{message}")
+        ContactChangeNotifier.deliver_membership_state_change(contact, message)
       end
     end
   end
@@ -418,7 +416,6 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     following_memberships = socket.assigns.following_memberships
     if update_following_memberships do
       for membership <- following_memberships do
-        IO.inspect("update contract of #{membership.id}")
         update_contract(membership, contract_changes)
         {:ok, _} = Legal.update_membership(membership, membership_changes)
       end
