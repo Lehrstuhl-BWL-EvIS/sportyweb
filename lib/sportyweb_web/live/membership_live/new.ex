@@ -18,32 +18,38 @@ defmodule SportywebWeb.MembershipLive.New do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
+  defp get_wanted_contact(params) do
+    case params["contact"] do
+      nil -> nil
+      contact_id -> Personal.get_contact!(contact_id)
+    end
+  end
+
+  defp get_wanted_group(params) do
+    case params["group"] do
+      nil -> nil
+      group_id -> Organization.get_group!(group_id, [:fees, department: [:fees, :groups]])
+    end
+  end
+
+  defp get_wanted_department(group, params) do
+    cond do
+      group != nil ->
+        group.department
+
+      params["department"] != nil ->
+        Organization.get_department!(params["department"], [:fees, groups: [:fees]])
+
+      true ->
+        nil
+    end
+  end
+
   defp apply_action(socket, :new, %{"club_id" => club_id} = params) do
     club = Organization.get_club!(club_id, departments: [:fees, groups: [:fees]])
-
-    contact =
-      case params["contact"] do
-        nil -> nil
-        contact_id -> Personal.get_contact!(contact_id)
-      end
-
-    group =
-      case params["group"] do
-        nil -> nil
-        group_id -> Organization.get_group!(group_id, [:fees, department: [:fees, :groups]])
-      end
-
-    department =
-      cond do
-        group != nil ->
-          group.department
-
-        params["department"] != nil ->
-          Organization.get_department!(params["department"], [:fees, groups: [:fees]])
-
-        true ->
-          nil
-      end
+    contact = get_wanted_contact(params)
+    group = get_wanted_group(params)
+    department = get_wanted_department(group, params)
 
     departments =
       if department != nil do
@@ -74,7 +80,10 @@ defmodule SportywebWeb.MembershipLive.New do
 
     contract_changeset = Legal.change_contract(contract)
 
-    other_memberships = if contact == nil, do: [], else: Legal.list_memberships_of_contact(contact.id, [:club, :department, :group])
+    other_memberships =
+      if contact == nil,
+        do: [],
+        else: Legal.list_memberships_of_contact(contact.id, [:club, :department, :group])
 
     socket
     |> assign(club: club)
@@ -108,7 +117,14 @@ defmodule SportywebWeb.MembershipLive.New do
   end
 
   @impl true
-  def handle_event("save", %{"contract" => contract_params, "preconditional_membership_id" => preconditional_membership_id}, socket) do
+  def handle_event(
+        "save",
+        %{
+          "contract" => contract_params,
+          "preconditional_membership_id" => preconditional_membership_id
+        },
+        socket
+      ) do
     contract_params =
       Enum.into(contract_params, %{
         "club_id" => socket.assigns.club.id,
@@ -189,7 +205,9 @@ defmodule SportywebWeb.MembershipLive.New do
        }) do
     contact = socket.assigns.contact
 
-    matching_membership = get_matching_membership(department_id, group_id, socket.assigns.other_memberships)
+    matching_membership =
+      get_matching_membership(department_id, group_id, socket.assigns.other_memberships)
+
     if matching_membership == nil do
       assign(socket, :duplicated_membership_error, nil)
     else
@@ -215,8 +233,12 @@ defmodule SportywebWeb.MembershipLive.New do
     cond do
       group_id != nil && group_id != "" ->
         Enum.find(other_memberships, fn m -> m.group_id == group_id end)
+
       department_id != nil && department_id != "" ->
-        Enum.find(other_memberships, fn m -> m.department_id == department_id && m.group_id == nil end)
+        Enum.find(other_memberships, fn m ->
+          m.department_id == department_id && m.group_id == nil
+        end)
+
       true ->
         Enum.find(other_memberships, fn m -> m.department_id == nil && m.group_id == nil end)
     end
@@ -224,16 +246,17 @@ defmodule SportywebWeb.MembershipLive.New do
 
   def print_department_option(department, other_memberships) do
     matching_membership = get_matching_membership(department.id, nil, other_memberships)
+
     if matching_membership == nil do
       {department.name, department.id}
-      else
+    else
       {"-- #{department.name} --", department.id}
     end
   end
 
-
   def print_group_option(group, other_memberships) do
     matching_membership = get_matching_membership(nil, group.id, other_memberships)
+
     if matching_membership == nil do
       {group.name, group.id}
     else

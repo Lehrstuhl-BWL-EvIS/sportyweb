@@ -5,23 +5,23 @@
 <.card class="mb-5">
   <.input_grids>
     <.input_grid>
-        <div class="col-span-12 md:col-span-4">
-            <.label>In</.label>
-            {Membership.get_organization(@membership).name}
-        </div>
+      <div class="col-span-12 md:col-span-4">
+        <.label>In</.label>
+        {Membership.get_organization(@membership).name}
+      </div>
 
-        <div class="col-span-12 md:col-span-4">
-        </div>
+      <div class="col-span-12 md:col-span-4"></div>
 
-        <div class="col-span-12 md:col-span-4">
-            <.label>&nbsp;</.label>
-        <.link :if={@membership.contract != nil}
-            navigate={~p"/contracts/#{@membership.contract}"}
-            class="text-indigo-600 hover:underline"
+      <div class="col-span-12 md:col-span-4">
+        <.label>&nbsp;</.label>
+        <.link
+          :if={@membership.contract != nil}
+          navigate={~p"/contracts/#{@membership.contract}"}
+          class="text-indigo-600 hover:underline"
         >
-            Zum Vertrag
+          Zum Vertrag
         </.link>
-        </div>
+      </div>
 
       <div class="col-span-12 md:col-span-4">
         <.label>Kontakt</.label>
@@ -33,16 +33,15 @@
         </.link>
       </div>
       <div class="col-span-12 md:col-span-4">
-          <%= if @membership.contact.type == "person" do %>
-                <.label>Alter</.label>
-                {Contact.age_in_years(@membership.contact)}
-            <% end %>
+        <%= if @membership.contact.type == "person" do %>
+          <.label>Alter</.label>
+          {Contact.age_in_years(@membership.contact)}
+        <% end %>
       </div>
       <div class="col-span-12 md:col-span-4">
         <.label>Geschlecht</.label>
         {get_key_for_value(Contact.get_valid_genders(), @membership.contact.person_gender)}
       </div>
-
     </.input_grid>
   </.input_grids>
 </.card>
@@ -80,110 +79,115 @@
   </.simple_form>
 </.card>
 
-
-
 <.card class="mb-5">
-    <.input_grids>
-      <.input_grid>
-        <div class="col-span-12 md:col-span-3">
-            <.label>Status</.label>
-            <.icon name={Membership.get_state_icon(@membership).icon} class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(@membership).color}"} />
-            {get_key_for_value(Membership.get_valid_states(), @membership.state)}
-        </div>
-        <div :if={@membership.contract != nil}
-            class="col-span-12 md:col-span-3">
-            <.label>Mitglied seit</.label>
-            {format_date_field_dmy(@membership.contract.start_date)}
-        </div>
-        <div :if={@membership.contract != nil && @membership.contract.termination_date != nil}
-             class="col-span-12 md:col-span-3">
-            <%= case @membership.state do %>
-                <% "DECEASED" -> %>
-                    <.label>Verstorben am</.label>
-                <% "SUSPENDED" -> %>
-                    <.label>Ausgeschlossen am</.label>
-                <% _ -> %>
-                <.label>Kündigungsdatum</.label>
-            <% end %>
-            {format_date_field_dmy(@membership.contract.termination_date)}
-        </div>
-        <div :if={@membership.contract != nil && @membership.contract.archive_date != nil }
-             class="col-span-12 md:col-span-3">
-            <.label>Ende der Mitgliedschaft</.label>
-            {format_date_field_dmy(@membership.contract.archive_date)}
-        </div>
-        <div :if={@membership.reactivation_date != nil} class="col-span-12 md:col-span-3">
-            <.label>Pausiert bis</.label>
-            {format_date_field_dmy(@membership.reactivation_date)}
-        </div>
-        <div :if={@membership.suspension_reason != ""} class="col-span-12 md:col-span-6">
-            <.label>Ausgeschlossen wegen</.label>
-            {@membership.suspension_reason}
-        </div>
+  <.input_grids>
+    <.input_grid>
+      <div class="col-span-12 md:col-span-3">
+        <.label>Status</.label>
+        <.icon
+          name={Membership.get_state_icon(@membership).icon}
+          class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(@membership).color}"}
+        />
+        {get_key_for_value(Membership.get_valid_states(), @membership.state)}
+      </div>
+      <div :if={@membership.contract != nil} class="col-span-12 md:col-span-3">
+        <.label>Mitglied seit</.label>
+        {format_date_field_dmy(@membership.contract.start_date)}
+      </div>
+      <div
+        :if={@membership.contract != nil && @membership.contract.termination_date != nil}
+        class="col-span-12 md:col-span-3"
+      >
+        <%= case @membership.state do %>
+          <% "DECEASED" -> %>
+            <.label>Verstorben am</.label>
+          <% "SUSPENDED" -> %>
+            <.label>Ausgeschlossen am</.label>
+          <% _ -> %>
+            <.label>Kündigungsdatum</.label>
+        <% end %>
+        {format_date_field_dmy(@membership.contract.termination_date)}
+      </div>
+      <div
+        :if={@membership.contract != nil && @membership.contract.archive_date != nil}
+        class="col-span-12 md:col-span-3"
+      >
+        <.label>Ende der Mitgliedschaft</.label>
+        {format_date_field_dmy(@membership.contract.archive_date)}
+      </div>
+      <div :if={@membership.reactivation_date != nil} class="col-span-12 md:col-span-3">
+        <.label>Pausiert bis</.label>
+        {format_date_field_dmy(@membership.reactivation_date)}
+      </div>
+      <div :if={@membership.suspension_reason != ""} class="col-span-12 md:col-span-6">
+        <.label>Ausgeschlossen wegen</.label>
+        {@membership.suspension_reason}
+      </div>
 
-        <div class="col-span-12 md:col-span-12">
-        </div>
+      <div class="col-span-12 md:col-span-12"></div>
 
-        <div class="col-span-12 md:col-span-12 flex gap-4">
-            <%= for action <- SportywebWeb.MembershipLive.ChangeStateComponent.get_possible_actions(@membership.state) do %>
-                <.live_component
-                id={"#{action}_component"}
-                module={SportywebWeb.MembershipLive.ChangeStateComponent}
-                membership={@membership}
-                action={action}
-                fee_options={@fee_options}
-                following_memberships={@following_memberships}
-                />
-            <% end %>
-            </div>
-      </.input_grid>
-    </.input_grids>
+      <div class="col-span-12 md:col-span-12 flex gap-4">
+        <%= for action <- SportywebWeb.MembershipLive.ChangeStateComponent.get_possible_actions(@membership.state) do %>
+          <.live_component
+            id={"#{action}_component"}
+            module={SportywebWeb.MembershipLive.ChangeStateComponent}
+            membership={@membership}
+            action={action}
+            fee_options={@fee_options}
+            following_memberships={@following_memberships}
+          />
+        <% end %>
+      </div>
+    </.input_grid>
+  </.input_grids>
 </.card>
 
-
 <.card class="mb-5">
-    <.input_grids>
+  <.input_grids>
     <.simple_form
-        for={@membership_form}
-        id="preconditional_membership_form"
-        phx-submit="preconditional_membership_submitted"
-        >
-            <.input_grid>
-                <div class="col-span-12 md:col-span-8">
-                    <.input
-                    field={@membership_form[:preconditional_membership_id]}
-                    type="select"
-                    label="geknüpft an"
-                    options={
-                        @other_memberships
-                        |> Enum.map(&{"Mitgliedschaft in #{Membership.get_organization(&1).name} - #{get_key_for_value(Membership.get_valid_states(), &1.state)}", &1.id})
-                    }
-                    prompt="an keine übergeordnete Mitgliedschaft geknüpft"
-                    />
-                </div>
+      for={@membership_form}
+      id="preconditional_membership_form"
+      phx-submit="preconditional_membership_submitted"
+    >
+      <.input_grid>
+        <div class="col-span-12 md:col-span-8">
+          <.input
+            field={@membership_form[:preconditional_membership_id]}
+            type="select"
+            label="geknüpft an"
+            options={
+              @other_memberships
+              |> Enum.map(
+                &{"Mitgliedschaft in #{Membership.get_organization(&1).name} - #{get_key_for_value(Membership.get_valid_states(), &1.state)}",
+                 &1.id}
+              )
+            }
+            prompt="an keine übergeordnete Mitgliedschaft geknüpft"
+          />
+        </div>
 
-                <div class="col-span-12 md:col-span-1"></div>
+        <div class="col-span-12 md:col-span-1"></div>
 
-                <div class="col-span-12 md:col-span-3">
-                    <.label>&nbsp</.label>
-                <.button phx-disable-with="Speichern...">Verknüpfung ändern</.button>
-                </div>
-            </.input_grid>
+        <div class="col-span-12 md:col-span-3">
+          <.label>&nbsp</.label>
+          <.button phx-disable-with="Speichern...">Verknüpfung ändern</.button>
+        </div>
+      </.input_grid>
     </.simple_form>
 
-        <.input_grid :if={!Enum.empty?(@following_memberships)}>
-                <div class="col-span-12 md:col-span-12">
-                    <.label>Diese Mitgliedschaft ist die Voraussetzung für</.label>
-                </div>
-            <%= for membership <- @following_memberships do %>
-                <div class="col-span-12 md:col-span-8">
-                    <.cancel_button navigate={~p"/memberships/#{membership}/edit"}>
-                    Mitgliedschaft in {Membership.get_organization(membership).name}
-                    </.cancel_button>
-                </div>
-            <% end %>
-        </.input_grid>
-    </.input_grids>
+    <.input_grid :if={!Enum.empty?(@following_memberships)}>
+      <div class="col-span-12 md:col-span-12">
+        <.label>Diese Mitgliedschaft ist die Voraussetzung für</.label>
+      </div>
+      <%= for membership <- @following_memberships do %>
+        <div class="col-span-12 md:col-span-8">
+          <.cancel_button navigate={~p"/memberships/#{membership}/edit"}>
+            Mitgliedschaft in {Membership.get_organization(membership).name}
+          </.cancel_button>
+        </div>
+      <% end %>
+    </.input_grid>
+  </.input_grids>
 </.card>
 
 <.input_grids>

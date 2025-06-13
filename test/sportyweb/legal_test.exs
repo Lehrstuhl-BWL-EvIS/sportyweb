@@ -120,7 +120,8 @@ defmodule Sportyweb.LegalTest do
       valid_attrs = %{
         club_id: contract.club_id,
         contact_id: contract.contact_id,
-        contract_id: contract.id
+        contract_id: contract.id,
+        state: "ACTIVE"
       }
 
       assert {:ok, %Membership{}} = Legal.create_membership(valid_attrs)

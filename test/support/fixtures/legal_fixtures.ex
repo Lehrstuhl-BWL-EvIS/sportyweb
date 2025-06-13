@@ -47,7 +47,8 @@ defmodule Sportyweb.LegalFixtures do
         contact_id: contract.contact_id,
         department_id: contract.department_id,
         group_id: contract.group_id,
-        contract_id: contract.id
+        contract_id: contract.id,
+        state: "ACTIVE"
       })
       |> Sportyweb.Legal.create_membership()
 

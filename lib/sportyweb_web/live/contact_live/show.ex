@@ -36,7 +36,8 @@ defmodule SportywebWeb.ContactLive.Show do
         ]
       ])
 
-      requested_memberships = Enum.filter(contact.memberships, fn m -> m.state == "PENDING" || m.state == "REJECTED" end)
+    requested_memberships =
+      Enum.filter(contact.memberships, fn m -> m.state == "PENDING" || m.state == "REJECTED" end)
 
     {:noreply,
      socket

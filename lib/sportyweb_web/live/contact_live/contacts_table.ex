@@ -69,12 +69,15 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
           </:col>
           <:col :let={{_id, contact}} label="In" sortable filterable>
             <%= if Enum.empty?(contact.memberships) do %>
-               {format_string_field(nil)}
+              {format_string_field(nil)}
             <% else %>
               <%= for m <- sort_memberships(contact) do %>
                 <p>
-                <.icon name={Membership.get_state_icon(m).icon} class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(m).color}"} />
-                {Membership.get_organization(m).name}
+                  <.icon
+                    name={Membership.get_state_icon(m).icon}
+                    class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(m).color}"}
+                  />
+                  {Membership.get_organization(m).name}
                 </p>
               <% end %>
             <% end %>
@@ -182,7 +185,9 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
         end
 
       "In" ->
-        fn c -> Enum.map(c.membership, fn m -> Membership.get_organization(m).name end) |> Enum.join(" ") end
+        fn c ->
+          Enum.map_join(c.membership, "", fn m -> Membership.get_organization(m).name end)
+        end
 
       "Adresse" ->
         fn c -> PostalAddress.as_text(Contact.get_most_relevant_postal_address(c)) end

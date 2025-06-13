@@ -35,7 +35,7 @@ defmodule Sportyweb.Legal.Membership do
       [key: "pausiert", value: "PAUSED"],
       [key: "gekündigt", value: "TERMINATED"],
       [key: "verstorben", value: "DECEASED"],
-      [key: "ausgeschlossen", value: "SUSPENDED"],
+      [key: "ausgeschlossen", value: "SUSPENDED"]
     ]
   end
 
@@ -45,7 +45,7 @@ defmodule Sportyweb.Legal.Membership do
       "REJECTED" -> %{icon: "hero-exclamation-circle-mini", color: "text-zinc-80"}
       "ACTIVE" -> %{icon: "hero-check-badge", color: "text-green-600"}
       "PAUSED" -> %{icon: "hero-calendar", color: "text-amber-600"}
-            _ -> %{icon: "hero-archive-box", color: "text-zinc-800"}
+      _ -> %{icon: "hero-archive-box", color: "text-zinc-800"}
     end
   end
 
@@ -65,9 +65,11 @@ defmodule Sportyweb.Legal.Membership do
   def print_organization(%Membership{:department_id => nil, :group_id => nil} = membership) do
     "Verein #{membership.club.name}"
   end
+
   def print_organization(%Membership{:group_id => nil} = membership) do
     "Abteilung #{membership.department.name}"
   end
+
   def print_organization(%Membership{} = membership) do
     "Gruppe #{membership.group.name}"
   end
@@ -96,8 +98,8 @@ defmodule Sportyweb.Legal.Membership do
       :state
     ])
     |> validate_inclusion(
-         :state,
-         get_valid_states() |> Enum.map(fn state -> state[:value] end)
+      :state,
+      get_valid_states() |> Enum.map(fn state -> state[:value] end)
     )
     |> validate_required_contract()
   end

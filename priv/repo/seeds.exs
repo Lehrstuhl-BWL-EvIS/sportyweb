@@ -223,14 +223,15 @@ defmodule Sportyweb.ContactSeedHelper do
     contract_ration = if is_person, do: 0.9, else: 0.3
 
     if :rand.uniform() < contract_ration do
-    {_, club_membership} = add_membership(club, nil, nil, contact, nil)
+      {_, club_membership} = add_membership(club, nil, nil, contact, nil)
 
       for department <- club.departments do
         number_of_departments = length(club.departments)
 
         if :rand.uniform() < 2 / number_of_departments do
           # make members of club be members in two departments by average
-          {_, department_membership} = add_membership(club, department, nil, contact, club_membership)
+          {_, department_membership} =
+            add_membership(club, department, nil, contact, club_membership)
 
           if !Enum.empty?(department.groups) && :rand.uniform() < 0.6 do
             # make most members of a department member in one of the department's groups
@@ -250,34 +251,39 @@ defmodule Sportyweb.ContactSeedHelper do
         true -> Finance.list_contract_fee_options(club, contact.id)
       end
 
-
     department_id = if department != nil, do: department.id, else: nil
     group_id = if group != nil, do: group.id, else: nil
-    preconditional_membership_id =  if preconditional_membership != nil , do: preconditional_membership.id, else: nil
+
+    preconditional_membership_id =
+      if preconditional_membership != nil, do: preconditional_membership.id, else: nil
 
     fee = Enum.random(fees)
-    state = if preconditional_membership != nil do
-      preconditional_membership.state
-    else
-      Membership.get_valid_states()
-      |> Enum.map(fn state -> state[:value] end)
-      |> Enum.random()
-    end
+
+    state =
+      if preconditional_membership != nil do
+        preconditional_membership.state
+      else
+        Membership.get_valid_states()
+        |> Enum.map(fn state -> state[:value] end)
+        |> Enum.random()
+      end
 
     today = Date.utc_today()
     today_next_year = Date.new!(today.year + 1, today.month, today.day)
-    end_of_year = Date.new!(today.year, 12,31)
+    end_of_year = Date.new!(today.year, 12, 31)
 
     suspension_reason = if state == "SUSPENDED", do: "Beitragsrückstand", else: ""
     reactivation_date = if state == "PAUSED", do: today_next_year, else: nil
-    {termination_date, archive_date} = cond do
-      state == "TERMINATED" -> {today, today}
-      state == "DECEASED" || state == "SUSPENDED" -> {today, end_of_year}
-      true -> {nil, nil}
-    end
+
+    {termination_date, archive_date} =
+      cond do
+        state == "TERMINATED" -> {today, today}
+        state == "DECEASED" || state == "SUSPENDED" -> {today, end_of_year}
+        true -> {nil, nil}
+      end
 
     contract =
-    if state == "PENDING" || state == "REJECTED" do
+      if state == "PENDING" || state == "REJECTED" do
         nil
       else
         Repo.insert!(%Contract{
@@ -309,7 +315,7 @@ defmodule Sportyweb.ContactSeedHelper do
         contact_id: contact.id,
         contact: contact,
         contract: contract,
-        contract_id: (if contract == nil, do: nil, else: contract.id),
+        contract_id: if(contract == nil, do: nil, else: contract.id),
         preconditional_membership_id: preconditional_membership_id,
         preconditional_membership: preconditional_membership,
         state: state,

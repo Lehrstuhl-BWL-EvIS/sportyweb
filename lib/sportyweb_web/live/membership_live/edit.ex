@@ -2,7 +2,6 @@ defmodule SportywebWeb.MembershipLive.Edit do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Legal
-  alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.Membership
   alias Sportyweb.Finance
   alias Sportyweb.Personal.Contact
@@ -25,8 +24,16 @@ defmodule SportywebWeb.MembershipLive.Edit do
         contract: [:fee]
       ])
 
-    other_memberships =  Legal.list_memberships_of_contact(membership.contact.id, [:club, :department, :group, :contract])
-      |> Enum.filter(fn m -> m.id != membership.id end)
+    all_memberships_of_contact =
+      Legal.list_memberships_of_contact(membership.contact.id, [
+        :club,
+        :department,
+        :group,
+        :contract
+      ])
+
+    other_memberships = Enum.filter(all_memberships_of_contact, fn m -> m.id != membership.id end)
+
     following_memberships = get_all_following_memberships(membership)
 
     organization = Membership.get_organization(membership)
@@ -41,17 +48,18 @@ defmodule SportywebWeb.MembershipLive.Edit do
       |> assign(:club, membership.club)
       |> assign(:other_memberships, other_memberships)
       |> assign(:following_memberships, following_memberships)
-      |>assign(:membership_form, to_form(Legal.change_membership(membership)))
-      |> assign(:preconditional_membership_form, to_form(%{"preconditional_membership_id" => membership.preconditional_membership_id}))
+      |> assign(:membership_form, to_form(Legal.change_membership(membership)))
+      |> assign(
+        :preconditional_membership_form,
+        to_form(%{"preconditional_membership_id" => membership.preconditional_membership_id})
+      )
       |> assign_new(:contract_form, fn ->
         if membership.contract == nil do
-            nil
-          else
-            to_form(Legal.change_contract(membership.contract))
+          nil
+        else
+          to_form(Legal.change_contract(membership.contract))
         end
-
       end)
-
 
     {:noreply, socket}
   end
@@ -116,30 +124,43 @@ defmodule SportywebWeb.MembershipLive.Edit do
     case Legal.update_membership(socket.assigns.membership, membership) do
       {:ok, _contract} ->
         {:noreply, socket |> put_flash(:info, "Verknüpfung aktualisiert")}
+
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, membership_form: to_form(changeset))}
     end
   end
 
   defp get_all_following_memberships(membership) do
-    recursive_get_following_memberships([membership], membership.following_memberships)
-    |> Enum.filter(fn m -> m.id != membership.id end)
-  end
-  defp recursive_get_following_memberships(found_memberships, []), do: found_memberships
-  defp recursive_get_following_memberships(found_memberships, memberships_to_check) do
-    memberships_ids_to_load = memberships_to_check
-    |> Enum.map(fn m -> m.id end)
-    |> Enum.uniq()
-    |> Enum.filter(fn m ->
-      # seems to be a loop of memberships
-      # -> do not continue loading, following membership was loaded before
-      Enum.find(found_memberships, fn  o -> o.id == m end) == nil
-    end)
+    all_following_memberships =
+      recursive_get_following_memberships([membership], membership.following_memberships)
 
-    next_memberships = Legal.list_memberships(memberships_ids_to_load, [:following_memberships, :department, :group, :club, :contract])
+    Enum.filter(all_following_memberships, fn m -> m.id != membership.id end)
+  end
+
+  defp recursive_get_following_memberships(found_memberships, []), do: found_memberships
+
+  defp recursive_get_following_memberships(found_memberships, memberships_to_check) do
+    memberships_ids_to_load =
+      memberships_to_check
+      |> Enum.map(fn m -> m.id end)
+      |> Enum.uniq()
+      |> Enum.filter(fn m ->
+        # seems to be a loop of memberships
+        # -> do not continue loading, following membership was loaded before
+        Enum.find(found_memberships, fn o -> o.id == m end) == nil
+      end)
+
+    next_memberships =
+      Legal.list_memberships(memberships_ids_to_load, [
+        :following_memberships,
+        :department,
+        :group,
+        :club,
+        :contract
+      ])
+
     found_memberships = Enum.concat(found_memberships, next_memberships)
     memberships_to_check = Enum.flat_map(next_memberships, fn m -> m.following_memberships end)
     recursive_get_following_memberships(found_memberships, memberships_to_check)
   end
-
 end

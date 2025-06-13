@@ -193,13 +193,13 @@ defmodule Sportyweb.Legal do
     Contract.changeset(contract, attrs)
   end
 
-
   def list_memberships(membership_ids, preloads) do
     query = from(m in Membership, where: m.id in ^membership_ids)
-    Repo.all(query)
+
+    query
+    |> Repo.all()
     |> Repo.preload(preloads)
   end
-
 
   def list_memberships_of_contact_in(contact_id, organization_id) do
     query =
@@ -214,9 +214,10 @@ defmodule Sportyweb.Legal do
   end
 
   def list_memberships_of_contact(contact_id, preloads) do
-    query =
-      from(m in Membership, where: m.contact_id == ^contact_id)
-    Repo.all(query)
+    query = from(m in Membership, where: m.contact_id == ^contact_id)
+
+    query
+    |> Repo.all()
     |> Repo.preload(preloads)
   end
 
