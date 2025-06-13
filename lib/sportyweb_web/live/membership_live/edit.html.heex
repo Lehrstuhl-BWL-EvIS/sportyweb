@@ -125,12 +125,12 @@
         </div>
 
         <div class="col-span-12 md:col-span-12 flex gap-4">
-            <%= for state <- SportywebWeb.MembershipLive.ChangeStateComponent.get_next_states(@membership) do %>
+            <%= for action <- SportywebWeb.MembershipLive.ChangeStateComponent.get_possible_actions(@membership.state) do %>
                 <.live_component
-                id={"change_state_to_#{state}_component"}
+                id={"#{action}_component"}
                 module={SportywebWeb.MembershipLive.ChangeStateComponent}
                 membership={@membership}
-                new_state={state}
+                action={action}
                 fee_options={@fee_options}
                 following_memberships={@following_memberships}
                 />

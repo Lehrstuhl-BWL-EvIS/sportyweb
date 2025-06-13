@@ -11,7 +11,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     ~H"""
     <div>
       <.button phx-click={show_modal("#{@id}_dialog")}>
-        {get_change_verb(@membership.state, @new_state)}
+        {print_action(@action)}
       </.button>
 
       <.modal id={"#{@id}_dialog"}>
@@ -23,45 +23,45 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
           phx-target={@myself}
         >
           <.input_grids>
-            <input type="text" name="new_state" id="new_state" class="hidden" value={@new_state} />
+            <input type="text" name="action" id="new_state" class="hidden" value={@action} />
             <.input_grid>
-                <%= if @new_state == "REJECTED" do %>
+                <%= if @action == "REJECT" do %>
                 <div class="col-span-12 md:col-span-12">
                     Soll der Aufnahmeantrag von {@membership.contact.name} in {Membership.print_organization(@membership)} abgelehnt werden?
                 </div>
                 <% end %>
 
-                <%= if @new_state == "ACTIVE" do %>
-                 <%= if @membership.state == "PENDING" || @membership.state == "REJECTED" do %>
-                    <div class="col-span-12 md:col-span-12">
-                      Soll {@membership.contact.name} als Mitglied in {Membership.print_organization(@membership)} aufgenommen werden?
-                    </div>
-                    <div class="col-span-12 md:col-span-6">
-                      <.input name="signing_date" type="date" label="Aufnahmedatum" value={@initial_signing_date} />
-                      <.error :if={@signing_date_error != nil}>{@signing_date_error}</.error>
-                    </div>
-                    <div class="col-span-12 md:col-span-6">
-                      <.input name="start_date" type="date" label="Beginn der Mitgliedschaft" value={@initial_start_date} />
-                      <.error :if={@start_date_error != nil}>{@start_date_error}</.error>
-                    </div>
-                    <div class="col-span-12 md:col-span-12">
-                      <.input name="fee_id" type="select" label="Beitrag" value={@initial_fee_id}
-                          options={
-                            @fee_options
-                            |> Enum.map(&{"#{&1.name}: #{&1.amount}", &1.id})
-                          }
-                          prompt="Bitte auswählen"
-                        />
-                      <.error :if={@fee_id_error != nil}>{@fee_id_error}</.error>
-                    </div>
-                  <% else %>
-                     <div class="col-span-12 md:col-span-12">
-                        Soll die Mitgliedschaft von {@membership.contact.name} in {Membership.print_organization(@membership)} reaktiviert werden?
-                    </div>
-                  <% end %>
+                <%= if @action == "ADMIT" do %>
+                  <div class="col-span-12 md:col-span-12">
+                    Soll {@membership.contact.name} als Mitglied in {Membership.print_organization(@membership)} aufgenommen werden?
+                  </div>
+                  <div class="col-span-12 md:col-span-6">
+                    <.input name="signing_date" type="date" label="Aufnahmedatum" value={@initial_signing_date} />
+                    <.error :if={@signing_date_error != nil}>{@signing_date_error}</.error>
+                  </div>
+                  <div class="col-span-12 md:col-span-6">
+                    <.input name="start_date" type="date" label="Beginn der Mitgliedschaft" value={@initial_start_date} />
+                    <.error :if={@start_date_error != nil}>{@start_date_error}</.error>
+                  </div>
+                  <div class="col-span-12 md:col-span-12">
+                    <.input name="fee_id" type="select" label="Beitrag" value={@initial_fee_id}
+                        options={
+                          @fee_options
+                          |> Enum.map(&{"#{&1.name}: #{&1.amount}", &1.id})
+                        }
+                        prompt="Bitte auswählen"
+                      />
+                    <.error :if={@fee_id_error != nil}>{@fee_id_error}</.error>
+                  </div>
                 <% end %>
 
-                <%= if @new_state == "PAUSED" do %>
+                <%= if @action == "REACTIVATE" do %>
+                   <div class="col-span-12 md:col-span-12">
+                      Soll die Mitgliedschaft von {@membership.contact.name} in {Membership.print_organization(@membership)} reaktiviert werden?
+                  </div>
+              <% end %>
+
+                <%= if @action == "PAUSE" do %>
                   <div class="col-span-12 md:col-span-12">
                     Soll die Mitgliedschaft von {@membership.contact.name} in {Membership.print_organization(@membership)} pausiert werden?
                   </div>
@@ -71,7 +71,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                   </div>
                 <% end %>
 
-                <%= if @new_state == "TERMINATED" do %>
+                <%= if @action == "TERMINATE" do %>
                   <div class="col-span-12 md:col-span-12">
                     Soll die Mitgliedschaft von {@membership.contact.name} in {Membership.print_organization(@membership)} gekündigt werden?
                   </div>
@@ -85,7 +85,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                    </div>
                 <% end %>
 
-                <%= if @new_state == "DECEASED" do %>
+                <%= if @action == "DECEASE" do %>
                   <div class="col-span-12 md:col-span-12">
                     Tod von {@membership.contact.name} hinterlegen und die Mitgliedschaft beenden?
                   </div>
@@ -95,7 +95,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                    </div>
                 <% end %>
 
-                <%= if @new_state == "SUSPENDED" do %>
+                <%= if @action == "SUSPEND" do %>
                   <div class="col-span-12 md:col-span-12">
                     Soll {@membership.contact.name} aus {Membership.print_organization(@membership)} ausgeschlossen werden?
                   </div>
@@ -128,16 +128,16 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                   name="update_following_memberships"
                   value="true"
                   type="checkbox"
-                  label={"#{Enum.count(@following_memberships)} zugehörige Mitgliedschaften #{get_change_verb(@membership.state, @new_state)}"}
+                  label={"#{Enum.count(@following_memberships)} zugehörige Mitgliedschaften #{print_action(@action)}"}
                 />
               </div>
 
               <div class="col-span-12 md:col-span-12 flex gap-4 justify-end">
                 <.button :if={!@allow_save} disabled={true} class="bg-zinc-200">
-                  {get_change_verb(@membership.state, @new_state)}
+                  {print_action(@action)}
                 </.button>
                 <.button :if={@allow_save}>
-                  {get_change_verb(@membership.state, @new_state)}
+                  {print_action(@action)}
                 </.button>
                 <.button phx-click={hide_modal("#{@id}_dialog")}>
                   Abbrechen
@@ -153,29 +153,28 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
 
   @impl true
   def update(assigns, socket) do
-    new_state = assigns.new_state
-    old_state = assigns.membership.state
+    action = assigns.action
     today = Date.utc_today()
     end_of_year = Date.new!(Date.utc_today().year, 12,31)
 
-    {initial_signing_date, initial_start_date, initial_fee_id} = if new_state == "ACTIVE" && (old_state == "PENDING" || old_state == "REJECTED") do
+    {initial_signing_date, initial_start_date, initial_fee_id} = if action == "ADMIT" do
         {today, today, nil}
       else
         {nil, nil, nil}
     end
-    {initial_termination_date, initial_archive_date} = if new_state == "TERMINATED" do
+    {initial_termination_date, initial_archive_date} = if action == "TERMINATE" do
       {today, end_of_year}
     else
       {nil, nil}
     end
 
-    {initial_suspension_date, initial_suspension_reason} = if new_state == "SUSPENDED" do
+    {initial_suspension_date, initial_suspension_reason} = if action == "SUSPEND" do
         {today, nil}
       else
         {nil, nil}
     end
 
-    initial_send_email = if new_state == "DECEASED" do
+    initial_send_email = if action == "DECEASE" do
         false
       else
         !Enum.empty?(assigns.membership.contact.emails)
@@ -191,8 +190,9 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     |> assign(:initial_suspension_date, initial_suspension_date)
     |> assign(:initial_suspension_reason, initial_suspension_reason)
     |> assign(:initial_send_email, initial_send_email)
+    |> assign(:action, action)
 
-    initial_values = %{"new_state" => new_state,
+    initial_values = %{"action" => action,
       "signing_date" => initial_signing_date, "start_date" => initial_start_date, "fee_id" => initial_fee_id,
       "termination_date" => initial_termination_date, "archive_date"=> initial_archive_date,
       "suspension_date"=> initial_suspension_date, "suspension_reason"=> initial_suspension_reason,
@@ -204,7 +204,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   @impl true
-  def handle_event("validate_dialog", %{"new_state" => "ACTIVE", "signing_date" => signing_date, "start_date" => start_date, "fee_id" => fee_id}, socket) do
+  def handle_event("validate_dialog", %{"action" => "ADMIT", "signing_date" => signing_date, "start_date" => start_date, "fee_id" => fee_id}, socket) do
     signing_date_error = error_if_nil(signing_date, "Bitte das Datum angeben, an dem der Aufnahmeantrag angenommen wurde.")
     start_date_error = error_if_nil(start_date, "Bitte das Datum angeben, zu dem die Mitgliedschaft beginnt.")
     fee_id_error = error_if_nil(fee_id, "Bitte eine Gebühr auswählen.")
@@ -219,40 +219,30 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   @impl true
-  def handle_event("save_dialog", %{"new_state" => "ACTIVE", "signing_date" => signing_date, "start_date" => start_date, "fee_id" => fee_id} = args, socket ) do
+  def handle_event("save_dialog", %{"action" => "ADMIT", "signing_date" => signing_date, "start_date" => start_date, "fee_id" => fee_id} = args, socket ) do
     organization_name = Membership.print_organization(socket.assigns.membership)
-    message = "Aufnahmeantrag für die Mitgliedschaft in #{organization_name} wurde angenommen."
+    message = "Ihr Aufnahmeantrag für die Mitgliedschaft im / in der #{organization_name} wurde angenommen."
     membership_change = %{state: "ACTIVE", reactivation_date: nil, suspension_reason: ""}
     contract_change = %{start_date: start_date, signing_date: signing_date, fee_id: fee_id}
     execute_update(message, membership_change, contract_change, args, socket)
   end
 
   @impl true
-  def handle_event("validate_dialog", %{"new_state" => "ACTIVE"}, socket) do
-    old_state = socket.assigns.membership.state
-    if old_state == "PENDING" || old_state == "REJECTED" do
-      raise "when changing from #{old_state} to ACTIVE, signing_date, start_date and fee_id are required"
-    end
-
+  def handle_event("validate_dialog", %{"action" => "REACTIVATE"}, socket) do
     socket  = assign(socket, :allow_save, true)
     {:noreply, socket}
   end
 
   @impl true
-  def handle_event("save_dialog", %{"new_state" => "ACTIVE"} = args, socket ) do
-    old_state = socket.assigns.membership.state
-    if old_state == "PENDING" || old_state == "REJECTED" do
-      raise "when changing from #{old_state} to ACTIVE, signing_date, start_date and fee_id are required"
-    end
-
+  def handle_event("save_dialog", %{"action" => "REACTIVATE"} = args, socket ) do
     organization_name = Membership.print_organization(socket.assigns.membership)
-    message = "Ihre Mitgliedschaft in #{organization_name} wurde reaktiviert."
+    message = "Ihre Mitgliedschaft im / in der #{organization_name} wurde reaktiviert."
     membership_change = %{state: "ACTIVE", reactivation_date: nil, suspension_reason: ""}
     execute_update(message, membership_change, nil, args, socket)
   end
 
   @impl true
-  def handle_event("validate_dialog", %{"new_state" => "PAUSED", "reactivation_date" => reactivation_date}, socket) do
+  def handle_event("validate_dialog", %{"action" => "PAUSE", "reactivation_date" => reactivation_date}, socket) do
     reactivation_date_error = nil # is reactivation_date optional
 
     socket = socket
@@ -262,16 +252,16 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   @impl true
-  def handle_event("save_dialog", %{"new_state" => "PAUSED", "reactivation_date" => reactivation_date} = args, socket ) do
+  def handle_event("save_dialog", %{"action" => "PAUSE", "reactivation_date" => reactivation_date} = args, socket ) do
     organization_name = Membership.print_organization(socket.assigns.membership)
     {message, membership_change} = if reactivation_date != nil && reactivation_date != "" do
       {
-        "Ihre Mitgliedschaft in #{organization_name} wurde bis zum #{reactivation_date} pausiert.",
+        "Ihre Mitgliedschaft im / in der #{organization_name} wurde bis zum #{reactivation_date} pausiert.",
         %{state: "PAUSED", reactivation_date: reactivation_date}
       }
     else
       {
-        "Ihre Mitgliedschaft in #{organization_name} wurde pausiert.",
+        "Ihre Mitgliedschaft im / in der #{organization_name} wurde pausiert.",
         %{state: "PAUSED", reactivation_date: ""}
       }
     end
@@ -279,21 +269,21 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   @impl true
-  def handle_event("validate_dialog", %{"new_state" => "REJECTED"}, socket) do
+  def handle_event("validate_dialog", %{"action" => "REJECT"}, socket) do
     socket  = assign(socket, :allow_save, true)
     {:noreply, socket}
   end
 
   @impl true
-  def handle_event("save_dialog", %{"new_state" => "REJECTED"} = args, socket ) do
+  def handle_event("save_dialog", %{"action" => "REJECT"} = args, socket ) do
     organization_name = Membership.print_organization(socket.assigns.membership)
-    message = "Ihr Aufnahmeantrag für #{organization_name} wurde abgelehnt."
+    message = "Ihr Aufnahmeantrag für den / die #{organization_name} wurde abgelehnt."
     membership_change = %{state: "REJECTED"}
     execute_update(message, membership_change, nil, args, socket)
   end
 
   @impl true
-  def handle_event("validate_dialog", %{"new_state" => "TERMINATED", "termination_date" => termination_date, "archive_date" => archive_date}, socket) do
+  def handle_event("validate_dialog", %{"action" => "TERMINATE", "termination_date" => termination_date, "archive_date" => archive_date}, socket) do
     termination_date_error = error_if_nil(termination_date, "Bitte das Datum angeben, an dem das Mitglied gekündigt hat.")
     archive_date_error = error_if_nil(archive_date, "Bitte eine Datum angeben, zu welchem die Mitgliedschaft endet.")
 
@@ -305,16 +295,16 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   @impl true
-  def handle_event("save_dialog", %{"new_state" => "TERMINATED", "termination_date" => termination_date, "archive_date" => archive_date} = args, socket ) do
+  def handle_event("save_dialog", %{"action" => "TERMINATE", "termination_date" => termination_date, "archive_date" => archive_date} = args, socket ) do
     organization_name = Membership.print_organization(socket.assigns.membership)
-    message = "Ihre Mitgliedschaft in #{organization_name} wurde gekündigt."
+    message = "Ihre Mitgliedschaft im / in der #{organization_name} wurde gekündigt und endet zum #{archive_date}"
     membership_change = %{state: "TERMINATED"}
     contract_change = %{termination_date: termination_date, archive_date: archive_date, reactivation_date: nil}
     execute_update(message, membership_change, contract_change, args, socket)
   end
 
   @impl true
-  def handle_event("validate_dialog", %{"new_state" => "SUSPENDED", "suspension_date" => suspension_date, "suspension_reason" => suspension_reason}, socket) do
+  def handle_event("validate_dialog", %{"action" => "SUSPEND", "suspension_date" => suspension_date, "suspension_reason" => suspension_reason}, socket) do
     suspension_date_error = error_if_nil(suspension_date, "Bitte das Datum angeben, an dem das Mitglied ausgeschlossen wurde.")
     suspension_reason_error = error_if_nil(suspension_reason, "Bitte angeben, warum das Mitglied ausgeschlossen wurde.")
 
@@ -326,16 +316,20 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   @impl true
-  def handle_event("save_dialog", %{"new_state" => "SUSPENDED", "suspension_date" => suspension_date, "suspension_reason" => suspension_reason} = args, socket ) do
+  def handle_event("save_dialog", %{"action" => "SUSPEND", "suspension_date" => suspension_date, "suspension_reason" => suspension_reason} = args, socket ) do
     organization_name = Membership.print_organization(socket.assigns.membership)
-    message = "Sie wurden von der Mitgliedschaft in #{organization_name} ausgeschlossen."
+    message = if suspension_reason != nil && suspension_reason != "" do
+       "Sie wurden aufgrund von #{suspension_reason} zum #{suspension_date} von der Mitgliedschaft im / in der #{organization_name} ausgeschlossen."
+      else
+       "Sie wurden zum #{suspension_date} von der Mitgliedschaft im / in der #{organization_name} ausgeschlossen."
+    end
     membership_change = %{state: "SUSPENDED", suspension_reason: suspension_reason, reactivation_date: nil}
     contract_change = %{termination_date: suspension_date, archive_date: suspension_date}
     execute_update(message, membership_change, contract_change, args, socket)
   end
 
   @impl true
-  def handle_event("validate_dialog", %{"new_state" => "DECEASED", "date_of_death" => date_of_death}, socket) do
+  def handle_event("validate_dialog", %{"action" => "DECEASE", "date_of_death" => date_of_death}, socket) do
     date_of_death_error = error_if_nil(date_of_death, "Bitte das Datum angeben, an dem das Mitglied verstorben ist.")
 
     socket = socket
@@ -345,10 +339,10 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   @impl true
-  def handle_event("save_dialog", %{"new_state" => "DECEASED", "date_of_death" => date_of_death} = args, socket ) do
+  def handle_event("save_dialog", %{"action" => "DECEASE", "date_of_death" => date_of_death} = args, socket ) do
     membership = socket.assigns.membership
     organization_name = Membership.print_organization(membership)
-    message = "Die Mitgliedschaft von #{membership.contact.name} in #{organization_name} wurde aufgrund des Todes beendet."
+    message = "Die Mitgliedschaft von #{membership.contact.name} im / in der #{organization_name} wurde aufgrund des Todes beendet."
     membership_change = %{state: "DECEASED", reactivation_date: nil}
     contract_change = %{termination_date: date_of_death, archive_date: date_of_death}
     execute_update(message, membership_change, contract_change, args, socket)
@@ -423,27 +417,42 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
   defp update_following_memberships(_args,_membership_changes, _contract_changes, _socket) do end # update_following_memberships was not present -> nothing to do
 
-  def get_next_states(membership) do
-    case membership.state do
-      "PENDING" -> ["ACTIVE", "REJECTED"]
-      "REJECTED"  -> ["ACTIVE"]
-      "ACTIVE" -> ["PAUSED", "TERMINATED", "DECEASED", "SUSPENDED"]
-      "PAUSED" -> ["ACTIVE", "TERMINATED", "DECEASED", "SUSPENDED"]
-      _ -> ["TERMINATED", "DECEASED", "SUSPENDED"]
+  def get_possible_actions(old_state) do
+    case old_state do
+      "PENDING" -> ["ADMIT", "REJECT"]
+      "REJECTED"  -> ["ADMIT"]
+      "ACTIVE" -> ["PAUSE", "TERMINATE", "DECEASE", "SUSPEND"]
+      "PAUSED" -> ["REACTIVATE", "TERMINATE", "DECEASE", "SUSPEND"]
+      _ -> ["TERMINATE", "DECEASE", "SUSPEND"]
     end
   end
 
-  def get_change_verb(old_state, new_state) do
-    case {old_state, new_state} do
-      {"PENDING", "ACTIVE"} -> "Annehmen"
-      {"REJECTED", "ACTIVE"} -> "Annehmen"
-      {"PENDING", "REJECTED"} -> "Ablehnen"
-      {_, "PAUSED"} -> "Pausieren"
-      {"PAUSED", "ACTIVE"} -> "Reaktivieren"
-      {_, "TERMINATED"} -> "Kündigen"
-      {_, "SUSPENDED"} -> "Ausschließen"
-      {_, "DECEASED"} -> "Verstorben"
-      _ -> raise "no verb implemented for change from #{old_state} to #{new_state}"
+  def get_change_action(old_state, new_state) do
+    case new_state do
+      "ACTIVE" -> 
+        if old_state == "PENDING" || old_state == "REJECTED" do
+          "ADMIT"
+        else
+          "REACTIVATE"
+        end
+      "REJECTED" -> "REJECT"
+      "PAUSED" -> "PAUSE"
+      "TERMINATED" -> "TERMINATE"
+      "SUSPENDED" -> "SUSPEND"
+      "DECEASED" -> "DECEASE"
+    end
+
+  end
+  
+  def print_action(action) do
+    case action do
+      "ADMIT" -> "Annehmen"
+      "REJECT" -> "Ablehnen"
+      "PAUSE" -> "Pausieren"
+      "REACTIVATE" -> "Reaktivieren"
+      "TERMINATE" -> "Kündigen"
+      "SUSPEND" -> "Ausschließen"
+      "DECEASE" -> "Verstorben"
     end
   end
 
@@ -461,3 +470,4 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
 end
+ 
