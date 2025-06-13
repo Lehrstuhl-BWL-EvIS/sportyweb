@@ -194,20 +194,6 @@ defmodule Sportyweb.Legal do
   end
 
 
-  @doc """
-  Returns a clubs list of memberships.
-
-  ## Examples
-
-      iex> list_memberships(1)
-      [%Membership{}, ...]
-
-  """
-  def list_memberships(club_id) do
-    query = from(m in Membership, where: m.club_id == ^club_id)
-    Repo.all(query)
-  end
-
   def list_memberships(membership_ids, preloads) do
     query = from(m in Membership, where: m.id in ^membership_ids)
     Repo.all(query)
@@ -232,19 +218,6 @@ defmodule Sportyweb.Legal do
       from(m in Membership, where: m.contact_id == ^contact_id)
     Repo.all(query)
     |> Repo.preload(preloads)
-  end
-
-  @doc """
-  Returns a clubs list of memberships. Preloads associations.
-
-  ## Examples
-
-      iex> list_memberships(1, [:club])
-      [%Membership{}, ...]
-
-  """
-  def list_memberships(club_id, preloads) do
-    Repo.preload(list_memberships(club_id), preloads)
   end
 
   @doc """

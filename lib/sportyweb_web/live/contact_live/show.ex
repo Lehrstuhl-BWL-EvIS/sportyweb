@@ -3,6 +3,7 @@ defmodule SportywebWeb.ContactLive.Show do
 
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.Membership
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
 
@@ -21,6 +22,11 @@ defmodule SportywebWeb.ContactLive.Show do
         :notes,
         :phones,
         :postal_addresses,
+        memberships: [
+          :club,
+          :department,
+          :group
+        ],
         contracts: [
           :club,
           :department,
@@ -30,11 +36,14 @@ defmodule SportywebWeb.ContactLive.Show do
         ]
       ])
 
+      requested_memberships = Enum.filter(contact.memberships, fn m -> m.state == "PENDING" || m.state == "REJECTED" end)
+
     {:noreply,
      socket
      |> assign(:page_title, "Kontakt: #{contact.name}")
      |> assign(:contact, contact)
      |> assign(:club, contact.club)
+     |> stream(:requested_memberships, requested_memberships)
      |> stream(:contracts, contact.contracts)}
   end
 end

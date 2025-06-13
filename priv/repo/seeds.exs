@@ -264,26 +264,39 @@ defmodule Sportyweb.ContactSeedHelper do
       |> Enum.random()
     end
 
-    archive_date = if :rand.uniform() > 0.8, do: ~D[2025-03-01], else: nil
-    termination_date = if archive_date == nil, do: nil, else: ~D[2025-12-31]
+    today = Date.utc_today()
+    today_next_year = Date.new!(today.year + 1, today.month, today.day)
+    end_of_year = Date.new!(today.year, 12,31)
+
+    suspension_reason = if state == "SUSPENDED", do: "Beitragsrückstand", else: ""
+    reactivation_date = if state == "PAUSED", do: today_next_year, else: nil
+    {termination_date, archive_date} = cond do
+      state == "TERMINATED" -> {today, today}
+      state == "DECEASED" || state == "SUSPENDED" -> {today, end_of_year}
+      true -> {nil, nil}
+    end
 
     contract =
-      Repo.insert!(%Contract{
-        club_id: club.id,
-        club: club,
-        department_id: department_id,
-        department: department,
-        group_id: group_id,
-        group: group,
-        contact_id: contact.id,
-        contact: contact,
-        fee_id: fee.id,
-        fee: fee,
-        signing_date: ~D[2021-11-28],
-        start_date: ~D[2022-01-01],
-        termination_date: archive_date,
-        archive_date: termination_date
-      })
+    if state == "PENDING" || state == "REJECTED" do
+        nil
+      else
+        Repo.insert!(%Contract{
+          club_id: club.id,
+          club: club,
+          department_id: department_id,
+          department: department,
+          group_id: group_id,
+          group: group,
+          contact_id: contact.id,
+          contact: contact,
+          fee_id: fee.id,
+          fee: fee,
+          signing_date: ~D[2021-11-28],
+          start_date: ~D[2022-01-01],
+          termination_date: termination_date,
+          archive_date: archive_date
+        })
+      end
 
     membership =
       Repo.insert!(%Membership{
@@ -296,10 +309,12 @@ defmodule Sportyweb.ContactSeedHelper do
         contact_id: contact.id,
         contact: contact,
         contract: contract,
-        contract_id: contract.id,
+        contract_id: (if contract == nil, do: nil, else: contract.id),
         preconditional_membership_id: preconditional_membership_id,
         preconditional_membership: preconditional_membership,
-        state: state
+        state: state,
+        suspension_reason: suspension_reason,
+        reactivation_date: reactivation_date
       })
 
     {contract, membership}

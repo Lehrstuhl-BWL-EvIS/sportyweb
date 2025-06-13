@@ -68,7 +68,16 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
             <% end %>
           </:col>
           <:col :let={{_id, contact}} label="In" sortable filterable>
-            {format_string_field(print_memberships(contact))}
+            <%= if Enum.empty?(contact.memberships) do %>
+               {format_string_field(nil)}
+            <% else %>
+              <%= for m <- sort_memberships(contact) do %>
+                <p>
+                <.icon name={Membership.get_state_icon(m).icon} class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(m).color}"} />
+                {Membership.get_organization(m).name}
+                </p>
+              <% end %>
+            <% end %>
           </:col>
           <:col :let={{_id, contact}} label="Art" sortable>
             <%= if contact.type == "person" do %>
@@ -173,7 +182,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
         end
 
       "In" ->
-        fn c -> print_memberships(c) end
+        fn c -> Enum.map(c.membership, fn m -> Membership.get_organization(m).name end) |> Enum.join(" ") end
 
       "Adresse" ->
         fn c -> PostalAddress.as_text(Contact.get_most_relevant_postal_address(c)) end
@@ -204,14 +213,13 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
     )
   end
 
-  def print_memberships(contact) do
+  def sort_memberships(contact) do
     if Enum.empty?(contact.memberships) do
-      nil
+      []
     else
       contact.memberships
       |> Enum.sort_by(fn m -> m.group_id end)
       |> Enum.sort_by(fn m -> m.department_id end)
-      |> Enum.map_join(", ", fn m -> Membership.get_organization(m).name end)
     end
   end
 end

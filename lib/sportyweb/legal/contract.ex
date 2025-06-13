@@ -61,13 +61,28 @@ defmodule Sportyweb.Legal.Contract do
   def print_partner(%Club{} = club) do
     "Verein #{club.name}"
   end
-
   def print_partner(%Department{} = department) do
     "Abteilung #{department.name}"
   end
-
   def print_partner(%Group{} = group) do
     "Gruppe #{group.name}"
+  end
+
+  def get_state_icon(%Contract{}= contract) do
+    case get_state(contract) do
+      "archived" -> %{icon: "hero-archive-box", color:  "text-zinc-800"}
+      "terminated" -> %{icon: "hero-archive-box", color:  "text-amber-800"}
+      "pending" -> %{icon: "hero-check-badge", color:  "text-amber-600"}
+      _ -> %{icon: "hero-check-badge", color:  "text-green-600"}
+    end
+  end
+  def get_state_color(%Contract{}= contract) do
+    case get_state(contract) do
+      "archived" -> "text-zinc-800"
+      "terminated" -> "text-amber-800"
+      "pending" -> "text-amber-600"
+      _ -> "text-green-600"
+    end
   end
 
   @doc """

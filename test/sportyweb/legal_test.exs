@@ -102,18 +102,6 @@ defmodule Sportyweb.LegalTest do
       contract_id: nil
     }
 
-    test "list_memberships/1 returns all memberships of a given club" do
-      membership = membership_fixture()
-      assert Legal.list_memberships(membership.club_id) == [membership]
-    end
-
-    test "list_memberships/2 returns all memberships of a given club with preloaded associations" do
-      membership = membership_fixture()
-
-      memberships = Legal.list_memberships(membership.club_id, [:club])
-      assert List.first(memberships).club_id == membership.club_id
-    end
-
     test "get_membership!/1 returns the membership with given id" do
       membership = membership_fixture()
       assert Legal.get_membership!(membership.id) == membership

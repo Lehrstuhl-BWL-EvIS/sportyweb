@@ -32,10 +32,7 @@
           <.input
             field={@contract_form[:department_id]}
             type="select"
-            options={
-              @departments
-              |> Enum.map(&{&1.name, &1.id})
-            }
+            options={ @departments |> Enum.map(&print_department_option(&1, @other_memberships)) }
             label="Abteilung"
             prompt="-"
           />
@@ -44,32 +41,20 @@
           <.input
             field={@contract_form[:group_id]}
             type="select"
-            options={@groups |> Enum.map(&{&1.name, &1.id})}
+            options={ @groups |> Enum.map(&print_group_option(&1, @other_memberships)) }
             label="Gruppe"
             prompt="-"
           />
         </div>
 
-        <div class="col-span-12 md:col-span-2">
-            <.input
-            name="membership_accepted"
-            value="true"
-            type="checkbox"
-            label="Aufnahmeantrag angenommen"
-            />
-        </div>
-
-        <div class="col-span-12 md:col-span-2">
-        </div>
-
-        <div class="col-span-12 md:col-span-4">
+        <div class="col-span-12 md:col-span-3">
           <.input field={@contract_form[:signing_date]} type="date" label="Aufnahmedatum" />
         </div>
-        <div class="col-span-12 md:col-span-4">
+        <div class="col-span-12 md:col-span-3">
           <.input field={@contract_form[:start_date]} type="date" label="Mitgliedschaft ab" />
         </div>
 
-        <div class="col-span-12 md:col-span-4">
+        <div class="col-span-12 md:col-span-6">
           <.input
             field={@contract_form[:fee_id]}
             type="select"
@@ -81,23 +66,21 @@
             prompt="Bitte auswählen"
           />
         </div>
-      </.input_grid>
 
-        <.input_grid>
-            <div class="col-span-12 md:col-span-8">
-                <.input
-                    name="preconditional_membership_id"
-                    value="nil"
-                    type="select"
-                    label="geknüpft an"
-                    options={
-                        @other_memberships
-                        |> Enum.map(&{"Mitgliedschaft in #{Membership.get_organization(&1).name}", &1.id})
-                    }
-                    prompt="an keine andere Mitgliedschaft geknüpft "
-                />
-            </div>
-        </.input_grid>
+        <div class="col-span-12 md:col-span-6">
+            <.input
+                name="preconditional_membership_id"
+                value="nil"
+                type="select"
+                label="geknüpft an"
+                options={
+                    @other_memberships
+                    |> Enum.map(&{"Mitgliedschaft in #{Membership.get_organization(&1).name} - #{get_key_for_value(Membership.get_valid_states(), &1.state)}", &1.id})
+                }
+                prompt="an keine andere Mitgliedschaft geknüpft "
+            />
+        </div>
+    </.input_grid>
 
 
     </.input_grids>

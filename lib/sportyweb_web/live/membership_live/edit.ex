@@ -2,8 +2,9 @@ defmodule SportywebWeb.MembershipLive.Edit do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Legal
-  alias Sportyweb.Finance
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.Membership
+  alias Sportyweb.Finance
   alias Sportyweb.Personal.Contact
 
   @impl true
@@ -16,15 +17,15 @@ defmodule SportywebWeb.MembershipLive.Edit do
     membership =
       Legal.get_membership!(id, [
         :club,
+        :following_memberships,
         contact: [:emails],
         preconditional_membership: [:club, :department, :group],
-        following_memberships: [:club, :department, :group],
         department: [:fees],
         group: [:fees],
         contract: [:fee]
       ])
 
-    other_memberships =  Legal.list_memberships_of_contact(membership.contact.id, [:club, :department, :group])
+    other_memberships =  Legal.list_memberships_of_contact(membership.contact.id, [:club, :department, :group, :contract])
       |> Enum.filter(fn m -> m.id != membership.id end)
     following_memberships = get_all_following_memberships(membership)
 
@@ -43,8 +44,14 @@ defmodule SportywebWeb.MembershipLive.Edit do
       |>assign(:membership_form, to_form(Legal.change_membership(membership)))
       |> assign(:preconditional_membership_form, to_form(%{"preconditional_membership_id" => membership.preconditional_membership_id}))
       |> assign_new(:contract_form, fn ->
-        to_form(Legal.change_contract(membership.contract))
+        if membership.contract == nil do
+            nil
+          else
+            to_form(Legal.change_contract(membership.contract))
+        end
+
       end)
+
 
     {:noreply, socket}
   end
@@ -114,16 +121,6 @@ defmodule SportywebWeb.MembershipLive.Edit do
     end
   end
 
-  def get_next_states(membership) do
-    case membership.state do
-      "PENDING" -> ["ACTIVE", "REJECTED"]
-      "REJECTED"  -> ["ACTIVE"]
-      "ACTIVE" -> ["PAUSED", "TERMINATED", "DECEASED", "SUSPENDED"]
-      "PAUSED" -> ["ACTIVE", "TERMINATED", "DECEASED", "SUSPENDED"]
-        _ -> ["TERMINATED", "DECEASED", "SUSPENDED"]
-    end
-  end
-
   defp get_all_following_memberships(membership) do
     recursive_get_following_memberships([membership], membership.following_memberships)
     |> Enum.filter(fn m -> m.id != membership.id end)
@@ -139,7 +136,7 @@ defmodule SportywebWeb.MembershipLive.Edit do
       Enum.find(found_memberships, fn  o -> o.id == m end) == nil
     end)
 
-    next_memberships = Legal.list_memberships(memberships_ids_to_load, [:following_memberships])
+    next_memberships = Legal.list_memberships(memberships_ids_to_load, [:following_memberships, :department, :group, :club, :contract])
     found_memberships = Enum.concat(found_memberships, next_memberships)
     memberships_to_check = Enum.flat_map(next_memberships, fn m -> m.following_memberships end)
     recursive_get_following_memberships(found_memberships, memberships_to_check)

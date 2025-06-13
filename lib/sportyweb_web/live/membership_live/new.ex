@@ -108,13 +108,12 @@ defmodule SportywebWeb.MembershipLive.New do
   end
 
   @impl true
-  def handle_event("save", %{"contract" => contract_params, "preconditional_membership_id" => preconditional_membership_id, "membership_accepted" => membership_accepted}, socket) do
+  def handle_event("save", %{"contract" => contract_params, "preconditional_membership_id" => preconditional_membership_id}, socket) do
     contract_params =
       Enum.into(contract_params, %{
         "club_id" => socket.assigns.club.id,
         "contact_id" => socket.assigns.contact.id
       })
-    membership_state = if membership_accepted == true, do: "ACTIVE", else:  "PENDING"
 
     case Legal.create_contract(contract_params) do
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -128,7 +127,7 @@ defmodule SportywebWeb.MembershipLive.New do
           contact_id: contract.contact_id,
           contract_id: contract.id,
           preconditional_membership_id: preconditional_membership_id,
-          state: membership_state
+          state: "ACTIVE"
         }
 
         case Legal.create_membership(membership) do
@@ -190,24 +189,13 @@ defmodule SportywebWeb.MembershipLive.New do
        }) do
     contact = socket.assigns.contact
 
-    matching_memberships =
-      cond do
-        group_id != nil && group_id != "" ->
-          Enum.filter(socket.assigns.other_memberships, fn m -> m.group_id == group_id end)
-        department_id != nil && department_id != "" ->
-          Enum.filter(socket.assigns.other_memberships, fn m -> m.department_id == department_id end)
-
-        true ->
-         socket.assigns.other_memberships
-      end
-
-    if Enum.empty?(matching_memberships) do
+    matching_membership = get_matching_membership(department_id, group_id, socket.assigns.other_memberships)
+    if matching_membership == nil do
       assign(socket, :duplicated_membership_error, nil)
     else
-      other_membership = Enum.at(matching_memberships, 0)
-      other_id = other_membership.id
+      other_id = matching_membership.id
       contact_name = contact.name
-      organization_name = Membership.get_organization(other_membership).name
+      organization_name = Membership.get_organization(matching_membership).name
 
       error_details = %{
         other_id: other_id,
@@ -221,5 +209,35 @@ defmodule SportywebWeb.MembershipLive.New do
 
   defp find_by_id(elements, wanted_id) do
     Enum.find(elements, fn e -> e.id == wanted_id end)
+  end
+
+  def get_matching_membership(department_id, group_id, other_memberships) do
+    cond do
+      group_id != nil && group_id != "" ->
+        Enum.find(other_memberships, fn m -> m.group_id == group_id end)
+      department_id != nil && department_id != "" ->
+        Enum.find(other_memberships, fn m -> m.department_id == department_id && m.group_id == nil end)
+      true ->
+        Enum.find(other_memberships, fn m -> m.department_id == nil && m.group_id == nil end)
+    end
+  end
+
+  def print_department_option(department, other_memberships) do
+    matching_membership = get_matching_membership(department.id, nil, other_memberships)
+    if matching_membership == nil do
+      {department.name, department.id}
+      else
+      {"-- #{department.name} --", department.id}
+    end
+  end
+
+
+  def print_group_option(group, other_memberships) do
+    matching_membership = get_matching_membership(nil, group.id, other_memberships)
+    if matching_membership == nil do
+      {group.name, group.id}
+    else
+      {"-- #{group.name} --", group.id}
+    end
   end
 end

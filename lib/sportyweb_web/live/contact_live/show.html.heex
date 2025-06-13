@@ -49,8 +49,48 @@
   </.list>
 </.card>
 
+
 <.header level="2" class="mt-12">
-  Verträge
+    Aufnahmeanträge
+</.header>
+
+ <.card>
+    <%= if Enum.any?(@streams.requested_memberships.inserts) do %>
+        <.table
+            id="requested_memberships"
+            rows={@streams.requested_memberships}
+            row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}/edit") end}
+        >
+            <:col :let={{_id, membership}} label="In">
+                <p>
+                    {format_string_field(Membership.get_organization(membership).name)}
+                </p>
+            </:col>
+            <:col :let={{_id, membership}} label="Status">
+                    <.icon name={Membership.get_state_icon(membership).icon} class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(membership).color}"} />
+                    {get_key_for_value(Membership.get_valid_states(), membership.state)}
+            </:col>
+
+            <:action :let={{_id, membership}}>
+                <.link navigate={~p"/memberships/#{membership}/edit"}>
+                    Antrag bearbeiten
+                </.link>
+            </:action>
+        </.table>
+    <% else %>
+        <p>
+            Keine Aufnahmeanträge vorhanden.
+        </p>
+    <% end %>
+
+    <.link navigate={~p"/clubs/#{@club}/memberships/new?contact=#{@contact}"}>
+        <.icon name="hero-plus-circle" /> Mitgliedschaft hinzufügen
+    </.link>
+</.card>
+
+
+<.header level="2" class="mt-12">
+  Mitgliedschaften & Verträge
 </.header>
 
 <.card>
@@ -69,19 +109,18 @@
       }
     >
       <:col :let={{_id, contract}}>
-        <%= case Contract.get_state(contract) do %>
-          <% "archived" -> %>
-            <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
-          <% "terminated" -> %>
-            <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-amber-800" />
-          <% "in_use" -> %>
-            <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-600" />
-          <% "pending" -> %>
-            <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-amber-600" />
-        <% end %>
+          <.icon name={Contract.get_state_icon(contract).icon} class={"ml-1 inline-block w-[20px] #{Contract.get_state_icon(contract).color}"} />
       </:col>
       <:col :let={{_id, contract}} label="Vertragsobjekt">
+          <p>
         {format_string_field(Contract.print_object(contract))}
+          </p>
+          <%= if contract.membership != nil do %>
+          <p>
+            <.icon name={Membership.get_state_icon(contract.membership).icon} class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(contract.membership).color}"} />
+            {get_key_for_value(Membership.get_valid_states(), contract.membership.state)}
+          </p>
+          <% end %>
       </:col>
       <:col :let={{_id, contract}} label="Partner">
         {format_string_field(Contract.print_partner(Contract.get_partner(contract)))}
@@ -108,8 +147,4 @@
       Bisher wurde noch kein Vertrag erstellt.
     </p>
   <% end %>
-
-  <.link navigate={~p"/clubs/#{@club}/memberships/new?contact=#{@contact}"}>
-    <.icon name="hero-plus-circle" /> Mitgliedschaft hinzufügen
-  </.link>
 </.card>
