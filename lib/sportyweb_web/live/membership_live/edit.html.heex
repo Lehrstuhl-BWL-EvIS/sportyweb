@@ -47,6 +47,30 @@
 </.card>
 
 <.card :if={@contract_form != nil} class="mb-5">
+  <.simple_form for={%{}} id="type-form" phx-submit="save_type">
+    <.input_grids>
+      <.input_grid>
+        <div class="col-span-12 md:col-span-8">
+          <.input
+            type="select"
+            name="type"
+            label="Art"
+            value={@membership.type}
+            options={get_types()}
+            prompt="Bitte auswählen"
+          />
+        </div>
+
+        <div class="col-span-12 md:col-span-1"></div>
+
+        <div class="col-span-12 md:col-span-3">
+          <.label>&nbsp</.label>
+          <.button phx-disable-with="Speichern...">Art ändern</.button>
+        </div>
+      </.input_grid>
+    </.input_grids>
+  </.simple_form>
+
   <.simple_form
     for={@contract_form}
     id="membership-fee-update-form"

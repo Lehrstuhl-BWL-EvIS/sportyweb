@@ -116,10 +116,13 @@
         />
       </:col>
       <:col :let={{_id, contract}} label="Vertragsobjekt">
-        <p>
-          {format_string_field(Contract.print_object(contract))}
-        </p>
+        {format_string_field(Contract.print_object(contract))}
+      </:col>
+      <:col :let={{_id, contract}} label="Status">
         <%= if contract.membership != nil do %>
+          <p>
+            {contract.membership.type}
+          </p>
           <p>
             <.icon
               name={Membership.get_state_icon(contract.membership).icon}
@@ -127,6 +130,12 @@
             />
             {get_key_for_value(Membership.get_valid_states(), contract.membership.state)}
           </p>
+        <% else %>
+          <.icon
+            name={Contract.get_state_icon(contract.membership).icon}
+            class={"ml-1 inline-block w-[20px] #{Contract.get_state_icon(contract.membership).color}"}
+          />
+          {get_key_for_value(Contract.get_valid_states(), contract.state)}
         <% end %>
       </:col>
       <:col :let={{_id, contract}} label="Partner">

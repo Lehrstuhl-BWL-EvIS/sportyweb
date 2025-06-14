@@ -20,6 +20,7 @@ defmodule Sportyweb.Legal.Membership do
     belongs_to :preconditional_membership, Membership
     has_many :following_memberships, Membership, foreign_key: :preconditional_membership_id
 
+    field :type, :string, default: ""
     field :state, :string, default: ""
     field :suspension_reason, :string, default: ""
     field :reactivation_date, :date
@@ -87,6 +88,7 @@ defmodule Sportyweb.Legal.Membership do
         :contract_id,
         :preconditional_membership_id,
         :state,
+        :type,
         :reactivation_date,
         :suspension_reason
       ],

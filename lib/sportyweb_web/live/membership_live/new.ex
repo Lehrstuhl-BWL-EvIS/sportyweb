@@ -121,7 +121,8 @@ defmodule SportywebWeb.MembershipLive.New do
         "save",
         %{
           "contract" => contract_params,
-          "preconditional_membership_id" => preconditional_membership_id
+          "preconditional_membership_id" => preconditional_membership_id,
+          "type" => type
         },
         socket
       ) do
@@ -143,7 +144,8 @@ defmodule SportywebWeb.MembershipLive.New do
           contact_id: contract.contact_id,
           contract_id: contract.id,
           preconditional_membership_id: preconditional_membership_id,
-          state: "ACTIVE"
+          state: "ACTIVE",
+          type: type
         }
 
         case Legal.create_membership(membership) do
@@ -262,5 +264,9 @@ defmodule SportywebWeb.MembershipLive.New do
     else
       {"-- #{group.name} --", group.id}
     end
+  end
+
+  def get_types() do
+    ["ordentlich/aktiv", "passiv", "außerordentlich", "Ehrenmitglied"]
   end
 end

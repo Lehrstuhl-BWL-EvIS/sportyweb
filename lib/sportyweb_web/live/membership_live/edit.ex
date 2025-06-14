@@ -130,6 +130,13 @@ defmodule SportywebWeb.MembershipLive.Edit do
     end
   end
 
+  @impl true
+  def handle_event("save_type", %{"type" => _type} = change, socket) do
+    {:ok, _} = Legal.update_membership(socket.assigns.membership, change)
+
+    {:noreply, socket |> put_flash(:info, "Art aktualisiert")}
+  end
+
   defp get_all_following_memberships(membership) do
     all_following_memberships =
       recursive_get_following_memberships([membership], membership.following_memberships)
@@ -162,5 +169,9 @@ defmodule SportywebWeb.MembershipLive.Edit do
     found_memberships = Enum.concat(found_memberships, next_memberships)
     memberships_to_check = Enum.flat_map(next_memberships, fn m -> m.following_memberships end)
     recursive_get_following_memberships(found_memberships, memberships_to_check)
+  end
+
+  def get_types() do
+    ["ordentlich/aktiv", "passiv", "außerordentlich", "Ehrenmitglied"]
   end
 end

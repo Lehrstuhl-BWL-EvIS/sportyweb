@@ -32,6 +32,15 @@ defmodule Sportyweb.Legal.Contract do
     timestamps(type: :utc_datetime)
   end
 
+  def get_valid_states do
+    [
+      [key: "beendet", value: "archived"],
+      [key: "gekündigt", value: "terminated"],
+      [key: "aktiv", value: "in_use"],
+      [key: "zukünftig", value: "pending"]
+    ]
+  end
+
   def get_state(%Contract{} = contract, %Date{} = date \\ Date.utc_today()) do
     cond do
       Contract.is_archived?(contract, date) -> "archived"
@@ -76,15 +85,6 @@ defmodule Sportyweb.Legal.Contract do
       "terminated" -> %{icon: "hero-archive-box", color: "text-amber-800"}
       "pending" -> %{icon: "hero-check-badge", color: "text-amber-600"}
       _ -> %{icon: "hero-check-badge", color: "text-green-600"}
-    end
-  end
-
-  def get_state_color(%Contract{} = contract) do
-    case get_state(contract) do
-      "archived" -> "text-zinc-800"
-      "terminated" -> "text-amber-800"
-      "pending" -> "text-amber-600"
-      _ -> "text-green-600"
     end
   end
 

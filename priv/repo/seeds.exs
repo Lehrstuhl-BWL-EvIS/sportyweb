@@ -268,6 +268,20 @@ defmodule Sportyweb.ContactSeedHelper do
         |> Enum.random()
       end
 
+    type =
+      if preconditional_membership != nil do
+        preconditional_membership.type
+      else
+        random = :rand.uniform()
+
+        cond do
+          random < 0.7 -> "ordentlich / aktiv"
+          random < 0.8 -> "passiv"
+          random < 0.9 -> "außerordentlich"
+          true -> "Ehrenmitglied"
+        end
+      end
+
     today = Date.utc_today()
     today_next_year = Date.new!(today.year + 1, today.month, today.day)
     end_of_year = Date.new!(today.year, 12, 31)
@@ -319,6 +333,7 @@ defmodule Sportyweb.ContactSeedHelper do
         preconditional_membership_id: preconditional_membership_id,
         preconditional_membership: preconditional_membership,
         state: state,
+        type: type,
         suspension_reason: suspension_reason,
         reactivation_date: reactivation_date
       })

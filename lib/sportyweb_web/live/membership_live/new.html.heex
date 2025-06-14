@@ -56,6 +56,16 @@
 
         <div class="col-span-12 md:col-span-6">
           <.input
+            name="type"
+            value={Enum.at(get_types(), 0)}
+            type="select"
+            label="Art"
+            options={get_types()}
+          />
+        </div>
+
+        <div class="col-span-12 md:col-span-6">
+          <.input
             field={@contract_form[:fee_id]}
             type="select"
             label="Beitrag"
