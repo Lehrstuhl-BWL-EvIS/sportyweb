@@ -1,8 +1,6 @@
 defmodule SportywebWeb.DocumentLive.Edit do
   use SportywebWeb, :live_view
 
-  require Logger
-
   alias Sportyweb.Documents
   alias Sportyweb.Documents.Document
   alias SportywebWeb.DocumentLive.DocumentConfig
@@ -20,8 +18,6 @@ defmodule SportywebWeb.DocumentLive.Edit do
       |> assign(:show_form, false)
       |> assign(:changed, false)
       |> assign(:show_delete_modal, false)
-
-    Logger.debug("mount: show_delete_modal=#{inspect(socket.assigns.show_delete_modal)}")
 
     {:ok, socket}
   end
@@ -145,19 +141,11 @@ defmodule SportywebWeb.DocumentLive.Edit do
 
   @impl true
   def handle_event("show_delete_modal", _params, socket) do
-    Logger.debug(
-      "show_delete_modal event: before assign=#{inspect(socket.assigns.show_delete_modal)}"
-    )
-
     {:noreply, assign(socket, show_delete_modal: true)}
   end
 
   @impl true
   def handle_event("hide_delete_modal", _params, socket) do
-    Logger.debug(
-      "hide_delete_modal event: before assign=#{inspect(socket.assigns.show_delete_modal)}"
-    )
-
     {:noreply, assign(socket, show_delete_modal: false)}
   end
 
