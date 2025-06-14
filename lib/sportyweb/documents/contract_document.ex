@@ -9,7 +9,6 @@ defmodule Sportyweb.Documents.ContractDocument do
   @foreign_key_type :binary_id
 
   @valid_types [
-    [key: "Mitgliedsantrag", value: "membership_application"],
     [key: "Vertragsdokument", value: "contract_document"],
     [key: "Zahlungsvereinbarung", value: "payment_agreement"],
     [key: "Kündigung", value: "termination_letter"],

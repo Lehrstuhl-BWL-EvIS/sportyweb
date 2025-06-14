@@ -22,11 +22,6 @@ defmodule Sportyweb.Documents.ThumbnailGenerator do
   @placeholder Path.join(:code.priv_dir(:sportyweb), "static/images/placeholder-thumbnail.png")
 
   def generate(source_path, content_type, document_id) do
-    Logger.debug("ThumbnailGenerator.generate/3 called with:")
-    Logger.debug("  source_path: #{inspect(source_path)}")
-    Logger.debug("  content_type: #{inspect(content_type)}")
-    Logger.debug("  document_id: #{inspect(document_id)}")
-
     tmp_dir = System.tmp_dir!()
     thumb_name = "thumb_#{document_id}.png"
     thumb_temp_path = Path.join(tmp_dir, thumb_name)
@@ -46,8 +41,6 @@ defmodule Sportyweb.Documents.ThumbnailGenerator do
   end
 
   defp generate_thumbnail(source_path, content_type, thumb_temp_path) do
-    Logger.debug("Starting generate_thumbnail with source_path: #{inspect(source_path)}")
-
     cond do
       is_nil(source_path) ->
         {:error, :source_path_nil}
@@ -60,8 +53,6 @@ defmodule Sportyweb.Documents.ThumbnailGenerator do
           %{format_prefix: format_prefix, multipage: multipage} = Map.fetch!(@content_type_config, content_type)
 
           page_selector = if multipage, do: "[0]", else: ""
-
-          Logger.debug("Calling convert: convert #{format_prefix}#{source_path}#{page_selector} -thumbnail 300x300> #{thumb_temp_path}")
 
           {output, exit_code} =
             System.cmd("convert", ["#{format_prefix}#{source_path}#{page_selector}", "-thumbnail", "300x300>", thumb_temp_path],

@@ -12,7 +12,7 @@
         </button>
       <% end %>
 
-      <div id={toggle_id(group_value)} class="px-2 py-2">
+      <div id={toggle_id(group_value)} class={if @group_by_type, do: "hidden px-4 py-2", else: "px-2 py-2"}>
         <%= for doc <- docs do %>
           <a
             href={"/documents/#{doc.document.id}"}
@@ -33,7 +33,10 @@
                 <%= if assigns[:get_entity] do %>
                   <div class="flex items-center gap-1">
                     <.icon name="hero-link" class="h-4 w-4" />
-                    {@get_entity.(doc).name}
+                    <%= case @get_entity.(doc) do
+                      %{name: name} when not is_nil(name) -> name
+                      _ -> "unbekannt"
+                    end %>
                   </div>
                 <% end %>
                 <div class="flex items-center gap-1">

@@ -11,14 +11,12 @@ defmodule SportywebWeb.DocumentListComponent do
      |> assign(assigns)}
   end
 
-  # Handle grouping logic
   defp grouped_documents(documents, false), do: [{"", documents}]
 
   defp grouped_documents(documents, true) do
     Enum.group_by(documents, &Map.get(&1, :type))
   end
 
-  # Label for group logic
   defp label_for_group(nil, _), do: nil
 
   defp label_for_group(document_module, value) do
