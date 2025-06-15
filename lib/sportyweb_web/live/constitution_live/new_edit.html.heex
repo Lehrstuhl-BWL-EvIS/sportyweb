@@ -5,11 +5,11 @@
 <.card class="mb-5">
   <.simple_form for={@form} id="new-membership-form" phx-change="validate" phx-submit="save">
     <.input_grids>
-        <.input_grid>
-            <div class="col-span-12 md:col-span-12">
-            Im Folgenden können bestimmte Inhalte der Vereinssatzung hinterlegt werden, um so die Funktionen zum Bearbeiten von Mitgliedschaften individuell anzupassen.
-            </div>
-        </.input_grid>
+      <.input_grid>
+        <div class="col-span-12 md:col-span-12">
+          Hier können bestimmte Inhalte der Vereinssatzung hinterlegt werden, um so die Funktionalitäten zum Bearbeiten von Mitgliedschaften individuell anzupassen.
+        </div>
+      </.input_grid>
       <.input_grid>
         <div class="col-span-12 md:col-span-12">
           <.label>
@@ -17,11 +17,11 @@
           </.label>
         </div>
         <%= for {value, i} <- Enum.with_index(Phoenix.HTML.Form.input_value(@form, :membership_types)) do %>
-          <div class="col-span-12 md:col-span-5 flex items-baseline justify-start">
-            <.input name="membership_types[]" value={value} />
+          <div class="col-span-12 md:col-span-4 flex items-baseline justify-start">
+            <.input name="constitution[membership_types][]" value={value} />
 
             <div phx-click={JS.push("remove_membership_type", value: %{index: i})}>
-              <.icon name="hero-x-mark-solid" class="text-red-500"/>
+              <.icon name="hero-x-mark-solid" class="text-red-500" />
             </div>
           </div>
         <% end %>
@@ -40,14 +40,63 @@
             prompt="-"
           />
         </div>
+
         <div class="col-span-12 md:col-span-4">
-          <.input label="Kündigungsfrist" field={@form[:termination_notice_period]} />
+          <.label>
+            Kündigungsfrist
+          </.label>
+          <div class="flex">
+            <div>
+              <.input
+                name="termination_notice_period_amount"
+                type="number"
+                value={
+                  get_amount(Phoenix.HTML.Form.input_value(@form, :termination_notice_period))
+                }
+              />
+            </div>
+            <div class="flex-shrink-0">
+              <.input
+                name="termination_notice_period_unit"
+                type="select"
+                value={get_unit(Phoenix.HTML.Form.input_value(@form, :termination_notice_period))}
+                options={get_duration_unit_options()}
+              />
+            </div>
+          </div>
+          <.error :for={msg <- @form[:termination_notice_period].errors}>
+            {translate_error(msg)}
+          </.error>
         </div>
+
         <div class="col-span-12 md:col-span-4">
-            <.input label="Kündigungsfrist" field={@form[:termination_notice_period]} />
-        </div>
-        <div class="col-span-12 md:col-span-4">
-          <.input label="Mindestmitgliedsdauer" field={@form[:minimal_membership_duration]} />
+          <.label>
+            Minimale Mitgliedsdauer
+          </.label>
+          <div class="flex">
+            <div>
+              <.input
+                name="minimal_membership_duration_amount"
+                type="number"
+                value={
+                  get_amount(Phoenix.HTML.Form.input_value(@form, :minimal_membership_duration))
+                }
+              />
+            </div>
+            <div class="flex-shrink-0">
+              <.input
+                name="minimal_membership_duration_unit"
+                type="select"
+                value={
+                  get_unit(Phoenix.HTML.Form.input_value(@form, :minimal_membership_duration))
+                }
+                options={get_duration_unit_options()}
+              />
+            </div>
+          </div>
+          <.error :for={msg <- @form[:minimal_membership_duration].errors}>
+            {translate_error(msg)}
+          </.error>
         </div>
       </.input_grid>
 
@@ -58,29 +107,27 @@
             type="select"
             options={Constitution.get_suspension_reasons_modes()}
             label="Begründung eines Ausschlusses"
-            prompt="-"
           />
         </div>
-        {Phoenix.HTML.Form.input_value(@form, :suspension_reason_mode)}
         <%= if Phoenix.HTML.Form.input_value(@form, :suspension_reason_mode) != "not_allowed" do %>
           <div class="col-span-12 md:col-span-12">
             <.label :if={
               Phoenix.HTML.Form.input_value(@form, :suspension_reason_mode) != "not_allowed"
             }>
-              erlaubte Gründe
+              mögliche Gründe
             </.label>
           </div>
           <%= for {value, i} <- Enum.with_index(Phoenix.HTML.Form.input_value(@form, :suspension_reasons)) do %>
-            <div class="col-span-12 md:col-span-6 flex items-baseline justify-start">
-              <.input name="suspension_reasons[]" value={value} class="flex-grow" />
+            <div class="col-span-12 md:col-span-4 flex items-baseline justify-start">
+              <.input name="constitution[suspension_reasons][]" value={value} class="flex-grow" />
 
               <div phx-click={JS.push("remove_suspension_reason", value: %{index: i})}>
-                <.icon name="hero-x-mark-solid" class="text-red-500"/>
+                <.icon name="hero-x-mark-solid" class="text-red-500" />
               </div>
             </div>
           <% end %>
           <div class="col-span-12 md:col-span-12" phx-click={JS.push("add_suspension_reason")}>
-            <.icon name="hero-plus-circle" class="text-emerald-600"/>
+            <.icon name="hero-plus-circle" class="text-emerald-600" />
           </div>
         <% end %>
       </.input_grid>

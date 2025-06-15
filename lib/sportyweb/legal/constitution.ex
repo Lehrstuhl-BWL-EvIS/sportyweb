@@ -11,7 +11,7 @@ defmodule Sportyweb.Legal.Constitution do
     belongs_to :club, Club
     field :membership_types, {:array, :string}
     field :suspension_reasons, {:array, :string}
-    field :suspension_reason_mode, :string, default: ""
+    field :suspension_reason_mode, :string, default: "optional"
     field :termination_notice_period, :string, default: ""
     field :termination_interval, :string, default: ""
     field :minimal_membership_duration, :string, default: ""
@@ -103,32 +103,44 @@ defmodule Sportyweb.Legal.Constitution do
         :club_id,
         :suspension_reason_mode,
         :termination_notice_period,
-        :minimal_membership_duration
+        :minimal_membership_duration,
+        :termination_interval
       ],
       empty_values: [nil, ""]
     )
     |> cast(
-         attrs,
-         [
-           :membership_types,
-           :suspension_reasons,
-         ],
-         empty_values: [nil] # keep "" here, otherwise ["", ""] would be changed to []
-       )
+      attrs,
+      [
+        :membership_types,
+        :suspension_reasons
+      ],
+      # keep "" here, otherwise ["", ""] would be changed to []
+      empty_values: [nil]
+    )
     |> validate_required([
       :club_id,
       :membership_types,
       :suspension_reasons,
-      :suspension_reason_mode,
-      :termination_interval
+      :suspension_reason_mode
     ])
     |> validate_inclusion(
       :suspension_reason_mode,
       get_suspension_reasons_modes() |> Enum.map(fn mode -> mode[:value] end)
     )
-    |> validate_inclusion(
-      :termination_interval,
-      get_termination_intervals() |> Enum.map(fn interval -> interval[:value] end)
-    )
+    |> validate_termination_interval()
+  end
+
+  defp validate_termination_interval(%Ecto.Changeset{} = changeset) do
+    case get_field(changeset, :termination_interval) do
+      "" ->
+        changeset
+
+      _ ->
+        changeset
+        |> validate_inclusion(
+          :termination_interval,
+          get_termination_intervals() |> Enum.map(fn interval -> interval[:value] end)
+        )
+    end
   end
 end

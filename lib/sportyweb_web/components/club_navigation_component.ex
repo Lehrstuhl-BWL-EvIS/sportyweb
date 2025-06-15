@@ -54,7 +54,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
           <span class="truncate">Abteilungen & Gruppen</span>
         </.link>
 
-      <.link
+        <.link
           phx-target={@myself}
           phx-click="toggle_submenu"
           phx-value-item={:memberships}
@@ -199,10 +199,10 @@ defmodule SportywebWeb.ClubNavigationComponent do
         assigns.club_navigation_current_item == :forecasts ||
         assigns.club_navigation_current_item == :fees ||
         assigns.club_navigation_current_item == :subsidies
+
     show_submenu_memberships =
       assigns.club_navigation_current_item == :contacts ||
-      assigns.club_navigation_current_item == :constitution
-
+        assigns.club_navigation_current_item == :constitution
 
     {:ok,
      socket
@@ -226,6 +226,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
 
   @impl true
   def handle_event("toggle_submenu", %{"item" => "memberships"}, socket) do
-    {:noreply, assign(socket, :show_submenu_memberships, !socket.assigns.show_submenu_memberships)}
+    {:noreply,
+     assign(socket, :show_submenu_memberships, !socket.assigns.show_submenu_memberships)}
   end
 end

@@ -41,79 +41,74 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
   end
 
   @impl true
-  def handle_event("validate", %{} = val, socket) do
-    changeset = Legal.change_constitution(socket.assigns.constitution, val)
+  def handle_event("validate", %{"constitution" => constitution_changes} = val, socket) do
+    IO.inspect(val)
+    termination_notice_period = get_termination_notice_period(val)
+    minimal_membership_duration = get_minimal_membership_duration(val)
+
+    constitution_changes =
+      Map.merge(constitution_changes, %{
+        "termination_notice_period" => termination_notice_period,
+        "minimal_membership_duration" => minimal_membership_duration
+      })
+
+    changeset = Legal.change_constitution(socket.assigns.constitution, constitution_changes)
 
     {:noreply,
      socket
      |> assign(form: prepare_form(changeset, action: :validate))}
   end
 
-  def handle_event("save", %{} = val, socket) do
-    case Legal.update_constitution(socket.assigns.constitution, val) do
+  @impl true
+  def handle_event("save", %{"constitution" => constitution_changes} = val, socket) do
+    termination_notice_period = get_termination_notice_period(val)
+    minimal_membership_duration = get_minimal_membership_duration(val)
+
+    constitution_changes =
+      Map.merge(constitution_changes, %{
+        "termination_notice_period" => termination_notice_period,
+        "minimal_membership_duration" => minimal_membership_duration
+      })
+
+    case Legal.update_constitution(socket.assigns.constitution, constitution_changes) do
       {:ok, constitution} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Kontakt erfolgreich aktualisiert")}
+         |> put_flash(:info, "Satzung erfolgreich aktualisiert")
+         |> push_navigate(to: ~p"/clubs/#{socket.assigns.club}/constitution")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: prepare_form(changeset))}
     end
   end
 
+  @impl true
   def handle_event("remove_membership_type", %{"index" => index}, socket) do
+    on_remove_event(:membership_types, index, socket)
+  end
+
+  @impl true
+  def handle_event("add_membership_type", %{}, socket) do
+    on_add_event(:membership_types, socket)
+  end
+
+  @impl true
+  def handle_event("remove_suspension_reason", %{"index" => index}, socket) do
+    on_remove_event(:suspension_reasons, index, socket)
+  end
+
+  @impl true
+  def handle_event("add_suspension_reason", %{}, socket) do
+    on_add_event(:suspension_reasons, socket)
+  end
+
+  def on_remove_event(field, index, socket) when is_atom(field) do
     values =
       socket.assigns.form
-      |> Phoenix.HTML.Form.input_value(:membership_types)
+      |> Phoenix.HTML.Form.input_value(field)
       |> remove_index(index)
 
-    changeset =
-      Legal.change_constitution(socket.assigns.constitution, %{membership_types: values})
-
-
-    {:noreply,
-     socket
-     |> assign(form: prepare_form(changeset, action: :validate))}
-  end
-
-  def handle_event("add_membership_type", %{}, socket) do
-    values =
-      socket.assigns.form
-      |> Phoenix.HTML.Form.input_value(:membership_types)
-
-    values = values ++ ["..."]
-
-    changeset =
-      Legal.change_constitution(socket.assigns.constitution, %{membership_types: values})
-
-    {:noreply,
-     socket
-     |> assign(form: prepare_form(changeset, action: :validate))}
-  end
-
-  def handle_event("remove_suspension_reason", %{"index" => index}, socket) do
-    values = Phoenix.HTML.Form.input_value(socket.assigns.form, :suspension_reasons)
-    values = remove_index(values, index)
-
-    changeset =
-      Legal.change_constitution(socket.assigns.constitution, %{suspension_reasons: values})
-
-    {:noreply,
-     socket
-     |> assign(form: prepare_form(changeset, action: :validate))}
-  end
-
-  def handle_event("add_suspension_reason", %{}, socket) do
-    form = socket.assigns.form
-    values =
-      form
-      |> Phoenix.HTML.Form.input_value(:suspension_reasons)
-
-    values = values ++ ["..."]
-
-
-    changeset =
-      Legal.change_constitution(socket.assigns.constitution, %{suspension_reasons: values})
+    changeset = Ecto.Changeset.put_change(socket.assigns.form.source, field, values)
 
     {:noreply,
      socket
@@ -126,9 +121,89 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
     |> Enum.map(fn {value, _} -> value end)
   end
 
+  def on_add_event(field, socket) when is_atom(field) do
+    values =
+      socket.assigns.form
+      |> Phoenix.HTML.Form.input_value(field)
+      |> add_new_entry()
+
+    changeset = Ecto.Changeset.put_change(socket.assigns.form.source, field, values)
+
+    {:noreply,
+     socket
+     |> assign(form: prepare_form(changeset, action: :validate))}
+  end
+
+  def add_new_entry(list) do
+    list ++ [""]
+  end
+
   defp prepare_form(changeset, options \\ []) do
-    form = to_form(changeset, options)
-    IO.inspect(form)
-    form
+    to_form(changeset, options)
+  end
+
+  def get_duration_unit_options() do
+    [
+      [key: "Jahre", value: "years"],
+      [key: "Monate", value: "months"],
+      [key: "Wochen", value: "weeks"],
+      [key: "Tage", value: "days"]
+    ]
+  end
+
+  def get_unit(duration) do
+    {unit, _} = split_duration(duration)
+    unit
+  end
+
+  defp get_amount(duration) do
+    {_, amount} = split_duration(duration)
+    amount
+  end
+
+  defp split_duration(duration) do
+    if duration == nil || duration == "" do
+      {nil, nil}
+    else
+      duration = Duration.from_iso8601!(duration)
+
+      cond do
+        duration.year != 0 -> {"years", duration.year}
+        duration.month != 0 -> {"months", duration.month}
+        duration.week != 0 -> {"weeks", duration.week}
+        duration.day != 0 -> {"days", duration.day}
+      end
+    end
+  end
+
+  defp get_termination_notice_period(%{
+         "termination_notice_period_amount" => termination_notice_period_amount,
+         "termination_notice_period_unit" => termination_notice_period_unit
+       }) do
+    create_duration(termination_notice_period_amount, termination_notice_period_unit)
+  end
+
+  defp get_minimal_membership_duration(%{
+         "minimal_membership_duration_amount" => minimal_membership_duration_amount,
+         "minimal_membership_duration_unit" => minimal_membership_duration_unit
+       }) do
+    create_duration(minimal_membership_duration_amount, minimal_membership_duration_unit)
+  end
+
+  defp create_duration("", unit), do: ""
+  defp create_duration(nil, unit), do: ""
+
+  defp create_duration(amount, unit) do
+    {amount, ""} = Integer.parse(amount)
+
+    duration =
+      case unit do
+        "years" -> Duration.new!(year: amount)
+        "months" -> Duration.new!(month: amount)
+        "weeks" -> Duration.new!(week: amount)
+        "days" -> Duration.new!(day: amount)
+      end
+
+    Duration.to_iso8601(duration)
   end
 end
