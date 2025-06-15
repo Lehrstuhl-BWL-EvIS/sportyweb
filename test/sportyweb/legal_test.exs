@@ -155,4 +155,99 @@ defmodule Sportyweb.LegalTest do
       assert %Ecto.Changeset{} = Legal.change_membership(membership)
     end
   end
+
+  describe "constitution" do
+    alias Sportyweb.Legal.Constitution
+
+    import Sportyweb.FinanceFixtures
+    import Sportyweb.LegalFixtures
+    import Sportyweb.OrganizationFixtures
+    import Sportyweb.PersonalFixtures
+
+    @invalid_attrs %{
+      club_id: nil,
+      termination_interval: nil
+    }
+
+    test "get_constitution_of_club/2 returns the constitution of the given club and contains a preloaded club" do
+      constitution = constitution_fixture()
+
+      assert %Constitution{} = Legal.get_constitution_of_club(constitution.club_id, [:club])
+
+      assert Legal.get_constitution_of_club(constitution.club_id, [:club]).club.id ==
+               constitution.club_id
+    end
+
+    test "create_constitution/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Legal.create_constitution(@invalid_attrs)
+    end
+
+    test "create_constitution/1 with empty constitution returns a constitution changeset" do
+      club = club_fixture()
+
+      valid_attrs = %{
+        club_id: club.id,
+        membership_types: ["type1", "type2"],
+        suspension_reasons: ["reason1", "reason2"],
+        suspension_reason_mode: "optional",
+        termination_notice_period: "P1D",
+        termination_interval: "end_of_quarter",
+        minimal_membership_duration: ""
+      }
+
+      assert {:ok, %Constitution{}} = Legal.create_constitution(valid_attrs)
+    end
+
+    test "change_constitution/1 returns a constitution changeset" do
+      constitution = constitution_fixture()
+      assert %Ecto.Changeset{} = Legal.change_constitution(constitution)
+    end
+
+    test "update_constitution/2 with valid data updates the constitution" do
+      constitution = constitution_fixture()
+      update_attrs = %{}
+
+      assert {:ok, %Constitution{}} = Legal.update_constitution(constitution, update_attrs)
+    end
+
+    test "update_constitution/2 with invalid data returns error changeset" do
+      constitution = constitution_fixture()
+      assert {:error, %Ecto.Changeset{}} = Legal.update_constitution(constitution, @invalid_attrs)
+    end
+
+    test "Constitution.get_next_allowed_archiving_date/2" do
+      date = ~D[2000-05-06]
+
+      constitution = %Constitution{
+        termination_interval: "",
+        termination_notice_period: ""
+      }
+
+      assert date = Constitution.get_next_allowed_archiving_date(constitution, nil, date)
+
+      constitution = %Constitution{
+        termination_interval: "",
+        termination_notice_period: "P5M"
+      }
+
+      assert ~D[2000-10-06] =
+               Constitution.get_next_allowed_archiving_date(constitution, nil, date)
+
+      constitution = %Constitution{
+        termination_interval: "end_of_half_year",
+        termination_notice_period: ""
+      }
+
+      assert ~D[2000-06-30] =
+               Constitution.get_next_allowed_archiving_date(constitution, nil, date)
+
+      constitution = %Constitution{
+        termination_interval: "end_of_half_year",
+        termination_notice_period: "P5M"
+      }
+
+      assert ~D[2000-12-31] =
+               Constitution.get_next_allowed_archiving_date(constitution, nil, date)
+    end
+  end
 end

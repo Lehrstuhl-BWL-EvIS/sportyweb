@@ -13,7 +13,7 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
   @impl true
   def handle_params(%{"club_id" => club_id}, _, socket) do
     constitution =
-      Legal.get_constitution(club_id, [:club])
+      Legal.get_constitution_of_club(club_id, [:club])
 
     constitution =
       if constitution != nil do

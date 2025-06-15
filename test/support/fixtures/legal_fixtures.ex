@@ -27,7 +27,7 @@ defmodule Sportyweb.LegalFixtures do
         first_billing_date: nil,
         termination_date: nil,
         archive_date: nil,
-        clubs: [club]
+        club: club
       })
       |> Sportyweb.Legal.create_contract()
 
@@ -53,5 +53,24 @@ defmodule Sportyweb.LegalFixtures do
       |> Sportyweb.Legal.create_membership()
 
     membership
+  end
+
+  @doc """
+  Generate a constitution.
+  """
+  def constitution_fixture(attrs \\ %{}) do
+    club = club_fixture()
+
+    {:ok, constitution} =
+      attrs
+      |> Enum.into(%{
+        club_id: club.id,
+        membership_types: ["type", "type2"],
+        suspension_reasons: ["reason1", "reason2"],
+        suspension_reason_mode: "optional"
+      })
+      |> Sportyweb.Legal.create_constitution()
+
+    constitution
   end
 end

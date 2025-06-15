@@ -323,7 +323,13 @@ defmodule Sportyweb.Legal do
     Membership.changeset(membership, attrs)
   end
 
-  def get_constitution(club_id, preloads) do
+  def create_constitution(attrs \\ %{}) do
+    %Constitution{}
+    |> Constitution.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def get_constitution_of_club(club_id, preloads) do
     query = from(c in Constitution, where: c.club_id == ^club_id)
 
     query
