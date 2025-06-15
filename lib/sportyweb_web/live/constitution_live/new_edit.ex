@@ -20,13 +20,7 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
         constitution
       else
         club = Organization.get_club!(club_id)
-
-        %Constitution{
-          club_id: club.id,
-          club: club,
-          suspension_reasons: Constitution.get_default_suspension_reasons(),
-          suspension_reason_mode: Constitution.get_default_suspension_reason_mode()
-        }
+        Constitution.get_default(club)
       end
 
     changeset = Legal.change_constitution(constitution)
@@ -42,7 +36,6 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
 
   @impl true
   def handle_event("validate", %{"constitution" => constitution_changes} = val, socket) do
-    IO.inspect(val)
     termination_notice_period = get_termination_notice_period(val)
     minimal_membership_duration = get_minimal_membership_duration(val)
 
@@ -71,7 +64,7 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
       })
 
     case Legal.update_constitution(socket.assigns.constitution, constitution_changes) do
-      {:ok, constitution} ->
+      {:ok, _} ->
         {:noreply,
          socket
          |> put_flash(:info, "Satzung erfolgreich aktualisiert")
@@ -116,8 +109,9 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
   end
 
   def remove_index(enum, index) do
-    Enum.with_index(enum)
-    |> Enum.filter(fn {value, i} -> i != index end)
+    enum
+    |> Enum.with_index()
+    |> Enum.filter(fn {_, i} -> i != index end)
     |> Enum.map(fn {value, _} -> value end)
   end
 
@@ -190,8 +184,8 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
     create_duration(minimal_membership_duration_amount, minimal_membership_duration_unit)
   end
 
-  defp create_duration("", unit), do: ""
-  defp create_duration(nil, unit), do: ""
+  defp create_duration("", _unit), do: ""
+  defp create_duration(nil, _unit), do: ""
 
   defp create_duration(amount, unit) do
     {amount, ""} = Integer.parse(amount)

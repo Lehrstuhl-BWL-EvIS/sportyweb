@@ -3,6 +3,7 @@ defmodule SportywebWeb.MembershipLive.Edit do
 
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Membership
+  alias Sportyweb.Legal.Constitution
   alias Sportyweb.Finance
   alias Sportyweb.Personal.Contact
 
@@ -15,8 +16,8 @@ defmodule SportywebWeb.MembershipLive.Edit do
   def handle_params(%{"id" => id}, _, socket) do
     membership =
       Legal.get_membership!(id, [
-        :club,
         :following_memberships,
+        club: [:constitution],
         contact: [:emails],
         preconditional_membership: [:club, :department, :group],
         department: [:fees],
@@ -33,12 +34,18 @@ defmodule SportywebWeb.MembershipLive.Edit do
       ])
 
     other_memberships = Enum.filter(all_memberships_of_contact, fn m -> m.id != membership.id end)
-
     following_memberships = get_all_following_memberships(membership)
 
     organization = Membership.get_organization(membership)
     fee_options = Finance.list_contract_fee_options(organization, membership.contact.id)
     title = Membership.print(membership)
+
+    constitution =
+      if membership.club.constitution != nil do
+        membership.club.constitution
+      else
+        Constitution.get_default(membership.club)
+      end
 
     socket =
       socket
@@ -46,6 +53,7 @@ defmodule SportywebWeb.MembershipLive.Edit do
       |> assign(:membership, membership)
       |> assign(:fee_options, fee_options)
       |> assign(:club, membership.club)
+      |> assign(:constitution, constitution)
       |> assign(:other_memberships, other_memberships)
       |> assign(:following_memberships, following_memberships)
       |> assign(:membership_form, to_form(Legal.change_membership(membership)))
@@ -169,9 +177,5 @@ defmodule SportywebWeb.MembershipLive.Edit do
     found_memberships = Enum.concat(found_memberships, next_memberships)
     memberships_to_check = Enum.flat_map(next_memberships, fn m -> m.following_memberships end)
     recursive_get_following_memberships(found_memberships, memberships_to_check)
-  end
-
-  def get_types() do
-    ["ordentlich/aktiv", "passiv", "außerordentlich", "Ehrenmitglied"]
   end
 end

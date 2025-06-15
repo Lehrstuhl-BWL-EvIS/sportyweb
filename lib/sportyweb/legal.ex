@@ -326,7 +326,8 @@ defmodule Sportyweb.Legal do
   def get_constitution(club_id, preloads) do
     query = from(c in Constitution, where: c.club_id == ^club_id)
 
-    Repo.one(query)
+    query
+    |> Repo.one()
     |> Repo.preload(preloads)
   end
 

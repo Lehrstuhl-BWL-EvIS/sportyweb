@@ -56,7 +56,7 @@
             name="type"
             label="Art"
             value={@membership.type}
-            options={get_types()}
+            options={@constitution.membership_types}
             prompt="Bitte auswählen"
           />
         </div>
@@ -157,6 +157,7 @@
             module={SportywebWeb.MembershipLive.ChangeStateComponent}
             membership={@membership}
             action={action}
+            constitution={@constitution}
             fee_options={@fee_options}
             following_memberships={@following_memberships}
           />

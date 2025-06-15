@@ -219,9 +219,9 @@ defmodule Sportyweb.Personal.Contact do
       if main_information != nil do
         main_information
       else
-        information_list
-        |> Enum.sort_by(fn add -> add.updated_at end, :desc)
-        |> Enum.at(0)
+          information_list
+          |> Enum.sort_by(fn add -> add.updated_at end, :desc)
+          |> Enum.at(0)
       end
     end
   end

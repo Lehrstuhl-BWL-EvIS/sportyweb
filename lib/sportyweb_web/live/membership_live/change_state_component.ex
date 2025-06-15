@@ -113,7 +113,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                     name="archive_date"
                     type="date"
                     label="Ende der Mitgliedschaft"
-                    value={@initial_termination_date}
+                    value={@initial_archive_date}
                   />
                   <.error :if={@archive_date_error != nil}>{@archive_date_error}</.error>
                 </div>
@@ -142,13 +142,16 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                   />
                   <.error :if={@suspension_date_error != nil}>{@suspension_date_error}</.error>
                 </div>
-                <div class="col-span-12 md:col-span-6">
+                <div
+                  :if={@constitution.suspension_reason_mode != "not_allowed"}
+                  class="col-span-12 md:col-span-6"
+                >
                   <.input
                     name="suspension_reason"
                     value={@initial_suspension_reason}
                     type="select"
                     label="Grund"
-                    options={get_suspension_reasons()}
+                    options={@constitution.suspension_reasons}
                     prompt="Bitte auswählen"
                   />
                   <.error :if={@suspension_reason_error != nil}>{@suspension_reason_error}</.error>
@@ -198,7 +201,6 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   def update(assigns, socket) do
     action = assigns.action
     today = Date.utc_today()
-    end_of_year = Date.new!(Date.utc_today().year, 12, 31)
 
     {initial_signing_date, initial_start_date, initial_fee_id} =
       if action == "ADMIT" do
@@ -209,7 +211,21 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
 
     {initial_termination_date, initial_archive_date} =
       if action == "TERMINATE" do
-        {today, end_of_year}
+        date_of_minimal_membership_duration =
+          if assigns.constitution.minimal_membership_duration == "" do
+            today
+          else
+            duration = Duration.from_iso8601!(assigns.constitution.minimal_membership_duration)
+            Date.shift(today, duration)
+          end
+
+        next_allowed_archiving_date =
+          Constitution.get_next_allowed_archiving_date(
+            assigns.constitution,
+            date_of_minimal_membership_duration
+          )
+
+        {today, next_allowed_archiving_date}
       else
         {nil, nil}
       end
@@ -454,7 +470,11 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
       )
 
     suspension_reason_error =
-      error_if_nil(suspension_reason, "Bitte angeben, warum das Mitglied ausgeschlossen wurde.")
+      if socket.assigns.constitution.suspension_reason_mode == "required" do
+        error_if_nil(suspension_reason, "Bitte angeben, warum das Mitglied ausgeschlossen wurde.")
+      else
+        nil
+      end
 
     socket =
       socket
@@ -470,15 +490,20 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
         "save_dialog",
         %{
           "action" => "SUSPEND",
-          "suspension_date" => suspension_date,
-          "suspension_reason" => suspension_reason
+          "suspension_date" => suspension_date
         } = args,
         socket
       ) do
+    suspension_reason = Map.get(args, "suspension_reason")
+
     organization_name = Membership.print_organization(socket.assigns.membership)
 
     message =
       if suspension_reason != nil && suspension_reason != "" do
+        if socket.assigns.constitution.suspension_reason_mode == "required" do
+          raise "suspension_reason is required by constitution"
+        end
+
         "Sie wurden aufgrund von #{suspension_reason} zum #{suspension_date} von der Mitgliedschaft im / in der #{organization_name} ausgeschlossen."
       else
         "Sie wurden zum #{suspension_date} von der Mitgliedschaft im / in der #{organization_name} ausgeschlossen."
@@ -658,10 +683,6 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
       "SUSPEND" -> "Ausschließen"
       "DECEASE" -> "Verstorben"
     end
-  end
-
-  def get_suspension_reasons() do
-    Constitution.get_default_suspension_reasons()
   end
 
   defp error_if_nil(value, error) do

@@ -19,6 +19,24 @@ defmodule Sportyweb.Legal.Constitution do
     timestamps(type: :utc_datetime)
   end
 
+  def get_default(%Club{} = club) do
+    default_suspension_reasons = [
+      "Beitragsrückstand",
+      "Verstoß gegen Satzung und Ordnung",
+      "Verstoß gegen Interessen des Vereins"
+    ]
+
+    default_membership_types = ["ordentlich/aktiv", "passiv", "außerordentlich", "Ehrenmitglied"]
+
+    %Constitution{
+      club_id: club.id,
+      club: club,
+      suspension_reasons: default_suspension_reasons,
+      suspension_reason_mode: "optional",
+      membership_types: default_membership_types
+    }
+  end
+
   def get_suspension_reasons_modes do
     [
       [key: "erforderlich", value: "required"],
@@ -36,60 +54,61 @@ defmodule Sportyweb.Legal.Constitution do
     ]
   end
 
-  def get_default_suspension_reasons do
-    [
-      "Beitragsrückstand",
-      "Verstoß gegen Satzung und Ordnung",
-      "Verstoß gegen Interessen des Vereins"
-    ]
-  end
-
-  def get_default_suspension_reason_mode do
-    "optional"
-  end
-
   def get_next_allowed_archiving_date(
         %Constitution{} = constitution,
-        after_date \\ Date.utc_today()
+        first_allowed_date \\ nil
       ) do
+    today = Date.utc_today()
+
     end_of_termination_notice_period =
       case constitution.termination_notice_period do
         "" ->
-          after_date
+          today
 
         _ ->
           notice_period = Duration.from_iso8601!(constitution.termination_notice_period)
-          Date.shift(after_date, notice_period)
+          Date.shift(today, notice_period)
       end
 
+    first_allowed_date =
+      cond do
+        first_allowed_date == nil -> end_of_termination_notice_period
+        first_allowed_date <= end_of_termination_notice_period -> end_of_termination_notice_period
+        true -> first_allowed_date
+      end
+
+    get_next_end_of_termination_interval(first_allowed_date)
+  end
+
+  defp get_next_end_of_termination_interval(first_allowed_date) do
     case constitution.termination_interval do
       "" ->
-        end_of_termination_notice_period
+        first_allowed_date
 
       "end_of_year" ->
-        Date.new!(end_of_termination_notice_period.year, 12, 31)
+        Date.new!(first_allowed_date.year, 12, 31)
 
       "end_of_month" ->
-        Date.end_of_month(end_of_termination_notice_period)
+        Date.end_of_month(first_allowed_date)
 
       "end_of_half_year" ->
-        if end_of_termination_notice_period.month > 6,
-          do: Date.new!(end_of_termination_notice_period.year, 12, 31),
-          else: Date.new!(end_of_termination_notice_period.year, 6, 30)
+        if first_allowed_date.month > 6,
+           do: Date.new!(first_allowed_date.year, 12, 31),
+           else: Date.new!(first_allowed_date.year, 6, 30)
 
       "end_of_quarter" ->
         cond do
-          end_of_termination_notice_period.month > 9 ->
-            Date.new!(end_of_termination_notice_period.year, 12, 31)
+          first_allowed_date.month > 9 ->
+            Date.new!(first_allowed_date.year, 12, 31)
 
-          end_of_termination_notice_period.month > 6 ->
-            Date.new!(end_of_termination_notice_period.year, 9, 30)
+          first_allowed_date.month > 6 ->
+            Date.new!(first_allowed_date.year, 9, 30)
 
-          end_of_termination_notice_period.month > 3 ->
-            Date.new!(end_of_termination_notice_period.year, 6, 30)
+          first_allowed_date.month > 3 ->
+            Date.new!(first_allowed_date.year, 6, 30)
 
           true ->
-            Date.new!(end_of_termination_notice_period.year, 3, 31)
+            Date.new!(first_allowed_date.year, 3, 31)
         end
     end
   end
