@@ -9,6 +9,7 @@ defmodule Sportyweb.Legal do
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.Membership
+  alias Sportyweb.Legal.Constitution
   alias Sportyweb.Personal.Contact
 
   @doc """
@@ -320,5 +321,22 @@ defmodule Sportyweb.Legal do
   """
   def change_membership(%Membership{} = membership, attrs \\ %{}) do
     Membership.changeset(membership, attrs)
+  end
+
+  def get_constitution(club_id, preloads) do
+    query = from(c in Constitution, where: c.club_id == ^club_id)
+
+    Repo.one(query)
+    |> Repo.preload(preloads)
+  end
+
+  def update_constitution(%Constitution{} = constitution, attrs) do
+    constitution
+    |> Constitution.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def change_constitution(%Constitution{} = contract, attrs \\ %{}) do
+    Constitution.changeset(contract, attrs)
   end
 end

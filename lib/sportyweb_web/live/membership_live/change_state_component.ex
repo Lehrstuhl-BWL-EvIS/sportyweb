@@ -1,8 +1,9 @@
 defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   use SportywebWeb, :live_component
 
-  alias Sportyweb.Legal.Membership
   alias Sportyweb.Legal
+  alias Sportyweb.Legal.Membership
+  alias Sportyweb.Legal.Constitution
   alias Sportyweb.Person.ContactChangeNotifier
 
   @impl true
@@ -660,11 +661,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   def get_suspension_reasons() do
-    [
-      "Beitragsrückstand",
-      "Verstoß gegen Satzung und Ordnung",
-      "Verstoß gegen Interessen des Vereins"
-    ]
+    Constitution.get_default_suspension_reasons()
   end
 
   defp error_if_nil(value, error) do

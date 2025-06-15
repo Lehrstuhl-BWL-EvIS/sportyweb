@@ -7,6 +7,7 @@ defmodule Sportyweb.Organization.Club do
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.Constitution
   alias Sportyweb.Organization.Club
   alias Sportyweb.Organization.ClubEmail
   alias Sportyweb.Organization.ClubFinancialData
@@ -39,6 +40,7 @@ defmodule Sportyweb.Organization.Club do
     many_to_many :financial_data, FinancialData, join_through: ClubFinancialData
     many_to_many :notes, Note, join_through: ClubNote
     many_to_many :phones, Phone, join_through: ClubPhone
+    has_one :constituion, Constitution
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""

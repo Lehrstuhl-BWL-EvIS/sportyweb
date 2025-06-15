@@ -23,6 +23,7 @@ alias Sportyweb.Finance.Fee
 alias Sportyweb.Finance.Subsidy
 alias Sportyweb.Legal.Contract
 alias Sportyweb.Legal.Membership
+alias Sportyweb.Legal.Constitution
 alias Sportyweb.Organization
 alias Sportyweb.Organization.Club
 alias Sportyweb.Organization.Department
@@ -135,7 +136,7 @@ defmodule Sportyweb.SeedHelper do
 end
 
 defmodule Sportyweb.ContactSeedHelper do
-  def add_contact(club) do
+  def add_contact(club, constitution) do
     is_main = :rand.uniform() < 0.8
 
     postal_addresses =
@@ -223,7 +224,7 @@ defmodule Sportyweb.ContactSeedHelper do
     contract_ration = if is_person, do: 0.9, else: 0.3
 
     if :rand.uniform() < contract_ration do
-      {_, club_membership} = add_membership(club, nil, nil, contact, nil)
+      {_, club_membership} = add_membership(constitution, club, nil, nil, contact, nil)
 
       for department <- club.departments do
         number_of_departments = length(club.departments)
@@ -231,19 +232,28 @@ defmodule Sportyweb.ContactSeedHelper do
         if :rand.uniform() < 2 / number_of_departments do
           # make members of club be members in two departments by average
           {_, department_membership} =
-            add_membership(club, department, nil, contact, club_membership)
+            add_membership(constitution, club, department, nil, contact, club_membership)
 
           if !Enum.empty?(department.groups) && :rand.uniform() < 0.6 do
             # make most members of a department member in one of the department's groups
             group = Enum.random(department.groups)
-            {_, _} = add_membership(club, department, group, contact, department_membership)
+
+            {_, _} =
+              add_membership(
+                constitution,
+                club,
+                department,
+                group,
+                contact,
+                department_membership
+              )
           end
         end
       end
     end
   end
 
-  defp add_membership(club, department, group, contact, preconditional_membership) do
+  defp add_membership(constitution, club, department, group, contact, preconditional_membership) do
     fees =
       cond do
         group != nil -> Finance.list_contract_fee_options(group, contact.id)
@@ -269,30 +279,36 @@ defmodule Sportyweb.ContactSeedHelper do
       end
 
     type =
-      if preconditional_membership != nil do
-        preconditional_membership.type
-      else
-        random = :rand.uniform()
-
-        cond do
-          random < 0.7 -> "ordentlich / aktiv"
-          random < 0.8 -> "passiv"
-          random < 0.9 -> "außerordentlich"
-          true -> "Ehrenmitglied"
-        end
+      cond do
+        preconditional_membership != nil -> preconditional_membership.type
+        constitution != nil -> Enum.random(constitution.membership_types)
+        true -> ""
       end
 
     today = Date.utc_today()
     today_next_year = Date.new!(today.year + 1, today.month, today.day)
-    end_of_year = Date.new!(today.year, 12, 31)
 
-    suspension_reason = if state == "SUSPENDED", do: "Beitragsrückstand", else: ""
+    suspension_reason =
+      cond do
+        state != "SUSPENDED" -> ""
+        constitution != nil && constitution.suspension_reason_mode == "not_allowed" -> ""
+        constitution != nil -> Enum.random(constitution.suspension_reasons)
+        true -> "Beitragsrückstand"
+      end
+
     reactivation_date = if state == "PAUSED", do: today_next_year, else: nil
+
+    next_allowed_archive_date =
+      if constitution == nil do
+        today
+      else
+        Constitution.get_next_allowed_archiving_date(constitution)
+      end
 
     {termination_date, archive_date} =
       cond do
         state == "TERMINATED" -> {today, today}
-        state == "DECEASED" || state == "SUSPENDED" -> {today, end_of_year}
+        state == "DECEASED" || state == "SUSPENDED" -> {today, next_allowed_archive_date}
         true -> {nil, nil}
       end
 
@@ -782,6 +798,75 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 |> Enum.each(fn {club, _club_index} ->
   # No data for the "empty club"!
   if club.id != club_4.id do
+    constitution =
+      if :rand.uniform() < 0.5 do
+        # everything should work if club has not set up it's constitution
+        nil
+      else
+        membership_types =
+          Enum.take_random(
+            [
+              "ordentlich / aktiv",
+              "ordentlich",
+              "aktiv",
+              "außerordentlich",
+              "Ehrenmitglied",
+              "jugendlich",
+              "fördernd"
+            ],
+            4
+          )
+
+        suspension_reason_mode = Enum.random(["required", "optional", "not_allowed"])
+
+        suspension_reasons =
+          if suspension_reason_mode == "not_allowed" do
+            []
+          else
+            Enum.take_random(
+              [
+                "ordentlich / aktiv",
+                "ordentlich",
+                "aktiv",
+                "außerordentlich",
+                "Ehrenmitglied",
+                "jugendlich",
+                "fördernd"
+              ],
+              4
+            )
+          end
+
+        termination_notice_period =
+          Enum.random([
+            "",
+            Duration.to_iso8601(Duration.new!(month: 1)),
+            Duration.to_iso8601(Duration.new!(month: 3)),
+            Duration.to_iso8601(Duration.new!(year: 1))
+          ])
+
+        termination_interval =
+          Enum.random(["", "end_of_year", "end_of_half_year", "end_of_quarter", "end_of_month"])
+
+        minimal_membership_duration =
+          if :rand.uniform() < 0.8 do
+            ""
+          else
+            Duration.to_iso8601(Duration.new!(year: 1))
+          end
+
+        Repo.insert!(%Constitution{
+          club: club,
+          club_id: club.id,
+          membership_types: membership_types,
+          suspension_reasons: suspension_reasons,
+          suspension_reason_mode: suspension_reason_mode,
+          termination_notice_period: termination_notice_period,
+          termination_interval: termination_interval,
+          minimal_membership_duration: minimal_membership_duration
+        })
+      end
+
     # Subsidies
 
     subsidy =
@@ -1121,7 +1206,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
       end
 
     for _i <- 0..number_of_contacts do
-      Sportyweb.ContactSeedHelper.add_contact(club)
+      Sportyweb.ContactSeedHelper.add_contact(club, constitution)
     end
 
     # Locations

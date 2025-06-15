@@ -1,0 +1,96 @@
+<.header>
+  Satzung von {@club.name}
+</.header>
+
+<.card class="mb-5">
+  <.simple_form for={@form} id="new-membership-form" phx-change="validate" phx-submit="save">
+    <.input_grids>
+        <.input_grid>
+            <div class="col-span-12 md:col-span-12">
+            Im Folgenden können bestimmte Inhalte der Vereinssatzung hinterlegt werden, um so die Funktionen zum Bearbeiten von Mitgliedschaften individuell anzupassen.
+            </div>
+        </.input_grid>
+      <.input_grid>
+        <div class="col-span-12 md:col-span-12">
+          <.label>
+            Mitgliedsarten
+          </.label>
+        </div>
+        <%= for {value, i} <- Enum.with_index(Phoenix.HTML.Form.input_value(@form, :membership_types)) do %>
+          <div class="col-span-12 md:col-span-5 flex items-baseline justify-start">
+            <.input name="membership_types[]" value={value} />
+
+            <div phx-click={JS.push("remove_membership_type", value: %{index: i})}>
+              <.icon name="hero-x-mark-solid" class="text-red-500"/>
+            </div>
+          </div>
+        <% end %>
+        <div class="col-span-12 md:col-span-12" phx-click={JS.push("add_membership_type")}>
+          <.icon name="hero-plus-circle" class="text-emerald-600" />
+        </div>
+      </.input_grid>
+
+      <.input_grid>
+        <div class="col-span-12 md:col-span-4">
+          <.input
+            field={@form[:termination_interval]}
+            type="select"
+            options={Constitution.get_termination_intervals()}
+            label="Zeitpunkte eines Austritts"
+            prompt="-"
+          />
+        </div>
+        <div class="col-span-12 md:col-span-4">
+          <.input label="Kündigungsfrist" field={@form[:termination_notice_period]} />
+        </div>
+        <div class="col-span-12 md:col-span-4">
+            <.input label="Kündigungsfrist" field={@form[:termination_notice_period]} />
+        </div>
+        <div class="col-span-12 md:col-span-4">
+          <.input label="Mindestmitgliedsdauer" field={@form[:minimal_membership_duration]} />
+        </div>
+      </.input_grid>
+
+      <.input_grid>
+        <div class="col-span-12 md:col-span-6">
+          <.input
+            field={@form[:suspension_reason_mode]}
+            type="select"
+            options={Constitution.get_suspension_reasons_modes()}
+            label="Begründung eines Ausschlusses"
+            prompt="-"
+          />
+        </div>
+        {Phoenix.HTML.Form.input_value(@form, :suspension_reason_mode)}
+        <%= if Phoenix.HTML.Form.input_value(@form, :suspension_reason_mode) != "not_allowed" do %>
+          <div class="col-span-12 md:col-span-12">
+            <.label :if={
+              Phoenix.HTML.Form.input_value(@form, :suspension_reason_mode) != "not_allowed"
+            }>
+              erlaubte Gründe
+            </.label>
+          </div>
+          <%= for {value, i} <- Enum.with_index(Phoenix.HTML.Form.input_value(@form, :suspension_reasons)) do %>
+            <div class="col-span-12 md:col-span-6 flex items-baseline justify-start">
+              <.input name="suspension_reasons[]" value={value} class="flex-grow" />
+
+              <div phx-click={JS.push("remove_suspension_reason", value: %{index: i})}>
+                <.icon name="hero-x-mark-solid" class="text-red-500"/>
+              </div>
+            </div>
+          <% end %>
+          <div class="col-span-12 md:col-span-12" phx-click={JS.push("add_suspension_reason")}>
+            <.icon name="hero-plus-circle" class="text-emerald-600"/>
+          </div>
+        <% end %>
+      </.input_grid>
+    </.input_grids>
+
+    <:actions>
+      <div>
+        <.button phx-disable-with="Speichern...">Speichern</.button>
+        <.cancel_button navigate={~p"/clubs/#{@club}/contacts"}>Abbrechen</.cancel_button>
+      </div>
+    </:actions>
+  </.simple_form>
+</.card>
