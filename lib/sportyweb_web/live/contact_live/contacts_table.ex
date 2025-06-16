@@ -150,7 +150,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       "Geschlecht" -> :person_gender
       "In" -> nil
       "Mitglied" -> nil
-      "Adresse" -> :address["street"]
+      "Adresse" -> :address_as_text
       "E-Mail" -> :email
       "Telefonnummer" -> :phone
     end
@@ -188,7 +188,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
         end
 
       "Adresse" ->
-        fn c -> PostalAddress.as_text(c.address) end
+        fn c -> c.address_as_text end
 
       "E-Mail" ->
         fn c -> c.email end

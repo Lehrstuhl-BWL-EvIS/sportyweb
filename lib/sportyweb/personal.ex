@@ -109,6 +109,18 @@ defmodule Sportyweb.Personal do
 
       {:person_gender, value}, dynamic ->
         dynamic([c], ^dynamic and ilike(c.person_gender, ^prepare_for_like(value)))
+
+      {:email, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.email, ^prepare_for_like(value)))
+
+      {:phone, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.phone, ^prepare_for_like(value)))
+
+      {:note, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.note, ^prepare_for_like(value)))#
+
+      {:address_as_text, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.address_as_text, ^prepare_for_like(value)))
     end)
   end
 

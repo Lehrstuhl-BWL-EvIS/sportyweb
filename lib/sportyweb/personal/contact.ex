@@ -34,6 +34,7 @@ defmodule Sportyweb.Personal.Contact do
     field :email, :string, default: ""
     field :phone, :string, default: ""
     field :note, :string, default: ""
+    field :address_as_text, :string, default: ""
     embeds_one :address, EmbeddedPostalAddress
     embeds_one :financial_data, EmbeddedFinancialData
 
@@ -146,7 +147,7 @@ defmodule Sportyweb.Personal.Contact do
     |> Email.validate_email_address(:email)
     |> Phone.validate_phone_number(:phone)
     |> Note.validate_note_content(:note)
-    |> set_name()
+    |> set_additional_fields()
   end
 
   defp validate_required_type_condition(%Ecto.Changeset{} = changeset) do
@@ -169,10 +170,9 @@ defmodule Sportyweb.Personal.Contact do
     end
   end
 
-  defp set_name(%Ecto.Changeset{} = changeset) do
+  defp set_additional_fields(%Ecto.Changeset{} = changeset) do
     # The "name" field is only set internally and its content is based on
     # the contact type and the content of (multiple) other fields.
-
     name =
       case get_field(changeset, :type) do
         "organization" ->
@@ -187,6 +187,17 @@ defmodule Sportyweb.Personal.Contact do
           ""
       end
 
-    changeset |> Ecto.Changeset.change(name: String.trim(name))
+      # for simplified filtering and sorting in contact_table,
+      # the address is added as string into each contact
+      address = get_field(changeset, :address);
+      address_as_text = if address == nil do
+        ""
+        else
+          EmbeddedPostalAddress.as_text(address)
+      end
+
+    changeset
+     |> Ecto.Changeset.change(name: String.trim(name))
+     |> Ecto.Changeset.change(address_as_text: address_as_text)
   end
 end

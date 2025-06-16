@@ -22,4 +22,7 @@ defmodule Sportyweb.Polymorphic.EmbeddedPostalAddress do
       |> PostalAddress.update_and_validate_changeset()
     end
   end
+
+  def as_text(address), do: PostalAddress.as_text(address)
+
 end

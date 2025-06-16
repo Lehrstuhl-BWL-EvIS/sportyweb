@@ -16,6 +16,7 @@ defmodule Sportyweb.Repo.Migrations.CreateContacts do
       add :email, :string, null: false
       add :phone, :string, null: false
       add :note, :text, null: false
+      add :address_as_text, :text, null: false
       add :address, :map
       add :financial_data, :map
 
