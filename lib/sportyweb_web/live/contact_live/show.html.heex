@@ -25,23 +25,24 @@
       {format_date_field_dmy(@contact.person_birthday)} - {Contact.age_in_years(@contact)} Jahre
     </:item>
     <:item title="Adresse">
-      <SportywebWeb.PolymorphicLive.PostalAddressesShowComponent.render postal_addresses={
-        @contact.postal_addresses
-      } />
+      {format_string_field(@contact.email)}
+      <SportywebWeb.PolymorphicLive.PostalAddressesShowComponent.render postal_addresses={[
+        @contact.address
+      ]} />
     </:item>
     <:item title="E-Mail">
-      {format_struct_list(@contact.emails, :address)}
+      {format_string_field(@contact.email)}
     </:item>
     <:item title="Telefon">
-      {format_struct_list(@contact.phones, :number)}
+      {format_string_field(@contact.phone)}
     </:item>
     <:item title="Zahlungsdaten">
-      <SportywebWeb.PolymorphicLive.FinancialDataShowComponent.render financial_data={
+      <SportywebWeb.PolymorphicLive.FinancialDataShowComponent.render financial_data={[
         @contact.financial_data
-      } />
+      ]} />
     </:item>
     <:item title="Notizen">
-      <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@contact.notes} />
+      {format_string_field(@contact.note)}
     </:item>
     <:item :if={Contact.has_active_membership_contract?(@contact)} title="Aktives Mitglied">
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />

@@ -14,8 +14,7 @@ defmodule Sportyweb.PersonalTest do
       organization_name: nil,
       organization_type: nil,
       person_birthday: nil,
-      person_first_name_1: nil,
-      person_first_name_2: nil,
+      person_first_name: nil,
       person_gender: nil,
       person_last_name: nil,
       type: nil
@@ -26,43 +25,25 @@ defmodule Sportyweb.PersonalTest do
       assert List.first(Personal.list_contacts(contact.club_id)).id == contact.id
     end
 
-    test "list_contacts/4 without order or filter returns all contacts of a given club with preloaded associations" do
+    test "list_contacts/3 without order or filter returns all contacts of a given club" do
       contact = contact_fixture()
 
-      assert Personal.list_contacts(contact.club_id, nil, nil, [
-               :emails,
-               :financial_data,
-               :notes,
-               :phones,
-               :postal_addresses
-             ]) == [contact]
+      assert Personal.list_contacts(contact.club_id, nil, nil) == [contact]
     end
 
-    test "list_contacts/4 without filter returns all contacts in correct order" do
+    test "list_contacts/3 without filter returns all contacts in correct order" do
       club = club_fixture()
       youngest_contact = contact_fixture(%{person_birthday: ~D[2003-02-15], club_id: club.id})
       middle_contact = contact_fixture(%{person_birthday: ~D[2001-02-15], club_id: club.id})
       oldest_contact = contact_fixture(%{person_birthday: ~D[2000-02-15], club_id: club.id})
 
       contacts =
-        Personal.list_contacts(club.id, [asc: :person_birthday], nil, [
-          :emails,
-          :financial_data,
-          :notes,
-          :phones,
-          :postal_addresses
-        ])
+        Personal.list_contacts(club.id, [asc: :person_birthday], nil)
 
       assert contacts == [oldest_contact, middle_contact, youngest_contact]
 
       contacts =
-        Personal.list_contacts(club.id, [desc: :person_birthday], nil, [
-          :emails,
-          :financial_data,
-          :notes,
-          :phones,
-          :postal_addresses
-        ])
+        Personal.list_contacts(club.id, [desc: :person_birthday], nil)
 
       assert contacts == [youngest_contact, middle_contact, oldest_contact]
     end
@@ -91,25 +72,19 @@ defmodule Sportyweb.PersonalTest do
       })
 
       contacts =
-        Personal.list_contacts(club.id, [asc: :person_birthday], [person_last_name: "%name%"], [
-          :emails,
-          :financial_data,
-          :notes,
-          :phones,
-          :postal_addresses
-        ])
+        Personal.list_contacts(club.id, [asc: :person_birthday], person_last_name: "%name%")
 
       assert contacts == [contact2, contact1]
     end
 
-    test "list_contacts/4 works with multiple filters" do
+    test "list_contacts/3 works with multiple filters" do
       club = club_fixture()
 
       contact1 =
         contact_fixture(%{
           person_birthday: ~D[2003-02-15],
           club_id: club.id,
-          person_first_name_1: "Alex",
+          person_first_name: "Alex",
           person_last_name: "my name 1"
         })
 
@@ -117,21 +92,21 @@ defmodule Sportyweb.PersonalTest do
         contact_fixture(%{
           person_birthday: ~D[2000-02-15],
           club_id: club.id,
-          person_first_name_1: "Alex",
+          person_first_name: "Alex",
           person_last_name: "CAPITALNAME"
         })
 
       contact_fixture(%{
         person_birthday: ~D[2001-02-15],
         club_id: club.id,
-        person_first_name_1: "Alex",
+        person_first_name: "Alex",
         person_last_name: "someting else"
       })
 
       contact_fixture(%{
         person_birthday: ~D[2001-02-15],
         club_id: club.id,
-        person_first_name_1: "John",
+        person_first_name: "John",
         person_last_name: "last name matches"
       })
 
@@ -139,8 +114,8 @@ defmodule Sportyweb.PersonalTest do
         Personal.list_contacts(
           club.id,
           [asc: :person_birthday],
-          [person_last_name: "%name%", person_first_name_1: "Alex"],
-          [:emails, :financial_data, :notes, :phones, :postal_addresses]
+          person_last_name: "%name%",
+          person_first_name: "Alex"
         )
 
       assert contacts == [contact2, contact1]
@@ -151,16 +126,10 @@ defmodule Sportyweb.PersonalTest do
       assert Personal.get_contact!(contact.id).id == contact.id
     end
 
-    test "get_contact!/2 returns the contact with given id and contains preloaded associations" do
+    test "get_contact!/1 returns the contact with given id and contains preloaded associations" do
       contact = contact_fixture()
 
-      assert Personal.get_contact!(contact.id, [
-               :emails,
-               :financial_data,
-               :notes,
-               :phones,
-               :postal_addresses
-             ]) == contact
+      assert Personal.get_contact!(contact.id) == contact
     end
 
     test "create_contact/1 with valid data creates a contact" do
@@ -171,24 +140,22 @@ defmodule Sportyweb.PersonalTest do
         organization_name: "some organization_name",
         organization_type: "club",
         person_birthday: ~D[2023-02-15],
-        person_first_name_1: "some person_first_name_1",
-        person_first_name_2: "some person_first_name_2",
+        person_first_name: "some person_first_name",
         person_gender: "female",
         person_last_name: "some person_last_name",
         type: "person",
-        emails: [email_attrs()],
-        financial_data: [financial_data_attrs()],
-        notes: [note_attrs()],
-        phones: [phone_attrs()],
-        postal_addresses: [postal_address_attrs()]
+        email: "someone@example.com",
+        financial_data: financial_data_attrs(),
+        notes: "some content",
+        phones: "012345 678910",
+        postal_addresses: postal_address_attrs()
       }
 
       assert {:ok, %Contact{} = contact} = Personal.create_contact(valid_attrs)
       assert contact.organization_name == "some organization_name"
       assert contact.organization_type == "club"
       assert contact.person_birthday == ~D[2023-02-15]
-      assert contact.person_first_name_1 == "some person_first_name_1"
-      assert contact.person_first_name_2 == "some person_first_name_2"
+      assert contact.person_first_name == "some person_first_name"
       assert contact.person_gender == "female"
       assert contact.person_last_name == "some person_last_name"
       assert contact.type == "person"
@@ -205,8 +172,7 @@ defmodule Sportyweb.PersonalTest do
         organization_name: "some updated organization_name",
         organization_type: "corporation",
         person_birthday: ~D[2023-02-16],
-        person_first_name_1: "some updated person_first_name_1",
-        person_first_name_2: "some updated person_first_name_2",
+        person_first_name: "some updated person_first_name",
         person_gender: "male",
         person_last_name: "some updated person_last_name",
         type: "organization"
@@ -216,8 +182,7 @@ defmodule Sportyweb.PersonalTest do
       assert contact.organization_name == "some updated organization_name"
       assert contact.organization_type == "corporation"
       assert contact.person_birthday == ~D[2023-02-16]
-      assert contact.person_first_name_1 == "some updated person_first_name_1"
-      assert contact.person_first_name_2 == "some updated person_first_name_2"
+      assert contact.person_first_name == "some updated person_first_name"
       assert contact.person_gender == "male"
       assert contact.person_last_name == "some updated person_last_name"
       assert contact.type == "organization"
@@ -227,14 +192,7 @@ defmodule Sportyweb.PersonalTest do
       contact = contact_fixture()
       assert {:error, %Ecto.Changeset{}} = Personal.update_contact(contact, @invalid_attrs)
 
-      assert contact ==
-               Personal.get_contact!(contact.id, [
-                 :emails,
-                 :financial_data,
-                 :phones,
-                 :notes,
-                 :postal_addresses
-               ])
+      assert contact == Personal.get_contact!(contact.id)
     end
 
     test "delete_contact/1 deletes the contact" do

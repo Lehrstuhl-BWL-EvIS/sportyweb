@@ -34,9 +34,14 @@ defmodule Sportyweb.Polymorphic.Phone do
       :type,
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
     )
-    |> update_change(:number, &String.trim/1)
+    |> validate_phone_number(:number)
+  end
+
+  def validate_phone_number(changeset, field) when is_atom(field) do
+    changeset
+    |> update_change(field, &String.trim/1)
     # Empty or contains valid chars
-    |> validate_format(:number, ~r/^$|^[0-9\s\/\(\)\+\-]/)
-    |> validate_length(:number, max: 250)
+    |> validate_format(field, ~r/^$|^[0-9\s\/\(\)\+\-]/)
+    |> validate_length(field, max: 250)
   end
 end

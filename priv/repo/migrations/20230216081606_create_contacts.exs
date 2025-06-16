@@ -9,10 +9,16 @@ defmodule Sportyweb.Repo.Migrations.CreateContacts do
       add :organization_name, :string, null: false
       add :organization_type, :string, null: false
       add :person_last_name, :string, null: false
-      add :person_first_name_1, :string, null: false
-      add :person_first_name_2, :string, null: false
+      add :person_first_name, :string, null: false
       add :person_gender, :string, null: false
       add :person_birthday, :date, null: true
+
+      add :email, :string, null: false
+      add :phone, :string, null: false
+      add :note, :text, null: false
+      add :address, :map
+      add :financial_data, :map
+
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps(type: :utc_datetime)

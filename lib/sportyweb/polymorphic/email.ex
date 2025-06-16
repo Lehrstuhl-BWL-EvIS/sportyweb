@@ -31,10 +31,15 @@ defmodule Sportyweb.Polymorphic.Email do
       :type,
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
     )
-    |> update_change(:address, &String.trim/1)
-    |> update_change(:address, &String.downcase/1)
+    |> validate_email_address(:address)
+  end
+
+  def validate_email_address(changeset, field) when is_atom(field) do
+    changeset
+    |> update_change(field, &String.trim/1)
+    |> update_change(field, &String.downcase/1)
     # Empty or contains "@"
-    |> validate_format(:address, ~r/^$|@/)
-    |> validate_length(:address, max: 250)
+    |> validate_format(field, ~r/^$|@/)
+    |> validate_length(field, max: 250)
   end
 end

@@ -15,7 +15,12 @@ defmodule Sportyweb.Polymorphic.Note do
     note
     |> cast(attrs, [:content], empty_values: ["", nil])
     |> validate_required([])
-    |> update_change(:content, &String.trim/1)
-    |> validate_length(:content, max: 20_000)
+    |> validate_note_content(:content)
+  end
+
+  def validate_note_content(changeset, field) when is_atom(field) do
+    changeset
+    |> update_change(field, &String.trim/1)
+    |> validate_length(field, max: 20_000)
   end
 end

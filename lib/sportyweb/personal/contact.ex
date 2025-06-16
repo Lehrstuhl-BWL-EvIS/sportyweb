@@ -6,18 +6,13 @@ defmodule Sportyweb.Personal.Contact do
   alias Sportyweb.Legal.Membership
   alias Sportyweb.Organization.Club
   alias Sportyweb.Personal.Contact
-  alias Sportyweb.Personal.ContactEmail
   alias Sportyweb.Personal.ContactGroup
   alias Sportyweb.Personal.ContactGroupContact
-  alias Sportyweb.Personal.ContactFinancialData
-  alias Sportyweb.Personal.ContactNote
-  alias Sportyweb.Personal.ContactPhone
-  alias Sportyweb.Personal.ContactPostalAddress
   alias Sportyweb.Polymorphic.Email
-  alias Sportyweb.Polymorphic.FinancialData
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
-  alias Sportyweb.Polymorphic.PostalAddress
+  alias Sportyweb.Polymorphic.EmbeddedPostalAddress
+  alias Sportyweb.Polymorphic.EmbeddedFinancialData
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -26,21 +21,21 @@ defmodule Sportyweb.Personal.Contact do
     has_many :contracts, Contract
     has_many :memberships, Membership
     many_to_many :contact_groups, ContactGroup, join_through: ContactGroupContact
-    many_to_many :emails, Email, join_through: ContactEmail
-    many_to_many :financial_data, FinancialData, join_through: ContactFinancialData
-    many_to_many :notes, Note, join_through: ContactNote
-    many_to_many :phones, Phone, join_through: ContactPhone
-    many_to_many :postal_addresses, PostalAddress, join_through: ContactPostalAddress
 
     field :type, :string, default: "person"
     field :name, :string, default: ""
     field :organization_name, :string, default: ""
     field :organization_type, :string, default: ""
     field :person_last_name, :string, default: ""
-    field :person_first_name_1, :string, default: ""
-    field :person_first_name_2, :string, default: ""
+    field :person_first_name, :string, default: ""
     field :person_gender, :string, default: ""
     field :person_birthday, :date, default: nil
+
+    field :email, :string, default: ""
+    field :phone, :string, default: ""
+    field :note, :string, default: ""
+    embeds_one :address, EmbeddedPostalAddress
+    embeds_one :financial_data, EmbeddedFinancialData
 
     timestamps(type: :utc_datetime)
   end
@@ -115,28 +110,25 @@ defmodule Sportyweb.Personal.Contact do
         :organization_name,
         :organization_type,
         :person_last_name,
-        :person_first_name_1,
-        :person_first_name_2,
+        :person_first_name,
         :person_gender,
-        :person_birthday
+        :person_birthday,
+        :email,
+        :note,
+        :phone
       ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:contact_groups, required: false)
-    |> cast_assoc(:emails, required: true)
-    |> cast_assoc(:financial_data, required: true)
-    |> cast_assoc(:notes, required: true)
-    |> cast_assoc(:phones, required: true)
-    |> cast_assoc(:postal_addresses, required: true)
+    |> cast_embed(:financial_data, required: true)
+    |> cast_embed(:address, required: false)
     |> validate_required([:type])
     |> update_change(:organization_name, &String.trim/1)
     |> update_change(:person_last_name, &String.trim/1)
-    |> update_change(:person_first_name_1, &String.trim/1)
-    |> update_change(:person_first_name_2, &String.trim/1)
+    |> update_change(:person_first_name, &String.trim/1)
     |> validate_length(:organization_name, max: 250)
     |> validate_length(:person_last_name, max: 100)
-    |> validate_length(:person_first_name_1, max: 75)
-    |> validate_length(:person_first_name_2, max: 75)
+    |> validate_length(:person_first_name, max: 100)
     |> validate_inclusion(
       :type,
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
@@ -151,6 +143,9 @@ defmodule Sportyweb.Personal.Contact do
       get_valid_genders() |> Enum.map(fn gender -> gender[:value] end)
     )
     |> validate_required_type_condition()
+    |> Email.validate_email_address(:email)
+    |> Phone.validate_phone_number(:phone)
+    |> Note.validate_note_content(:note)
     |> set_name()
   end
 
@@ -164,7 +159,7 @@ defmodule Sportyweb.Personal.Contact do
         changeset
         |> validate_required([
           :person_last_name,
-          :person_first_name_1,
+          :person_first_name,
           :person_gender,
           :person_birthday
         ])
@@ -185,44 +180,13 @@ defmodule Sportyweb.Personal.Contact do
 
         "person" ->
           person_last_name = get_field(changeset, :person_last_name)
-          person_first_name_1 = get_field(changeset, :person_first_name_1)
-          person_first_name_2 = get_field(changeset, :person_first_name_2)
-          "#{person_last_name}, #{person_first_name_1} #{person_first_name_2}"
+          person_first_name = get_field(changeset, :person_first_name)
+          "#{person_last_name}, #{person_first_name}"
 
         _ ->
           ""
       end
 
     changeset |> Ecto.Changeset.change(name: String.trim(name))
-  end
-
-  def get_most_relevant_email(%Contact{} = contact) do
-    find_most_relevant(contact.emails)
-  end
-
-  def get_most_relevant_phone(%Contact{} = contact) do
-    find_most_relevant(contact.phones)
-  end
-
-  def get_most_relevant_postal_address(%Contact{} = contact) do
-    find_most_relevant(contact.postal_addresses)
-  end
-
-  defp find_most_relevant(information_list) do
-    number_of_information = length(information_list)
-
-    if number_of_information == 1 do
-      Enum.at(information_list, 0)
-    else
-      main_information = Enum.find(information_list, fn add -> add.is_main end)
-
-      if main_information != nil do
-        main_information
-      else
-        information_list
-        |> Enum.sort_by(fn add -> add.updated_at end, :desc)
-        |> Enum.at(0)
-      end
-    end
   end
 end

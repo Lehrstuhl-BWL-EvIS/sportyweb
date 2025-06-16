@@ -17,11 +17,6 @@ defmodule SportywebWeb.ContactLive.Show do
     contact =
       Personal.get_contact!(id, [
         :club,
-        :emails,
-        :financial_data,
-        :notes,
-        :phones,
-        :postal_addresses,
         memberships: [
           :club,
           :department,

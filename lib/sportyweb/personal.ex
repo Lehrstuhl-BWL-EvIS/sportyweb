@@ -101,8 +101,8 @@ defmodule Sportyweb.Personal do
       {:person_last_name, value}, dynamic ->
         dynamic([c], ^dynamic and ilike(c.person_last_name, ^prepare_for_like(value)))
 
-      {:person_first_name_1, value}, dynamic ->
-        dynamic([c], ^dynamic and ilike(c.person_first_name_1, ^prepare_for_like(value)))
+      {:person_first_name, value}, dynamic ->
+        dynamic([c], ^dynamic and ilike(c.person_first_name, ^prepare_for_like(value)))
 
       {:person_birthday, value}, dynamic ->
         dynamic([c], ^dynamic and ilike(c.person_birthday, ^prepare_for_like(value)))

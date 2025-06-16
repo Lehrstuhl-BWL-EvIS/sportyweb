@@ -94,7 +94,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
             {format_string_field(contact.name)}
           </:col>
           <:col :let={{_id, contact}} label="Vorname" sortable filterable>
-            {format_string_field(contact.person_first_name_1)}
+            {format_string_field(contact.person_first_name)}
           </:col>
           <:col :let={{_id, contact}} label="Nachname" sortable filterable>
             {format_string_field(contact.person_last_name)}
@@ -106,15 +106,13 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
             {format_date_field_dmy(contact.person_birthday)}
           </:col>
           <:col :let={{_id, contact}} label="Adresse" sortable filterable>
-            {format_string_field(
-              PostalAddress.as_text(Contact.get_most_relevant_postal_address(contact))
-            )}
+            {format_string_field(PostalAddress.as_text(contact.address))}
           </:col>
           <:col :let={{_id, contact}} label="E-Mail" sortable filterable>
-            {format_string_field(Contact.get_most_relevant_email(contact).address)}
+            {format_string_field(contact.email)}
           </:col>
           <:col :let={{_id, contact}} label="Telefonnummer" sortable filterable>
-            {format_string_field(Contact.get_most_relevant_phone(contact).number)}
+            {format_string_field(contact.phone)}
           </:col>
 
           <:action :let={{_id, contact}}>
@@ -147,14 +145,14 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       "Art" -> :type
       "Name" -> :name
       "Nachname" -> :person_last_name
-      "Vorname" -> :person_first_name_1
+      "Vorname" -> :person_first_name
       "Geburtsdatum" -> :person_birthday
       "Geschlecht" -> :person_gender
       "In" -> nil
       "Mitglied" -> nil
-      "Adresse" -> nil
-      "E-Mail" -> nil
-      "Telefonnummer" -> nil
+      "Adresse" -> :address["street"]
+      "E-Mail" -> :email
+      "Telefonnummer" -> :phone
     end
   end
 
@@ -190,13 +188,13 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
         end
 
       "Adresse" ->
-        fn c -> PostalAddress.as_text(Contact.get_most_relevant_postal_address(c)) end
+        fn c -> PostalAddress.as_text(c.address) end
 
       "E-Mail" ->
-        fn c -> Contact.get_most_relevant_email(c).address end
+        fn c -> c.email end
 
       "Telefonnummer" ->
-        fn c -> Contact.get_most_relevant_phone(c).number end
+        fn c -> c.phone end
     end
   end
 
@@ -209,9 +207,6 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       database_sorting,
       database_filters,
       [
-        :postal_addresses,
-        :emails,
-        :phones,
         memberships: [:club, :department, :group]
       ],
       only_members_of

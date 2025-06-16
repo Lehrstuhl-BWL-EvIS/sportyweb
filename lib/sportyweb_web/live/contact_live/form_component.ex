@@ -63,16 +63,8 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                     <.input field={@form[:person_last_name]} type="text" label="Nachname" />
                   </div>
 
-                  <div class="col-span-12 md:col-span-4">
-                    <.input field={@form[:person_first_name_1]} type="text" label="Vorname" />
-                  </div>
-
-                  <div class="col-span-12 md:col-span-4">
-                    <.input
-                      field={@form[:person_first_name_2]}
-                      type="text"
-                      label="2. Vorname (optional)"
-                    />
+                  <div class="col-span-12 md:col-span-6">
+                    <.input field={@form[:person_first_name]} type="text" label="Vorname" />
                   </div>
 
                   <div class="col-span-12 md:col-span-6">
@@ -92,24 +84,26 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               <% end %>
 
               <.input_grid class="pt-6">
-                <SportywebWeb.PolymorphicLive.PostalAddressesFormComponent.render form={@form} />
+                <SportywebWeb.PolymorphicLive.PostalAddressesFormComponent.render_embedded form={
+                  @form
+                } />
               </.input_grid>
 
-              <.input_grid class="pt-6">
-                <SportywebWeb.PolymorphicLive.EmailsFormComponent.render form={@form} />
-              </.input_grid>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:email]} type="text" label="E-Mail" />
+              </div>
 
-              <.input_grid class="pt-6">
-                <SportywebWeb.PolymorphicLive.PhonesFormComponent.render form={@form} />
-              </.input_grid>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:phone]} type="text" label="Telefon" />
+              </div>
 
               <.input_grid class="pt-6">
                 <SportywebWeb.PolymorphicLive.FinancialDataFormComponent.render form={@form} />
               </.input_grid>
 
-              <.input_grid class="pt-6">
-                <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
-              </.input_grid>
+              <div class="col-span-12 md:col-span-12">
+                <.input field={@form[:note]} type="textarea" label="Notizen" />
+              </div>
             <% end %>
           </.input_grids>
 

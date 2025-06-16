@@ -87,6 +87,35 @@ defmodule Sportyweb.SeedHelper do
     end
   end
 
+  def get_random_embedded_financial_data_params(address_params) do
+    random_name = "#{Faker.Person.last_name()}, #{Faker.Person.first_name()}"
+
+    address_params =
+      address_params != nil &&
+        if :rand.uniform() < 0.75 do
+          address_params
+        else
+          get_random_embedded_postal_address_params()
+        end
+
+    if :rand.uniform() < 0.9 do
+      %{
+        postal_address: address_params,
+        type: "direct_debit",
+        direct_debit_account_holder: random_name,
+        direct_debit_iban: "DE06495352657836424132",
+        direct_debit_institute: "Beispielbank"
+      }
+    else
+      %{
+        postal_address: address_params,
+        type: "invoice",
+        invoice_recipient: random_name,
+        invoice_additional_information: ""
+      }
+    end
+  end
+
   def get_random_internal_event do
     %InternalEvent{
       is_recurring: true,
@@ -128,6 +157,19 @@ defmodule Sportyweb.SeedHelper do
     }
   end
 
+  def get_random_embedded_postal_address_params() do
+    %{
+      street: Faker.Address.street_name(),
+      street_number: Faker.Address.building_number(),
+      zipcode: Faker.Address.zip(),
+      city: Faker.Address.city(),
+      country:
+        PostalAddress.get_valid_countries()
+        |> Enum.map(fn country -> country[:value] end)
+        |> Enum.random()
+    }
+  end
+
   def get_random_note do
     %Note{
       content: if(:rand.uniform() < 0.7, do: Faker.Lorem.paragraph(), else: "")
@@ -137,49 +179,12 @@ end
 
 defmodule Sportyweb.ContactSeedHelper do
   def add_contact(club, constitution) do
-    is_main = :rand.uniform() < 0.8
-
-    postal_addresses =
-      cond do
-        :rand.uniform() < 0.85 ->
-          [Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address(is_main))]
-
-        true ->
-          [
-            Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address(is_main)),
-            Map.from_struct(Sportyweb.SeedHelper.get_random_postal_address(false))
-          ]
-      end
-
-    is_main = :rand.uniform() < 0.8
-
-    emails =
-      cond do
-        :rand.uniform() < 0.6 ->
-          [Map.from_struct(Sportyweb.SeedHelper.get_random_email(is_main))]
-
-        true ->
-          [
-            Map.from_struct(Sportyweb.SeedHelper.get_random_email(is_main)),
-            Map.from_struct(Sportyweb.SeedHelper.get_random_email(false))
-          ]
-      end
-
-    is_main = :rand.uniform() < 0.8
-
-    phones =
-      cond do
-        :rand.uniform() < 0.6 ->
-          [Map.from_struct(Sportyweb.SeedHelper.get_random_phone(is_main))]
-
-        true ->
-          [
-            Map.from_struct(Sportyweb.SeedHelper.get_random_phone(is_main)),
-            Map.from_struct(Sportyweb.SeedHelper.get_random_phone(false))
-          ]
-      end
-
     is_person = :rand.uniform() < 0.8
+
+    address_params = Sportyweb.SeedHelper.get_random_embedded_postal_address_params()
+
+    financial_data_params =
+      Sportyweb.SeedHelper.get_random_embedded_financial_data_params(address_params)
 
     # Use the context function instead of Repo.insert!() to invoke the changeset which sets the name.
     {:ok, %Contact{} = contact} =
@@ -201,9 +206,7 @@ defmodule Sportyweb.ContactSeedHelper do
               |> Enum.random()
           ),
         person_last_name: if(is_person, do: Faker.Person.last_name(), else: ""),
-        person_first_name_1: if(is_person, do: Faker.Person.first_name(), else: ""),
-        person_first_name_2:
-          if(is_person && :rand.uniform() > 0.80, do: Faker.Person.first_name(), else: ""),
+        person_first_name: if(is_person, do: Faker.Person.first_name(), else: ""),
         person_gender:
           if(is_person,
             do:
@@ -213,11 +216,11 @@ defmodule Sportyweb.ContactSeedHelper do
             else: ""
           ),
         person_birthday: if(is_person, do: Faker.Date.date_of_birth(6..99), else: ""),
-        postal_addresses: postal_addresses,
-        emails: emails,
-        phones: phones,
-        financial_data: [Map.from_struct(Sportyweb.SeedHelper.get_random_financial_data(true))],
-        notes: [Map.from_struct(Sportyweb.SeedHelper.get_random_note())]
+        address: address_params,
+        email: if(:rand.uniform() < 0.7, do: Faker.Internet.email(), else: ""),
+        phones: if(:rand.uniform() < 0.7, do: Faker.Phone.EnUs.phone(), else: ""),
+        financial_data: financial_data_params,
+        note: if(:rand.uniform() < 0.7, do: Faker.Lorem.paragraph(), else: "")
       })
 
     # create contracts for most persons, why is the club allowed to store their data otherwise?

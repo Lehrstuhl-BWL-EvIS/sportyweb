@@ -22,6 +22,8 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
     timestamps(type: :utc_datetime)
   end
 
+  def as_text(nil), do: nil
+
   def as_text(postal_address) do
     "#{postal_address.street} #{postal_address.street_number}, #{postal_address.zipcode} #{postal_address.city}"
   end
@@ -57,19 +59,33 @@ defmodule Sportyweb.Polymorphic.PostalAddress do
       :city,
       :country
     ])
+    |> update_change(:street_additional_information, &String.trim/1)
+    |> validate_length(:street_additional_information, max: 250)
+    |> update_and_validate_changeset()
+  end
+
+  def update_and_validate_changeset(%Ecto.Changeset{} = changeset) do
+    changeset
     |> update_change(:street, &String.trim/1)
     |> update_change(:street_number, &String.trim/1)
-    |> update_change(:street_additional_information, &String.trim/1)
     |> update_change(:zipcode, &String.trim/1)
     |> update_change(:city, &String.trim/1)
     |> validate_length(:street, max: 250)
     |> validate_length(:street_number, max: 250)
-    |> validate_length(:street_additional_information, max: 250)
     |> validate_length(:zipcode, max: 15)
     |> validate_length(:city, max: 250)
-    |> validate_inclusion(
-      :country,
-      get_valid_countries() |> Enum.map(fn country -> country[:value] end)
-    )
+    |> validate_country()
+  end
+
+  defp validate_country(changeset) do
+    if get_field(changeset, :country) == "" do
+      changeset
+    else
+      changeset
+      |> validate_inclusion(
+        :country,
+        get_valid_countries() |> Enum.map(fn country -> country[:value] end)
+      )
+    end
   end
 end
