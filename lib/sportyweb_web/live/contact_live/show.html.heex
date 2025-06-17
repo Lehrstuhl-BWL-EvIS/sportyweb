@@ -161,7 +161,44 @@
     </.table>
   <% else %>
     <p>
-      Bisher wurde noch kein Vertrag erstellt.
+      Bisher wurde noch kein Vertrag und noch keine Mitgliedschaft erstellt.
     </p>
   <% end %>
+</.card>
+
+<.header level="2" class="mt-12">
+  Kontaktgruppen
+</.header>
+
+<.card>
+  <%= if Enum.any?(@streams.contact_groups.inserts) do %>
+    <.table
+      id="contact_groups"
+      rows={@streams.contact_groups}
+      row_click={
+        fn {_id, contact_groups} ->
+          JS.navigate(~p"/contact_groups/#{contact_groups}")
+        end
+      }
+    >
+      <:col :let={{_id, contact_group}} label="Name">
+        {format_string_field(contact_group.name)}
+      </:col>
+      <:col :let={{_id, contact_group}} label="Weitere Kontakte">
+        {print_other_contacts_in_group(contact_group, @contact)}
+      </:col>
+
+      <:action :let={{_id, contact_group}}>
+        <.link navigate={~p"/contact_groups/#{contact_group}"}>Gruppe anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Der Kontakt ist kein Teil einer Kontaktgruppe.
+    </p>
+  <% end %>
+
+  <.link navigate={~p"/clubs/#{@club}/contact_groups/new?contact=#{@contact}"}>
+    <.icon name="hero-plus-circle" /> Neue Kontaktgruppe anlegen
+  </.link>
 </.card>

@@ -206,9 +206,12 @@
       </div>
       <%= for membership <- @following_memberships do %>
         <div class="col-span-12 md:col-span-8">
-          <.cancel_button navigate={~p"/memberships/#{membership}/edit"}>
+          <.link
+            navigate={~p"/memberships/#{membership}/edit"}
+            class="text-indigo-600 hover:underline"
+          >
             Mitgliedschaft in {Membership.get_organization(membership).name}
-          </.cancel_button>
+          </.link>
         </div>
       <% end %>
     </.input_grid>

@@ -215,11 +215,6 @@ defmodule Sportyweb.PersonalTest do
 
     @invalid_attrs %{club_id: nil}
 
-    test "list_contact_groups/0 returns all contact_groups" do
-      contact_group = contact_group_fixture()
-      assert Personal.list_contact_groups() == [contact_group]
-    end
-
     test "get_contact_group!/1 returns the contact_group with given id" do
       contact_group = contact_group_fixture()
       assert Personal.get_contact_group!(contact_group.id) == contact_group
@@ -231,7 +226,8 @@ defmodule Sportyweb.PersonalTest do
 
       valid_attrs = %{
         club_id: club.id,
-        contact_id: contact.id
+        contact_id: contact.id,
+        name: "test group name"
       }
 
       assert {:ok, %ContactGroup{}} = Personal.create_contact_group(valid_attrs)

@@ -71,13 +71,15 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
             <%= if Enum.empty?(contact.memberships) do %>
               {format_string_field(nil)}
             <% else %>
-              <%= for m <- sort_memberships(contact) do %>
+              <%= for m <- Membership.sort_by_organization_category(contact.memberships) do %>
                 <p>
-                  <.icon
-                    name={Membership.get_state_icon(m).icon}
-                    class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(m).color}"}
-                  />
-                  {Membership.get_organization(m).name}
+                  <.link navigate={~p"/memberships/#{m}/edit"}>
+                    <.icon
+                      name={Membership.get_state_icon(m).icon}
+                      class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(m).color}"}
+                    />
+                    {Membership.get_organization(m).name}
+                  </.link>
                 </p>
               <% end %>
             <% end %>
@@ -211,15 +213,5 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       ],
       only_members_of
     )
-  end
-
-  def sort_memberships(contact) do
-    if Enum.empty?(contact.memberships) do
-      []
-    else
-      contact.memberships
-      |> Enum.sort_by(fn m -> m.group_id end)
-      |> Enum.sort_by(fn m -> m.department_id end)
-    end
   end
 end

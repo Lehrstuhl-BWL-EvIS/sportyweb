@@ -9,6 +9,7 @@ defmodule Sportyweb.Personal do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.Membership
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.Personal.ContactGroupContact
 
   @doc """
   Returns the list of contacts.
@@ -117,7 +118,8 @@ defmodule Sportyweb.Personal do
         dynamic([c], ^dynamic and ilike(c.phone, ^prepare_for_like(value)))
 
       {:note, value}, dynamic ->
-        dynamic([c], ^dynamic and ilike(c.note, ^prepare_for_like(value)))#
+        #
+        dynamic([c], ^dynamic and ilike(c.note, ^prepare_for_like(value)))
 
       {:address_as_text, value}, dynamic ->
         dynamic([c], ^dynamic and ilike(c.address_as_text, ^prepare_for_like(value)))
@@ -268,19 +270,6 @@ defmodule Sportyweb.Personal do
   alias Sportyweb.Personal.ContactGroup
 
   @doc """
-  Returns the list of contact_groups.
-
-  ## Examples
-
-      iex> list_contact_groups()
-      [%ContactGroup{}, ...]
-
-  """
-  def list_contact_groups do
-    Repo.all(ContactGroup)
-  end
-
-  @doc """
   Gets a single contact_group.
 
   Raises `Ecto.NoResultsError` if the Contact group does not exist.
@@ -294,7 +283,11 @@ defmodule Sportyweb.Personal do
       ** (Ecto.NoResultsError)
 
   """
-  def get_contact_group!(id), do: Repo.get!(ContactGroup, id)
+  def get_contact_group!(id, preloads \\ []) do
+    ContactGroup
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
 
   @doc """
   Creates a contact_group.
@@ -359,5 +352,13 @@ defmodule Sportyweb.Personal do
   """
   def change_contact_group(%ContactGroup{} = contact_group, attrs \\ %{}) do
     ContactGroup.changeset(contact_group, attrs)
+  end
+
+  def add_contact_group_contact(%ContactGroupContact{} = contact_group_contact) do
+    Repo.insert(contact_group_contact)
+  end
+
+  def delete_contact_group_contact(%ContactGroupContact{} = contact_group_contact) do
+    Repo.delete(contact_group_contact)
   end
 end

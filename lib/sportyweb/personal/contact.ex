@@ -181,23 +181,25 @@ defmodule Sportyweb.Personal.Contact do
         "person" ->
           person_last_name = get_field(changeset, :person_last_name)
           person_first_name = get_field(changeset, :person_first_name)
-          "#{person_last_name}, #{person_first_name}"
+          "#{person_first_name} #{person_last_name}"
 
         _ ->
           ""
       end
 
-      # for simplified filtering and sorting in contact_table,
-      # the address is added as string into each contact
-      address = get_field(changeset, :address);
-      address_as_text = if address == nil do
+    # for simplified filtering and sorting in contact_table,
+    # the address is added as string into each contact
+    address = get_field(changeset, :address)
+
+    address_as_text =
+      if address == nil do
         ""
-        else
-          EmbeddedPostalAddress.as_text(address)
+      else
+        EmbeddedPostalAddress.as_text(address)
       end
 
     changeset
-     |> Ecto.Changeset.change(name: String.trim(name))
-     |> Ecto.Changeset.change(address_as_text: address_as_text)
+    |> Ecto.Changeset.change(name: String.trim(name))
+    |> Ecto.Changeset.change(address_as_text: address_as_text)
   end
 end

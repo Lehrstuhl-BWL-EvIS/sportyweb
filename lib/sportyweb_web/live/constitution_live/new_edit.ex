@@ -29,7 +29,7 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
       socket
       |> assign(:constitution, constitution)
       |> assign(:club, constitution.club)
-      |> assign(form: prepare_form(changeset))
+      |> assign(form: to_form(changeset))
 
     {:noreply, socket}
   end
@@ -49,7 +49,7 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
 
     {:noreply,
      socket
-     |> assign(form: prepare_form(changeset, action: :validate))}
+     |> assign(form: to_form(changeset, action: :validate))}
   end
 
   @impl true
@@ -71,7 +71,7 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
          |> push_navigate(to: ~p"/clubs/#{socket.assigns.club}/constitution")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: prepare_form(changeset))}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
@@ -105,7 +105,7 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
 
     {:noreply,
      socket
-     |> assign(form: prepare_form(changeset, action: :validate))}
+     |> assign(form: to_form(changeset, action: :validate))}
   end
 
   def remove_index(enum, index) do
@@ -125,15 +125,11 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
 
     {:noreply,
      socket
-     |> assign(form: prepare_form(changeset, action: :validate))}
+     |> assign(form: to_form(changeset, action: :validate))}
   end
 
   def add_new_entry(list) do
     list ++ [""]
-  end
-
-  defp prepare_form(changeset, options \\ []) do
-    to_form(changeset, options)
   end
 
   def get_duration_unit_options() do

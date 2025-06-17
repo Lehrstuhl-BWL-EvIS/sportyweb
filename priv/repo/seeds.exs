@@ -30,6 +30,8 @@ alias Sportyweb.Organization.Department
 alias Sportyweb.Organization.Group
 alias Sportyweb.Personal
 alias Sportyweb.Personal.Contact
+alias Sportyweb.Personal.ContactGroup
+alias Sportyweb.Personal.ContactGroupContact
 alias Sportyweb.Polymorphic.Email
 alias Sportyweb.Polymorphic.FinancialData
 alias Sportyweb.Polymorphic.InternalEvent
@@ -254,6 +256,8 @@ defmodule Sportyweb.ContactSeedHelper do
         end
       end
     end
+
+    contact
   end
 
   defp add_membership(constitution, club, department, group, contact, preconditional_membership) do
@@ -1208,8 +1212,25 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
         Enum.random(20..50)
       end
 
+    contacts =
+      Enum.map(0..number_of_contacts, fn _i ->
+        Sportyweb.ContactSeedHelper.add_contact(club, constitution)
+      end)
+
     for _i <- 0..number_of_contacts do
-      Sportyweb.ContactSeedHelper.add_contact(club, constitution)
+      contact_group =
+        Repo.insert!(%ContactGroup{
+          club_id: club.id,
+          name: "#{Faker.Lorem.sentence(Enum.random(1..3))}",
+          description: if(:rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: "")
+        })
+
+      for contact <- Enum.take_random(contacts, Enum.random(2..6)) do
+        Repo.insert!(%ContactGroupContact{
+          contact_group_id: contact_group.id,
+          contact_id: contact.id
+        })
+      end
     end
 
     # Locations

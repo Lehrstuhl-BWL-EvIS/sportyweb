@@ -17,8 +17,8 @@ defmodule SportywebWeb.MembershipLive.Edit do
     membership =
       Legal.get_membership!(id, [
         :following_memberships,
+        contact: [contact_groups: [:contacts]],
         club: [:constitution],
-        contact: [:emails],
         preconditional_membership: [:club, :department, :group],
         department: [:fees],
         group: [:fees],

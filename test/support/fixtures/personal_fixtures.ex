@@ -44,7 +44,8 @@ defmodule Sportyweb.PersonalFixtures do
     {:ok, contact_group} =
       attrs
       |> Enum.into(%{
-        club_id: club.id
+        club_id: club.id,
+        name: "group name"
       })
       |> Sportyweb.Personal.create_contact_group()
 

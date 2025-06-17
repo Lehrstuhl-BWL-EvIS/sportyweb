@@ -28,7 +28,8 @@ defmodule SportywebWeb.ContactLive.Show do
           :group,
           :membership,
           fee: :internal_events
-        ]
+        ],
+        contact_groups: [:contacts]
       ])
 
     requested_memberships =
@@ -40,6 +41,13 @@ defmodule SportywebWeb.ContactLive.Show do
      |> assign(:contact, contact)
      |> assign(:club, contact.club)
      |> stream(:requested_memberships, requested_memberships)
+     |> stream(:contact_groups, contact.contact_groups)
      |> stream(:contracts, contact.contracts)}
+  end
+
+  def print_other_contacts_in_group(contact_group, contact) do
+    contact_group.contacts
+    |> Enum.filter(fn c -> c.id != contact.id end)
+    |> Enum.map_join(", ", fn c -> c.name end)
   end
 end

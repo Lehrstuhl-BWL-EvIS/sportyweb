@@ -6,6 +6,9 @@ defmodule Sportyweb.Repo.Migrations.CreateContactGroups do
       add :id, :binary_id, primary_key: true
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
+      add :description, :text, null: false
+      add :name, :string, null: false
+
       timestamps(type: :utc_datetime)
     end
 

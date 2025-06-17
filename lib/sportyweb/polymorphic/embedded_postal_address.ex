@@ -24,5 +24,4 @@ defmodule Sportyweb.Polymorphic.EmbeddedPostalAddress do
   end
 
   def as_text(address), do: PostalAddress.as_text(address)
-
 end

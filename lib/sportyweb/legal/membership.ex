@@ -75,6 +75,16 @@ defmodule Sportyweb.Legal.Membership do
     "Gruppe #{membership.group.name}"
   end
 
+  def sort_by_organization_category(memberships) do
+    if Enum.empty?(memberships) do
+      []
+    else
+      memberships
+      |> Enum.sort_by(fn m -> m.group_id end)
+      |> Enum.sort_by(fn m -> m.department_id end)
+    end
+  end
+
   @doc false
   def changeset(membership, attrs) do
     membership

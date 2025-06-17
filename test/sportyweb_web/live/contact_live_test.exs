@@ -103,7 +103,7 @@ defmodule SportywebWeb.ContactLiveTest do
         |> follow_redirect(conn)
 
       assert html =~ "Kontakt erfolgreich erstellt"
-      assert html =~ "some person_last_name, some person_first_name"
+      assert html =~ "some person_first_name some person_last_name"
     end
 
     test "cancels save new contact", %{conn: conn, user: user} do

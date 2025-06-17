@@ -158,7 +158,34 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                 </div>
               <% end %>
 
-              <div :if={!Enum.empty?(@membership.contact.emails)} class="col-span-12 md:col-span-12">
+              <%= if !Enum.empty?(@membership.contact.contact_groups) do %>
+                <div
+                  class="col-span-12 md:col-span-12 max-h-10rem"
+                  phx-click="toggle_show_contact_groups"
+                  phx-target={@myself}
+                >
+                  Das Mitglied ist Teil von {Enum.count(@membership.contact.contact_groups)} Kontaktgruppen
+                  <.icon
+                    name="hero-chevron-right"
+                    class={Enum.join([if(@show_contact_groups, do: "rotate-90")], " ")}
+                  />
+                  <%= if @show_contact_groups do %>
+                    <%= for contact_group <- @membership.contact.contact_groups do %>
+                      <.label>
+                        {contact_group.name}
+                        <.link navigate={~p"/contact_groups/#{contact_group}"}>
+                          <.icon name="hero-information-circle" />
+                        </.link>
+                      </.label>
+                      <p>
+                        {print_other_contacts_in_group(contact_group, @membership.contact)}
+                      </p>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <div :if={@membership.contact.email != ""} class="col-span-12 md:col-span-12">
                 <.input
                   name="send_email"
                   value={@initial_send_email}
@@ -241,7 +268,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
       if action == "DECEASE" do
         false
       else
-        !Enum.empty?(assigns.membership.contact.emails)
+        assigns.membership.contact.email != ""
       end
 
     socket =
@@ -256,6 +283,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
       |> assign(:initial_suspension_reason, initial_suspension_reason)
       |> assign(:initial_send_email, initial_send_email)
       |> assign(:action, action)
+      |> assign(:show_contact_groups, false)
 
     initial_values = %{
       "action" => action,
@@ -553,6 +581,11 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     execute_update(message, membership_change, contract_change, args, socket)
   end
 
+  @impl true
+  def handle_event("toggle_show_contact_groups", _, socket) do
+    {:noreply, assign(socket, :show_contact_groups, !socket.assigns.show_contact_groups)}
+  end
+
   defp execute_update(message, membership_changes, contract_changes, args, socket) do
     membership = socket.assigns.membership
     contract = update_contract(membership, contract_changes)
@@ -609,7 +642,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     else
       contact = socket.assigns.membership.contact
 
-      if Enum.empty?(contact.emails) do
+      if contact.email == "" do
         raise "no e-mail known of #{contact.name}"
       else
         ContactChangeNotifier.deliver_membership_state_change(contact, message)
@@ -691,5 +724,11 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     else
       nil
     end
+  end
+
+  def print_other_contacts_in_group(contact_group, contact) do
+    contact_group.contacts
+    |> Enum.filter(fn c -> c.id != contact.id end)
+    |> Enum.map_join(", ", fn c -> c.name end)
   end
 end
