@@ -142,6 +142,7 @@ defmodule SportywebWeb.Router do
 
       live "/clubs/:club_id/contacts/new", ContactLive.NewEdit, :new
       live "/contacts/:id/edit", ContactLive.NewEdit, :edit
+      get "/contacts/:id/export", DownloadController, :export_user_data
 
       live "/contacts/:id", ContactLive.Show, :show
 
