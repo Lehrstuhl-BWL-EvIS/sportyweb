@@ -23,6 +23,6 @@ defmodule Sportyweb.Personal.ContactGroupContact do
     contact_group_contact
     |> cast(attrs, [:contact_group_id, :contact_id])
     |> validate_required([:contact_group_id, :contact_id])
-    |> unique_constraint(:contact_id, name: "contact_group_contacts_contact_id_index")
+    |> unique_constraint([:contact_group_id, :contact_id], name: "contact_group_contacts_contact_id_index")
   end
 end

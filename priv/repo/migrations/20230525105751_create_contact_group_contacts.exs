@@ -16,6 +16,6 @@ defmodule Sportyweb.Repo.Migrations.CreateContactGroupContacts do
     end
 
     create index(:contact_group_contacts, [:contact_group_id])
-    create unique_index(:contact_group_contacts, [:contact_id])
+    create unique_index(:contact_group_contacts, [:contact_id, :contact_group_id])
   end
 end
