@@ -2,9 +2,11 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Personal
+  alias Sportyweb.History
   alias Sportyweb.Personal.ContactGroup
   alias Sportyweb.Personal.ContactGroupContact
   alias Sportyweb.Organization
+  alias SportywebWeb.ChangeLive.LastChangeComponent
 
   @impl true
   def mount(_params, _session, socket) do
@@ -22,6 +24,8 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
 
     changeset = Personal.change_contact_group(contact_group)
 
+    last_change = History.get_last_change("contact_group", contact_group.id)
+
     contacts =
       contact_group.contact_group_contacts
       |> Enum.map(fn c -> c.contact end)
@@ -31,6 +35,7 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
     |> assign(:contact_group, contact_group)
     |> assign(:contacts, contacts)
     |> assign(:club, contact_group.club)
+    |> assign(:last_change, last_change)
     |> assign(form: to_form(changeset))
     |> assign(matching_contacts: [])
   end
@@ -60,6 +65,7 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
     |> assign(:contact_group, contact_group)
     |> assign(:contacts, initial_contacts)
     |> assign(:club, club)
+    |> assign(:last_change, nil)
     |> assign(form: to_form(changeset))
     |> assign(matching_contacts: [])
   end
@@ -102,10 +108,11 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     contact_group = Personal.get_contact_group!(id)
-    {:ok, _} = Personal.delete_contact_group(contact_group)
+    {:ok, _} = Personal.delete_contact_group(contact_group, socket.assigns.current_user)
 
     for contact_group_contact <- contact_group.contact_group_contacts do
-      {:ok, _} = Personal.delete_contact_group_contact(contact_group_contact)
+      {:ok, _} =
+        Personal.delete_contact_group_contact(contact_group_contact, socket.assigns.current_user)
     end
 
     {:noreply,
@@ -128,7 +135,11 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
   end
 
   defp save_contact_group(socket, :edit, contact_group_params) do
-    case Personal.update_contact_group(socket.assigns.contact_group, contact_group_params) do
+    case Personal.update_contact_group(
+           socket.assigns.contact_group,
+           contact_group_params,
+           socket.assigns.current_user
+         ) do
       {:ok, contact_group} ->
         actual_contacts = socket.assigns.contacts
         old_contact_group_contacts = socket.assigns.contact_group.contact_group_contacts
@@ -140,7 +151,11 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
           end)
 
         for removed_contact_group_contact <- removed_contact_group_contacts do
-          {:ok, _} = Personal.delete_contact_group_contact(removed_contact_group_contact)
+          {:ok, _} =
+            Personal.delete_contact_group_contact(
+              removed_contact_group_contact,
+              socket.assigns.current_user
+            )
         end
 
         added_contacts =
@@ -155,7 +170,8 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
             contact: added_contact
           }
 
-          {:ok, _} = Personal.add_contact_group_contact(contact_group_contact)
+          {:ok, _} =
+            Personal.add_contact_group_contact(contact_group_contact, socket.assigns.current_user)
         end
 
         {:noreply,
@@ -174,7 +190,7 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
         "club_id" => socket.assigns.club.id
       })
 
-    case Personal.create_contact_group(contact_group_params) do
+    case Personal.create_contact_group(contact_group_params, socket.assigns.current_user) do
       {:ok, contact_group} ->
         for added_contact <- socket.assigns.contacts do
           contact_group_contact = %ContactGroupContact{
@@ -182,7 +198,8 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
             contact: added_contact
           }
 
-          {:ok, _} = Personal.add_contact_group_contact(contact_group_contact)
+          {:ok, _} =
+            Personal.add_contact_group_contact(contact_group_contact, socket.assigns.current_user)
         end
 
         {

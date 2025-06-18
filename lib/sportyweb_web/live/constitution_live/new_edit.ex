@@ -4,6 +4,8 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
   alias Sportyweb.Organization
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Constitution
+  alias Sportyweb.History
+  alias SportywebWeb.ChangeLive.LastChangeComponent
 
   @impl true
   def mount(_params, _session, socket) do
@@ -15,12 +17,13 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
     constitution =
       Legal.get_constitution_of_club(club_id, [:club])
 
-    constitution =
+    {constitution, last_change} =
       if constitution != nil do
-        constitution
+        last_change = History.get_last_change("constitution", constitution.id)
+        {constitution, last_change}
       else
         club = Organization.get_club!(club_id)
-        Constitution.get_default(club)
+        {Constitution.get_default(club), nil}
       end
 
     changeset = Legal.change_constitution(constitution)
@@ -29,6 +32,7 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
       socket
       |> assign(:constitution, constitution)
       |> assign(:club, constitution.club)
+      |> assign(last_change: last_change)
       |> assign(form: to_form(changeset))
 
     {:noreply, socket}
@@ -63,7 +67,18 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
         "minimal_membership_duration" => minimal_membership_duration
       })
 
-    case Legal.update_constitution(socket.assigns.constitution, constitution_changes) do
+    result =
+      if socket.assigns.constitution.id != nil do
+        Legal.update_constitution(
+          socket.assigns.constitution,
+          constitution_changes,
+          socket.assigns.current_user
+        )
+      else
+        Legal.create_constitution(constitution_changes, socket.assigns.current_user)
+      end
+
+    case result do
       {:ok, _} ->
         {:noreply,
          socket

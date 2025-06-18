@@ -59,6 +59,10 @@ defmodule Sportyweb.Legal.Contract do
     contract.archive_date && Date.compare(date, contract.archive_date) != :lt
   end
 
+  def print(%Contract{} = contract) do
+    "Vertrag zwischen #{contract.contact.name} und #{print_partner(get_partner(contract))}"
+  end
+
   def get_partner(%Contract{} = contract) do
     cond do
       contract.group != nil -> contract.group
@@ -67,17 +71,9 @@ defmodule Sportyweb.Legal.Contract do
     end
   end
 
-  def print_partner(%Club{} = club) do
-    "Verein #{club.name}"
-  end
-
-  def print_partner(%Department{} = department) do
-    "Abteilung #{department.name}"
-  end
-
-  def print_partner(%Group{} = group) do
-    "Gruppe #{group.name}"
-  end
+  def print_partner(%Club{} = club), do: "Verein #{club.name}"
+  def print_partner(%Department{} = department), do: "Abteilung #{department.name}"
+  def print_partner(%Group{} = group), do: "Gruppe #{group.name}"
 
   def get_state_icon(%Contract{} = contract) do
     case get_state(contract) do

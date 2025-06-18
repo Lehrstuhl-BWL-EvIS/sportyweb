@@ -588,7 +588,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
 
   defp execute_update(message, membership_changes, contract_changes, args, socket) do
     membership = socket.assigns.membership
-    contract = update_contract(membership, contract_changes)
+    contract = update_contract(membership, contract_changes, socket.assigns.current_user)
 
     changes_with_contract_update =
       if contract == nil do
@@ -597,7 +597,12 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
         Map.put(membership_changes, :contract_id, contract.id)
       end
 
-    result = Legal.update_membership(membership, changes_with_contract_update)
+    result =
+      Legal.update_membership(
+        membership,
+        changes_with_contract_update,
+        socket.assigns.current_user
+      )
 
     case result do
       {:ok, _membership} ->
@@ -611,11 +616,11 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     end
   end
 
-  defp update_contract(membership, nil) do
+  defp update_contract(membership, nil, _) do
     membership.contract
   end
 
-  defp update_contract(membership, contract_changes) do
+  defp update_contract(membership, contract_changes, user) do
     if membership.contract == nil do
       contract = %{
         club_id: membership.club_id,
@@ -629,25 +634,21 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
         archive_date: nil
       }
 
-      {:ok, contract} = Legal.create_contract(contract)
+      {:ok, contract} = Legal.create_contract(contract, user)
       contract
     else
-      {:ok, contract} = Legal.update_contract(membership.contract, contract_changes)
+      {:ok, contract} = Legal.update_contract(membership.contract, contract_changes, user)
       contract
     end
   end
 
-  defp send_mail(%{"send_email" => send_email}, message, socket) do
-    if send_email != "true" do
-    else
-      contact = socket.assigns.membership.contact
+  defp send_mail(%{"send_email" => "true"}, message, socket) do
+    contact = socket.assigns.membership.contact
+    ContactChangeNotifier.deliver_membership_state_change(contact, message)
+  end
 
-      if contact.email == "" do
-        raise "no e-mail known of #{contact.name}"
-      else
-        ContactChangeNotifier.deliver_membership_state_change(contact, message)
-      end
-    end
+  defp send_mail(_, _message, _socket) do
+    # nothing to do
   end
 
   defp update_following_memberships(
@@ -660,8 +661,10 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
 
     if update_following_memberships do
       for membership <- following_memberships do
-        update_contract(membership, contract_changes)
-        {:ok, _} = Legal.update_membership(membership, membership_changes)
+        update_contract(membership, contract_changes, socket.assigns.current_user)
+
+        {:ok, _} =
+          Legal.update_membership(membership, membership_changes, socket.assigns.current_user)
       end
     end
   end

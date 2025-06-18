@@ -2,6 +2,7 @@ defmodule Sportyweb.PersonalTest do
   use Sportyweb.DataCase, async: true
 
   alias Sportyweb.Personal
+  alias Sportyweb.History
 
   describe "contacts" do
     alias Sportyweb.Personal.Contact
@@ -11,6 +12,7 @@ defmodule Sportyweb.PersonalTest do
     import Sportyweb.PolymorphicFixtures
 
     @invalid_attrs %{
+      club_id: "a3428f2e-42c8-428b-80ae-ab6e4dc4e52d",
       organization_name: nil,
       organization_type: nil,
       person_birthday: nil,
@@ -132,7 +134,7 @@ defmodule Sportyweb.PersonalTest do
       assert Personal.get_contact!(contact.id) == contact
     end
 
-    test "create_contact/1 with valid data creates a contact" do
+    test "create_contact/1 with valid data creates a contact and writes to history" do
       club = club_fixture()
 
       valid_attrs = %{
@@ -151,7 +153,7 @@ defmodule Sportyweb.PersonalTest do
         postal_addresses: postal_address_attrs()
       }
 
-      assert {:ok, %Contact{} = contact} = Personal.create_contact(valid_attrs)
+      assert {:ok, %Contact{} = contact} = Personal.create_contact(valid_attrs, "test")
       assert contact.organization_name == "some organization_name"
       assert contact.organization_type == "club"
       assert contact.person_birthday == ~D[2023-02-15]
@@ -159,13 +161,23 @@ defmodule Sportyweb.PersonalTest do
       assert contact.person_gender == "female"
       assert contact.person_last_name == "some person_last_name"
       assert contact.type == "person"
+
+      changes = History.list_changes("contact", contact.id)
+      assert Enum.count(changes) == 1
+
+      assert Enum.any?(changes, fn c ->
+               c.attribute == "-creation-" and c.changed_by == "test" and
+                 c.new_value == "-"
+             end)
     end
 
     test "create_contact/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Personal.create_contact(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Personal.create_contact(@invalid_attrs, "test")
+
+      assert Enum.empty?(History.list_all_changes_of_club(@invalid_attrs.club_id))
     end
 
-    test "update_contact/2 with valid data updates the contact" do
+    test "update_contact/2 with valid data updates the contact and writes to history" do
       contact = contact_fixture()
 
       update_attrs = %{
@@ -178,7 +190,7 @@ defmodule Sportyweb.PersonalTest do
         type: "organization"
       }
 
-      assert {:ok, %Contact{} = contact} = Personal.update_contact(contact, update_attrs)
+      assert {:ok, %Contact{} = contact} = Personal.update_contact(contact, update_attrs, "test")
       assert contact.organization_name == "some updated organization_name"
       assert contact.organization_type == "corporation"
       assert contact.person_birthday == ~D[2023-02-16]
@@ -186,19 +198,46 @@ defmodule Sportyweb.PersonalTest do
       assert contact.person_gender == "male"
       assert contact.person_last_name == "some updated person_last_name"
       assert contact.type == "organization"
+
+      changes = History.list_changes("contact", contact.id)
+      assert Enum.count(changes) == 9
+
+      assert Enum.any?(changes, fn c ->
+               c.attribute == "person_gender" and c.changed_by == "test" and c.new_value == "male"
+             end)
+
+      assert Enum.any?(changes, fn c ->
+               c.attribute == "type" and c.changed_by == "test" and c.new_value == "organization"
+             end)
     end
 
     test "update_contact/2 with invalid data returns error changeset" do
       contact = contact_fixture()
-      assert {:error, %Ecto.Changeset{}} = Personal.update_contact(contact, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Personal.update_contact(contact, @invalid_attrs, "test")
 
       assert contact == Personal.get_contact!(contact.id)
+
+      changes = History.list_changes("contact", contact.id)
+      assert Enum.count(changes) == 1
+
+      assert Enum.any?(changes, fn c ->
+               c.attribute == "-creation-" and c.changed_by == "test" and c.new_value == "-"
+             end)
     end
 
-    test "delete_contact/1 deletes the contact" do
+    test "delete_contact/1 deletes the contact and writes to history" do
       contact = contact_fixture()
-      assert {:ok, %Contact{}} = Personal.delete_contact(contact)
+      assert {:ok, %Contact{} = contact} = Personal.delete_contact(contact, "test")
       assert_raise Ecto.NoResultsError, fn -> Personal.get_contact!(contact.id) end
+
+      changes = History.list_changes("contact", contact.id)
+      assert Enum.count(changes) == 2
+
+      assert Enum.any?(changes, fn c ->
+               c.attribute == "-deletion-" and c.changed_by == "test" and c.new_value == "-"
+             end)
     end
 
     test "change_contact/1 returns a contact changeset" do
@@ -213,14 +252,14 @@ defmodule Sportyweb.PersonalTest do
     import Sportyweb.PersonalFixtures
     import Sportyweb.OrganizationFixtures
 
-    @invalid_attrs %{club_id: nil}
+    @invalid_attrs %{club_id: "a3428f2e-42c8-428b-80ae-ab6e4dc4e52d", name: nil}
 
     test "get_contact_group!/1 returns the contact_group with given id" do
       contact_group = contact_group_fixture()
       assert Personal.get_contact_group!(contact_group.id) == contact_group
     end
 
-    test "create_contact_group/1 with valid data creates a contact_group" do
+    test "create_contact_group/1 with valid data creates a contact_group and writes to history" do
       club = club_fixture()
       contact = contact_fixture()
 
@@ -230,33 +269,66 @@ defmodule Sportyweb.PersonalTest do
         name: "test group name"
       }
 
-      assert {:ok, %ContactGroup{}} = Personal.create_contact_group(valid_attrs)
+      assert {:ok, %ContactGroup{} = contact_group} =
+               Personal.create_contact_group(valid_attrs, "test")
+
+      changes = History.list_changes("contact_group", contact_group.id)
+      assert Enum.count(changes) == 1
+
+      assert Enum.any?(changes, fn c ->
+               c.attribute == "-creation-" and c.changed_by == "test" and
+                 c.new_value == "-"
+             end)
     end
 
     test "create_contact_group/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Personal.create_contact_group(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Personal.create_contact_group(@invalid_attrs, "test")
+
+      assert Enum.empty?(History.list_all_changes_of_club(@invalid_attrs.club_id))
     end
 
-    test "update_contact_group/2 with valid data updates the contact_group" do
+    test "update_contact_group/2 with valid data updates the contact_group and writes to history" do
       contact_group = contact_group_fixture()
-      update_attrs = %{}
+      update_attrs = %{name: "new name"}
 
-      assert {:ok, %ContactGroup{}} = Personal.update_contact_group(contact_group, update_attrs)
+      assert {:ok, %ContactGroup{}} =
+               Personal.update_contact_group(contact_group, update_attrs, "test")
+
+      changes = History.list_changes("contact_group", contact_group.id)
+      assert Enum.count(changes) == 2
+
+      assert Enum.any?(changes, fn c ->
+               c.attribute == "name" and c.changed_by == "test" and c.new_value == "new name"
+             end)
     end
 
     test "update_contact_group/2 with invalid data returns error changeset" do
       contact_group = contact_group_fixture()
 
       assert {:error, %Ecto.Changeset{}} =
-               Personal.update_contact_group(contact_group, @invalid_attrs)
+               Personal.update_contact_group(contact_group, @invalid_attrs, "test")
 
       assert contact_group == Personal.get_contact_group!(contact_group.id)
+
+      changes = History.list_changes("contact_group", contact_group.id)
+      assert Enum.count(changes) == 1
+
+      assert Enum.any?(changes, fn c ->
+               c.attribute == "-creation-" and c.changed_by == "test" and c.new_value == "-"
+             end)
     end
 
-    test "delete_contact_group/1 deletes the contact_group" do
+    test "delete_contact_group/1 deletes the contact_group and writes to history" do
       contact_group = contact_group_fixture()
-      assert {:ok, %ContactGroup{}} = Personal.delete_contact_group(contact_group)
+      assert {:ok, %ContactGroup{}} = Personal.delete_contact_group(contact_group, "test")
       assert_raise Ecto.NoResultsError, fn -> Personal.get_contact_group!(contact_group.id) end
+
+      changes = History.list_changes("contact_group", contact_group.id)
+      assert Enum.count(changes) == 2
+
+      assert Enum.any?(changes, fn c ->
+               c.attribute == "-deletion-" and c.changed_by == "test" and c.new_value == "-"
+             end)
     end
 
     test "change_contact_group/1 returns a contact_group changeset" do

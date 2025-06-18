@@ -44,6 +44,15 @@ defmodule SportywebWeb.CommonHelper do
     end
   end
 
+  def format_time_field_hm(utc_time) do
+    if !is_nil(utc_time) && utc_time do
+      europe_time = DateTime.shift_zone!(utc_time, "Europe/Paris")
+      Calendar.strftime(europe_time, "%H:%M")
+    else
+      "-"
+    end
+  end
+
   @doc """
   Takes a list of structs and returns a comma separated list of one attribute.
   If the list is empty, the function returns a string containg a hyphen.

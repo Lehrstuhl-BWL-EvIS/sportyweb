@@ -29,7 +29,7 @@ defmodule Sportyweb.LegalFixtures do
         archive_date: nil,
         club: club
       })
-      |> Sportyweb.Legal.create_contract()
+      |> Sportyweb.Legal.create_contract("test")
 
     contract
   end
@@ -50,7 +50,7 @@ defmodule Sportyweb.LegalFixtures do
         contract_id: contract.id,
         state: "ACTIVE"
       })
-      |> Sportyweb.Legal.create_membership()
+      |> Sportyweb.Legal.create_membership("test")
 
     membership
   end
@@ -69,7 +69,7 @@ defmodule Sportyweb.LegalFixtures do
         suspension_reasons: ["reason1", "reason2"],
         suspension_reason_mode: "optional"
       })
-      |> Sportyweb.Legal.create_constitution()
+      |> Sportyweb.Legal.create_constitution("test")
 
     constitution
   end

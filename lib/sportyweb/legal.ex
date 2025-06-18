@@ -11,6 +11,7 @@ defmodule Sportyweb.Legal do
   alias Sportyweb.Legal.Membership
   alias Sportyweb.Legal.Constitution
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.History
 
   @doc """
   Returns a list of all contracts. Preloads associations.
@@ -95,17 +96,18 @@ defmodule Sportyweb.Legal do
 
   ## Examples
 
-      iex> create_contract(%{field: value})
+      iex> create_contract(%{field: value}, %User{})
       {:ok, %Contract{}}
 
-      iex> create_contract(%{field: bad_value})
+      iex> create_contract(%{field: bad_value}, %User{}))
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_contract(attrs \\ %{}) do
+  def create_contract(attrs \\ %{}, user) do
     %Contract{}
     |> Contract.changeset(attrs)
     |> Repo.insert()
+    |> History.add_creation("contract", user)
   end
 
   @doc """
@@ -113,16 +115,17 @@ defmodule Sportyweb.Legal do
 
   ## Examples
 
-      iex> update_contract(contract, %{field: new_value})
+      iex> update_contract(contract, %{field: new_value}, %User{})
       {:ok, %Contract{}}
 
-      iex> update_contract(contract, %{field: bad_value})
+      iex> update_contract(contract, %{field: bad_value}, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_contract(%Contract{} = contract, attrs) do
+  def update_contract(%Contract{} = contract, attrs, user) do
     contract
     |> Contract.changeset(attrs)
+    |> History.add_changes("contract", user)
     |> Repo.update()
   end
 
@@ -158,7 +161,11 @@ defmodule Sportyweb.Legal do
       contact_age = Contact.age_in_years(contract.contact)
 
       if fee.successor_id && contact_age > fee.maximum_age_in_years do
-        Legal.update_contract(contract, %{fee_id: fee.successor_id})
+        Legal.update_contract(
+          contract,
+          %{fee_id: fee.successor_id},
+          "Sportyweb - update contracts for aged contacts"
+        )
       end
     end)
 
@@ -170,15 +177,17 @@ defmodule Sportyweb.Legal do
 
   ## Examples
 
-      iex> delete_contract(contract)
+      iex> delete_contract(contract, %User{})
       {:ok, %Contract{}}
 
-      iex> delete_contract(contract)
+      iex> delete_contract(contract, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_contract(%Contract{} = contract) do
-    Repo.delete(contract)
+  def delete_contract(%Contract{} = contract, user) do
+    contract
+    |> Repo.delete()
+    |> History.add_deletion("contract", user)
   end
 
   @doc """
@@ -263,17 +272,18 @@ defmodule Sportyweb.Legal do
 
   ## Examples
 
-      iex> create_membership(%{field: value})
+      iex> create_membership(%{field: value}, %User{})
       {:ok, %Membership{}}
 
-      iex> create_membership(%{field: bad_value})
+      iex> create_membership(%{field: bad_value}, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_membership(attrs \\ %{}) do
+  def create_membership(attrs \\ %{}, user) do
     %Membership{}
     |> Membership.changeset(attrs)
     |> Repo.insert()
+    |> History.add_creation("membership", user)
   end
 
   @doc """
@@ -281,16 +291,17 @@ defmodule Sportyweb.Legal do
 
   ## Examples
 
-      iex> update_membership(membership, %{field: new_value})
+      iex> update_membership(membership, %{field: new_value}, %User{})
       {:ok, %Membership{}}
 
-      iex> update_membership(membership, %{field: bad_value})
+      iex> update_membership(membership, %{field: bad_value}, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_membership(%Membership{} = membership, attrs) do
+  def update_membership(%Membership{} = membership, %{} = attrs, user) do
     membership
     |> Membership.changeset(attrs)
+    |> History.add_changes("membership", user)
     |> Repo.update()
   end
 
@@ -299,15 +310,17 @@ defmodule Sportyweb.Legal do
 
   ## Examples
 
-      iex> delete_membership(membership)
+      iex> delete_membership(membership, %User{})
       {:ok, %Membership{}}
 
-      iex> delete_membership(membership)
+      iex> delete_membership(membership, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_membership(%Membership{} = membership) do
-    Repo.delete(membership)
+  def delete_membership(%Membership{} = membership, user) do
+    membership
+    |> Repo.delete()
+    |> History.add_deletion("membership", user)
   end
 
   @doc """
@@ -315,7 +328,7 @@ defmodule Sportyweb.Legal do
 
   ## Examples
 
-      iex> change_membership(membership)
+      iex> change_membership(membership, %User{})
       %Ecto.Changeset{data: %Membership{}}
 
   """
@@ -323,10 +336,11 @@ defmodule Sportyweb.Legal do
     Membership.changeset(membership, attrs)
   end
 
-  def create_constitution(attrs \\ %{}) do
+  def create_constitution(attrs \\ %{}, user) do
     %Constitution{}
     |> Constitution.changeset(attrs)
     |> Repo.insert()
+    |> History.add_creation("constitution", user)
   end
 
   def get_constitution_of_club(club_id, preloads) do
@@ -337,13 +351,29 @@ defmodule Sportyweb.Legal do
     |> Repo.preload(preloads)
   end
 
-  def update_constitution(%Constitution{} = constitution, attrs) do
+  def update_constitution(%Constitution{} = constitution, attrs, user) do
     constitution
     |> Constitution.changeset(attrs)
+    |> History.add_changes("constitution", user)
     |> Repo.update()
   end
 
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking constitution changes.
+
+  ## Examples
+
+      iex> change_constitution(constitution, %User{})
+      %Ecto.Changeset{data: %Constitution{}}
+
+  """
   def change_constitution(%Constitution{} = contract, attrs \\ %{}) do
     Constitution.changeset(contract, attrs)
+  end
+
+  def get_constitution!(id, preloads \\ []) do
+    Constitution
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
   end
 end

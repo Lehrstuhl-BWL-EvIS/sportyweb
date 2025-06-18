@@ -132,7 +132,7 @@ defmodule SportywebWeb.MembershipLive.New do
         "contact_id" => socket.assigns.contact.id
       })
 
-    case Legal.create_contract(contract_params) do
+    case Legal.create_contract(contract_params, socket.assigns.current_user) do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, contract_form: to_form(changeset))}
 
@@ -148,7 +148,7 @@ defmodule SportywebWeb.MembershipLive.New do
           type: type
         }
 
-        case Legal.create_membership(membership) do
+        case Legal.create_membership(membership, socket.assigns.current_user) do
           {:ok, membership} ->
             {:noreply,
              socket
@@ -156,7 +156,7 @@ defmodule SportywebWeb.MembershipLive.New do
              |> push_navigate(to: ~p"/memberships/#{membership}/edit")}
 
           {:error, _} ->
-            Legal.delete_contract(contract)
+            Legal.delete_contract(contract, socket.assigns.current_user)
 
             {:noreply,
              socket

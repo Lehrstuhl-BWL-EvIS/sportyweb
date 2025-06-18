@@ -12,7 +12,7 @@ defmodule SportywebWeb.DownloadController do
           :club,
           :department,
           :group,
-          :preconditional_membership,
+          :preconditional_membership
         ],
         contracts: [
           :club,
@@ -41,7 +41,8 @@ defmodule SportywebWeb.DownloadController do
           state: m.state,
           suspension_reason: m.suspension_reason,
           reactivation_date: m.reactivation_date,
-          preconditional_membership: (if m.preconditional_membership != nil, do: m.preconditional_membership.id, else: nil),
+          preconditional_membership:
+            if(m.preconditional_membership != nil, do: m.preconditional_membership.id, else: nil),
           in: Membership.get_organization(m).name,
           contract: m.contract_id
         }

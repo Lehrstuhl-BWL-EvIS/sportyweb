@@ -1,5 +1,5 @@
 <.header>
-  Mitgliedschaft bearbeiten
+  Mitgliedschaft bearbeiten {LastChangeComponent.show_last_change(%{last_change: @last_change})}
 </.header>
 
 <.card class="mb-5">
@@ -156,6 +156,7 @@
             id={"#{action}_component"}
             module={SportywebWeb.MembershipLive.ChangeStateComponent}
             membership={@membership}
+            current_user={@current_user}
             action={action}
             constitution={@constitution}
             fee_options={@fee_options}

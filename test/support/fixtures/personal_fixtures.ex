@@ -30,7 +30,7 @@ defmodule Sportyweb.PersonalFixtures do
         financial_data: financial_data_attrs(),
         note: "some content"
       })
-      |> Sportyweb.Personal.create_contact()
+      |> Sportyweb.Personal.create_contact("test")
 
     contact
   end
@@ -47,7 +47,7 @@ defmodule Sportyweb.PersonalFixtures do
         club_id: club.id,
         name: "group name"
       })
-      |> Sportyweb.Personal.create_contact_group()
+      |> Sportyweb.Personal.create_contact_group("test")
 
     contact_group
   end

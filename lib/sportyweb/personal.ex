@@ -10,6 +10,7 @@ defmodule Sportyweb.Personal do
   alias Sportyweb.Legal.Membership
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Personal.ContactGroupContact
+  alias Sportyweb.History
 
   @doc """
   Returns the list of contacts.
@@ -207,17 +208,18 @@ defmodule Sportyweb.Personal do
 
   ## Examples
 
-      iex> create_contact(%{field: value})
+      iex> create_contact(%{field: value}, %User{})
       {:ok, %Contact{}}
 
-      iex> create_contact(%{field: bad_value})
+      iex> create_contact(%{field: bad_value}, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_contact(attrs \\ %{}) do
+  def create_contact(attrs \\ %{}, user) do
     %Contact{}
     |> Contact.changeset(attrs)
     |> Repo.insert()
+    |> History.add_creation("contact", user)
   end
 
   @doc """
@@ -225,16 +227,17 @@ defmodule Sportyweb.Personal do
 
   ## Examples
 
-      iex> update_contact(contact, %{field: new_value})
+      iex> update_contact(contact, %{field: new_value}, %User{})
       {:ok, %Contact{}}
 
-      iex> update_contact(contact, %{field: bad_value})
+      iex> update_contact(contact, %{field: bad_value}, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_contact(%Contact{} = contact, attrs) do
+  def update_contact(%Contact{} = contact, attrs, user) do
     contact
     |> Contact.changeset(attrs)
+    |> History.add_changes("contact", user)
     |> Repo.update()
   end
 
@@ -243,15 +246,17 @@ defmodule Sportyweb.Personal do
 
   ## Examples
 
-      iex> delete_contact(contact)
+      iex> delete_contact(contact, %User{})
       {:ok, %Contact{}}
 
-      iex> delete_contact(contact)
+      iex> delete_contact(contact, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_contact(%Contact{} = contact) do
-    Repo.delete(contact)
+  def delete_contact(%Contact{} = contact, user) do
+    contact
+    |> Repo.delete()
+    |> History.add_deletion("contact", user)
   end
 
   @doc """
@@ -294,17 +299,18 @@ defmodule Sportyweb.Personal do
 
   ## Examples
 
-      iex> create_contact_group(%{field: value})
+      iex> create_contact_group(%{field: value}, %User{})
       {:ok, %ContactGroup{}}
 
-      iex> create_contact_group(%{field: bad_value})
+      iex> create_contact_group(%{field: bad_value}, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_contact_group(attrs \\ %{}) do
+  def create_contact_group(attrs \\ %{}, user) do
     %ContactGroup{}
     |> ContactGroup.changeset(attrs)
     |> Repo.insert()
+    |> History.add_creation("contact_group", user)
   end
 
   @doc """
@@ -312,16 +318,17 @@ defmodule Sportyweb.Personal do
 
   ## Examples
 
-      iex> update_contact_group(contact_group, %{field: new_value})
+      iex> update_contact_group(contact_group, %{field: new_value}, %User{})
       {:ok, %ContactGroup{}}
 
-      iex> update_contact_group(contact_group, %{field: bad_value})
+      iex> update_contact_group(contact_group, %{field: bad_value}, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_contact_group(%ContactGroup{} = contact_group, attrs) do
+  def update_contact_group(%ContactGroup{} = contact_group, attrs, user) do
     contact_group
     |> ContactGroup.changeset(attrs)
+    |> History.add_changes("contact_group", user)
     |> Repo.update()
   end
 
@@ -330,15 +337,17 @@ defmodule Sportyweb.Personal do
 
   ## Examples
 
-      iex> delete_contact_group(contact_group)
+      iex> delete_contact_group(contact_group, %User{})
       {:ok, %ContactGroup{}}
 
-      iex> delete_contact_group(contact_group)
+      iex> delete_contact_group(contact_group, %User{})
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_contact_group(%ContactGroup{} = contact_group) do
-    Repo.delete(contact_group)
+  def delete_contact_group(%ContactGroup{} = contact_group, user) do
+    contact_group
+    |> Repo.delete()
+    |> History.add_deletion("contact_group", user)
   end
 
   @doc """
@@ -354,11 +363,39 @@ defmodule Sportyweb.Personal do
     ContactGroup.changeset(contact_group, attrs)
   end
 
-  def add_contact_group_contact(%ContactGroupContact{} = contact_group_contact) do
-    Repo.insert(contact_group_contact)
+  def add_contact_group_contact(%ContactGroupContact{} = contact_group_contact, user) do
+    res = Repo.insert(contact_group_contact)
+
+    case res do
+      {:ok, _} ->
+        History.add_change(
+          contact_group_contact.contact_group.club_id,
+          "contact_group",
+          contact_group_contact.contact_group_id,
+          "contact_added",
+          %{contact: contact_group_contact.contact_id},
+          user
+        )
+    end
+
+    res
   end
 
-  def delete_contact_group_contact(%ContactGroupContact{} = contact_group_contact) do
-    Repo.delete(contact_group_contact)
+  def delete_contact_group_contact(%ContactGroupContact{} = contact_group_contact, user) do
+    res = Repo.delete(contact_group_contact)
+
+    case res do
+      {:ok, _} ->
+        History.add_change(
+          contact_group_contact.contact_group.club_id,
+          "contact_group",
+          contact_group_contact.contact_group_id,
+          "contact_removed",
+          %{contact: contact_group_contact.contact_id},
+          user
+        )
+    end
+
+    res
   end
 end

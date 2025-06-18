@@ -4,6 +4,8 @@ defmodule SportywebWeb.ContractLive.Show do
   alias Sportyweb.Legal
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Finance.Fee
+  alias Sportyweb.History
+  alias SportywebWeb.ChangeLive.LastChangeComponent
 
   @impl true
   def mount(_params, _session, socket) do
@@ -16,6 +18,8 @@ defmodule SportywebWeb.ContractLive.Show do
     contract_object = Contract.print_object(contract)
     contract_partner = Contract.print_partner(Contract.get_partner(contract))
 
+    last_change = History.get_last_change("contract", contract.id)
+
     {:noreply,
      socket
      |> assign(
@@ -23,6 +27,7 @@ defmodule SportywebWeb.ContractLive.Show do
        "Vertrag (#{get_key_for_value(Fee.get_valid_types(), contract.fee.type)})"
      )
      |> assign(:contract, contract)
+     |> assign(:last_change, last_change)
      |> assign(:contract_object, contract_object)
      |> assign(:contract_partner, contract_partner)
      |> assign(:club, contract.club)}

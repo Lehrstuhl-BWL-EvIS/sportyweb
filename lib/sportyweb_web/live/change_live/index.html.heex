@@ -1,0 +1,26 @@
+<.header>
+  <p>
+    Historie zu {print_entity(@entity)}
+  </p>
+  <.cancel_button navigate={navigate_to_entity(@entity)}>
+    Zurück
+  </.cancel_button>
+</.header>
+
+<.card>
+  <.table id="changes" rows={@streams.changes} row_click={}>
+    <:col :let={{_id, change}} label="Attribut">
+      {format_string_field(change.attribute)}
+    </:col>
+    <:col :let={{_id, change}} label="Neuer Wert">
+      {format_string_field(change.new_value)}
+    </:col>
+    <:col :let={{_id, change}} label="geändert durch">
+      {format_string_field(change.changed_by)}
+    </:col>
+    <:col :let={{_id, change}} label="geändert am">
+      {format_date_field_dmy(change.changed_at)}
+      {format_time_field_hm(change.changed_at)}
+    </:col>
+  </.table>
+</.card>

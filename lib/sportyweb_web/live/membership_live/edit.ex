@@ -6,6 +6,8 @@ defmodule SportywebWeb.MembershipLive.Edit do
   alias Sportyweb.Legal.Constitution
   alias Sportyweb.Finance
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.History
+  alias SportywebWeb.ChangeLive.LastChangeComponent
 
   @impl true
   def mount(_params, _session, socket) do
@@ -24,6 +26,8 @@ defmodule SportywebWeb.MembershipLive.Edit do
         group: [:fees],
         contract: [:fee]
       ])
+
+    last_change = History.get_last_change("membership", membership.id)
 
     all_memberships_of_contact =
       Legal.list_memberships_of_contact(membership.contact.id, [
@@ -53,6 +57,7 @@ defmodule SportywebWeb.MembershipLive.Edit do
       |> assign(:membership, membership)
       |> assign(:fee_options, fee_options)
       |> assign(:club, membership.club)
+      |> assign(:last_change, last_change)
       |> assign(:constitution, constitution)
       |> assign(:other_memberships, other_memberships)
       |> assign(:following_memberships, following_memberships)
@@ -82,9 +87,9 @@ defmodule SportywebWeb.MembershipLive.Edit do
   def handle_event("delete", %{"id" => id}, socket) do
     membership = Legal.get_membership!(id, [:contract, :contact])
 
-    case Legal.delete_membership(membership) do
+    case Legal.delete_membership(membership, socket.assigns.current_user) do
       {:ok, _membership} ->
-        case Legal.delete_contract(membership.contract) do
+        case Legal.delete_contract(membership.contract, socket.assigns.current_user) do
           {:ok, _contract} ->
             {:noreply,
              socket
@@ -98,7 +103,7 @@ defmodule SportywebWeb.MembershipLive.Edit do
   def handle_event("save-fee", %{"contract" => %{"fee_id" => fee}}, socket) do
     contract = socket.assigns.membership.contract
 
-    case Legal.update_contract(contract, %{fee_id: fee}) do
+    case Legal.update_contract(contract, %{fee_id: fee}, socket.assigns.current_user) do
       {:ok, _contract} ->
         {:noreply, socket |> put_flash(:info, "Beitrag aktualisiert")}
 
@@ -118,7 +123,7 @@ defmodule SportywebWeb.MembershipLive.Edit do
     contract = socket.assigns.membership.contract
     termination_params = %{archive_date: archive_date, termination_date: termination_date}
 
-    case Legal.update_contract(contract, termination_params) do
+    case Legal.update_contract(contract, termination_params, socket.assigns.current_user) do
       {:ok, _contract} ->
         {:noreply, socket |> put_flash(:info, "Kündigung aktualisiert")}
 
@@ -129,7 +134,11 @@ defmodule SportywebWeb.MembershipLive.Edit do
 
   @impl true
   def handle_event("preconditional_membership_submitted", %{"membership" => membership}, socket) do
-    case Legal.update_membership(socket.assigns.membership, membership) do
+    case Legal.update_membership(
+           socket.assigns.membership,
+           membership,
+           socket.assigns.current_user
+         ) do
       {:ok, _contract} ->
         {:noreply, socket |> put_flash(:info, "Verknüpfung aktualisiert")}
 
@@ -140,7 +149,8 @@ defmodule SportywebWeb.MembershipLive.Edit do
 
   @impl true
   def handle_event("save_type", %{"type" => _type} = change, socket) do
-    {:ok, _} = Legal.update_membership(socket.assigns.membership, change)
+    {:ok, _} =
+      Legal.update_membership(socket.assigns.membership, change, socket.assigns.current_user)
 
     {:noreply, socket |> put_flash(:info, "Art aktualisiert")}
   end

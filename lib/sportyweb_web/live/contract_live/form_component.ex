@@ -5,12 +5,15 @@ defmodule SportywebWeb.ContractLive.FormComponent do
   alias Sportyweb.Legal
   alias Sportyweb.Personal
 
+  alias SportywebWeb.ChangeLive.LastChangeComponent
+
   @impl true
   def render(assigns) do
     ~H"""
     <div>
       <.header>
         {@title}
+        {LastChangeComponent.show_last_change(%{last_change: @last_change})}
       </.header>
 
       <.card>
@@ -96,7 +99,11 @@ defmodule SportywebWeb.ContractLive.FormComponent do
   end
 
   defp save_contract(socket, :edit, contract_params) do
-    case Legal.update_contract(socket.assigns.contract, contract_params) do
+    case Legal.update_contract(
+           socket.assigns.contract,
+           contract_params,
+           socket.assigns.current_user
+         ) do
       {:ok, _contract} ->
         {:noreply,
          socket
@@ -114,7 +121,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
         "club_id" => socket.assigns.contract.club.id
       })
 
-    case Legal.create_contract(contract_params) do
+    case Legal.create_contract(contract_params, socket.assigns.current_user) do
       {:ok, _contract} ->
         {:noreply,
          socket

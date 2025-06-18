@@ -190,40 +190,43 @@ defmodule Sportyweb.ContactSeedHelper do
 
     # Use the context function instead of Repo.insert!() to invoke the changeset which sets the name.
     {:ok, %Contact{} = contact} =
-      Personal.create_contact(%{
-        club_id: club.id,
-        type: if(is_person, do: "person", else: "organization"),
-        organization_name:
-          if(is_person,
-            do: "",
-            else:
-              "#{Faker.Company.buzzword_prefix()} #{Faker.Industry.sub_sector()} #{Faker.Company.buzzword_prefix()}"
-          ),
-        organization_type:
-          if(is_person,
-            do: "",
-            else:
-              Contact.get_valid_organization_types()
-              |> Enum.map(fn organization_type -> organization_type[:value] end)
-              |> Enum.random()
-          ),
-        person_last_name: if(is_person, do: Faker.Person.last_name(), else: ""),
-        person_first_name: if(is_person, do: Faker.Person.first_name(), else: ""),
-        person_gender:
-          if(is_person,
-            do:
-              Contact.get_valid_genders()
-              |> Enum.map(fn gender -> gender[:value] end)
-              |> Enum.random(),
-            else: ""
-          ),
-        person_birthday: if(is_person, do: Faker.Date.date_of_birth(6..99), else: ""),
-        address: address_params,
-        email: if(:rand.uniform() < 0.7, do: Faker.Internet.email(), else: ""),
-        phones: if(:rand.uniform() < 0.7, do: Faker.Phone.EnUs.phone(), else: ""),
-        financial_data: financial_data_params,
-        note: if(:rand.uniform() < 0.7, do: Faker.Lorem.paragraph(), else: "")
-      })
+      Personal.create_contact(
+        %{
+          club_id: club.id,
+          type: if(is_person, do: "person", else: "organization"),
+          organization_name:
+            if(is_person,
+              do: "",
+              else:
+                "#{Faker.Company.buzzword_prefix()} #{Faker.Industry.sub_sector()} #{Faker.Company.buzzword_prefix()}"
+            ),
+          organization_type:
+            if(is_person,
+              do: "",
+              else:
+                Contact.get_valid_organization_types()
+                |> Enum.map(fn organization_type -> organization_type[:value] end)
+                |> Enum.random()
+            ),
+          person_last_name: if(is_person, do: Faker.Person.last_name(), else: ""),
+          person_first_name: if(is_person, do: Faker.Person.first_name(), else: ""),
+          person_gender:
+            if(is_person,
+              do:
+                Contact.get_valid_genders()
+                |> Enum.map(fn gender -> gender[:value] end)
+                |> Enum.random(),
+              else: ""
+            ),
+          person_birthday: if(is_person, do: Faker.Date.date_of_birth(6..99), else: ""),
+          address: address_params,
+          email: if(:rand.uniform() < 0.7, do: Faker.Internet.email(), else: ""),
+          phones: if(:rand.uniform() < 0.7, do: Faker.Phone.EnUs.phone(), else: ""),
+          financial_data: financial_data_params,
+          note: if(:rand.uniform() < 0.7, do: Faker.Lorem.paragraph(), else: "")
+        },
+        "seeds"
+      )
 
     # create contracts for most persons, why is the club allowed to store their data otherwise?
     contract_ration = if is_person, do: 0.9, else: 0.3

@@ -4,6 +4,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
 
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
+  alias SportywebWeb.ChangeLive.LastChangeComponent
 
   @impl true
   def render(assigns) do
@@ -11,6 +12,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
     <div>
       <.header>
         {@title}
+        {LastChangeComponent.show_last_change(%{last_change: @last_change})}
       </.header>
 
       <.card>
@@ -183,7 +185,11 @@ defmodule SportywebWeb.ContactLive.FormComponent do
   end
 
   defp save_contact(socket, :edit, contact_params) do
-    case Personal.update_contact(socket.assigns.contact, contact_params) do
+    case Personal.update_contact(
+           socket.assigns.contact,
+           contact_params,
+           socket.assigns.current_user
+         ) do
       {:ok, contact} ->
         {:noreply,
          socket
@@ -201,7 +207,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
         "club_id" => socket.assigns.contact.club.id
       })
 
-    case Personal.create_contact(contact_params) do
+    case Personal.create_contact(contact_params, socket.assigns.current_user) do
       {:ok, contact} ->
         {:noreply,
          socket

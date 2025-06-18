@@ -1,5 +1,10 @@
 <.header>
-  Satzung von {@club.name}
+  <%= if @constitution.id == nil do %>
+    Satzung von {@club.name} ändern
+  <% else %>
+    Satzung von {@club.name} hinterlegen
+  <% end %>
+  {LastChangeComponent.show_last_change(%{last_change: @last_change})}
 </.header>
 
 <.card class="mb-5">
