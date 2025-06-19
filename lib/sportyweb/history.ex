@@ -71,7 +71,8 @@ defmodule Sportyweb.History do
     changed_by = write_user(user)
     new_value = write_new_value(new_value)
 
-    res =
+    {:ok, _} =
+      res =
       %Change{}
       |> Change.changeset(%{
         club_id: club_id,
@@ -93,5 +94,6 @@ defmodule Sportyweb.History do
   defp write_new_value(nil), do: nil
   defp write_new_value(new_value) when is_binary(new_value), do: new_value
   defp write_new_value(%Date{} = new_value), do: Date.to_string(new_value)
+  defp write_new_value(%Ecto.Changeset{changes: new_value}), do: Jason.encode!(new_value)
   defp write_new_value(new_value), do: Jason.encode!(new_value)
 end

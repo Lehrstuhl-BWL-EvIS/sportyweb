@@ -367,15 +367,19 @@ defmodule Sportyweb.Personal do
     res = Repo.insert(contact_group_contact)
 
     case res do
-      {:ok, _} ->
+      {:ok, inserted_contact_group_contact} ->
         History.add_change(
-          contact_group_contact.contact_group.club_id,
+          contact_group_contact.contact.club_id,
           "contact_group",
-          contact_group_contact.contact_group_id,
+          inserted_contact_group_contact.contact_group_id,
           "contact_added",
-          %{contact: contact_group_contact.contact_id},
+          %{contact: inserted_contact_group_contact.contact_id},
           user
         )
+
+      # nothing to do
+      _ ->
+        nil
     end
 
     res
@@ -387,13 +391,17 @@ defmodule Sportyweb.Personal do
     case res do
       {:ok, _} ->
         History.add_change(
-          contact_group_contact.contact_group.club_id,
+          contact_group_contact.contact.club_id,
           "contact_group",
           contact_group_contact.contact_group_id,
           "contact_removed",
           %{contact: contact_group_contact.contact_id},
           user
         )
+
+      # nothing to do
+      _ ->
+        nil
     end
 
     res

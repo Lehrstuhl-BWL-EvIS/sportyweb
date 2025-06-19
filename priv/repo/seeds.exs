@@ -21,6 +21,7 @@ alias Sportyweb.Calendar.Event
 alias Sportyweb.Finance
 alias Sportyweb.Finance.Fee
 alias Sportyweb.Finance.Subsidy
+alias Sportyweb.Legal
 alias Sportyweb.Legal.Contract
 alias Sportyweb.Legal.Membership
 alias Sportyweb.Legal.Constitution
@@ -322,11 +323,34 @@ defmodule Sportyweb.ContactSeedHelper do
         true -> {nil, nil}
       end
 
-    contract =
+    {:ok, contract} =
       if state == "PENDING" || state == "REJECTED" do
-        nil
+        {:ok, nil}
       else
-        Repo.insert!(%Contract{
+        Legal.create_contract(
+          %{
+            club_id: club.id,
+            club: club,
+            department_id: department_id,
+            department: department,
+            group_id: group_id,
+            group: group,
+            contact_id: contact.id,
+            contact: contact,
+            fee_id: fee.id,
+            fee: fee,
+            signing_date: ~D[2021-11-28],
+            start_date: ~D[2022-01-01],
+            termination_date: termination_date,
+            archive_date: archive_date
+          },
+          "seeds"
+        )
+      end
+
+    {:ok, membership} =
+      Legal.create_membership(
+        %{
           club_id: club.id,
           club: club,
           department_id: department_id,
@@ -335,34 +359,17 @@ defmodule Sportyweb.ContactSeedHelper do
           group: group,
           contact_id: contact.id,
           contact: contact,
-          fee_id: fee.id,
-          fee: fee,
-          signing_date: ~D[2021-11-28],
-          start_date: ~D[2022-01-01],
-          termination_date: termination_date,
-          archive_date: archive_date
-        })
-      end
-
-    membership =
-      Repo.insert!(%Membership{
-        club_id: club.id,
-        club: club,
-        department_id: department_id,
-        department: department,
-        group_id: group_id,
-        group: group,
-        contact_id: contact.id,
-        contact: contact,
-        contract: contract,
-        contract_id: if(contract == nil, do: nil, else: contract.id),
-        preconditional_membership_id: preconditional_membership_id,
-        preconditional_membership: preconditional_membership,
-        state: state,
-        type: type,
-        suspension_reason: suspension_reason,
-        reactivation_date: reactivation_date
-      })
+          contract: contract,
+          contract_id: if(contract == nil, do: nil, else: contract.id),
+          preconditional_membership_id: preconditional_membership_id,
+          preconditional_membership: preconditional_membership,
+          state: state,
+          type: type,
+          suspension_reason: suspension_reason,
+          reactivation_date: reactivation_date
+        },
+        "seeds"
+      )
 
     {contract, membership}
   end
@@ -808,10 +815,10 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 |> Enum.each(fn {club, _club_index} ->
   # No data for the "empty club"!
   if club.id != club_4.id do
-    constitution =
+    {:ok, constitution} =
       if :rand.uniform() < 0.5 do
         # everything should work if club has not set up it's constitution
-        nil
+        {:ok, nil}
       else
         membership_types =
           Enum.take_random(
@@ -865,16 +872,19 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
             Duration.to_iso8601(Duration.new!(year: 1))
           end
 
-        Repo.insert!(%Constitution{
-          club: club,
-          club_id: club.id,
-          membership_types: membership_types,
-          suspension_reasons: suspension_reasons,
-          suspension_reason_mode: suspension_reason_mode,
-          termination_notice_period: termination_notice_period,
-          termination_interval: termination_interval,
-          minimal_membership_duration: minimal_membership_duration
-        })
+        Legal.create_constitution(
+          %{
+            club: club,
+            club_id: club.id,
+            membership_types: membership_types,
+            suspension_reasons: suspension_reasons,
+            suspension_reason_mode: suspension_reason_mode,
+            termination_notice_period: termination_notice_period,
+            termination_interval: termination_interval,
+            minimal_membership_duration: minimal_membership_duration
+          },
+          "seeds"
+        )
       end
 
     # Subsidies
@@ -1221,18 +1231,26 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
       end)
 
     for _i <- 0..number_of_contacts do
-      contact_group =
-        Repo.insert!(%ContactGroup{
-          club_id: club.id,
-          name: "#{Faker.Lorem.sentence(Enum.random(1..3))}",
-          description: if(:rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: "")
-        })
+      {:ok, contact_group} =
+        Personal.create_contact_group(
+          %{
+            club_id: club.id,
+            name: "#{Faker.Lorem.sentence(Enum.random(1..3))}",
+            description: if(:rand.uniform() < 0.65, do: Faker.Lorem.paragraph(), else: "")
+          },
+          "seeds"
+        )
 
       for contact <- Enum.take_random(contacts, Enum.random(2..6)) do
-        Repo.insert!(%ContactGroupContact{
-          contact_group_id: contact_group.id,
-          contact_id: contact.id
-        })
+        {:ok, _} =
+          Personal.add_contact_group_contact(
+            %ContactGroupContact{
+              contact_group_id: contact_group.id,
+              contact_id: contact.id,
+              contact: contact
+            },
+            "seeds"
+          )
       end
     end
 

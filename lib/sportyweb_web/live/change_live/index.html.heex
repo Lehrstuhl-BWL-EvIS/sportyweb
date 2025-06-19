@@ -10,10 +10,10 @@
 <.card>
   <.table id="changes" rows={@streams.changes} row_click={}>
     <:col :let={{_id, change}} label="Attribut">
-      {format_string_field(change.attribute)}
+      {translate_attribute(change.attribute, @entity)}
     </:col>
     <:col :let={{_id, change}} label="Neuer Wert">
-      {format_string_field(change.new_value)}
+      {new_value_component(%{change: change, entity: @entity})}
     </:col>
     <:col :let={{_id, change}} label="geändert durch">
       {format_string_field(change.changed_by)}

@@ -63,6 +63,7 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
 
     constitution_changes =
       Map.merge(constitution_changes, %{
+        "club_id" => socket.assigns.club.id,
         "termination_notice_period" => termination_notice_period,
         "minimal_membership_duration" => minimal_membership_duration
       })
@@ -154,31 +155,6 @@ defmodule SportywebWeb.ConstitutionLive.NewEdit do
       [key: "Wochen", value: "weeks"],
       [key: "Tage", value: "days"]
     ]
-  end
-
-  def get_unit(duration) do
-    {unit, _} = split_duration(duration)
-    unit
-  end
-
-  defp get_amount(duration) do
-    {_, amount} = split_duration(duration)
-    amount
-  end
-
-  defp split_duration(duration) do
-    if duration == nil || duration == "" do
-      {nil, nil}
-    else
-      duration = Duration.from_iso8601!(duration)
-
-      cond do
-        duration.year != 0 -> {"years", duration.year}
-        duration.month != 0 -> {"months", duration.month}
-        duration.week != 0 -> {"weeks", duration.week}
-        duration.day != 0 -> {"days", duration.day}
-      end
-    end
   end
 
   defp get_termination_notice_period(%{

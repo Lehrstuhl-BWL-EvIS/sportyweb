@@ -487,10 +487,10 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
         %{
           "action" => "SUSPEND",
           "suspension_date" => suspension_date,
-          "suspension_reason" => suspension_reason
-        },
+        } = args,
         socket
       ) do
+
     suspension_date_error =
       error_if_nil(
         suspension_date,
@@ -499,6 +499,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
 
     suspension_reason_error =
       if socket.assigns.constitution.suspension_reason_mode == "required" do
+        suspension_reason = Map.get(args, "suspension_reason")
         error_if_nil(suspension_reason, "Bitte angeben, warum das Mitglied ausgeschlossen wurde.")
       else
         nil

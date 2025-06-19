@@ -56,7 +56,9 @@
                 name="termination_notice_period_amount"
                 type="number"
                 value={
-                  get_amount(Phoenix.HTML.Form.input_value(@form, :termination_notice_period))
+                  get_amount_of_duration(
+                    Phoenix.HTML.Form.input_value(@form, :termination_notice_period)
+                  )
                 }
               />
             </div>
@@ -64,7 +66,11 @@
               <.input
                 name="termination_notice_period_unit"
                 type="select"
-                value={get_unit(Phoenix.HTML.Form.input_value(@form, :termination_notice_period))}
+                value={
+                  get_unit_of_duration(
+                    Phoenix.HTML.Form.input_value(@form, :termination_notice_period)
+                  )
+                }
                 options={get_duration_unit_options()}
               />
             </div>
@@ -84,7 +90,9 @@
                 name="minimal_membership_duration_amount"
                 type="number"
                 value={
-                  get_amount(Phoenix.HTML.Form.input_value(@form, :minimal_membership_duration))
+                  get_amount_of_duration(
+                    Phoenix.HTML.Form.input_value(@form, :minimal_membership_duration)
+                  )
                 }
               />
             </div>
@@ -93,7 +101,9 @@
                 name="minimal_membership_duration_unit"
                 type="select"
                 value={
-                  get_unit(Phoenix.HTML.Form.input_value(@form, :minimal_membership_duration))
+                  get_unit_of_duration(
+                    Phoenix.HTML.Form.input_value(@form, :minimal_membership_duration)
+                  )
                 }
                 options={get_duration_unit_options()}
               />

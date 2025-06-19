@@ -167,7 +167,8 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
         for added_contact <- added_contacts do
           contact_group_contact = %ContactGroupContact{
             contact_group: contact_group,
-            contact: added_contact
+            contact: added_contact,
+            contact_id: added_contact.id
           }
 
           {:ok, _} =
@@ -195,7 +196,8 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
         for added_contact <- socket.assigns.contacts do
           contact_group_contact = %ContactGroupContact{
             contact_group: contact_group,
-            contact: added_contact
+            contact: added_contact,
+            contact_id: added_contact.id
           }
 
           {:ok, _} =
