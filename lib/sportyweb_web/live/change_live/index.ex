@@ -21,15 +21,20 @@ defmodule SportywebWeb.ChangeLive.Index do
   @impl true
   def handle_params(%{"entity_id" => entity_id, "entity_type" => entity_type}, _, socket) do
     changes = History.list_changes(entity_type, entity_id)
-    entity = load_entity(entity_id, entity_type)
+
+    entity =
+      try do
+        load_entity(entity_id, entity_type)
+      rescue
+        Ecto.NoResultsError -> nil
+      end
 
     changes =
-      if entity_type == "membership" && entity.contract_id != nil do
+      if entity_type == "membership" && entity != nil && entity.contract_id != nil do
         additional_changes = History.list_changes("contract", entity.contract_id)
 
-        changes
-        |> Enum.into(additional_changes)
-        |> Enum.sort_by(fn c -> c.changed_at end, :desc)
+        changes = changes ++ additional_changes
+        Enum.sort_by(changes, fn c -> c.changed_at end, :desc)
       else
         changes
       end
@@ -37,6 +42,8 @@ defmodule SportywebWeb.ChangeLive.Index do
     {:noreply,
      socket
      |> assign(:entity, entity)
+     |> assign(:entity_id, entity_id)
+     |> assign(:entity_type, entity_type)
      |> stream(:changes, changes)}
   end
 
@@ -65,30 +72,6 @@ defmodule SportywebWeb.ChangeLive.Index do
     end
   end
 
-  def print_entity(%Contract{} = contract), do: Contract.print(contract)
-  def print_entity(%Fee{} = fee), do: "Gebühr #{fee.name}"
-  def print_entity(%Membership{} = membership), do: Membership.print(membership)
-  def print_entity(%Constitution{} = constitution), do: "Satzung von #{constitution.club.name}"
-  def print_entity(%Contact{} = contact), do: "Kontakt #{contact.name}"
-  def print_entity(%ContactGroup{} = contact_group), do: "Kontaktgruppe #{contact_group.name}"
-
-  def navigate_to_entity(%Contract{} = contract), do: ~p"/contracts/#{contract}"
-  def navigate_to_entity(%Fee{} = fee), do: ~p"/fees/#{fee}"
-  def navigate_to_entity(%Membership{} = membership), do: ~p"/memberships/#{membership}/edit"
-
-  def navigate_to_entity(%Constitution{} = constitution),
-    do: ~p"/clubs/#{constitution.club_id}/constitution"
-
-  def navigate_to_entity(%Contact{} = contact), do: ~p"/contacts/#{contact}/edit"
-
-  def navigate_to_entity(%ContactGroup{} = contact_group),
-    do: ~p"/contact_groups/#{contact_group}"
-
-  def new_value_component(%{:change => change, :entity => entity}) do
-    new_value = format_new_value(change.new_value, change.attribute, change, entity)
-    _new_value_component(new_value)
-  end
-
   defp _new_value_component({:link, %{:text => _, :href => _} = link}) do
     assigns = link
 
@@ -113,6 +96,36 @@ defmodule SportywebWeb.ChangeLive.Index do
     ~H"""
     {format_string_field(nil)}
     """
+  end
+
+  def translate_entity_type("contract"), do: "Vertrag"
+  def translate_entity_type("membership"), do: "Mitgliedschaft"
+  def translate_entity_type("constitution"), do: "Satzung"
+  def translate_entity_type("contact"), do: "Kontakt"
+  def translate_entity_type("contact_group"), do: "Kontaktgruppe"
+
+  def print_entity(%Contract{} = contract), do: Contract.print(contract)
+  def print_entity(%Fee{} = fee), do: "Gebühr #{fee.name}"
+  def print_entity(%Membership{} = membership), do: Membership.print(membership)
+  def print_entity(%Constitution{} = constitution), do: "Satzung von #{constitution.club.name}"
+  def print_entity(%Contact{} = contact), do: "Kontakt #{contact.name}"
+  def print_entity(%ContactGroup{} = contact_group), do: "Kontaktgruppe #{contact_group.name}"
+
+  def navigate_to_entity(%Contract{} = contract), do: ~p"/contracts/#{contract}"
+  def navigate_to_entity(%Fee{} = fee), do: ~p"/fees/#{fee}"
+  def navigate_to_entity(%Membership{} = membership), do: ~p"/memberships/#{membership}/edit"
+
+  def navigate_to_entity(%Constitution{} = constitution),
+    do: ~p"/clubs/#{constitution.club_id}/constitution"
+
+  def navigate_to_entity(%Contact{} = contact), do: ~p"/contacts/#{contact}/edit"
+
+  def navigate_to_entity(%ContactGroup{} = contact_group),
+    do: ~p"/contact_groups/#{contact_group}"
+
+  def new_value_component(%{:change => change, :entity => entity}) do
+    new_value = format_new_value(change.new_value, change.attribute, change, entity)
+    _new_value_component(new_value)
   end
 
   def translate_attribute("name", _), do: "Name"
@@ -210,22 +223,11 @@ defmodule SportywebWeb.ChangeLive.Index do
 
   def format_new_value(new_value, "reactivation_date", _, _), do: format_date_string(new_value)
 
-  def format_new_value(new_value, "contract_id", _, _) do
-    try do
-      contract = Legal.get_contract!(new_value, [:contact, :club, :department, :group])
-      {:link, %{text: print_entity(contract), href: navigate_to_entity(contract)}}
-    rescue
-      _ -> new_value
-    end
-  end
-  def format_new_value(new_value, "preconditional_membership_id", _, _) do
-    try do
-      membership = Legal.get_membership!(new_value, [:contact, :club, :department, :group])
-      {:link, %{text: print_entity(membership), href: navigate_to_entity(membership)}}
-    rescue
-      _ -> new_value
-    end
-  end
+  def format_new_value(new_value, "contract_id", _, _),
+    do: format_link_to_entity(new_value, "contract")
+
+  def format_new_value(new_value, "preconditional_membership_id", _, _),
+    do: format_link_to_entity(new_value, "membership")
 
   def format_new_value(new_value, "signing_date", _, _), do: format_date_string(new_value)
   def format_new_value(new_value, "start_date", _, _), do: format_date_string(new_value)
@@ -257,9 +259,24 @@ defmodule SportywebWeb.ChangeLive.Index do
       ),
       do: "#{print_entity(membership.contract)} wurde gelöscht"
 
+  def format_new_value(_, "-creation-", change, nil),
+    do: "#{translate_entity_type(change.entity_type)} #{change.entity_id} wurde angelegt"
+
+  def format_new_value(_, "-deletion-", change, nil),
+    do: "#{translate_entity_type(change.entity_type)} #{change.entity_id} wurde gelöscht"
+
   def format_new_value(_, "-creation-", _, entity), do: "#{print_entity(entity)} wurde angelegt"
   def format_new_value(_, "-deletion-", _, entity), do: "#{print_entity(entity)} wurde gelöscht"
   def format_new_value(new_value, _, _, _), do: new_value
+
+  defp format_link_to_entity(id, entity_type) do
+    try do
+      entity = load_entity(id, entity_type)
+      {:link, %{text: print_entity(entity), href: navigate_to_entity(entity)}}
+    rescue
+      Ecto.NoResultsError -> id
+    end
+  end
 
   defp format_date_string(date_string) do
     if date_string == nil || date_string == "" do

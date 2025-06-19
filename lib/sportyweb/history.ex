@@ -96,4 +96,10 @@ defmodule Sportyweb.History do
   defp write_new_value(%Date{} = new_value), do: Date.to_string(new_value)
   defp write_new_value(%Ecto.Changeset{changes: new_value}), do: Jason.encode!(new_value)
   defp write_new_value(new_value), do: Jason.encode!(new_value)
+
+  def remove_old_changes() do
+    one_year_ago = DateTime.shift(DateTime.utc_now(), Duration.new!(year: -1))
+    query = from(c in Change, where: c.changed_at <= ^one_year_ago)
+    Repo.delete_all(query)
+  end
 end

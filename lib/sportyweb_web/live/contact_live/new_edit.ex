@@ -69,7 +69,7 @@ defmodule SportywebWeb.ContactLive.NewEdit do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    contact = Personal.get_contact!(id)
+    contact = Personal.get_contact!(id, [:contact_group_contacts])
     {:ok, _} = Personal.delete_contact(contact, socket.assigns.current_user)
 
     {:noreply,

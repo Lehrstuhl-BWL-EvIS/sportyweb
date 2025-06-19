@@ -21,6 +21,7 @@ defmodule Sportyweb.Personal.Contact do
     has_many :contracts, Contract
     has_many :memberships, Membership
     many_to_many :contact_groups, ContactGroup, join_through: ContactGroupContact
+    has_many :contact_group_contacts, ContactGroupContact
 
     field :type, :string, default: "person"
     field :name, :string, default: ""

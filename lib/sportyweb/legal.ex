@@ -376,4 +376,66 @@ defmodule Sportyweb.Legal do
     |> Repo.get!(id)
     |> Repo.preload(preloads)
   end
+
+  def reactivate_paused_memberships() do
+    memberships_to_reactivate =
+      Repo.all(
+        from(
+          m in Membership,
+          where: m.reactivation_date <= ^Date.utc_today()
+        )
+      )
+
+    for m <- memberships_to_reactivate do
+      {:ok, _} =
+        update_membership(
+          m,
+          %{reactivation_date: nil, state: "ACTIVE"},
+          "Sportyweb - reactivate paused memberships"
+        )
+    end
+  end
+
+  def delete_old_archived_contracts_and_memberships() do
+    job_name = "Sportyweb - delete archived contracts"
+    one_year_ago = DateTime.shift(DateTime.utc_now(), Duration.new!(year: -1))
+
+    # delete all contracts and memberships where archive_date is at least one year ago
+    contact_query = from(c in Contract, where: c.archive_date <= ^one_year_ago)
+
+    contact_ids_with_removed_contracts =
+      contact_query
+      |> Repo.all()
+      |> Repo.preload(membership: [:following_memberships])
+      |> Enum.filter(fn c -> c.membership == nil || Enum.empty?(c.membership.following_memberships) end) # keep memberships required by other memberships
+      |> Enum.map(fn contract ->
+        if contract.membership != nil do
+          {:ok, _} = delete_membership(contract.membership, job_name)
+        end
+
+        {:ok, _} = delete_contract(contract, job_name)
+        contract.contact_id
+      end)
+
+    # delete old memberships that were never accepted
+    membership_query =
+      from(m in Membership,
+        where: is_nil(m.contract_id) and m.updated_at <= ^one_year_ago
+      )
+
+    contact_ids_with_removed_applications =
+      membership_query
+      |> Repo.all()
+      |> Repo.preload([:following_memberships])
+      |> Enum.filter(fn m -> Enum.empty?(m.following_memberships) end) # keep memberships required by other memberships
+      |> Enum.map(fn membership ->
+        {:ok, _} = delete_membership(membership, job_name)
+        membership.contact_id
+      end)
+
+    contacts_ids_to_check =
+      contact_ids_with_removed_contracts ++ contact_ids_with_removed_applications
+
+    Sportyweb.Personal.delete_contacts_without_contracts(contacts_ids_to_check, job_name)
+  end
 end

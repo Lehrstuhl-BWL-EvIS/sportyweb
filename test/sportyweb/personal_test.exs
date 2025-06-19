@@ -229,6 +229,7 @@ defmodule Sportyweb.PersonalTest do
 
     test "delete_contact/1 deletes the contact and writes to history" do
       contact = contact_fixture()
+      contact = Map.put(contact, :contact_group_contacts, [])
       assert {:ok, %Contact{} = contact} = Personal.delete_contact(contact, "test")
       assert_raise Ecto.NoResultsError, fn -> Personal.get_contact!(contact.id) end
 

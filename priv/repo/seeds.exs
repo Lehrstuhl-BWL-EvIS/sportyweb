@@ -22,7 +22,6 @@ alias Sportyweb.Finance
 alias Sportyweb.Finance.Fee
 alias Sportyweb.Finance.Subsidy
 alias Sportyweb.Legal
-alias Sportyweb.Legal.Contract
 alias Sportyweb.Legal.Membership
 alias Sportyweb.Legal.Constitution
 alias Sportyweb.Organization
@@ -31,7 +30,6 @@ alias Sportyweb.Organization.Department
 alias Sportyweb.Organization.Group
 alias Sportyweb.Personal
 alias Sportyweb.Personal.Contact
-alias Sportyweb.Personal.ContactGroup
 alias Sportyweb.Personal.ContactGroupContact
 alias Sportyweb.Polymorphic.Email
 alias Sportyweb.Polymorphic.FinancialData

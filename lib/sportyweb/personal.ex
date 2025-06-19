@@ -255,6 +255,7 @@ defmodule Sportyweb.Personal do
   """
   def delete_contact(%Contact{} = contact, user) do
     contact
+    |> delete_contact_from_contact_groups(user)
     |> Repo.delete()
     |> History.add_deletion("contact", user)
   end
@@ -385,6 +386,17 @@ defmodule Sportyweb.Personal do
     res
   end
 
+  def delete_contact_from_contact_groups(%Contact{} = contact, user) do
+    _ =
+      contact.contact_group_contacts
+      |> Enum.map(fn cgc ->
+        cgc = Map.put(cgc, :contact, contact)
+        {:ok, _} = delete_contact_group_contact(cgc, user)
+      end)
+
+    contact
+  end
+
   def delete_contact_group_contact(%ContactGroupContact{} = contact_group_contact, user) do
     res = Repo.delete(contact_group_contact)
 
@@ -405,5 +417,35 @@ defmodule Sportyweb.Personal do
     end
 
     res
+  end
+
+  def delete_contacts_without_contracts(contacts_ids_to_check, job_name) do
+    contacts_ids_to_check
+    # delete all contacts that do no longer have an assigned contract
+    |> Enum.dedup()
+    |> Enum.map(fn contact_id ->
+      Contact
+      |> Repo.get!(contact_id)
+      |> Repo.preload([:contracts, :memberships, :contact_group_contacts, :contact_groups])
+    end)
+    |> Enum.filter(fn contact ->
+      Enum.empty?(contact.contracts) && Enum.empty?(contact.memberships)
+    end)
+    |> Enum.flat_map(fn contact ->
+      {:ok, _} = delete_contact(contact, job_name)
+      contact.contact_groups
+    end)
+    # delete all contact_groups that do no longer contain any contact
+    |> Enum.dedup()
+    |> Enum.map(fn contact_group ->
+      ContactGroup
+      |> Repo.get!(contact_group.id)
+      |> Repo.preload(:contact_group_contacts)
+    end)
+    |> Enum.filter(fn contact_group -> Enum.empty?(contact_group.contact_group_contacts) end)
+    |> Enum.map(fn contact_group ->
+      {:ok, _} = delete_contact_group(contact_group, job_name)
+      contact_group
+    end)
   end
 end

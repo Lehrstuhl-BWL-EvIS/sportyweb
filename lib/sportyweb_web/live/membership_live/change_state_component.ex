@@ -2,6 +2,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   use SportywebWeb, :live_component
 
   alias Sportyweb.Legal
+  alias Sportyweb.Legal.Contract
   alias Sportyweb.Legal.Membership
   alias Sportyweb.Legal.Constitution
   alias Sportyweb.Person.ContactChangeNotifier
@@ -15,6 +16,9 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
       </.button>
 
       <.modal id={"#{@id}_dialog"}>
+
+      {@send_email}
+
         <.simple_form
           for={%{}}
           id={"#{@id}_form"}
@@ -44,7 +48,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                     name="signing_date"
                     type="date"
                     label="Aufnahmedatum"
-                    value={@initial_signing_date}
+                    value={@signing_date}
                   />
                   <.error :if={@signing_date_error != nil}>{@signing_date_error}</.error>
                 </div>
@@ -53,7 +57,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                     name="start_date"
                     type="date"
                     label="Beginn der Mitgliedschaft"
-                    value={@initial_start_date}
+                    value={@start_date}
                   />
                   <.error :if={@start_date_error != nil}>{@start_date_error}</.error>
                 </div>
@@ -62,7 +66,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                     name="fee_id"
                     type="select"
                     label="Beitrag"
-                    value={@initial_fee_id}
+                    value={@fee_id}
                     options={
                       @fee_options
                       |> Enum.map(&{"#{&1.name}: #{&1.amount}", &1.id})
@@ -104,7 +108,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                     name="termination_date"
                     type="date"
                     label="Kündigungsdatum"
-                    value={@initial_termination_date}
+                    value={@termination_date}
                   />
                   <.error :if={@termination_date_error != nil}>{@termination_date_error}</.error>
                 </div>
@@ -113,7 +117,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                     name="archive_date"
                     type="date"
                     label="Ende der Mitgliedschaft"
-                    value={@initial_archive_date}
+                    value={@archive_date}
                   />
                   <.error :if={@archive_date_error != nil}>{@archive_date_error}</.error>
                 </div>
@@ -138,7 +142,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                     name="suspension_date"
                     type="date"
                     label="Ausgeschlossen am"
-                    value={@initial_suspension_date}
+                    value={@suspension_date}
                   />
                   <.error :if={@suspension_date_error != nil}>{@suspension_date_error}</.error>
                 </div>
@@ -148,7 +152,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                 >
                   <.input
                     name="suspension_reason"
-                    value={@initial_suspension_reason}
+                    value={@suspension_reason}
                     type="select"
                     label="Grund"
                     options={@constitution.suspension_reasons}
@@ -188,7 +192,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
               <div :if={@membership.contact.email != ""} class="col-span-12 md:col-span-12">
                 <.input
                   name="send_email"
-                  value={@initial_send_email}
+                  value={@send_email}
                   type="checkbox"
                   label="Kontakt per E-Mail benachrichtigen"
                 />
@@ -199,7 +203,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
               >
                 <.input
                   name="update_following_memberships"
-                  value="true"
+                  value={@update_following_memberships}
                   type="checkbox"
                   label={"#{Enum.count(@following_memberships)} zugehörige Mitgliedschaften #{print_action(@action)}"}
                 />
@@ -229,14 +233,14 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     action = assigns.action
     today = Date.utc_today()
 
-    {initial_signing_date, initial_start_date, initial_fee_id} =
+    {signing_date, start_date, fee_id} =
       if action == "ADMIT" do
         {today, today, nil}
       else
         {nil, nil, nil}
       end
 
-    {initial_termination_date, initial_archive_date} =
+    {termination_date, archive_date} =
       if action == "TERMINATE" do
         date_of_minimal_membership_duration =
           if assigns.constitution.minimal_membership_duration == "" do
@@ -257,14 +261,14 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
         {nil, nil}
       end
 
-    {initial_suspension_date, initial_suspension_reason} =
+    {suspension_date, suspension_reason} =
       if action == "SUSPEND" do
         {today, nil}
       else
         {nil, nil}
       end
 
-    initial_send_email =
+    send_email =
       if action == "DECEASE" do
         false
       else
@@ -274,26 +278,27 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     socket =
       socket
       |> assign(assigns)
-      |> assign(:initial_signing_date, initial_signing_date)
-      |> assign(:initial_start_date, initial_start_date)
-      |> assign(:initial_fee_id, initial_fee_id)
-      |> assign(:initial_termination_date, initial_termination_date)
-      |> assign(:initial_archive_date, initial_archive_date)
-      |> assign(:initial_suspension_date, initial_suspension_date)
-      |> assign(:initial_suspension_reason, initial_suspension_reason)
-      |> assign(:initial_send_email, initial_send_email)
+      |> assign(:signing_date, signing_date)
+      |> assign(:start_date, start_date)
+      |> assign(:fee_id, fee_id)
+      |> assign(:termination_date, termination_date)
+      |> assign(:archive_date, archive_date)
+      |> assign(:suspension_date, suspension_date)
+      |> assign(:suspension_reason, suspension_reason)
+      |> assign(:send_email, send_email)
+      |> assign(:update_following_memberships, Enum.empty?(assigns.following_memberships))
       |> assign(:action, action)
       |> assign(:show_contact_groups, false)
 
     initial_values = %{
       "action" => action,
-      "signing_date" => initial_signing_date,
-      "start_date" => initial_start_date,
-      "fee_id" => initial_fee_id,
-      "termination_date" => initial_termination_date,
-      "archive_date" => initial_archive_date,
-      "suspension_date" => initial_suspension_date,
-      "suspension_reason" => initial_suspension_reason,
+      "signing_date" => signing_date,
+      "start_date" => start_date,
+      "fee_id" => fee_id,
+      "termination_date" => termination_date,
+      "archive_date" => archive_date,
+      "suspension_date" => suspension_date,
+      "suspension_reason" => suspension_reason,
       "reactivation_date" => nil,
       "date_of_death" => nil
     }
@@ -310,25 +315,47 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
           "signing_date" => signing_date,
           "start_date" => start_date,
           "fee_id" => fee_id
-        },
+        } = changes,
         socket
       ) do
+    contract_errors = Legal.change_contract(%Contract{}, changes).errors
+
     signing_date_error =
-      error_if_nil(
-        signing_date,
-        "Bitte das Datum angeben, an dem der Aufnahmeantrag angenommen wurde."
-      )
+      cond do
+        is_empty?(signing_date) ->
+          "Bitte das Datum angeben, an dem der Aufnahmeantrag angenommen wurde"
+
+        contract_errors[:signing_date] != nil ->
+          Kernel.elem(contract_errors[:signing_date], 0)
+
+        true ->
+          nil
+      end
 
     start_date_error =
-      error_if_nil(start_date, "Bitte das Datum angeben, zu dem die Mitgliedschaft beginnt.")
+      cond do
+        is_empty?(start_date) -> "Bitte das Datum angeben, zu dem die Mitgliedschaft beginnt."
+        contract_errors[:start_date] != nil -> Kernel.elem(contract_errors[:start_date], 0)
+        true -> nil
+      end
 
-    fee_id_error = error_if_nil(fee_id, "Bitte eine Gebühr auswählen.")
+    fee_id_error =
+      cond do
+        is_empty?(fee_id) -> "Bitte eine Gebühr auswählen.."
+        contract_errors[:fee] != nil -> Kernel.elem(contract_errors[:fee], 0)
+        true -> nil
+      end
 
     socket =
       socket
       |> assign(:signing_date_error, signing_date_error)
       |> assign(:start_date_error, start_date_error)
       |> assign(:fee_id_error, fee_id_error)
+      |> assign(:fee_id, fee_id)
+      |> assign(:start_date, start_date)
+      |> assign(:signing_date, signing_date)
+      |> assign(:signing_date, signing_date)
+      |> rewrite_default_values(changes)
       |> assign(
         :allow_save,
         signing_date_error == nil && start_date_error == nil && fee_id_error == nil
@@ -344,7 +371,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
           "action" => "ADMIT",
           "signing_date" => signing_date,
           "start_date" => start_date,
-          "fee_id" => fee_id
+          "fee_id" => fee_id,
         } = args,
         socket
       ) do
@@ -359,8 +386,10 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   @impl true
-  def handle_event("validate_dialog", %{"action" => "REACTIVATE"}, socket) do
+  def handle_event("validate_dialog", %{"action" => "REACTIVATE"} = changes,
+        socket) do
     socket = assign(socket, :allow_save, true)
+             |> rewrite_default_values(changes)
     {:noreply, socket}
   end
 
@@ -375,16 +404,27 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   @impl true
   def handle_event(
         "validate_dialog",
-        %{"action" => "PAUSE", "reactivation_date" => _reactivation_date},
+        %{"action" => "PAUSE",
+          "reactivation_date" => _reactivation_date} = changes,
         socket
       ) do
-    # is reactivation_date optional
-    reactivation_date_error = nil
+    membership_errors = Legal.change_membership(socket.assigns.membership, changes).errors
+
+    reactivation_date_error =
+      cond do
+        # reactivation_date is optional
+        membership_errors[:reactivation_date] != nil ->
+          Kernel.elem(membership_errors[:reactivation_date], 0)
+
+        true ->
+          nil
+      end
 
     socket =
       socket
       |> assign(:reactivation_date_error, reactivation_date_error)
       |> assign(:allow_save, reactivation_date_error == nil)
+      |> rewrite_default_values(changes)
 
     {:noreply, socket}
   end
@@ -414,8 +454,9 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   @impl true
-  def handle_event("validate_dialog", %{"action" => "REJECT"}, socket) do
+  def handle_event("validate_dialog", %{"action" => "REJECT"} = changes, socket) do
     socket = assign(socket, :allow_save, true)
+             |> rewrite_default_values(changes)
     {:noreply, socket}
   end
 
@@ -434,23 +475,43 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
           "action" => "TERMINATE",
           "termination_date" => termination_date,
           "archive_date" => archive_date
-        },
+        } = changes,
         socket
       ) do
+    contract_errors = Legal.change_contract(socket.assigns.membership.contract, changes).errors
+
     termination_date_error =
-      error_if_nil(
-        termination_date,
-        "Bitte das Datum angeben, an dem das Mitglied gekündigt hat."
-      )
+      cond do
+        is_empty?(termination_date) ->
+          "Bitte das Datum angeben, an dem das Mitglied gekündigt hat."
+
+        contract_errors[:termination_date] != nil ->
+          Kernel.elem(contract_errors[:termination_date], 0)
+
+        true ->
+          nil
+      end
 
     archive_date_error =
-      error_if_nil(archive_date, "Bitte eine Datum angeben, zu welchem die Mitgliedschaft endet.")
+      cond do
+        is_empty?(archive_date) ->
+          "Bitte eine Datum angeben, zu welchem die Mitgliedschaft endet."
+
+        contract_errors[:archive_date] != nil ->
+          Kernel.elem(contract_errors[:archive_date], 0)
+
+        true ->
+          nil
+      end
 
     socket =
       socket
       |> assign(:termination_date_error, termination_date_error)
       |> assign(:archive_date_error, archive_date_error)
+      |> assign(:termination_date, termination_date)
+      |> assign(:archive_date, archive_date)
       |> assign(:allow_save, termination_date_error == nil && archive_date_error == nil)
+      |> rewrite_default_values(changes)
 
     {:noreply, socket}
   end
@@ -486,29 +547,51 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
         "validate_dialog",
         %{
           "action" => "SUSPEND",
-          "suspension_date" => suspension_date,
+          "suspension_date" => suspension_date
         } = args,
         socket
       ) do
+    membership_errors = Legal.change_membership(socket.assigns.membership, args).errors
+
+    contract_errors =
+      Legal.change_contract(socket.assigns.membership.contract, %{
+        termination_date: suspension_date,
+        archive_date: suspension_date
+      }).errors
 
     suspension_date_error =
-      error_if_nil(
-        suspension_date,
-        "Bitte das Datum angeben, an dem das Mitglied ausgeschlossen wurde."
-      )
+      cond do
+        is_empty?(suspension_date) ->
+          "Bitte das Datum angeben, an dem das Mitglied ausgeschlossen wurde."
+
+        membership_errors[:suspension_date] != nil ->
+          Kernel.elem(membership_errors[:suspension_date], 0)
+
+        true ->
+          nil
+      end
 
     suspension_reason_error =
-      if socket.assigns.constitution.suspension_reason_mode == "required" do
-        suspension_reason = Map.get(args, "suspension_reason")
-        error_if_nil(suspension_reason, "Bitte angeben, warum das Mitglied ausgeschlossen wurde.")
-      else
-        nil
+      cond do
+        is_empty?(args[:suspension_date]) &&
+            socket.assigns.constitution.suspension_reason_mode == "required" ->
+          "Bitte angeben, warum das Mitglied ausgeschlossen wurde."
+
+        contract_errors[:termination_date] != nil ->
+          Kernel.elem(contract_errors[:termination_date], 0)
+
+        contract_errors[:archive_date] != nil ->
+          Kernel.elem(contract_errors[:archive_date], 0)
+
+        true ->
+          nil
       end
 
     socket =
       socket
       |> assign(:suspension_date_error, suspension_date_error)
       |> assign(:suspension_reason_error, suspension_reason_error)
+      |> rewrite_default_values(args)
       |> assign(:allow_save, suspension_date_error == nil && suspension_reason_error == nil)
 
     {:noreply, socket}
@@ -523,8 +606,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
         } = args,
         socket
       ) do
-    suspension_reason = Map.get(args, "suspension_reason")
-
+    suspension_reason = args[:suspension_reason]
     organization_name = Membership.print_organization(socket.assigns.membership)
 
     message =
@@ -551,16 +633,35 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   @impl true
   def handle_event(
         "validate_dialog",
-        %{"action" => "DECEASE", "date_of_death" => date_of_death},
+        %{"action" => "DECEASE", "date_of_death" => date_of_death} = changes,
         socket
       ) do
+    contract_errors =
+      Legal.change_contract(socket.assigns.membership.contract, %{
+        termination_date: date_of_death,
+        archive_date: date_of_death
+      }).errors
+
     date_of_death_error =
-      error_if_nil(date_of_death, "Bitte das Datum angeben, an dem das Mitglied verstorben ist.")
+      cond do
+        is_empty?(date_of_death) ->
+          "Bitte das Datum angeben, an dem das Mitglied verstorben ist."
+
+        contract_errors[:termination_date] != nil ->
+          Kernel.elem(contract_errors[:termination_date], 0)
+
+        contract_errors[:archive_date] != nil ->
+          Kernel.elem(contract_errors[:archive_date], 0)
+
+        true ->
+          nil
+      end
 
     socket =
       socket
       |> assign(:date_of_death_error, date_of_death_error)
       |> assign(:allow_save, date_of_death_error == nil)
+      |> rewrite_default_values(changes)
 
     {:noreply, socket}
   end
@@ -617,12 +718,22 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     end
   end
 
+  defp rewrite_default_values(socket, params) do
+    send_email = params["send_email"]
+    update_following_memberships = params["update_following_memberships"]
+
+    socket
+    |> assign(:send_email, send_email)
+    |> assign(:update_following_memberships, update_following_memberships)
+  end
+
   defp update_contract(membership, nil, _) do
     membership.contract
   end
 
   defp update_contract(membership, contract_changes, user) do
     if membership.contract == nil do
+      IO.puts("create contract for membership #{membership.id}}")
       contract = %{
         club_id: membership.club_id,
         department_id: membership.department_id,
@@ -653,25 +764,24 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   defp update_following_memberships(
-         %{"update_following_memberships" => update_following_memberships},
+         %{"update_following_memberships" => "true"},
          membership_changes,
          contract_changes,
          socket
        ) do
     following_memberships = socket.assigns.following_memberships
 
-    if update_following_memberships do
       for membership <- following_memberships do
         update_contract(membership, contract_changes, socket.assigns.current_user)
 
         {:ok, _} =
           Legal.update_membership(membership, membership_changes, socket.assigns.current_user)
       end
-    end
   end
 
   # update_following_memberships was not present -> nothing to do
-  defp update_following_memberships(_args, _membership_changes, _contract_changes, _socket) do
+  defp update_following_memberships(args, _membership_changes, _contract_changes, _socket) do
+    IO.inspect(args)
   end
 
   def get_possible_actions(old_state) do
@@ -722,12 +832,8 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     end
   end
 
-  defp error_if_nil(value, error) do
-    if value == nil || value == "" do
-      error
-    else
-      nil
-    end
+  defp is_empty?(value) do
+    value == nil || value == ""
   end
 
   def print_other_contacts_in_group(contact_group, contact) do

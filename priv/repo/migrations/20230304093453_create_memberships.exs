@@ -8,7 +8,7 @@ defmodule Sportyweb.Repo.Migrations.CreateMemberships do
       add :type, :string, null: false
       add :suspension_reason, :string, null: false
       add :reactivation_date, :date, null: true
-      add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
+      add :club_id, references(:clubs, on_delete: :nothing, type: :binary_id), null: false
 
       add :department_id, references(:departments, on_delete: :delete_all, type: :binary_id),
         null: true
@@ -22,7 +22,7 @@ defmodule Sportyweb.Repo.Migrations.CreateMemberships do
         null: true
 
       add :preconditional_membership_id,
-          references(:memberships, on_delete: :delete_all, type: :binary_id),
+          references(:memberships, on_delete: :nilify_all, type: :binary_id),
           null: true
 
       timestamps(type: :utc_datetime)

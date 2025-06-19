@@ -1,10 +1,15 @@
-<.header>
+<.header :if={@entity != nil}>
   <p>
     Historie zu {print_entity(@entity)}
   </p>
   <.cancel_button navigate={navigate_to_entity(@entity)}>
     Zurück
   </.cancel_button>
+</.header>
+<.header :if={@entity == nil}>
+  <p>
+    Historie zu {translate_entity_type(@entity_type)} {@entity_id}
+  </p>
 </.header>
 
 <.card>
