@@ -407,7 +407,10 @@ defmodule Sportyweb.Legal do
       contact_query
       |> Repo.all()
       |> Repo.preload(membership: [:following_memberships])
-      |> Enum.filter(fn c -> c.membership == nil || Enum.empty?(c.membership.following_memberships) end) # keep memberships required by other memberships
+      # keep memberships required by other memberships
+      |> Enum.filter(fn c ->
+        c.membership == nil || Enum.empty?(c.membership.following_memberships)
+      end)
       |> Enum.map(fn contract ->
         if contract.membership != nil do
           {:ok, _} = delete_membership(contract.membership, job_name)
@@ -427,7 +430,8 @@ defmodule Sportyweb.Legal do
       membership_query
       |> Repo.all()
       |> Repo.preload([:following_memberships])
-      |> Enum.filter(fn m -> Enum.empty?(m.following_memberships) end) # keep memberships required by other memberships
+      # keep memberships required by other memberships
+      |> Enum.filter(fn m -> Enum.empty?(m.following_memberships) end)
       |> Enum.map(fn membership ->
         {:ok, _} = delete_membership(membership, job_name)
         membership.contact_id

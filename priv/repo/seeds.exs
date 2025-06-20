@@ -437,7 +437,8 @@ department =
     creation_date: ~D[1900-03-01],
     emails: [Sportyweb.SeedHelper.get_random_email()],
     phones: [Sportyweb.SeedHelper.get_random_phone()],
-    notes: [Sportyweb.SeedHelper.get_random_note()]
+    notes: [Sportyweb.SeedHelper.get_random_note()],
+    sport: "Fußball"
   })
 
 Repo.insert!(%Group{
@@ -492,7 +493,8 @@ department =
     creation_date: ~D[1905-03-01],
     emails: [Sportyweb.SeedHelper.get_random_email()],
     phones: [Sportyweb.SeedHelper.get_random_phone()],
-    notes: [%Note{}]
+    notes: [%Note{}],
+    sport: "Fußball"
   })
 
 Repo.insert!(%Group{
@@ -546,7 +548,8 @@ Repo.insert!(%Department{
   creation_date: ~D[1910-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Basketball"
 })
 
 Repo.insert!(%Department{
@@ -555,7 +558,8 @@ Repo.insert!(%Department{
   creation_date: ~D[1915-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Handball"
 })
 
 Repo.insert!(%Department{
@@ -564,7 +568,8 @@ Repo.insert!(%Department{
   creation_date: ~D[1920-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Schach"
 })
 
 ###################################
@@ -581,7 +586,8 @@ club_2 =
     emails: [%Email{type: "organization", address: "service@fc.de"}],
     phones: [%Phone{type: "organization", number: "0221 99 1948 0"}],
     financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
-    notes: [Sportyweb.SeedHelper.get_random_note()]
+    notes: [Sportyweb.SeedHelper.get_random_note()],
+    sport: "Fußball"
   })
 
 department =
@@ -591,7 +597,8 @@ department =
     creation_date: ~D[1948-03-01],
     emails: [Sportyweb.SeedHelper.get_random_email()],
     phones: [Sportyweb.SeedHelper.get_random_phone()],
-    notes: [Sportyweb.SeedHelper.get_random_note()]
+    notes: [Sportyweb.SeedHelper.get_random_note()],
+    sport: "Fußball"
   })
 
 Repo.insert!(%Group{
@@ -600,7 +607,8 @@ Repo.insert!(%Group{
   creation_date: ~D[1948-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Fußball"
 })
 
 Repo.insert!(%Group{
@@ -609,7 +617,8 @@ Repo.insert!(%Group{
   creation_date: ~D[1949-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Fußball"
 })
 
 Repo.insert!(%Group{
@@ -618,7 +627,8 @@ Repo.insert!(%Group{
   creation_date: ~D[1950-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Fußball"
 })
 
 Repo.insert!(%Group{
@@ -627,7 +637,8 @@ Repo.insert!(%Group{
   creation_date: ~D[1951-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Fußball"
 })
 
 Repo.insert!(%Group{
@@ -636,7 +647,8 @@ Repo.insert!(%Group{
   creation_date: ~D[1952-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Fußball"
 })
 
 department =
@@ -646,7 +658,8 @@ department =
     creation_date: ~D[1950-03-01],
     emails: [Sportyweb.SeedHelper.get_random_email()],
     phones: [Sportyweb.SeedHelper.get_random_phone()],
-    notes: [Sportyweb.SeedHelper.get_random_note()]
+    notes: [Sportyweb.SeedHelper.get_random_note()],
+    sport: "Fußball"
   })
 
 Repo.insert!(%Group{
@@ -655,7 +668,8 @@ Repo.insert!(%Group{
   creation_date: ~D[1950-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Fußball"
 })
 
 Repo.insert!(%Group{
@@ -664,7 +678,8 @@ Repo.insert!(%Group{
   creation_date: ~D[1951-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Fußball"
 })
 
 Repo.insert!(%Group{
@@ -673,7 +688,8 @@ Repo.insert!(%Group{
   creation_date: ~D[1952-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Fußball"
 })
 
 Repo.insert!(%Group{
@@ -682,7 +698,8 @@ Repo.insert!(%Group{
   creation_date: ~D[1953-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Fußball"
 })
 
 Repo.insert!(%Group{
@@ -691,7 +708,8 @@ Repo.insert!(%Group{
   creation_date: ~D[1954-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Fußball"
 })
 
 Repo.insert!(%Department{
@@ -700,7 +718,8 @@ Repo.insert!(%Department{
   creation_date: ~D[1955-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Handball"
 })
 
 Repo.insert!(%Department{
@@ -709,7 +728,8 @@ Repo.insert!(%Department{
   creation_date: ~D[1960-03-01],
   emails: [Sportyweb.SeedHelper.get_random_email()],
   phones: [Sportyweb.SeedHelper.get_random_phone()],
-  notes: [Sportyweb.SeedHelper.get_random_note()]
+  notes: [Sportyweb.SeedHelper.get_random_note()],
+  sport: "Tischtennis"
 })
 
 ###################################
@@ -726,7 +746,8 @@ _club_3 =
     emails: [%Email{type: "organization", address: "info@fcstpauli.com"}],
     phones: [%Phone{type: "organization", number: "040 - 317 874 0"}],
     financial_data: [Sportyweb.SeedHelper.get_random_financial_data()],
-    notes: [Sportyweb.SeedHelper.get_random_note()]
+    notes: [Sportyweb.SeedHelper.get_random_note()],
+    sport: "Fußball"
   })
 
 ###################################

@@ -210,6 +210,9 @@ defmodule SportywebWeb.Router do
       # Constitution -> Settings for memberships
       live "/clubs/:club_id/constitution", ConstitutionLive.NewEdit, :new
 
+      # Analysis
+      live "/analysis/:club_id", AnalysisLive.Show, :show
+
       # Transaction (Each belongs to a contract)
 
       live "/transactions", TransactionLive.Index, :index_root

@@ -44,10 +44,12 @@ defmodule SportywebWeb.ClubLive.FormComponent do
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:foundation_date]} type="date" label="Gründungsdatum" />
               </div>
-            </.input_grid>
 
-            <.input_grid :if={@club.id && Enum.any?(@club.locations)} class="pt-6">
-              <div class="col-span-12">
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:sport]} type="text" label="Sportart (optional)" />
+              </div>
+
+              <div :if={@club.id && Enum.any?(@club.locations)} class="col-span-12 md:col-span-6">
                 <.input
                   field={@form[:location_id]}
                   type="select"

@@ -31,6 +31,7 @@ defmodule Sportyweb.Organization.Department do
     field :reference_number, :string, default: ""
     field :description, :string, default: ""
     field :creation_date, :date, default: nil
+    field :sport, :string, default: ""
 
     timestamps(type: :utc_datetime)
   end
@@ -45,7 +46,8 @@ defmodule Sportyweb.Organization.Department do
         :name,
         :reference_number,
         :description,
-        :creation_date
+        :creation_date,
+        :sport
       ],
       empty_values: ["", nil]
     )

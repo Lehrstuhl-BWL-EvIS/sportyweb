@@ -8,6 +8,7 @@ defmodule Sportyweb.Repo.Migrations.CreateDepartments do
       add :reference_number, :string, null: false
       add :description, :text, null: false
       add :creation_date, :date, null: false
+      add :sport, :string, null: false
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
 
       timestamps(type: :utc_datetime)

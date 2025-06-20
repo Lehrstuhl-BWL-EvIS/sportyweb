@@ -47,6 +47,7 @@ defmodule Sportyweb.Organization.Club do
     field :description, :string, default: ""
     field :website_url, :string, default: ""
     field :foundation_date, :date, default: nil
+    field :sport, :string, default: ""
 
     timestamps(type: :utc_datetime)
   end
@@ -66,7 +67,8 @@ defmodule Sportyweb.Organization.Club do
         :reference_number,
         :description,
         :website_url,
-        :foundation_date
+        :foundation_date,
+        :sport
       ],
       empty_values: ["", nil]
     )

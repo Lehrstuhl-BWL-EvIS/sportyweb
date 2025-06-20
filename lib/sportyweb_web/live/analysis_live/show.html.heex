@@ -1,0 +1,35 @@
+<.header>
+  Mitgliederanalyse
+</.header>
+
+<.card>
+  <.input_grids>
+    <.input_grid>
+      <%= for {{group_by, options}, i} <- Enum.with_index(@selected_group_bys) do %>
+        <.live_component
+          id={"group_by_component_#{i}"}
+          module={SportywebWeb.AnalysisLive.GroupByOptionComponent}
+          group_by={group_by}
+          options={options}
+          index={i}
+        />
+      <% end %>
+      <div class="col-span-12 md:col-span-12" phx-click={JS.push("add_group_by")}>
+        <.icon name="hero-plus-circle" class="text-emerald-600" />
+      </div>
+    </.input_grid>
+
+    <div class="col-span-12 md:col-span-3">
+      <.label>&nbsp</.label>
+      <.button phx-click="analyse" phx-disable-with="Speichern...">Mitglieder auswerten</.button>
+    </div>
+  </.input_grids>
+</.card>
+
+<.card :if={Enum.empty?(@result)}>
+  Es wurde noch keine Analyse durchgeführt
+</.card>
+
+<.card :if={!Enum.empty?(@result)}>
+    {result_tree_row(@result)}
+</.card>

@@ -16,8 +16,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
       </.button>
 
       <.modal id={"#{@id}_dialog"}>
-
-      {@send_email}
+        {@send_email}
 
         <.simple_form
           for={%{}}
@@ -44,12 +43,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
                   )} aufgenommen werden?
                 </div>
                 <div class="col-span-12 md:col-span-6">
-                  <.input
-                    name="signing_date"
-                    type="date"
-                    label="Aufnahmedatum"
-                    value={@signing_date}
-                  />
+                  <.input name="signing_date" type="date" label="Aufnahmedatum" value={@signing_date} />
                   <.error :if={@signing_date_error != nil}>{@signing_date_error}</.error>
                 </div>
                 <div class="col-span-12 md:col-span-6">
@@ -371,7 +365,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
           "action" => "ADMIT",
           "signing_date" => signing_date,
           "start_date" => start_date,
-          "fee_id" => fee_id,
+          "fee_id" => fee_id
         } = args,
         socket
       ) do
@@ -386,10 +380,11 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   end
 
   @impl true
-  def handle_event("validate_dialog", %{"action" => "REACTIVATE"} = changes,
-        socket) do
-    socket = assign(socket, :allow_save, true)
-             |> rewrite_default_values(changes)
+  def handle_event("validate_dialog", %{"action" => "REACTIVATE"} = changes, socket) do
+    socket =
+      assign(socket, :allow_save, true)
+      |> rewrite_default_values(changes)
+
     {:noreply, socket}
   end
 
@@ -404,8 +399,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   @impl true
   def handle_event(
         "validate_dialog",
-        %{"action" => "PAUSE",
-          "reactivation_date" => _reactivation_date} = changes,
+        %{"action" => "PAUSE", "reactivation_date" => _reactivation_date} = changes,
         socket
       ) do
     membership_errors = Legal.change_membership(socket.assigns.membership, changes).errors
@@ -455,8 +449,10 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
 
   @impl true
   def handle_event("validate_dialog", %{"action" => "REJECT"} = changes, socket) do
-    socket = assign(socket, :allow_save, true)
-             |> rewrite_default_values(changes)
+    socket =
+      assign(socket, :allow_save, true)
+      |> rewrite_default_values(changes)
+
     {:noreply, socket}
   end
 
@@ -734,6 +730,7 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   defp update_contract(membership, contract_changes, user) do
     if membership.contract == nil do
       IO.puts("create contract for membership #{membership.id}}")
+
       contract = %{
         club_id: membership.club_id,
         department_id: membership.department_id,
@@ -771,12 +768,12 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
        ) do
     following_memberships = socket.assigns.following_memberships
 
-      for membership <- following_memberships do
-        update_contract(membership, contract_changes, socket.assigns.current_user)
+    for membership <- following_memberships do
+      update_contract(membership, contract_changes, socket.assigns.current_user)
 
-        {:ok, _} =
-          Legal.update_membership(membership, membership_changes, socket.assigns.current_user)
-      end
+      {:ok, _} =
+        Legal.update_membership(membership, membership_changes, socket.assigns.current_user)
+    end
   end
 
   # update_following_memberships was not present -> nothing to do
