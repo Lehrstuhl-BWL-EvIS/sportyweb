@@ -53,7 +53,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
         </.input_grids>
       </div>
 
-      <div class="overflow-auto max-w-full max-h-[550px]">
+      <div class="overflow-auto max-w-full max-h-[28rem]">
         <.table
           id="contacts"
           filter_sort_target={@myself}

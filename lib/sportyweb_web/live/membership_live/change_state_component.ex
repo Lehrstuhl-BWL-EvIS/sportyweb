@@ -382,7 +382,8 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   @impl true
   def handle_event("validate_dialog", %{"action" => "REACTIVATE"} = changes, socket) do
     socket =
-      assign(socket, :allow_save, true)
+      socket
+      |> assign(:allow_save, true)
       |> rewrite_default_values(changes)
 
     {:noreply, socket}
@@ -405,13 +406,11 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     membership_errors = Legal.change_membership(socket.assigns.membership, changes).errors
 
     reactivation_date_error =
-      cond do
+      if membership_errors[:reactivation_date] != nil do
         # reactivation_date is optional
-        membership_errors[:reactivation_date] != nil ->
-          Kernel.elem(membership_errors[:reactivation_date], 0)
-
-        true ->
-          nil
+        Kernel.elem(membership_errors[:reactivation_date], 0)
+      else
+        nil
       end
 
     socket =
@@ -450,7 +449,8 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
   @impl true
   def handle_event("validate_dialog", %{"action" => "REJECT"} = changes, socket) do
     socket =
-      assign(socket, :allow_save, true)
+      socket
+      |> assign(:allow_save, true)
       |> rewrite_default_values(changes)
 
     {:noreply, socket}
@@ -729,8 +729,6 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
 
   defp update_contract(membership, contract_changes, user) do
     if membership.contract == nil do
-      IO.puts("create contract for membership #{membership.id}}")
-
       contract = %{
         club_id: membership.club_id,
         department_id: membership.department_id,
@@ -776,9 +774,8 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
     end
   end
 
-  # update_following_memberships was not present -> nothing to do
-  defp update_following_memberships(args, _membership_changes, _contract_changes, _socket) do
-    IO.inspect(args)
+  defp update_following_memberships(_args, _membership_changes, _contract_changes, _socket) do
+    # update_following_memberships was not present -> nothing to do
   end
 
   def get_possible_actions(old_state) do

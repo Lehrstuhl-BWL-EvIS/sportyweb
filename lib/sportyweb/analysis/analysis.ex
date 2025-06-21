@@ -5,9 +5,7 @@ defmodule Sportyweb.Analysis do
 
   def analyse_memberships(club_id, group_bys \\ []) do
     contacts_with_memberships = load_contacts_and_memberships(club_id)
-    IO.puts("loaded #{Enum.count(contacts_with_memberships)} contacts")
 
-    # Sportyweb.Analysis.analyse_memberships("8d8ae3a7-0caa-4abf-bb86-756ec29ab4a7", :gender)
     groups =
       group_bys
       |> Enum.reduce(contacts_with_memberships, fn group_by, acc -> group_by(acc, group_by) end)
@@ -15,17 +13,17 @@ defmodule Sportyweb.Analysis do
     count_groups(groups)
   end
 
-  def count_groups(group) when is_list(group) do
+  defp count_groups(group) when is_list(group) do
     count = Enum.count(group)
 
     contacts =
       group
-      |> Enum.map(fn contact -> contact.name end)
+      |> Enum.map(fn {contact, _memberships} -> contact.name end)
 
     {count, contacts}
   end
 
-  def count_groups(%{} = groups) do
+  defp count_groups(%{} = groups) do
     counted_groups =
       groups
       |> Map.new(fn {group_key, group} ->
@@ -48,75 +46,85 @@ defmodule Sportyweb.Analysis do
 
   defp group_by(contacts_with_memberships, {:year_of_birth, _options}) do
     contacts_with_memberships
-    |> Enum.group_by(fn contact -> get_year_of_birth(contact) end)
+    |> Enum.group_by(fn {contact, _memberships} ->
+      {:year_of_birth, get_year_of_birth(contact)}
+    end)
+  end
+
+  defp group_by(contacts_with_memberships, {:age, _options}) do
+    contacts_with_memberships
+    |> Enum.group_by(fn {contact, _memberships} ->
+      {:age, Contact.age_in_years(contact)}
+    end)
   end
 
   defp group_by(contacts_with_memberships, {:gender, _options}) do
     contacts_with_memberships
-    |> Enum.group_by(fn contact -> contact.person_gender end)
+    |> Enum.group_by(fn {contact, _memberships} -> {:gender, contact.person_gender} end)
   end
 
-  defp group_by(contacts_with_memberships, {:sports, _options}) do
+  defp group_by(contacts_with_memberships, {:sport, _options}) do
     contacts_with_memberships
-    |> Enum.flat_map(fn contact -> separate_by_sports(contact) end)
-    |> Enum.group_by(fn {sport, _contact} -> sport end, fn {_, contact} -> contact end)
-  end
-
-  defp group_by(contacts_with_memberships, {:departments, _options}) do
-    contacts_with_memberships
-    |> Enum.flat_map(fn contact -> separate_by_department(contact) end)
-    |> Enum.group_by(fn {department_name, _contact} -> department_name end, fn {_, contact} ->
-      contact
+    |> Enum.flat_map(fn contact_with_memberships ->
+      group_memberships_by_sport(contact_with_memberships)
+    end)
+    |> Enum.group_by(fn {sport, _, _} -> {:sport, sport} end, fn {_, memberships_in_sport,
+                                                                  contact} ->
+      {contact, memberships_in_sport}
     end)
   end
 
-  defp group_by(_, group_by) do
-    raise "can not group contacts by #{group_by}"
+  defp group_by(contacts_with_memberships, {:department, _options}) do
+    contacts_with_memberships
+    |> Enum.flat_map(fn contact -> group_memberships_by_department(contact) end)
+    |> Enum.group_by(fn {department, _, _} -> {:department, department} end, fn {_,
+                                                                                 memberships_in_department,
+                                                                                 contact} ->
+      {contact, memberships_in_department}
+    end)
   end
 
-  defp separate_by_sports(%Contact{} = contact) do
-    contact.memberships
-    |> keep_membership_in_smallest_organizations()
-    |> Enum.map(fn membership -> get_sport(membership) end)
-    |> Enum.uniq()
-    |> Enum.map(fn sport -> {sport, contact} end)
+  defp group_by(contacts_with_memberships, {:group, _options}) do
+    contacts_with_memberships
+    |> Enum.flat_map(fn contact -> group_memberships_by_group(contact) end)
+    |> Enum.group_by(fn {group, _, _} -> {:group, group} end, fn {_, memberships_in_department,
+                                                                  contact} ->
+      {contact, memberships_in_department}
+    end)
   end
 
-  defp separate_by_department(%Contact{} = contact) do
-    contact.memberships
-    |> keep_membership_in_smallest_organizations()
-    |> Enum.filter(fn membership -> membership.department != nil end)
-    |> Enum.map(fn membership -> membership.department.name end)
-    |> Enum.uniq()
-    |> Enum.map(fn department_name -> {department_name, contact} end)
+  defp group_by(_, {key, _options}) do
+    raise "can not group contacts by #{key}"
   end
 
-  defp keep_membership_in_smallest_organizations(memberships) do
-    ids_of_greater_memberships =
-      memberships
-      |> Enum.flat_map(fn m ->
-        cond do
-          m.group_id != nil -> [m.club_id, m.department_id]
-          m.department_id != nil -> [m.club_id]
-          true -> []
-        end
-      end)
+  defp group_by(_, res) do
+    raise "can not group contacts by #{res}"
+  end
 
+  defp group_memberships_by_sport({%Contact{} = contact, memberships}) do
     memberships
-    |> Enum.filter(fn m ->
-      cond do
-        m.group_id != nil ->
-          true
+    |> Enum.group_by(fn membership -> get_sport(membership) end)
+    |> Enum.map(fn {sport, memberships_in_sport} -> {sport, memberships_in_sport, contact} end)
+  end
 
-        m.department_id != nil ->
-          Enum.find(ids_of_greater_memberships, fn other_id -> other_id == m.department_id end) ==
-            nil
-
-        true ->
-          Enum.find(ids_of_greater_memberships, fn other_id -> other_id == m.club_id end) == nil
-      end
+  defp group_memberships_by_department({%Contact{} = contact, memberships}) do
+    memberships
+    |> Enum.group_by(fn membership -> get_name(membership.department) end)
+    |> Enum.map(fn {department, memberships_in_department} ->
+      {department, memberships_in_department, contact}
     end)
   end
+
+  defp group_memberships_by_group({%Contact{} = contact, memberships}) do
+    memberships
+    |> Enum.group_by(fn membership -> get_name(membership.group) end)
+    |> Enum.map(fn {group, memberships_in_department} ->
+      {group, memberships_in_department, contact}
+    end)
+  end
+
+  defp get_name(nil), do: nil
+  defp get_name(val), do: val.name
 
   defp get_sport(%Membership{} = membership) do
     cond do
@@ -149,9 +157,10 @@ defmodule Sportyweb.Analysis do
   end
 
   defp load_contacts_and_memberships(club_id) do
-    Personal.list_contacts(club_id, nil, nil, memberships: [:club, :department, :group])
+    club_id
+    |> Personal.list_contacts(nil, nil, memberships: [:club, :department, :group])
     |> Enum.map(fn contact -> keep_only_relevant_memberships(contact) end)
-    |> Enum.filter(fn contact -> !Enum.empty?(contact.memberships) end)
+    |> Enum.filter(fn {_contact, memberships} -> !Enum.empty?(memberships) end)
   end
 
   defp keep_only_relevant_memberships(%Contact{} = contact) do
@@ -161,6 +170,6 @@ defmodule Sportyweb.Analysis do
         membership.state == "ACTIVE" || membership.state == "PAUSED"
       end)
 
-    Map.put(contact, :membership, relevant_memberships)
+    {contact, relevant_memberships}
   end
 end

@@ -1,12 +1,13 @@
 defmodule SportywebWeb.AnalysisLive.Show do
   use SportywebWeb, :live_view
+  import SportywebWeb.AnalysisLive.ResultHelper
 
   alias Sportyweb.Analysis
   alias Sportyweb.Organization
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :club_navigation_current_item, :contacts)}
+    {:ok, assign(socket, :club_navigation_current_item, :membership_analysis)}
   end
 
   @impl true
@@ -15,19 +16,72 @@ defmodule SportywebWeb.AnalysisLive.Show do
 
     {:noreply,
      socket
-     |> assign(:selected_group_bys, [{:departments, nil}])
+     |> assign(:selected_group_bys, [{:department, nil}, {:year_of_birth, nil}])
      |> assign(:club, club)
-     |> assign(:result, %{})}
+     |> assign(:result, nil)
+     |> assign(:show_contacts, false)
+     |> assign(:show_result_as, "tree")
+     |> assign(:open, true)}
   end
 
   @impl true
-  def handle_event("add_group_by", args, socket) do
-    selected_group_bys = socket.assigns.selected_group_bys ++ [{:departments, nil}]
+  def handle_event("add_group_by", _, socket) do
+    selected_group_bys = socket.assigns.selected_group_bys ++ [{:department, nil}]
 
     {:noreply,
      socket
      |> assign(:selected_group_bys, selected_group_bys)
-     |> assign(:result, %{})}
+     |> assign(:result, nil)}
+  end
+
+  @impl true
+  def handle_event("dosb_analysis", _, socket) do
+    socket =
+      socket
+      |> assign(:selected_group_bys, [{:sport, nil}, {:year_of_birth, nil}, {:gender, nil}])
+
+    handle_event("analyse", %{}, socket)
+  end
+
+  @impl true
+  def handle_event("analyse", _, socket) do
+    result =
+      Analysis.analyse_memberships(socket.assigns.club.id, socket.assigns.selected_group_bys)
+
+    new_dimensions = count_dimensions(result)
+
+    show_result_as =
+      cond do
+        new_dimensions == 1 -> "list"
+        new_dimensions == 2 -> "table"
+        new_dimensions == 3 -> "tabs_with_tables"
+        true -> "tree"
+      end
+
+    {:noreply,
+     socket
+     |> assign(:result, result)
+     |> assign(:show_result_as, show_result_as)}
+  end
+
+  @impl true
+  def handle_event("show_result_as_tree", _, socket) do
+    {:noreply, socket |> assign(:show_result_as, "tree")}
+  end
+
+  @impl true
+  def handle_event("show_result_as_list", _, socket) do
+    {:noreply, socket |> assign(:show_result_as, "list")}
+  end
+
+  @impl true
+  def handle_event("show_result_as_table", _, socket) do
+    {:noreply, socket |> assign(:show_result_as, "table")}
+  end
+
+  @impl true
+  def handle_event("show_result_as_tabs_with_table", _, socket) do
+    {:noreply, socket |> assign(:show_result_as, "tabs_with_tables")}
   end
 
   @impl true
@@ -37,7 +91,7 @@ defmodule SportywebWeb.AnalysisLive.Show do
     {:noreply,
      socket
      |> assign(:selected_group_bys, selected_group_bys)
-     |> assign(:result, %{})}
+     |> assign(:result, nil)}
   end
 
   @impl true
@@ -46,32 +100,14 @@ defmodule SportywebWeb.AnalysisLive.Show do
         socket
       ) do
     group_by = String.to_existing_atom(group_by)
-    IO.inspect(group_by)
 
     selected_group_bys =
       replace_index(socket.assigns.selected_group_bys, index, {group_by, options})
 
-    IO.inspect(selected_group_bys)
-
     {:noreply,
      socket
      |> assign(:selected_group_bys, selected_group_bys)
-     |> assign(:result, %{})}
-  end
-
-  @impl true
-  def handle_event("analyse", args, socket) do
-    IO.inspect(socket.assigns.selected_group_bys)
-
-    {count, result} =
-      Analysis.analyse_memberships(socket.assigns.club.id, socket.assigns.selected_group_bys)
-
-      IO.inspect(result, limit: 10)
-
-    IO.puts("############################")
-    print_result(result)
-
-    {:noreply, socket |> assign(:result, result)}
+     |> assign(:result, nil)}
   end
 
   defp replace_index(enum, index, new_value) do
@@ -92,77 +128,4 @@ defmodule SportywebWeb.AnalysisLive.Show do
     |> Enum.filter(fn {_, i} -> i != index end)
     |> Enum.map(fn {value, _} -> value end)
   end
-
-  defp print_result(result,_ ) when is_list(result) do
-  end
-
-  defp print_result(%{} = map, int \\ 0) do
-    map
-    |> Enum.map(fn v -> print_result(v, int + 1) end)
-  end
-
-  defp print_result({key, {count, rest}}, int) do
-    delimiter = Enum.map(0..int, fn c -> "-" end)
-    |> Enum.join("")
-    IO.puts("#{delimiter} #{key}: #{count}")
-    print_result(rest, int)
-  end
-
-
-  def test(%{}) do
-    assigns = %{}
-    ~H"""
-test
-"""
-  end
-
-  def result_tree_row(result, level) when is_list(result) do
-    assigns = %{}
-    ~H"""
-      -
-    """
-  end
-
-  def result_tree_row(%{} = result, level \\ 0) do
-    assigns = %{result: result, level: level}
-    ~H"""
-      <%= for group <- @result do %>
-      <p>
-        {result_tree_row(group, @level)}
-      </p>
-      <% end %>
-    """
-  end
-
-  def result_tree_row({key, {count, subgroups}}, level) do
-    delimiters = Enum.map(0..level, fn c -> "-" end)
-    assigns = %{key: key, delimiters: delimiters, count: count, subgroups: subgroups, level: level + 1}
-    ~H"""
-          <%= for _ <- @delimiters do %>
-       &nbsp
-      <% end %>
-      {translate_key(@key)}: {@count}
-      <%= for group <- @subgroups do %>
-      <p>
-        {result_tree_row(group, @level)}
-      </p>
-      <% end %>
-    """
-  end
-
-  def result_tree_row(v, level) when is_binary(v) do
-    delimiters = Enum.map(0..level, fn c -> "-" end)
-    assigns = %{v: v, delimiters: delimiters}
-    ~H"""
-    """
-  end
-
-  defp translate_key("female"), do: "weiblich"
-  defp translate_key("male"), do: "männlich"
-  defp translate_key("no_info"), do: "keine Angabe"
-  defp translate_key("other"), do: "Divers"
-  defp translate_key(""), do: "-"
-  defp translate_key(key), do: key
-
-
 end

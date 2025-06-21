@@ -96,6 +96,20 @@ defmodule SportywebWeb.ClubNavigationComponent do
               <span class="truncate">Satzung</span>
             </.link>
           </li>
+          <li>
+            <.link
+              navigate={~p"/analysis/#{@club}"}
+              class={[
+                @classes_menu_item,
+                @classes_submenu_item,
+                if(@club_navigation_current_item == :membership_analysis,
+                  do: @classes_menu_item_active
+                )
+              ]}
+            >
+              <span class="truncate">Analyse</span>
+            </.link>
+          </li>
         </ul>
 
         <.link
@@ -202,7 +216,8 @@ defmodule SportywebWeb.ClubNavigationComponent do
 
     show_submenu_memberships =
       assigns.club_navigation_current_item == :contacts ||
-        assigns.club_navigation_current_item == :constitution
+        assigns.club_navigation_current_item == :constitution ||
+        assigns.club_navigation_current_item == :membership_analysis
 
     {:ok,
      socket

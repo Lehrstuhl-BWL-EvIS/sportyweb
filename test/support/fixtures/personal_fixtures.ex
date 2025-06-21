@@ -6,13 +6,12 @@ defmodule Sportyweb.PersonalFixtures do
 
   import Sportyweb.OrganizationFixtures
   import Sportyweb.PolymorphicFixtures
+  alias Sportyweb.Organization.Club
 
   @doc """
   Generate a contact.
   """
-  def contact_fixture(attrs \\ %{}) do
-    club = club_fixture()
-
+  def contact_fixture(attrs \\ %{}, %Club{} = club \\ club_fixture()) do
     {:ok, contact} =
       attrs
       |> Enum.into(%{

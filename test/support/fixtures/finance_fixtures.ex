@@ -6,13 +6,12 @@ defmodule Sportyweb.FinanceFixtures do
 
   import Sportyweb.OrganizationFixtures
   import Sportyweb.PolymorphicFixtures
+  alias Sportyweb.Organization.Club
 
   @doc """
   Generate a fee.
   """
-  def fee_fixture(attrs \\ %{}) do
-    club = club_fixture()
-
+  def fee_fixture(attrs \\ %{}, %Club{} = club \\ club_fixture()) do
     {:ok, fee} =
       attrs
       |> Enum.into(%{

@@ -83,15 +83,20 @@ defmodule Sportyweb.Personal.Contact do
     # Based on: https://stackoverflow.com/a/71043385
 
     birthday = contact.person_birthday
-    today = Date.utc_today()
 
-    years_diff = today.year - birthday.year
-
-    # If today's date in the year is before the contact's birthday, substract 1
-    if Date.compare(today, %Date{birthday | year: today.year}) == :lt do
-      years_diff - 1
+    if birthday == nil do
+      nil
     else
-      years_diff
+      today = Date.utc_today()
+
+      years_diff = today.year - birthday.year
+
+      # If today's date in the year is before the contact's birthday, substract 1
+      if Date.compare(today, %Date{birthday | year: today.year}) == :lt do
+        years_diff - 1
+      else
+        years_diff
+      end
     end
   end
 
