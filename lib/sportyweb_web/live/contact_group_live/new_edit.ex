@@ -83,7 +83,9 @@ defmodule SportywebWeb.ContactGroupLive.NewEdit do
 
   def handle_event("contact_filter_changed", %{"contact_filter_input" => filter_input}, socket) do
     matching_contacts =
-      Personal.list_contacts(socket.assigns.club.id, [asc: :name], name: filter_input)
+      socket.assigns.club.id
+      |> Personal.list_contacts([asc: :name], name: filter_input)
+      |> Enum.take(15)
 
     {:noreply,
      socket

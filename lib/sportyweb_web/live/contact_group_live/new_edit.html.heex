@@ -60,14 +60,14 @@
 </.card>
 
 <.modal id="contact_filter_dialog">
+  <.header level="2">
+    Einen weiteren Kontakt zur Kontaktgruppe hinzufügen
+  </.header>
   <.simple_form for={%{}} id="contact_filter_form" phx-change="contact_filter_changed">
     <.input_grids>
       <.input_grid>
         <div class="col-span-12 md:col-span-12">
-          <.label>
-            Filter
-          </.label>
-          <input type="text" name="contact_filter_input" label="Filter" />
+          <.input type="text" name="contact_filter_input" value={nil} label="Filter" />
         </div>
         <%= for contact <- @matching_contacts do %>
           <div

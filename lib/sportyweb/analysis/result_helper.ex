@@ -38,16 +38,23 @@ defmodule Sportyweb.Analysis.ResultHelper do
   def translate_key("male"), do: "männlich"
   def translate_key("no_info"), do: "keine Angabe"
   def translate_key("other"), do: "Divers"
+  def translate_key(%{:start => nil, :end => nil}), do: "-"
+  def translate_key(%{:start => nil, :end => finish}), do: "Bis #{finish}"
+  def translate_key(%{:start => start, :end => nil}), do: "Ab #{start}"
+  def translate_key(%{:start => start, :end => finish}), do: "#{start} - #{finish}"
   def translate_key(""), do: "-"
   def translate_key(nil), do: "-"
   def translate_key("-"), do: "-"
   def translate_key(key), do: key
 
-  def get_allowed_group_bys(), do: [:gender, :sport, :year_of_birth, :age, :department, :group]
+  def get_allowed_group_bys(),
+    do: [:gender, :sport, :year_of_birth, :age, :age_group, :department, :group]
+
   def translate_group_by(:gender), do: "Geschlecht"
   def translate_group_by(:sport), do: "Sportart"
   def translate_group_by(:year_of_birth), do: "Geburtsjahr"
   def translate_group_by(:age), do: "Alter"
+  def translate_group_by(:age_group), do: "Altersgruppe"
   def translate_group_by(:department), do: "Abteilung"
   def translate_group_by(:group), do: "Gruppe"
 end

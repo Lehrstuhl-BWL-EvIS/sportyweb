@@ -16,7 +16,9 @@ defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
       </.button>
 
       <.modal id={"#{@id}_dialog"}>
-        {@send_email}
+        <.header level="2">
+          Mitgliedschaft von {@membership.contact.name}
+        </.header>
 
         <.simple_form
           for={%{}}

@@ -16,7 +16,10 @@ defmodule SportywebWeb.AnalysisLive.Show do
 
     {:noreply,
      socket
-     |> assign(:selected_group_bys, [{:department, nil}, {:year_of_birth, nil}])
+     |> assign(:selected_group_bys, [
+       {:department, nil},
+       {:age_group, [%{start: nil, end: 18}, %{start: 18, end: nil}]}
+     ])
      |> assign(:club, club)
      |> assign(:result, nil)
      |> assign(:show_contacts, false)
@@ -99,8 +102,6 @@ defmodule SportywebWeb.AnalysisLive.Show do
         {"group_by_changed", %{"index" => index, "group_by" => group_by, "options" => options}},
         socket
       ) do
-    group_by = String.to_existing_atom(group_by)
-
     selected_group_bys =
       replace_index(socket.assigns.selected_group_bys, index, {group_by, options})
 
@@ -140,18 +141,18 @@ defmodule SportywebWeb.AnalysisLive.Show do
         nil
 
       true ->
-        params = "group_by_1=#{write_group_by(Enum.at(group_bys, 0))}"
+        params = "#{write_group_by(group_bys, 0)}"
 
         params =
           if count >= 2 do
-            params <> "&group_by_2=#{write_group_by(Enum.at(group_bys, 1))}"
+            params <> "&#{write_group_by(group_bys, 1)}"
           else
             params
           end
 
         params =
           if count >= 3 do
-            params <> "&group_by_3=#{write_group_by(Enum.at(group_bys, 2))}"
+            params <> "&#{write_group_by(group_bys, 2)}"
           else
             params
           end
@@ -160,7 +161,18 @@ defmodule SportywebWeb.AnalysisLive.Show do
     end
   end
 
-  defp write_group_by({key, _options}) do
-    key
+  defp write_group_by({key, nil}, number), do: "group_by_#{number}=#{key}"
+
+  defp write_group_by({key, options}, number) do
+    group_by_key = write_group_by({key, nil}, number)
+    group_by_key <> "&" <> "options_#{number}=" <> write_options(key, options)
+  end
+
+  defp write_group_by(group_bys, index) when is_list(group_bys),
+    do: write_group_by(Enum.at(group_bys, index), index + 1)
+
+  defp write_options(:age_group, options) when is_list(options) do
+    options
+    |> Enum.map_join(";", fn %{:start => start, :end => finish} -> "#{start}-#{finish}" end)
   end
 end

@@ -12,10 +12,10 @@ defmodule SportywebWeb.AnalysisLive.Export do
 
     group_bys =
       []
-      |> add_group_by(params, "group_by")
-      |> add_group_by(params, "group_by_1")
-      |> add_group_by(params, "group_by_2")
-      |> add_group_by(params, "group_by_3")
+      |> add_group_by(params, "group_by", "options")
+      |> add_group_by(params, "group_by_1", "options_1")
+      |> add_group_by(params, "group_by_2", "options_2")
+      |> add_group_by(params, "group_by_3", "options_3")
 
     if Enum.empty?(group_bys), do: raise("parameters to group_by are required")
 
@@ -93,14 +93,38 @@ defmodule SportywebWeb.AnalysisLive.Export do
     %{sheets: sheets}
   end
 
-  defp add_group_by(group_bys, params, param_name) do
+  defp add_group_by(group_bys, params, param_name, option_name) do
     case params[param_name] do
-      nil -> group_bys
-      group_by -> group_bys ++ [parse_group_by(group_by)]
+      nil ->
+        group_bys
+
+      group_by ->
+        key = String.to_existing_atom(group_by)
+        options = parse_options(key, params[option_name], option_name)
+        group_bys ++ [{key, options}]
     end
   end
 
-  defp parse_group_by(group_by) do
-    {String.to_existing_atom(group_by), nil}
+  defp parse_options(:age_group, nil, option_name),
+    do: raise("option of age-groups as '#{option_name}' required to group by :age_group")
+
+  defp parse_options(:age_group, params, _) do
+    params
+    |> String.split(";")
+    |> Enum.map(fn split ->
+      [start, finish] = String.split(split, "-")
+      start = parse_integer(start)
+      finish = parse_integer(finish)
+      %{start: start, end: finish}
+    end)
+  end
+
+  defp parse_options(_, _, _), do: nil
+
+  defp parse_integer(""), do: nil
+
+  defp parse_integer(string_value) do
+    {int_value, _} = Integer.parse(string_value)
+    int_value
   end
 end

@@ -58,6 +58,17 @@ defmodule Sportyweb.Analysis do
     end)
   end
 
+  defp group_by(_, {:age_group, nil}),
+    do: raise("group_by :age_group requires age-groups as options")
+
+  defp group_by(contacts_with_memberships, {:age_group, options}) do
+    contacts_with_memberships
+    |> Enum.group_by(fn {contact, _memberships} ->
+      age = Contact.age_in_years(contact)
+      {:age_group, get_first_age_group(age, options)}
+    end)
+  end
+
   defp group_by(contacts_with_memberships, {:gender, _options}) do
     contacts_with_memberships
     |> Enum.group_by(fn {contact, _memberships} -> {:gender, contact.person_gender} end)
@@ -93,12 +104,21 @@ defmodule Sportyweb.Analysis do
     end)
   end
 
-  defp group_by(_, {key, _options}) do
-    raise "can not group contacts by #{key}"
+  defp group_by(_, {key, options}) do
+    raise "can not group contacts by #{key} with options #{options}"
   end
 
   defp group_by(_, res) do
     raise "can not group contacts by #{res}"
+  end
+
+  defp get_first_age_group(age_in_years, options) do
+    options
+    |> Enum.find(fn %{:start => start, :end => finish} ->
+      start_ok = start == nil || age_in_years >= start
+      end_ok = finish == nil || age_in_years <= finish
+      start_ok && end_ok
+    end)
   end
 
   defp group_memberships_by_sport({%Contact{} = contact, memberships}) do

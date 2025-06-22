@@ -25,7 +25,9 @@ defmodule SportywebWeb.ContactLive.ExportContactListButton do
       </div>
 
       <.modal id="export_modal">
-        Kontaktliste exportieren
+        <.header level="2">
+          Export einstellen
+        </.header>
         <.simple_form for={%{}} phx-target={@myself} phx-change="update_export_form">
           <.input
             name="export_with_memberships"
@@ -42,7 +44,7 @@ defmodule SportywebWeb.ContactLive.ExportContactListButton do
           />
         </.simple_form>
 
-        <.button phx-click={hide_modal("export_modal")}>
+        <.button phx-click={hide_modal("export_modal")} class="mt-5">
           Schließen
         </.button>
       </.modal>
