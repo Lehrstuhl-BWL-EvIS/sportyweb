@@ -1,6 +1,6 @@
 defmodule SportywebWeb.AnalysisLive.ResultTreeRow do
   use SportywebWeb, :live_component
-  import SportywebWeb.AnalysisLive.ResultHelper
+  import Sportyweb.Analysis.ResultHelper
 
   @impl true
   def render(%{:group => _, :level => level, :open => _, :show_names => _} = assigns) do
@@ -16,7 +16,7 @@ defmodule SportywebWeb.AnalysisLive.ResultTreeRow do
         <%= for _ <- @delimiters do %>
           &nbsp&nbsp
         <% end %>
-        {translate_key(get_key(@group))} {get_count(@group)}
+        {translate_key(get_key(@group))}: {get_count(@group)}
 
         <.icon
           :if={!Enum.empty?(get_subgroups(@group)) || @show_names}

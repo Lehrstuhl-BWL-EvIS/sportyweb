@@ -1,14 +1,14 @@
 defmodule SportywebWeb.AnalysisLive.ResultTabsComponent do
   use SportywebWeb, :live_component
-  import SportywebWeb.AnalysisLive.ResultHelper
+  import Sportyweb.Analysis.ResultHelper
 
   @impl true
   def render(%{:result => _} = assigns) do
     ~H"""
     <div>
-      <%= for {{key, _content}, i} <- Enum.with_index(@tabs) do %>
+      <%= for {{{_key, key_value}, _content}, i} <- Enum.with_index(@tabs) do %>
         <.button phx-target={@myself} phx-click={JS.push("tab_clicked", value: %{index: i})}>
-          {translate_key(key)}
+          {translate_key(key_value)}
         </.button>
       <% end %>
 

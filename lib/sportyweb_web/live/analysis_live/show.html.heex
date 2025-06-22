@@ -22,7 +22,7 @@
       <div class="col-span-12 md:col-span-12 "></div>
       <div class="col-span-12 md:col-span-3">
         <.button phx-click="analyse" phx-disable-with="Speichern...">
-          Mitglieder auswerten
+          Analyse durchführen
         </.button>
       </div>
 
@@ -36,11 +36,11 @@
   </.input_grids>
 </.card>
 
-<.card :if={@result == nil}>
+<.card :if={@result == nil} class="mt-5">
   Es wurde noch keine Analyse durchgeführt
 </.card>
 
-<.card :if={@result != nil}>
+<.card :if={@result != nil} class="mt-5">
   <.input_grids>
     <.input_grid>
       <div :if={count_dimensions(@result) == 1} class="col-span-12 md:col-span-3">
@@ -81,6 +81,17 @@
           value={@show_result_as == "tree"}
           phx-click={JS.push("show_result_as_tree")}
         />
+      </div>
+
+      <div class="col-span-12 md:col-span-3"></div>
+
+      <div
+        :if={get_export_link(@club, @selected_group_bys) != " nil"}
+        class="col-span-12 md:col-span-3"
+      >
+        <a href={get_export_link(@club, @selected_group_bys)}>
+          <.button>Exportieren</.button>
+        </a>
       </div>
     </.input_grid>
   </.input_grids>

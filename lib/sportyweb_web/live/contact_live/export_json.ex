@@ -1,10 +1,10 @@
-defmodule SportywebWeb.DownloadController do
+defmodule SportywebWeb.ContactLive.ExportJson do
   use SportywebWeb, :controller
 
   alias Sportyweb.Personal
   alias Sportyweb.Legal.Membership
 
-  def export_user_data(conn, %{"id" => id}) do
+  def export_contact_data(conn, %{"id" => id}) do
     contact =
       Personal.get_contact!(id, [
         :contact_groups,
@@ -103,12 +103,10 @@ defmodule SportywebWeb.DownloadController do
       contact: contact
     }
 
-    name =
-      contact.name
-      |> String.replace(~r(\s), "_")
+    name = String.replace(contact.name, ~r(\s), "_")
 
     conn
-    |> put_resp_header("content-type", "application/json")
+    |> put_resp_content_type("application/json")
     |> put_resp_header("content-disposition", "attachment; filename=\"export_#{name}.json\"")
     |> put_status(:ok)
     |> json(data_to_export)

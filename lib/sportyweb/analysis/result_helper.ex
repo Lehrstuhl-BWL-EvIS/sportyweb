@@ -1,4 +1,4 @@
-defmodule SportywebWeb.AnalysisLive.ResultHelper do
+defmodule Sportyweb.Analysis.ResultHelper do
   def get_subgroups({_, {_, list}}) when is_list(list), do: []
   def get_subgroups({_, {_, subgroups}}), do: subgroups
   def get_subgroups({_, %{} = map}), do: Enum.map(map, fn entry -> entry end)

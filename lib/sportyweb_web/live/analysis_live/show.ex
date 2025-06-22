@@ -1,6 +1,6 @@
 defmodule SportywebWeb.AnalysisLive.Show do
   use SportywebWeb, :live_view
-  import SportywebWeb.AnalysisLive.ResultHelper
+  import Sportyweb.Analysis.ResultHelper
 
   alias Sportyweb.Analysis
   alias Sportyweb.Organization
@@ -127,5 +127,40 @@ defmodule SportywebWeb.AnalysisLive.Show do
     |> Enum.with_index()
     |> Enum.filter(fn {_, i} -> i != index end)
     |> Enum.map(fn {value, _} -> value end)
+  end
+
+  def get_export_link(club, group_bys) do
+    count = Enum.count(group_bys)
+
+    cond do
+      count == 0 ->
+        nil
+
+      count > 3 ->
+        nil
+
+      true ->
+        params = "group_by_1=#{write_group_by(Enum.at(group_bys, 0))}"
+
+        params =
+          if count >= 2 do
+            params <> "&group_by_2=#{write_group_by(Enum.at(group_bys, 1))}"
+          else
+            params
+          end
+
+        params =
+          if count >= 3 do
+            params <> "&group_by_3=#{write_group_by(Enum.at(group_bys, 2))}"
+          else
+            params
+          end
+
+        "/analysis/#{club.id}/download?#{params}"
+    end
+  end
+
+  defp write_group_by({key, _options}) do
+    key
   end
 end

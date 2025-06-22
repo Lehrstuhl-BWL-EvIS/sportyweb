@@ -63,7 +63,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
           row_click={fn {_id, contact} -> JS.navigate(~p"/contacts/#{contact}") end}
         >
           <:col :let={{_id, contact}} label="Mitglied">
-            <%= if length(contact.memberships) > 0 do %>
+            <%= if is_active_member(contact) do %>
               <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-600" />
             <% end %>
           </:col>
@@ -213,5 +213,13 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       ],
       only_members_of
     )
+  end
+
+  def is_active_member(%Contact{} = contact) do
+    count =
+      contact.memberships
+      |> Enum.count(fn m -> m.state == "ACTIVE" || m.state == "PAUSED" end)
+
+    count > 0
   end
 end

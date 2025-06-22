@@ -139,10 +139,11 @@ defmodule SportywebWeb.Router do
 
       live "/contacts", ContactLive.Index, :index_root
       live "/clubs/:club_id/contacts", ContactLive.Index, :index
+      get "/clubs/:club_id/contacts/export", ContactLive.ExportXlsx, :export_contact_list
 
       live "/clubs/:club_id/contacts/new", ContactLive.NewEdit, :new
       live "/contacts/:id/edit", ContactLive.NewEdit, :edit
-      get "/contacts/:id/export", DownloadController, :export_user_data
+      get "/contacts/:id/export", ContactLive.ExportJson, :export_contact_data
 
       live "/contacts/:id", ContactLive.Show, :show
 
@@ -212,6 +213,7 @@ defmodule SportywebWeb.Router do
 
       # Analysis
       live "/analysis/:club_id", AnalysisLive.Show, :show
+      get "/analysis/:club_id/download", AnalysisLive.Export, :export_analysis
 
       # Transaction (Each belongs to a contract)
 

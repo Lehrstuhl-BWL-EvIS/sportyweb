@@ -1,6 +1,12 @@
 <.header>
   {@page_title}
+
   <:actions>
+    <.live_component
+      id="export_list_button"
+      module={SportywebWeb.ContactLive.ExportContactListButton}
+      club={@club}
+    />
     <.link navigate={~p"/clubs/#{@club}/contacts/new"}>
       <.button>Kontakt erstellen</.button>
     </.link>

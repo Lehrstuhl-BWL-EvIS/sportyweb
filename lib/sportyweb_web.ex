@@ -39,7 +39,7 @@ defmodule SportywebWeb do
   def controller do
     quote do
       use Phoenix.Controller,
-        formats: [:html, :json],
+        formats: [:html, :json, :xlsx],
         layouts: [html: SportywebWeb.Layouts]
 
       import Plug.Conn

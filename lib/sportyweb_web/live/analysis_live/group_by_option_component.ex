@@ -1,6 +1,6 @@
 defmodule SportywebWeb.AnalysisLive.GroupByOptionComponent do
   use SportywebWeb, :live_component
-  import SportywebWeb.AnalysisLive.ResultHelper
+  import Sportyweb.Analysis.ResultHelper
 
   @impl true
   def render(assigns) do
