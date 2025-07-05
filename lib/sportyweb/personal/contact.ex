@@ -145,15 +145,29 @@ defmodule Sportyweb.Personal.Contact do
       get_valid_organization_types()
       |> Enum.map(fn organization_type -> organization_type[:value] end)
     )
-    |> validate_inclusion(
-      :person_gender,
-      get_valid_genders() |> Enum.map(fn gender -> gender[:value] end)
-    )
+    |> validate_inclusion_of_gender()
     |> validate_required_type_condition()
     |> Email.validate_email_address(:email)
     |> Phone.validate_phone_number(:phone)
     |> Note.validate_note_content(:note)
     |> set_additional_fields()
+  end
+
+  defp validate_inclusion_of_gender(%Ecto.Changeset{} = changeset) do
+    case get_field(changeset, :person_gender) do
+      nil ->
+        changeset
+
+      "" ->
+        changeset
+
+      _ ->
+        changeset
+        |> validate_inclusion(
+          :person_gender,
+          get_valid_genders() |> Enum.map(fn gender -> gender[:value] end)
+        )
+    end
   end
 
   defp validate_required_type_condition(%Ecto.Changeset{} = changeset) do
@@ -166,9 +180,7 @@ defmodule Sportyweb.Personal.Contact do
         changeset
         |> validate_required([
           :person_last_name,
-          :person_first_name,
-          :person_gender,
-          :person_birthday
+          :person_first_name
         ])
 
       _ ->

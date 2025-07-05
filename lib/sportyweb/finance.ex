@@ -138,10 +138,10 @@ defmodule Sportyweb.Finance do
         )
 
       # The age restriction only plays a role for persons
-      query =
-        if Contact.is_person?(contact) do
-          contact_age_in_years = Contact.age_in_years(contact)
+      contact_age_in_years = Contact.age_in_years(contact)
 
+      query =
+        if contact_age_in_years != nil do
           from(
             f in query,
             where:
