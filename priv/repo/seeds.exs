@@ -279,12 +279,17 @@ defmodule Sportyweb.ContactSeedHelper do
     fee = Enum.random(fees)
 
     state =
-      if preconditional_membership != nil do
-        preconditional_membership.state
-      else
-        Membership.get_valid_states()
-        |> Enum.map(fn state -> state[:value] end)
-        |> Enum.random()
+      cond do
+        preconditional_membership != nil ->
+          preconditional_membership.state
+
+        :rand.uniform() < 0.6 ->
+          "ACTIVE"
+
+        true ->
+          Membership.get_valid_states()
+          |> Enum.map(fn state -> state[:value] end)
+          |> Enum.random()
       end
 
     type =

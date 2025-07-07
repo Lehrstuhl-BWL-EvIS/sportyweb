@@ -137,6 +137,29 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
             phx-keyup={JS.push("max_element_count_changed", value: %{})}
           />
         <% end %>
+
+        <p>
+          <.icon
+            name={Membership.get_state_icon("ACTIVE").icon}
+            class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon("ACTIVE").color}"}
+          /> aktiv
+          <.icon
+            name={Membership.get_state_icon("PAUSED").icon}
+            class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon("PAUSED").color}"}
+          /> pausiert
+          <.icon
+            name={Membership.get_state_icon("PENDING").icon}
+            class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon("PENDING").color}"}
+          /> beantragt
+          <.icon
+            name={Membership.get_state_icon("REJECTED").icon}
+            class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon("REJECTED").color}"}
+          /> abgelehnt
+          <.icon
+            name={Membership.get_state_icon("TERMINATED").icon}
+            class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon("TERMINATED").color}"}
+          /> gekündigt, verstorben oder ausgeschlossen
+        </p>
       </div>
     </div>
     """

@@ -41,12 +41,16 @@ defmodule Sportyweb.Legal.Membership do
   end
 
   def get_state_icon(%Membership{} = membership) do
-    case membership.state do
+    get_state_icon(membership.state)
+  end
+
+  def get_state_icon(state) do
+    case state do
       "PENDING" -> %{icon: "hero-information-circle", color: "text-amber-600"}
-      "REJECTED" -> %{icon: "hero-exclamation-circle-mini", color: "text-zinc-80"}
-      "ACTIVE" -> %{icon: "hero-check-badge", color: "text-green-600"}
-      "PAUSED" -> %{icon: "hero-calendar", color: "text-amber-600"}
-      _ -> %{icon: "hero-archive-box", color: "text-zinc-800"}
+      "REJECTED" -> %{icon: "hero-exclamation-circle-mini", color: "text-zinc-500"}
+      "ACTIVE" -> %{icon: "hero-check-badge", color: "text-green-800"}
+      "PAUSED" -> %{icon: "hero-calendar", color: "text-amber-800"}
+      _ -> %{icon: "hero-archive-box", color: "text-zinc-500"}
     end
   end
 

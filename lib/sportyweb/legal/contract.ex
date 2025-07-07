@@ -77,10 +77,10 @@ defmodule Sportyweb.Legal.Contract do
 
   def get_state_icon(%Contract{} = contract) do
     case get_state(contract) do
-      "archived" -> %{icon: "hero-archive-box", color: "text-zinc-800"}
-      "terminated" -> %{icon: "hero-archive-box", color: "text-amber-800"}
+      "archived" -> %{icon: "hero-archive-box", color: "text-zinc-500"}
+      "terminated" -> %{icon: "hero-archive-box", color: "text-amber-600"}
       "pending" -> %{icon: "hero-check-badge", color: "text-amber-600"}
-      _ -> %{icon: "hero-check-badge", color: "text-green-600"}
+      _ -> %{icon: "hero-check-badge", color: "text-green-800"}
     end
   end
 
