@@ -1,6 +1,7 @@
 defmodule SportywebWeb.AnalysisLive.ResultTreeRow do
   use SportywebWeb, :live_component
   import Sportyweb.Analysis.ResultHelper
+  import SportywebWeb.CommonHelper
 
   @impl true
   def render(%{:group => _, :level => level, :open => _, :show_names => _} = assigns) do
@@ -31,7 +32,15 @@ defmodule SportywebWeb.AnalysisLive.ResultTreeRow do
             <%= for _ <- @delimiters do %>
               &nbsp&nbsp
             <% end %>
-            {Enum.join(get_contacts(@group), ", ")}
+            <%= for %{name: name, id: id} <- get_contacts(@group) do %>
+              <.link
+                href={~p"/contacts/#{id}"}
+                class="text-indigo-600 hover:underline"
+                target="_blank"
+              >
+                {format_string_field(name)}
+              </.link>
+            <% end %>
           </p>
         <% end %>
         <%= for {subgroup, index} <- Enum.with_index(get_subgroups(@group)) do %>

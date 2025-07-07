@@ -233,36 +233,67 @@ defmodule Sportyweb.AnalysisTest do
     assert 2 == Enum.count(basketball_group)
     {1, basketball_1985} = Map.get(basketball_group, {:year_of_birth, "1985"})
     assert 1 == Enum.count(basketball_1985)
-    assert {1, ["male3 some person_last_name"]} == Map.get(basketball_1985, {:gender, "male"})
+
+    assert {1, ["male3 some person_last_name"]} ==
+             get_count_and_names(basketball_1985, {:gender, "male"})
+
     {1, basketball_2000} = Map.get(basketball_group, {:year_of_birth, "2000"})
     assert 1 == Enum.count(basketball_2000)
-    assert {1, ["female1 some person_last_name"]} == Map.get(basketball_2000, {:gender, "female"})
+
+    assert {1, ["female1 some person_last_name"]} ==
+             get_count_and_names(basketball_2000, {:gender, "female"})
 
     {5, football_group} = Map.get(groups, {:sport, "Fußball"})
     assert 4 == Enum.count(football_group)
     {1, football1980} = Map.get(football_group, {:year_of_birth, "1980"})
     assert 1 == Enum.count(football1980)
-    assert {1, ["male1 some person_last_name"]} == Map.get(football1980, {:gender, "male"})
+
+    assert {1, ["male1 some person_last_name"]} ==
+             get_count_and_names(football1980, {:gender, "male"})
+
     {2, football_1985} = Map.get(football_group, {:year_of_birth, "1985"})
     assert 1 == Enum.count(football_1985)
 
     assert {2, ["male2 some person_last_name", "male4 some person_last_name"]} ==
-             Map.get(football_1985, {:gender, "male"})
+             get_count_and_names(football_1985, {:gender, "male"})
 
     {1, football_1991} = Map.get(football_group, {:year_of_birth, "1991"})
     assert 1 == Enum.count(football_1991)
-    assert {1, ["female3 some person_last_name"]} == Map.get(football_1991, {:gender, "female"})
+
+    assert {1, ["female3 some person_last_name"]} ==
+             get_count_and_names(football_1991, {:gender, "female"})
+
     {1, football_1995} = Map.get(football_group, {:year_of_birth, "1995"})
     assert 1 == Enum.count(football_1995)
-    assert {1, ["female2 some person_last_name"]} == Map.get(football_1995, {:gender, "female"})
+
+    assert {1, ["female2 some person_last_name"]} ==
+             get_count_and_names(football_1995, {:gender, "female"})
 
     {2, other_sports_group} = Map.get(groups, {:sport, "andere Sportart"})
     assert 2 == Enum.count(other_sports_group)
     {1, other_1985} = Map.get(other_sports_group, {:year_of_birth, "1985"})
     assert 1 == Enum.count(other_1985)
-    assert {1, ["male2 some person_last_name"]} == Map.get(other_1985, {:gender, "male"})
+
+    assert {1, ["male2 some person_last_name"]} ==
+             get_count_and_names(other_1985, {:gender, "male"})
+
     {1, other_1991} = Map.get(other_sports_group, {:year_of_birth, "1991"})
     assert 1 == Enum.count(other_1991)
-    assert {1, ["female3 some person_last_name"]} == Map.get(other_1991, {:gender, "female"})
+
+    assert {1, ["female3 some person_last_name"]} ==
+             get_count_and_names(other_1991, {:gender, "female"})
+  end
+
+  defp get_count_and_names(%{} = map, key) do
+    entry = Map.get(map, key)
+    get_count_and_names(entry)
+  end
+
+  defp get_count_and_names({count, list_of_contacts}) when is_list(list_of_contacts) do
+    names =
+      list_of_contacts
+      |> Enum.map(fn %{id: _, name: name} -> name end)
+
+    {count, names}
   end
 end

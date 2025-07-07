@@ -18,7 +18,8 @@ defmodule Sportyweb.Analysis do
 
     contacts =
       group
-      |> Enum.map(fn {contact, _memberships} -> contact.name end)
+      # replace contacts and memberships by contact name and id to reduce number of data send to client when analysis is shown
+      |> Enum.map(fn {contact, _memberships} -> %{name: contact.name, id: contact.id} end)
 
     {count, contacts}
   end
@@ -113,12 +114,16 @@ defmodule Sportyweb.Analysis do
   end
 
   defp get_first_age_group(age_in_years, options) do
-    options
-    |> Enum.find(fn %{:start => start, :end => finish} ->
-      start_ok = start == nil || age_in_years >= start
-      end_ok = finish == nil || age_in_years <= finish
-      start_ok && end_ok
-    end)
+    if age_in_years == nil do
+      nil
+    else
+      options
+      |> Enum.find(fn %{:start => start, :end => finish} ->
+        start_ok = start == nil || age_in_years >= start
+        end_ok = finish == nil || age_in_years <= finish
+        start_ok && end_ok
+      end)
+    end
   end
 
   defp group_memberships_by_sport({%Contact{} = contact, memberships}) do
