@@ -1,0 +1,125 @@
+<.header>
+  Mitgliederanalyse
+</.header>
+
+<.card>
+  <.input_grids>
+    <.input_grid>
+      <%= for {{group_by, options}, i} <- Enum.with_index(@selected_group_bys) do %>
+        <div class="col-span-12 md:col-span-3 ">
+          <.live_component
+            id={"group_by_component_#{i}"}
+            module={SportywebWeb.AnalysisLive.GroupByOptionComponent}
+            group_by={group_by}
+            options={options}
+            index={i}
+          />
+        </div>
+      <% end %>
+      <div class="col-span-12 md:col-span-1 flex items-center" phx-click={JS.push("add_group_by")}>
+        <.icon name="hero-plus-circle" class="text-emerald-600" />
+      </div>
+      <div class="col-span-12 md:col-span-12 "></div>
+      <div class="col-span-12 md:col-span-3">
+        <.button phx-click="analyse" phx-disable-with="Speichern...">
+          Analyse durchführen
+        </.button>
+      </div>
+
+      <div class="col-span-12 md:col-span-5"></div>
+      <div class="col-span-12 md:col-span-3">
+        <.button phx-click="dosb_analysis" phx-disable-with="Speichern...">
+          DOSB Bestandsmeldung
+        </.button>
+      </div>
+    </.input_grid>
+  </.input_grids>
+</.card>
+
+<.card :if={@result == nil} class="mt-5">
+  Die Analyse wurde noch nicht durchgeführt
+</.card>
+
+<.card :if={@result != nil} class="mt-5">
+  <.input_grids>
+    <.input_grid>
+      <div :if={count_dimensions(@result) == 1} class="col-span-12 md:col-span-3">
+        <.input
+          name="show_list"
+          type="checkbox"
+          label="Als Liste anzeigen"
+          value={@show_result_as == "list"}
+          phx-click={JS.push("show_result_as_list")}
+        />
+      </div>
+
+      <div :if={count_dimensions(@result) == 2} class="col-span-12 md:col-span-3">
+        <.input
+          name="show_table"
+          type="checkbox"
+          label="Als Tabelle anzeigen"
+          value={@show_result_as == "table"}
+          phx-click={JS.push("show_result_as_table")}
+        />
+      </div>
+
+      <div :if={count_dimensions(@result) == 3} class="col-span-12 md:col-span-3">
+        <.input
+          name="show_tabs_with_tables"
+          type="checkbox"
+          label="Tabs mit Tabellen anzeigen"
+          value={@show_result_as == "tabs_with_tables"}
+          phx-click={JS.push("show_result_as_tabs_with_table")}
+        />
+      </div>
+
+      <div class="col-span-12 md:col-span-3">
+        <.input
+          name="show_tree"
+          type="checkbox"
+          label="Als Baum anzeigen"
+          value={@show_result_as == "tree"}
+          phx-click={JS.push("show_result_as_tree")}
+        />
+      </div>
+
+      <div class="col-span-12 md:col-span-3"></div>
+
+      <div
+        :if={get_export_link(@club, @selected_group_bys) != " nil"}
+        class="col-span-12 md:col-span-3"
+      >
+        <a href={get_export_link(@club, @selected_group_bys)}>
+          <.button>Exportieren</.button>
+        </a>
+      </div>
+    </.input_grid>
+  </.input_grids>
+</.card>
+
+<.card :if={@result != nil}>
+  <.live_component
+    :if={@show_result_as == "tree"}
+    id="result_tree"
+    module={SportywebWeb.AnalysisLive.ResultTreeComponent}
+    result={@result}
+  />
+  <.live_component
+    :if={@show_result_as == "list"}
+    id="result_list"
+    module={SportywebWeb.AnalysisLive.ResultListComponent}
+    result={@result}
+  />
+  <.live_component
+    :if={@show_result_as == "table"}
+    id="result_table"
+    module={SportywebWeb.AnalysisLive.ResultTableComponent}
+    result={@result}
+  />
+  <.live_component
+    :if={@show_result_as == "tabs_with_tables"}
+    id="result_tabs"
+    module={SportywebWeb.AnalysisLive.ResultTabsComponent}
+    result={@result}
+  />
+</.card>

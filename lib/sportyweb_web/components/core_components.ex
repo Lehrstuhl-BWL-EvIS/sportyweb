@@ -514,6 +514,20 @@ defmodule SportywebWeb.CoreComponents do
   end
 
   @doc """
+  Generates a generic waring message.
+  """
+  slot :inner_block, required: true
+
+  def warn(assigns) do
+    ~H"""
+    <p class="mt-2 flex gap-3 text-sm leading-6 text-amber-600">
+      <.icon name="hero-exclamation-triangle-mini" class="mt-0.5 h-5 w-5 flex-none" />
+      {render_slot(@inner_block)}
+    </p>
+    """
+  end
+
+  @doc """
   Renders a description (usually below) input fields.
 
   ## Examples
@@ -624,6 +638,59 @@ defmodule SportywebWeb.CoreComponents do
     """
   end
 
+  attr :column_label, :string, required: true
+  attr :current_filter, :any, default: nil
+  attr :id, :string, required: true
+  attr :filter_sort_target, :any, default: nil
+
+  defp column_filter_dialog(assigns) do
+    assigns =
+      assign(assigns,
+        form:
+          to_form(%{
+            "column_label" => assigns.column_label,
+            "#{assigns.column_label}" => assigns.current_filter
+          })
+      )
+
+    ~H"""
+    <.modal id={@id}>
+      Spalte {@column_label} filtern
+      <.simple_form
+        for={@form}
+        id={"#{@id}-filter-form"}
+        phx-target={@filter_sort_target}
+        phx-submit="apply_filter"
+      >
+        <.input field={@form["#{assigns.column_label}"]} type="text" label="Filtern nach" />
+        <.button phx-click={hide_modal(@id)}>
+          Filtern
+        </.button>
+        <.button
+          :if={@current_filter != nil}
+          type="button"
+          class="bg-rose-700 hover:bg-rose-800"
+          phx-target={@filter_sort_target}
+          phx-click={
+            hide_modal(@id) |> JS.push("remove_filter", value: %{column: assigns.column_label})
+          }
+        >
+          Zurücksetzen
+        </.button>
+      </.simple_form>
+    </.modal>
+    """
+  end
+
+  defp next_sort_direction(current_direction) do
+    cond do
+      current_direction == "asc" -> "desc"
+      current_direction == "desc" -> nil
+      current_direction == nil -> "asc"
+      true -> raise "#{current_direction} is no valid sort direction"
+    end
+  end
+
   @doc ~S"""
   Renders a table with generic styling.
 
@@ -637,8 +704,11 @@ defmodule SportywebWeb.CoreComponents do
   attr :id, :string, required: true
   attr :class, :string, default: nil
   attr :rows, :list, required: true
+  attr :sorting, :any, default: %{}
+  attr :filters, :any, default: %{}
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
+  attr :filter_sort_target, :any, default: nil
 
   attr :row_item, :any,
     default: &Function.identity/1,
@@ -646,6 +716,8 @@ defmodule SportywebWeb.CoreComponents do
 
   slot :col, required: true do
     attr :label, :string
+    attr :sortable, :boolean, required: false
+    attr :filterable, :boolean, required: false
   end
 
   slot :action, doc: "the slot for showing user actions in the last table column"
@@ -659,9 +731,55 @@ defmodule SportywebWeb.CoreComponents do
     ~H"""
     <div class={Twix.tw(["overflow-y-auto px-4 md:overflow-visible sm:px-0", @class])}>
       <table class="w-[40rem] sm:w-full">
-        <thead class="text-sm text-left leading-6 text-zinc-500">
+        <thead class="text-sm text-left leading-6 text-zinc-500 bg-white sticky top-0 z-10">
           <tr>
-            <th :for={col <- @col} class="p-0 pb-4 pr-6 font-normal">{col[:label]}</th>
+            <th
+              :for={col <- @col}
+              phx-target={@filter_sort_target}
+              phx-click={
+                if col[:sortable] do
+                  JS.push("apply_sorting",
+                    value: %{col[:label] => next_sort_direction(@sorting[col[:label]])}
+                  )
+                end
+              }
+              class="p-0 pb-4 pr-6 font-normal"
+            >
+              <div class="flex items-center">
+                {col[:label]}
+                <div :if={col[:sortable]}>
+                  <.icon
+                    :if={@sorting[col[:label]] != "desc" && @sorting[col[:label]] != "asc"}
+                    name="hero-arrows-up-down"
+                    class="h-3 w-3"
+                  />
+                  <.icon
+                    :if={@sorting[col[:label]] == "desc"}
+                    name="hero-arrow-up"
+                    class="h-3 w-3 text-amber-500"
+                  />
+                  <.icon
+                    :if={@sorting[col[:label]] == "asc"}
+                    name="hero-arrow-down"
+                    class="h-3 w-3 text-amber-500"
+                  />
+                </div>
+                <div :if={col[:filterable]} phx-click={show_modal("#{@id}-#{col[:label]}")}>
+                  <.column_filter_dialog
+                    column_label={col[:label]}
+                    filter_sort_target={@filter_sort_target}
+                    id={"#{@id}-#{col[:label]}"}
+                    current_filter={@filters[col[:label]]}
+                  />
+                  <.icon
+                    :if={@filters[col[:label]] != nil}
+                    name="hero-funnel"
+                    class="h-3 w-3 text-amber-500"
+                  />
+                  <.icon :if={@filters[col[:label]] == nil} name="hero-funnel" class="h-3 w-3" />
+                </div>
+              </div>
+            </th>
             <th :if={@action != []} class="relative p-0 pb-4">
               <span class="sr-only">{gettext("Actions")}</span>
             </th>
@@ -669,7 +787,6 @@ defmodule SportywebWeb.CoreComponents do
         </thead>
         <tbody
           id={@id}
-          phx-update={match?(%Phoenix.LiveView.LiveStream{}, @rows) && "stream"}
           class="relative divide-y divide-zinc-100 border-t border-zinc-200 text-sm leading-6 text-zinc-700"
         >
           <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="group hover:bg-zinc-50">

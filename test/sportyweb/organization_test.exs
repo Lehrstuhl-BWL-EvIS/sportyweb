@@ -5,9 +5,7 @@ defmodule Sportyweb.OrganizationTest do
 
   describe "clubs" do
     alias Sportyweb.Organization.Club
-    alias Sportyweb.Organization.ClubContract
 
-    import Sportyweb.LegalFixtures
     import Sportyweb.OrganizationFixtures
     import Sportyweb.PolymorphicFixtures
 
@@ -99,21 +97,13 @@ defmodule Sportyweb.OrganizationTest do
       club = club_fixture()
       assert %Ecto.Changeset{} = Organization.change_club(club)
     end
-
-    test "create_club_contract/2 with valid data" do
-      club = club_fixture()
-      contract = contract_fixture()
-      assert {:ok, %ClubContract{}} = Organization.create_club_contract(club, contract)
-    end
   end
 
   describe "departments" do
     alias Sportyweb.Organization.Department
-    alias Sportyweb.Organization.DepartmentContract
     alias Sportyweb.Organization.DepartmentFee
 
     import Sportyweb.FinanceFixtures
-    import Sportyweb.LegalFixtures
     import Sportyweb.OrganizationFixtures
     import Sportyweb.PolymorphicFixtures
 
@@ -206,14 +196,6 @@ defmodule Sportyweb.OrganizationTest do
       assert %Ecto.Changeset{} = Organization.change_department(department)
     end
 
-    test "create_department_contract/2 with valid data" do
-      department = department_fixture()
-      contract = contract_fixture()
-
-      assert {:ok, %DepartmentContract{}} =
-               Organization.create_department_contract(department, contract)
-    end
-
     test "create_department_fee/2 with valid data" do
       department = department_fixture()
       fee = fee_fixture()
@@ -223,11 +205,9 @@ defmodule Sportyweb.OrganizationTest do
 
   describe "groups" do
     alias Sportyweb.Organization.Group
-    alias Sportyweb.Organization.GroupContract
     alias Sportyweb.Organization.GroupFee
 
     import Sportyweb.FinanceFixtures
-    import Sportyweb.LegalFixtures
     import Sportyweb.OrganizationFixtures
     import Sportyweb.PolymorphicFixtures
 
@@ -310,12 +290,6 @@ defmodule Sportyweb.OrganizationTest do
     test "change_group/1 returns a group changeset" do
       group = group_fixture()
       assert %Ecto.Changeset{} = Organization.change_group(group)
-    end
-
-    test "create_group_contract/2 with valid data" do
-      group = group_fixture()
-      contract = contract_fixture()
-      assert {:ok, %GroupContract{}} = Organization.create_group_contract(group, contract)
     end
 
     test "create_group_fee/2 with valid data" do

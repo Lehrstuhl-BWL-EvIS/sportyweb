@@ -46,6 +46,10 @@ defmodule Sportyweb.Polymorphic.FinancialData do
       ],
       empty_values: ["", nil]
     )
+  end
+
+  def update_and_validate_changeset(%Ecto.Changeset{} = changeset) do
+    changeset
     |> validate_required([:type])
     |> update_change(:direct_debit_account_holder, &String.trim/1)
     |> update_change(:direct_debit_iban, &String.trim/1)

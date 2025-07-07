@@ -12,6 +12,9 @@
     <:item title="Referenznummer">
       {format_string_field(@department.reference_number)}
     </:item>
+    <:item title="Sportart">
+      {format_string_field(@department.sport)}
+    </:item>
     <:item title="Beschreibung">
       {format_string_field(@department.description)}
     </:item>
@@ -90,18 +93,21 @@
 <.header level="2" class="mt-12">
   Mitglieder
   <:actions>
-    <.link navigate={~p"/departments/#{@department}/contracts/new"}>
-      <.button>Mitglied erstellen</.button>
-    </.link>
+    <.live_component
+      id="export_list_button"
+      module={SportywebWeb.ContactLive.ExportContactListButton}
+      club={@club}
+      only_members_of={@department.id}
+    />
   </:actions>
 </.header>
 
 <.card>
-  <%= if Enum.any?(@department.contacts) do %>
-    <SportywebWeb.ContactLive.IndexTableComponent.render contacts={@department.contacts} />
-  <% else %>
-    <p>
-      Bisher wurde noch kein Mitglied erstellt.
-    </p>
-  <% end %>
+  <.live_component
+    id="group_membership_table"
+    module={SportywebWeb.ContactLive.ContactsTableComponent}
+    show_quick_filters={false}
+    only_members_of={@department.id}
+    club={@club}
+  />
 </.card>

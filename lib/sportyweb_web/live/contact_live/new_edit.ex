@@ -1,14 +1,12 @@
 defmodule SportywebWeb.ContactLive.NewEdit do
   use SportywebWeb, :live_view
 
+  alias Sportyweb.History
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Organization
-  alias Sportyweb.Polymorphic.Email
-  alias Sportyweb.Polymorphic.FinancialData
-  alias Sportyweb.Polymorphic.Note
-  alias Sportyweb.Polymorphic.Phone
-  alias Sportyweb.Polymorphic.PostalAddress
+  alias Sportyweb.Polymorphic.EmbeddedFinancialData
+  alias Sportyweb.Polymorphic.EmbeddedPostalAddress
 
   @impl true
   def render(assigns) do
@@ -19,7 +17,9 @@ defmodule SportywebWeb.ContactLive.NewEdit do
         id={@contact.id || :new}
         title={@page_title}
         action={@live_action}
+        last_change={@last_change}
         contact={@contact}
+        current_user={@current_user}
         navigate={if @contact.id, do: ~p"/contacts/#{@contact}", else: ~p"/clubs/#{@club}/contacts"}
       />
     </div>
@@ -38,18 +38,14 @@ defmodule SportywebWeb.ContactLive.NewEdit do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     contact =
-      Personal.get_contact!(id, [
-        :club,
-        :emails,
-        :financial_data,
-        :phones,
-        :postal_addresses,
-        :notes
-      ])
+      Personal.get_contact!(id, :club)
+
+    last_change = History.get_last_change("contact", contact.id)
 
     socket
     |> assign(:page_title, "Kontakt bearbeiten")
     |> assign(:contact, contact)
+    |> assign(:last_change, last_change)
     |> assign(:club, contact.club)
   end
 
@@ -58,22 +54,23 @@ defmodule SportywebWeb.ContactLive.NewEdit do
 
     socket
     |> assign(:page_title, "Kontakt erstellen")
+    |> assign(:last_change, nil)
     |> assign(:contact, %Contact{
       club_id: club.id,
       club: club,
-      postal_addresses: [%PostalAddress{}],
-      emails: [%Email{}],
-      phones: [%Phone{}],
-      financial_data: [%FinancialData{}],
-      notes: [%Note{}]
+      address: %EmbeddedPostalAddress{},
+      email: "",
+      phone: "",
+      financial_data: %EmbeddedFinancialData{},
+      note: ""
     })
     |> assign(:club, club)
   end
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    contact = Personal.get_contact!(id)
-    {:ok, _} = Personal.delete_contact(contact)
+    contact = Personal.get_contact!(id, [:contact_group_contacts])
+    {:ok, _} = Personal.delete_contact(contact, socket.assigns.current_user)
 
     {:noreply,
      socket

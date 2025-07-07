@@ -7,8 +7,8 @@ defmodule Sportyweb.Organization.Club do
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Finance.Subsidy
   alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.Constitution
   alias Sportyweb.Organization.Club
-  alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.ClubEmail
   alias Sportyweb.Organization.ClubFinancialData
   alias Sportyweb.Organization.ClubNote
@@ -35,17 +35,19 @@ defmodule Sportyweb.Organization.Club do
     # This line has to be below "has_many :all_contracts"!
     has_many :transactions, through: [:all_contracts, :transactions]
     has_many :locations, Location, preload_order: [asc: :name]
-    many_to_many :contracts, Contract, join_through: ClubContract
+    has_many :contracts, Contract
     many_to_many :emails, Email, join_through: ClubEmail
     many_to_many :financial_data, FinancialData, join_through: ClubFinancialData
     many_to_many :notes, Note, join_through: ClubNote
     many_to_many :phones, Phone, join_through: ClubPhone
+    has_one :constitution, Constitution
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""
     field :description, :string, default: ""
     field :website_url, :string, default: ""
     field :foundation_date, :date, default: nil
+    field :sport, :string, default: ""
 
     timestamps(type: :utc_datetime)
   end
@@ -65,7 +67,8 @@ defmodule Sportyweb.Organization.Club do
         :reference_number,
         :description,
         :website_url,
-        :foundation_date
+        :foundation_date,
+        :sport
       ],
       empty_values: ["", nil]
     )

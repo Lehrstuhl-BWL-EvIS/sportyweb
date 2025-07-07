@@ -193,7 +193,11 @@ defmodule Sportyweb.Accounting do
 
       # Update the contract to never calculate the amount_one_time of a referenced fee again.
       if is_nil(transaction.contract.first_billing_date) do
-        Legal.update_contract(transaction.contract, %{first_billing_date: date})
+        Legal.update_contract(
+          transaction.contract,
+          %{first_billing_date: date},
+          "Sportyweb - initialize first billing_date"
+        )
       end
     end)
 

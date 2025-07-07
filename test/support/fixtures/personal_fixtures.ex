@@ -6,13 +6,12 @@ defmodule Sportyweb.PersonalFixtures do
 
   import Sportyweb.OrganizationFixtures
   import Sportyweb.PolymorphicFixtures
+  alias Sportyweb.Organization.Club
 
   @doc """
   Generate a contact.
   """
-  def contact_fixture(attrs \\ %{}) do
-    club = club_fixture()
-
+  def contact_fixture(attrs \\ %{}, %Club{} = club \\ club_fixture()) do
     {:ok, contact} =
       attrs
       |> Enum.into(%{
@@ -21,17 +20,16 @@ defmodule Sportyweb.PersonalFixtures do
         organization_name: "some organization_name",
         organization_type: "club",
         person_last_name: "some person_last_name",
-        person_first_name_1: "some person_first_name_1",
-        person_first_name_2: "some person_first_name_2",
+        person_first_name: "some person_first_name",
         person_gender: "other",
         person_birthday: ~D[2000-02-15],
-        postal_addresses: [postal_address_attrs()],
-        emails: [email_attrs()],
-        phones: [phone_attrs()],
-        financial_data: [financial_data_attrs()],
-        notes: [note_attrs()]
+        address: postal_address_attrs(),
+        email: "someone@example.com",
+        phone: "012345 678910",
+        financial_data: financial_data_attrs(),
+        note: "some content"
       })
-      |> Sportyweb.Personal.create_contact()
+      |> Sportyweb.Personal.create_contact("test")
 
     contact
   end
@@ -45,9 +43,10 @@ defmodule Sportyweb.PersonalFixtures do
     {:ok, contact_group} =
       attrs
       |> Enum.into(%{
-        club_id: club.id
+        club_id: club.id,
+        name: "group name"
       })
-      |> Sportyweb.Personal.create_contact_group()
+      |> Sportyweb.Personal.create_contact_group("test")
 
     contact_group
   end

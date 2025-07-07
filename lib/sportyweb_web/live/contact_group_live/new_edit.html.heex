@@ -1,0 +1,94 @@
+<.header>
+  Kontaktgruppe bearbeiten {LastChangeComponent.show_last_change(%{last_change: @last_change})}
+</.header>
+
+<.card>
+  <.simple_form for={@form} id="contact_group-form" phx-change="validate" phx-submit="save">
+    <.input_grids>
+      <.input_grid>
+        <div class="col-span-12">
+          <.input field={@form[:name]} type="text" label="Name" />
+        </div>
+        <div class="col-span-12">
+          <.input field={@form[:description]} type="textarea" label="Beschreibung" />
+        </div>
+
+        <div class="col-span-12 md:col-span-12">
+          <.label>
+            Kontakte
+          </.label>
+        </div>
+        <div class="col-span-12 md:col-span-12 ">
+          <%= for {contact, i} <- Enum.with_index( @contacts ) do %>
+            <div class="flex items-baseline">
+              <div phx-click={JS.push("remove_contact", value: %{index: i})}>
+                <.icon name="hero-x-mark-solid" class="text-red-500" />
+              </div>
+              <.link navigate={~p"/contacts/#{contact}"} class="text-indigo-600 hover:underline">
+                {contact.name}
+              </.link>
+            </div>
+          <% end %>
+        </div>
+        <div class="col-span-12 md:col-span-12" phx-click={show_modal("contact_filter_dialog")}>
+          <.icon name="hero-plus-circle" class="text-emerald-600" />
+        </div>
+      </.input_grid>
+    </.input_grids>
+
+    <:actions>
+      <div>
+        <.button phx-disable-with="Speichern...">Speichern</.button>
+        <.cancel_button navigate={
+          if @contact_group.id,
+            do: ~p"/contact_groups/#{@contact_group}",
+            else: ~p"/clubs/#{@club}/contacts"
+        }>
+          Abbrechen
+        </.cancel_button>
+      </div>
+      <.button
+        :if={@contact_group.id}
+        class="bg-rose-700 hover:bg-rose-800"
+        phx-click={JS.push("delete", value: %{id: @contact_group.id})}
+        data-confirm="Unwiderruflich löschen?"
+      >
+        Löschen
+      </.button>
+    </:actions>
+  </.simple_form>
+</.card>
+
+<.modal id="contact_filter_dialog">
+  <.header level="2">
+    Einen weiteren Kontakt zur Kontaktgruppe hinzufügen
+  </.header>
+  <.simple_form for={%{}} id="contact_filter_form" phx-change="contact_filter_changed">
+    <.input_grids>
+      <.input_grid>
+        <div class="col-span-12 md:col-span-12">
+          <.input type="text" name="contact_filter_input" value={nil} label="Filter" />
+        </div>
+        <%= for contact <- @matching_contacts do %>
+          <div
+            class="col-span-12 md:col-span-12"
+            phx-click={
+              hide_modal("contact_filter_dialog")
+              |> JS.push("add_contact", value: %{contact: contact.id})
+            }
+          >
+            <p>
+              <.icon name="hero-plus-circle" class="text-emerald-600" />
+              {contact.name}
+            </p>
+          </div>
+        <% end %>
+        <%= if Enum.empty?(@matching_contacts) do %>
+          <div class="col-span-12 md:col-span-12">
+            Es wurde kein Kontakt mit dem eingegebenen Namen gefunden
+          </div>
+        <% end %>
+      </.input_grid>
+    </.input_grids>
+  </.simple_form>
+</.modal>

@@ -79,4 +79,18 @@ defmodule Sportyweb.PolymorphicFixtures do
       country: "DEU"
     })
   end
+
+  @doc """
+  Return attrs/params for a embedded_postal_address.
+  """
+  def embedded_postal_address_attrs(attrs \\ %{}) do
+    attrs
+    |> Enum.into(%{
+      street: "Universitätsstraße",
+      street_number: "11",
+      zipcode: "58097",
+      city: "Hagen",
+      country: "DEU"
+    })
+  end
 end

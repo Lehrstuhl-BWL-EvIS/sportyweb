@@ -3,42 +3,41 @@ defmodule Sportyweb.Personal.Contact do
   import Ecto.Changeset
 
   alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.Membership
   alias Sportyweb.Organization.Club
   alias Sportyweb.Personal.Contact
-  alias Sportyweb.Personal.ContactEmail
   alias Sportyweb.Personal.ContactGroup
   alias Sportyweb.Personal.ContactGroupContact
-  alias Sportyweb.Personal.ContactFinancialData
-  alias Sportyweb.Personal.ContactNote
-  alias Sportyweb.Personal.ContactPhone
-  alias Sportyweb.Personal.ContactPostalAddress
   alias Sportyweb.Polymorphic.Email
-  alias Sportyweb.Polymorphic.FinancialData
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
-  alias Sportyweb.Polymorphic.PostalAddress
+  alias Sportyweb.Polymorphic.EmbeddedPostalAddress
+  alias Sportyweb.Polymorphic.EmbeddedFinancialData
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "contacts" do
     belongs_to :club, Club
     has_many :contracts, Contract
+    has_many :memberships, Membership
     many_to_many :contact_groups, ContactGroup, join_through: ContactGroupContact
-    many_to_many :emails, Email, join_through: ContactEmail
-    many_to_many :financial_data, FinancialData, join_through: ContactFinancialData
-    many_to_many :notes, Note, join_through: ContactNote
-    many_to_many :phones, Phone, join_through: ContactPhone
-    many_to_many :postal_addresses, PostalAddress, join_through: ContactPostalAddress
+    has_many :contact_group_contacts, ContactGroupContact
 
     field :type, :string, default: "person"
     field :name, :string, default: ""
     field :organization_name, :string, default: ""
     field :organization_type, :string, default: ""
     field :person_last_name, :string, default: ""
-    field :person_first_name_1, :string, default: ""
-    field :person_first_name_2, :string, default: ""
+    field :person_first_name, :string, default: ""
     field :person_gender, :string, default: ""
     field :person_birthday, :date, default: nil
+
+    field :email, :string, default: ""
+    field :phone, :string, default: ""
+    field :note, :string, default: ""
+    field :address_as_text, :string, default: ""
+    embeds_one :address, EmbeddedPostalAddress
+    embeds_one :financial_data, EmbeddedFinancialData
 
     timestamps(type: :utc_datetime)
   end
@@ -84,15 +83,20 @@ defmodule Sportyweb.Personal.Contact do
     # Based on: https://stackoverflow.com/a/71043385
 
     birthday = contact.person_birthday
-    today = Date.utc_today()
 
-    years_diff = today.year - birthday.year
-
-    # If today's date in the year is before the contact's birthday, substract 1
-    if Date.compare(today, %Date{birthday | year: today.year}) == :lt do
-      years_diff - 1
+    if birthday == nil do
+      nil
     else
-      years_diff
+      today = Date.utc_today()
+
+      years_diff = today.year - birthday.year
+
+      # If today's date in the year is before the contact's birthday, substract 1
+      if Date.compare(today, %Date{birthday | year: today.year}) == :lt do
+        years_diff - 1
+      else
+        years_diff
+      end
     end
   end
 
@@ -113,28 +117,25 @@ defmodule Sportyweb.Personal.Contact do
         :organization_name,
         :organization_type,
         :person_last_name,
-        :person_first_name_1,
-        :person_first_name_2,
+        :person_first_name,
         :person_gender,
-        :person_birthday
+        :person_birthday,
+        :email,
+        :note,
+        :phone
       ],
       empty_values: ["", nil]
     )
     |> cast_assoc(:contact_groups, required: false)
-    |> cast_assoc(:emails, required: true)
-    |> cast_assoc(:financial_data, required: true)
-    |> cast_assoc(:notes, required: true)
-    |> cast_assoc(:phones, required: true)
-    |> cast_assoc(:postal_addresses, required: true)
+    |> cast_embed(:financial_data, required: true)
+    |> cast_embed(:address, required: false)
     |> validate_required([:type])
     |> update_change(:organization_name, &String.trim/1)
     |> update_change(:person_last_name, &String.trim/1)
-    |> update_change(:person_first_name_1, &String.trim/1)
-    |> update_change(:person_first_name_2, &String.trim/1)
+    |> update_change(:person_first_name, &String.trim/1)
     |> validate_length(:organization_name, max: 250)
     |> validate_length(:person_last_name, max: 100)
-    |> validate_length(:person_first_name_1, max: 75)
-    |> validate_length(:person_first_name_2, max: 75)
+    |> validate_length(:person_first_name, max: 100)
     |> validate_inclusion(
       :type,
       get_valid_types() |> Enum.map(fn type -> type[:value] end)
@@ -144,12 +145,29 @@ defmodule Sportyweb.Personal.Contact do
       get_valid_organization_types()
       |> Enum.map(fn organization_type -> organization_type[:value] end)
     )
-    |> validate_inclusion(
-      :person_gender,
-      get_valid_genders() |> Enum.map(fn gender -> gender[:value] end)
-    )
+    |> validate_inclusion_of_gender()
     |> validate_required_type_condition()
-    |> set_name()
+    |> Email.validate_email_address(:email)
+    |> Phone.validate_phone_number(:phone)
+    |> Note.validate_note_content(:note)
+    |> set_additional_fields()
+  end
+
+  defp validate_inclusion_of_gender(%Ecto.Changeset{} = changeset) do
+    case get_field(changeset, :person_gender) do
+      nil ->
+        changeset
+
+      "" ->
+        changeset
+
+      _ ->
+        changeset
+        |> validate_inclusion(
+          :person_gender,
+          get_valid_genders() |> Enum.map(fn gender -> gender[:value] end)
+        )
+    end
   end
 
   defp validate_required_type_condition(%Ecto.Changeset{} = changeset) do
@@ -162,9 +180,7 @@ defmodule Sportyweb.Personal.Contact do
         changeset
         |> validate_required([
           :person_last_name,
-          :person_first_name_1,
-          :person_gender,
-          :person_birthday
+          :person_first_name
         ])
 
       _ ->
@@ -172,10 +188,9 @@ defmodule Sportyweb.Personal.Contact do
     end
   end
 
-  defp set_name(%Ecto.Changeset{} = changeset) do
+  defp set_additional_fields(%Ecto.Changeset{} = changeset) do
     # The "name" field is only set internally and its content is based on
     # the contact type and the content of (multiple) other fields.
-
     name =
       case get_field(changeset, :type) do
         "organization" ->
@@ -183,14 +198,26 @@ defmodule Sportyweb.Personal.Contact do
 
         "person" ->
           person_last_name = get_field(changeset, :person_last_name)
-          person_first_name_1 = get_field(changeset, :person_first_name_1)
-          person_first_name_2 = get_field(changeset, :person_first_name_2)
-          "#{person_last_name}, #{person_first_name_1} #{person_first_name_2}"
+          person_first_name = get_field(changeset, :person_first_name)
+          "#{person_first_name} #{person_last_name}"
 
         _ ->
           ""
       end
 
-    changeset |> Ecto.Changeset.change(name: String.trim(name))
+    # for simplified filtering and sorting in contact_table,
+    # the address is added as string into each contact
+    address = get_field(changeset, :address)
+
+    address_as_text =
+      if address == nil do
+        ""
+      else
+        EmbeddedPostalAddress.as_text(address)
+      end
+
+    changeset
+    |> Ecto.Changeset.change(name: String.trim(name))
+    |> Ecto.Changeset.change(address_as_text: address_as_text)
   end
 end

@@ -7,23 +7,21 @@ defmodule Sportyweb.Legal.Contract do
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization.Club
-  alias Sportyweb.Organization.ClubContract
   alias Sportyweb.Organization.Department
-  alias Sportyweb.Organization.DepartmentContract
   alias Sportyweb.Organization.Group
-  alias Sportyweb.Organization.GroupContract
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.Legal.Membership
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "contracts" do
     belongs_to :club, Club
+    belongs_to :department, Department
+    belongs_to :group, Group
     belongs_to :contact, Contact
     belongs_to :fee, Fee
     has_many :transactions, Transaction
-    many_to_many :clubs, Club, join_through: ClubContract
-    many_to_many :departments, Department, join_through: DepartmentContract
-    many_to_many :groups, Group, join_through: GroupContract
+    has_one :membership, Membership
 
     field :signing_date, :date, default: nil
     field :start_date, :date, default: nil
@@ -32,6 +30,24 @@ defmodule Sportyweb.Legal.Contract do
     field :archive_date, :date, default: nil
 
     timestamps(type: :utc_datetime)
+  end
+
+  def get_valid_states do
+    [
+      [key: "beendet", value: "archived"],
+      [key: "gekündigt", value: "terminated"],
+      [key: "aktiv", value: "in_use"],
+      [key: "zukünftig", value: "pending"]
+    ]
+  end
+
+  def get_state(%Contract{} = contract, %Date{} = date \\ Date.utc_today()) do
+    cond do
+      Contract.is_archived?(contract, date) -> "archived"
+      contract.archive_date || contract.termination_date -> "terminated"
+      Contract.is_in_use?(contract, date) -> "in_use"
+      true -> "pending"
+    end
   end
 
   def is_in_use?(%Contract{} = contract, %Date{} = date \\ Date.utc_today()) do
@@ -43,10 +59,35 @@ defmodule Sportyweb.Legal.Contract do
     contract.archive_date && Date.compare(date, contract.archive_date) != :lt
   end
 
+  def print(%Contract{} = contract) do
+    "Vertrag zwischen #{contract.contact.name} und #{print_partner(get_partner(contract))}"
+  end
+
+  def get_partner(%Contract{} = contract) do
+    cond do
+      contract.group != nil -> contract.group
+      contract.department != nil -> contract.department
+      true -> contract.club
+    end
+  end
+
+  def print_partner(%Club{} = club), do: "Verein #{club.name}"
+  def print_partner(%Department{} = department), do: "Abteilung #{department.name}"
+  def print_partner(%Group{} = group), do: "Gruppe #{group.name}"
+
+  def get_state_icon(%Contract{} = contract) do
+    case get_state(contract) do
+      "archived" -> %{icon: "hero-archive-box", color: "text-zinc-500"}
+      "terminated" -> %{icon: "hero-archive-box", color: "text-amber-600"}
+      "pending" -> %{icon: "hero-check-badge", color: "text-amber-600"}
+      _ -> %{icon: "hero-check-badge", color: "text-green-800"}
+    end
+  end
+
   @doc """
   A contract "connects" a contact, a fee and the actual "object" the contract is about.
-  This object (not in the OOP sense!) could be an instance of the entities
-  club, department or group. Others could be added in the future.
+  This object (not in the OOP sense!) could be an instance of a membership in a
+  club, department or group. Others entities could be added in the future.
   This function automatically determines to which entity and especially to which
   instance of an entity the given contract has a polymorphic association to.
   It then returns this instance.
@@ -56,18 +97,18 @@ defmodule Sportyweb.Legal.Contract do
         such functions pop up over time.
   """
   def get_object(%Contract{} = contract) do
-    cond do
-      is_list(contract.clubs) && Enum.any?(contract.clubs) ->
-        Enum.at(contract.clubs, 0)
+    if contract.membership != nil do
+      contract.membership
+    else
+      nil
+    end
+  end
 
-      is_list(contract.departments) && Enum.any?(contract.departments) ->
-        Enum.at(contract.departments, 0)
-
-      is_list(contract.groups) && Enum.any?(contract.groups) ->
-        Enum.at(contract.groups, 0)
-
-      true ->
-        nil
+  def print_object(%Contract{} = contract) do
+    if contract.membership != nil do
+      "Mitgliedschaft"
+    else
+      nil
     end
   end
 
@@ -78,6 +119,8 @@ defmodule Sportyweb.Legal.Contract do
       attrs,
       [
         :club_id,
+        :department_id,
+        :group_id,
         :contact_id,
         :fee_id,
         :signing_date,

@@ -4,6 +4,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
 
   alias Sportyweb.Personal
   alias Sportyweb.Personal.Contact
+  alias SportywebWeb.ChangeLive.LastChangeComponent
 
   @impl true
   def render(assigns) do
@@ -11,6 +12,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
     <div>
       <.header>
         {@title}
+        {LastChangeComponent.show_last_change(%{last_change: @last_change})}
       </.header>
 
       <.card>
@@ -59,20 +61,12 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                 </.input_grid>
               <% else %>
                 <.input_grid>
-                  <div class="col-span-12 md:col-span-4">
+                  <div class="col-span-12 md:col-span-6">
                     <.input field={@form[:person_last_name]} type="text" label="Nachname" />
                   </div>
 
-                  <div class="col-span-12 md:col-span-4">
-                    <.input field={@form[:person_first_name_1]} type="text" label="Vorname" />
-                  </div>
-
-                  <div class="col-span-12 md:col-span-4">
-                    <.input
-                      field={@form[:person_first_name_2]}
-                      type="text"
-                      label="2. Vorname (optional)"
-                    />
+                  <div class="col-span-12 md:col-span-6">
+                    <.input field={@form[:person_first_name]} type="text" label="Vorname" />
                   </div>
 
                   <div class="col-span-12 md:col-span-6">
@@ -92,24 +86,26 @@ defmodule SportywebWeb.ContactLive.FormComponent do
               <% end %>
 
               <.input_grid class="pt-6">
-                <SportywebWeb.PolymorphicLive.PostalAddressesFormComponent.render form={@form} />
+                <SportywebWeb.PolymorphicLive.PostalAddressesFormComponent.render_embedded form={
+                  @form
+                } />
               </.input_grid>
 
-              <.input_grid class="pt-6">
-                <SportywebWeb.PolymorphicLive.EmailsFormComponent.render form={@form} />
-              </.input_grid>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:email]} type="text" label="E-Mail" />
+              </div>
 
-              <.input_grid class="pt-6">
-                <SportywebWeb.PolymorphicLive.PhonesFormComponent.render form={@form} />
-              </.input_grid>
+              <div class="col-span-12 md:col-span-6">
+                <.input field={@form[:phone]} type="text" label="Telefon" />
+              </div>
 
               <.input_grid class="pt-6">
                 <SportywebWeb.PolymorphicLive.FinancialDataFormComponent.render form={@form} />
               </.input_grid>
 
-              <.input_grid class="pt-6">
-                <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
-              </.input_grid>
+              <div class="col-span-12 md:col-span-12">
+                <.input field={@form[:note]} type="textarea" label="Notizen" />
+              </div>
             <% end %>
           </.input_grids>
 
@@ -189,12 +185,16 @@ defmodule SportywebWeb.ContactLive.FormComponent do
   end
 
   defp save_contact(socket, :edit, contact_params) do
-    case Personal.update_contact(socket.assigns.contact, contact_params) do
-      {:ok, _contact} ->
+    case Personal.update_contact(
+           socket.assigns.contact,
+           contact_params,
+           socket.assigns.current_user
+         ) do
+      {:ok, contact} ->
         {:noreply,
          socket
          |> put_flash(:info, "Kontakt erfolgreich aktualisiert")
-         |> push_navigate(to: socket.assigns.navigate)}
+         |> push_navigate(to: ~p"/contacts/#{contact}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -207,12 +207,12 @@ defmodule SportywebWeb.ContactLive.FormComponent do
         "club_id" => socket.assigns.contact.club.id
       })
 
-    case Personal.create_contact(contact_params) do
-      {:ok, _contact} ->
+    case Personal.create_contact(contact_params, socket.assigns.current_user) do
+      {:ok, contact} ->
         {:noreply,
          socket
          |> put_flash(:info, "Kontakt erfolgreich erstellt")
-         |> push_navigate(to: socket.assigns.navigate)}
+         |> push_navigate(to: ~p"/contacts/#{contact}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}

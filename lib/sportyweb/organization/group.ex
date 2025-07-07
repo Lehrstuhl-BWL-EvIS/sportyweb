@@ -5,7 +5,6 @@ defmodule Sportyweb.Organization.Group do
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization.Department
-  alias Sportyweb.Organization.GroupContract
   alias Sportyweb.Organization.GroupEmail
   alias Sportyweb.Organization.GroupFee
   alias Sportyweb.Organization.GroupNote
@@ -18,7 +17,7 @@ defmodule Sportyweb.Organization.Group do
   @foreign_key_type :binary_id
   schema "groups" do
     belongs_to :department, Department
-    many_to_many :contracts, Contract, join_through: GroupContract
+    has_many :contracts, Contract
     many_to_many :emails, Email, join_through: GroupEmail
     many_to_many :fees, Fee, join_through: GroupFee
     many_to_many :notes, Note, join_through: GroupNote
@@ -30,6 +29,7 @@ defmodule Sportyweb.Organization.Group do
     field :reference_number, :string, default: ""
     field :description, :string, default: ""
     field :creation_date, :date, default: nil
+    field :sport, :string, default: ""
 
     timestamps(type: :utc_datetime)
   end
@@ -44,7 +44,8 @@ defmodule Sportyweb.Organization.Group do
         :name,
         :reference_number,
         :description,
-        :creation_date
+        :creation_date,
+        :sport
       ],
       empty_values: ["", nil]
     )

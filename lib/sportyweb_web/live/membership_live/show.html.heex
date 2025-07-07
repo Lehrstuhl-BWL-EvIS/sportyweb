@@ -1,0 +1,42 @@
+<.header>
+  {Membership.print(@membership)}
+</.header>
+
+<.card>
+  <.list>
+    <:item title="In">
+      {Membership.get_organization(@membership).name}
+    </:item>
+    <:item title="Kontakt">
+      <.link
+        navigate={~p"/contacts/#{@membership.contact}"}
+        class="text-indigo-600 hover:underline"
+      >
+        {format_string_field(@membership.contact.name)}
+      </.link>
+    </:item>
+    <:item title="Beginn">
+      {format_date_field_dmy(@membership.contract.start_date)}
+    </:item>
+    <:item title="Ende">
+      {format_date_field_dmy(@membership.contract.archive_date)}
+    </:item>
+  </.list>
+</.card>
+
+<.card>
+  <.list>
+    <:item title="Gebühr">
+      {@membership.contract.fee.name}: {@membership.contract.fee.amount}
+    </:item>
+
+    <:item title="Vertrag">
+      <.link
+        navigate={~p"/contracts/#{@membership.contract}"}
+        class="text-indigo-600 hover:underline"
+      >
+        Vertrag anzeigen
+      </.link>
+    </:item>
+  </.list>
+</.card>

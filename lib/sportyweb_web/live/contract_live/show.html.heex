@@ -1,11 +1,15 @@
 <.header>
   {@page_title}
+  {LastChangeComponent.show_last_change(%{last_change: @last_change})}
 </.header>
 
 <.card>
   <.list>
     <:item title="Vertragsobjekt">
-      {format_string_field(@contract_object.name)}
+      {format_string_field(@contract_object)}
+    </:item>
+    <:item title="Partner">
+      {format_string_field(@contract_partner)}
     </:item>
     <:item title="Kontakt">
       <.link navigate={~p"/contacts/#{@contract.contact}"} class="text-indigo-600 hover:underline">

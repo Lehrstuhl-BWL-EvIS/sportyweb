@@ -3,11 +3,9 @@ defmodule SportywebWeb.ContractLive.FormComponent do
 
   alias Sportyweb.Finance
   alias Sportyweb.Legal
-  alias Sportyweb.Organization
-  alias Sportyweb.Organization.Club
-  alias Sportyweb.Organization.Department
-  alias Sportyweb.Organization.Group
   alias Sportyweb.Personal
+
+  alias SportywebWeb.ChangeLive.LastChangeComponent
 
   @impl true
   def render(assigns) do
@@ -15,6 +13,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
     <div>
       <.header>
         {@title}
+        {LastChangeComponent.show_last_change(%{last_change: @last_change})}
       </.header>
 
       <.card>
@@ -100,11 +99,15 @@ defmodule SportywebWeb.ContractLive.FormComponent do
   end
 
   defp save_contract(socket, :edit, contract_params) do
-    case Legal.update_contract(socket.assigns.contract, contract_params) do
+    case Legal.update_contract(
+           socket.assigns.contract,
+           contract_params,
+           socket.assigns.current_user
+         ) do
       {:ok, _contract} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Mitgliedschaftsvertrag erfolgreich aktualisiert")
+         |> put_flash(:info, "Vertrag erfolgreich aktualisiert")
          |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -118,20 +121,12 @@ defmodule SportywebWeb.ContractLive.FormComponent do
         "club_id" => socket.assigns.contract.club.id
       })
 
-    case Legal.create_contract(contract_params) do
-      {:ok, contract} ->
-        case create_association(contract, socket.assigns.contract_object) do
-          {:ok, _} ->
-            {:noreply,
-             socket
-             |> put_flash(:info, "Mitgliedschaftsvertrag erfolgreich erstellt")
-             |> push_navigate(to: socket.assigns.navigate)}
-
-          {:error, _} ->
-            {:noreply,
-             socket
-             |> put_flash(:error, "Mitgliedschaftsvertrag konnte nicht erstellt werden")}
-        end
+    case Legal.create_contract(contract_params, socket.assigns.current_user) do
+      {:ok, _contract} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Vertrag erfolgreich erstellt")
+         |> push_navigate(to: socket.assigns.navigate)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
@@ -144,26 +139,5 @@ defmodule SportywebWeb.ContractLive.FormComponent do
       :fee_options,
       Finance.list_contract_fee_options(socket.assigns.contract_object, contact_id)
     )
-  end
-
-  defp create_association(contract, %Club{} = contract_object) do
-    Organization.create_club_contract(contract_object, contract)
-    {:ok, contract}
-  end
-
-  defp create_association(contract, %Department{} = contract_object) do
-    Organization.create_department_contract(contract_object, contract)
-    {:ok, contract}
-  end
-
-  defp create_association(contract, %Group{} = contract_object) do
-    Organization.create_group_contract(contract_object, contract)
-    {:ok, contract}
-  end
-
-  defp create_association(contract, _) do
-    # Immediately delete the contract if no association could be created.
-    # Otherwise the contract would be "free floating", without a contract_object.
-    {:error, _} = Legal.delete_contract(contract)
   end
 end

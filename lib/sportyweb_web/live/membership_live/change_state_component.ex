@@ -1,0 +1,840 @@
+defmodule SportywebWeb.MembershipLive.ChangeStateComponent do
+  use SportywebWeb, :live_component
+
+  alias Sportyweb.Legal
+  alias Sportyweb.Legal.Contract
+  alias Sportyweb.Legal.Membership
+  alias Sportyweb.Legal.Constitution
+  alias Sportyweb.Person.ContactChangeNotifier
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div>
+      <.button phx-click={show_modal("#{@id}_dialog")}>
+        {print_action(@action)}
+      </.button>
+
+      <.modal id={"#{@id}_dialog"}>
+        <.header level="2">
+          Mitgliedschaft von {@membership.contact.name}
+        </.header>
+
+        <.simple_form
+          for={%{}}
+          id={"#{@id}_form"}
+          phx-submit="save_dialog"
+          phx-change="validate_dialog"
+          phx-target={@myself}
+        >
+          <.input_grids>
+            <input type="text" name="action" id="new_state" class="hidden" value={@action} />
+            <.input_grid>
+              <%= if @action == "REJECT" do %>
+                <div class="col-span-12 md:col-span-12">
+                  Soll der Aufnahmeantrag von {@membership.contact.name} in {Membership.print_organization(
+                    @membership
+                  )} abgelehnt werden?
+                </div>
+              <% end %>
+
+              <%= if @action == "ADMIT" do %>
+                <div class="col-span-12 md:col-span-12">
+                  Soll {@membership.contact.name} als Mitglied in {Membership.print_organization(
+                    @membership
+                  )} aufgenommen werden?
+                </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input name="signing_date" type="date" label="Aufnahmedatum" value={@signing_date} />
+                  <.error :if={@signing_date_error != nil}>{@signing_date_error}</.error>
+                </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input
+                    name="start_date"
+                    type="date"
+                    label="Beginn der Mitgliedschaft"
+                    value={@start_date}
+                  />
+                  <.error :if={@start_date_error != nil}>{@start_date_error}</.error>
+                </div>
+                <div class="col-span-12 md:col-span-12">
+                  <.input
+                    name="fee_id"
+                    type="select"
+                    label="Beitrag"
+                    value={@fee_id}
+                    options={
+                      @fee_options
+                      |> Enum.map(&{"#{&1.name}: #{&1.amount}", &1.id})
+                    }
+                    prompt="Bitte auswählen"
+                  />
+                  <.error :if={@fee_id_error != nil}>{@fee_id_error}</.error>
+                </div>
+              <% end %>
+
+              <%= if @action == "REACTIVATE" do %>
+                <div class="col-span-12 md:col-span-12">
+                  Soll die Mitgliedschaft von {@membership.contact.name} in {Membership.print_organization(
+                    @membership
+                  )} reaktiviert werden?
+                </div>
+              <% end %>
+
+              <%= if @action == "PAUSE" do %>
+                <div class="col-span-12 md:col-span-12">
+                  Soll die Mitgliedschaft von {@membership.contact.name} in {Membership.print_organization(
+                    @membership
+                  )} pausiert werden?
+                </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input name="reactivation_date" type="date" label="Pausieren bis" value={nil} />
+                  <.error :if={@reactivation_date_error != nil}>{@reactivation_date_error}</.error>
+                </div>
+              <% end %>
+
+              <%= if @action == "TERMINATE" do %>
+                <div class="col-span-12 md:col-span-12">
+                  Soll die Mitgliedschaft von {@membership.contact.name} in {Membership.print_organization(
+                    @membership
+                  )} gekündigt werden?
+                </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input
+                    name="termination_date"
+                    type="date"
+                    label="Kündigungsdatum"
+                    value={@termination_date}
+                  />
+                  <.error :if={@termination_date_error != nil}>{@termination_date_error}</.error>
+                </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input
+                    name="archive_date"
+                    type="date"
+                    label="Ende der Mitgliedschaft"
+                    value={@archive_date}
+                  />
+                  <.error :if={@archive_date_error != nil}>{@archive_date_error}</.error>
+                </div>
+              <% end %>
+
+              <%= if @action == "DECEASE" do %>
+                <div class="col-span-12 md:col-span-12">
+                  Tod von {@membership.contact.name} hinterlegen und die Mitgliedschaft beenden?
+                </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input name={:date_of_death} type="date" label="Todesdatum" value={nil} />
+                  <.error :if={@date_of_death_error != nil}>{@date_of_death_error}</.error>
+                </div>
+              <% end %>
+
+              <%= if @action == "SUSPEND" do %>
+                <div class="col-span-12 md:col-span-12">
+                  Soll {@membership.contact.name} aus {Membership.print_organization(@membership)} ausgeschlossen werden?
+                </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input
+                    name="suspension_date"
+                    type="date"
+                    label="Ausgeschlossen am"
+                    value={@suspension_date}
+                  />
+                  <.error :if={@suspension_date_error != nil}>{@suspension_date_error}</.error>
+                </div>
+                <div
+                  :if={@constitution.suspension_reason_mode != "not_allowed"}
+                  class="col-span-12 md:col-span-6"
+                >
+                  <.input
+                    name="suspension_reason"
+                    value={@suspension_reason}
+                    type="select"
+                    label="Grund"
+                    options={@constitution.suspension_reasons}
+                    prompt="Bitte auswählen"
+                  />
+                  <.error :if={@suspension_reason_error != nil}>{@suspension_reason_error}</.error>
+                </div>
+              <% end %>
+
+              <%= if !Enum.empty?(@membership.contact.contact_groups) do %>
+                <div
+                  class="col-span-12 md:col-span-12 max-h-10rem"
+                  phx-click="toggle_show_contact_groups"
+                  phx-target={@myself}
+                >
+                  Das Mitglied ist Teil von {Enum.count(@membership.contact.contact_groups)} Kontaktgruppen
+                  <.icon
+                    name="hero-chevron-right"
+                    class={Enum.join([if(@show_contact_groups, do: "rotate-90")], " ")}
+                  />
+                  <%= if @show_contact_groups do %>
+                    <%= for contact_group <- @membership.contact.contact_groups do %>
+                      <.label>
+                        {contact_group.name}
+                        <.link navigate={~p"/contact_groups/#{contact_group}"}>
+                          <.icon name="hero-information-circle" />
+                        </.link>
+                      </.label>
+                      <p>
+                        {print_other_contacts_in_group(contact_group, @membership.contact)}
+                      </p>
+                    <% end %>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <div :if={@membership.contact.email != ""} class="col-span-12 md:col-span-12">
+                <.input
+                  name="send_email"
+                  value={@send_email}
+                  type="checkbox"
+                  label="Kontakt per E-Mail benachrichtigen"
+                />
+              </div>
+              <div
+                :if={!Enum.empty?(@following_memberships) && @membership.contract != nil}
+                class="col-span-12 md:col-span-12"
+              >
+                <.input
+                  name="update_following_memberships"
+                  value={@update_following_memberships}
+                  type="checkbox"
+                  label={"#{Enum.count(@following_memberships)} zugehörige Mitgliedschaften #{print_action(@action)}"}
+                />
+              </div>
+
+              <div class="col-span-12 md:col-span-12 flex gap-4 justify-end">
+                <.button :if={!@allow_save} disabled={true} class="bg-zinc-200">
+                  {print_action(@action)}
+                </.button>
+                <.button :if={@allow_save}>
+                  {print_action(@action)}
+                </.button>
+                <.button phx-click={hide_modal("#{@id}_dialog")}>
+                  Abbrechen
+                </.button>
+              </div>
+            </.input_grid>
+          </.input_grids>
+        </.simple_form>
+      </.modal>
+    </div>
+    """
+  end
+
+  @impl true
+  def update(assigns, socket) do
+    action = assigns.action
+    today = Date.utc_today()
+
+    {signing_date, start_date, fee_id} =
+      if action == "ADMIT" do
+        {today, today, nil}
+      else
+        {nil, nil, nil}
+      end
+
+    {termination_date, archive_date} =
+      if action == "TERMINATE" do
+        date_of_minimal_membership_duration =
+          if assigns.constitution.minimal_membership_duration == "" do
+            today
+          else
+            duration = Duration.from_iso8601!(assigns.constitution.minimal_membership_duration)
+            Date.shift(today, duration)
+          end
+
+        next_allowed_archiving_date =
+          Constitution.get_next_allowed_archiving_date(
+            assigns.constitution,
+            date_of_minimal_membership_duration
+          )
+
+        {today, next_allowed_archiving_date}
+      else
+        {nil, nil}
+      end
+
+    {suspension_date, suspension_reason} =
+      if action == "SUSPEND" do
+        {today, nil}
+      else
+        {nil, nil}
+      end
+
+    send_email =
+      if action == "DECEASE" do
+        false
+      else
+        assigns.membership.contact.email != ""
+      end
+
+    socket =
+      socket
+      |> assign(assigns)
+      |> assign(:signing_date, signing_date)
+      |> assign(:start_date, start_date)
+      |> assign(:fee_id, fee_id)
+      |> assign(:termination_date, termination_date)
+      |> assign(:archive_date, archive_date)
+      |> assign(:suspension_date, suspension_date)
+      |> assign(:suspension_reason, suspension_reason)
+      |> assign(:send_email, send_email)
+      |> assign(:update_following_memberships, Enum.empty?(assigns.following_memberships))
+      |> assign(:action, action)
+      |> assign(:show_contact_groups, false)
+
+    initial_values = %{
+      "action" => action,
+      "signing_date" => signing_date,
+      "start_date" => start_date,
+      "fee_id" => fee_id,
+      "termination_date" => termination_date,
+      "archive_date" => archive_date,
+      "suspension_date" => suspension_date,
+      "suspension_reason" => suspension_reason,
+      "reactivation_date" => nil,
+      "date_of_death" => nil
+    }
+
+    {_, socket} = handle_event("validate_dialog", initial_values, socket)
+    {:ok, socket}
+  end
+
+  @impl true
+  def handle_event(
+        "validate_dialog",
+        %{
+          "action" => "ADMIT",
+          "signing_date" => signing_date,
+          "start_date" => start_date,
+          "fee_id" => fee_id
+        } = changes,
+        socket
+      ) do
+    contract_errors = Legal.change_contract(%Contract{}, changes).errors
+
+    signing_date_error =
+      cond do
+        is_empty?(signing_date) ->
+          "Bitte das Datum angeben, an dem der Aufnahmeantrag angenommen wurde"
+
+        contract_errors[:signing_date] != nil ->
+          Kernel.elem(contract_errors[:signing_date], 0)
+
+        true ->
+          nil
+      end
+
+    start_date_error =
+      cond do
+        is_empty?(start_date) -> "Bitte das Datum angeben, zu dem die Mitgliedschaft beginnt."
+        contract_errors[:start_date] != nil -> Kernel.elem(contract_errors[:start_date], 0)
+        true -> nil
+      end
+
+    fee_id_error =
+      cond do
+        is_empty?(fee_id) -> "Bitte eine Gebühr auswählen.."
+        contract_errors[:fee] != nil -> Kernel.elem(contract_errors[:fee], 0)
+        true -> nil
+      end
+
+    socket =
+      socket
+      |> assign(:signing_date_error, signing_date_error)
+      |> assign(:start_date_error, start_date_error)
+      |> assign(:fee_id_error, fee_id_error)
+      |> assign(:fee_id, fee_id)
+      |> assign(:start_date, start_date)
+      |> assign(:signing_date, signing_date)
+      |> assign(:signing_date, signing_date)
+      |> rewrite_default_values(changes)
+      |> assign(
+        :allow_save,
+        signing_date_error == nil && start_date_error == nil && fee_id_error == nil
+      )
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event(
+        "save_dialog",
+        %{
+          "action" => "ADMIT",
+          "signing_date" => signing_date,
+          "start_date" => start_date,
+          "fee_id" => fee_id
+        } = args,
+        socket
+      ) do
+    organization_name = Membership.print_organization(socket.assigns.membership)
+
+    message =
+      "Ihr Aufnahmeantrag für die Mitgliedschaft im / in der #{organization_name} wurde angenommen."
+
+    membership_change = %{state: "ACTIVE", reactivation_date: nil, suspension_reason: ""}
+    contract_change = %{start_date: start_date, signing_date: signing_date, fee_id: fee_id}
+    execute_update(message, membership_change, contract_change, args, socket)
+  end
+
+  @impl true
+  def handle_event("validate_dialog", %{"action" => "REACTIVATE"} = changes, socket) do
+    socket =
+      socket
+      |> assign(:allow_save, true)
+      |> rewrite_default_values(changes)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("save_dialog", %{"action" => "REACTIVATE"} = args, socket) do
+    organization_name = Membership.print_organization(socket.assigns.membership)
+    message = "Ihre Mitgliedschaft im / in der #{organization_name} wurde reaktiviert."
+    membership_change = %{state: "ACTIVE", reactivation_date: nil, suspension_reason: ""}
+    execute_update(message, membership_change, nil, args, socket)
+  end
+
+  @impl true
+  def handle_event(
+        "validate_dialog",
+        %{"action" => "PAUSE", "reactivation_date" => _reactivation_date} = changes,
+        socket
+      ) do
+    membership_errors = Legal.change_membership(socket.assigns.membership, changes).errors
+
+    reactivation_date_error =
+      if membership_errors[:reactivation_date] != nil do
+        # reactivation_date is optional
+        Kernel.elem(membership_errors[:reactivation_date], 0)
+      else
+        nil
+      end
+
+    socket =
+      socket
+      |> assign(:reactivation_date_error, reactivation_date_error)
+      |> assign(:allow_save, reactivation_date_error == nil)
+      |> rewrite_default_values(changes)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event(
+        "save_dialog",
+        %{"action" => "PAUSE", "reactivation_date" => reactivation_date} = args,
+        socket
+      ) do
+    organization_name = Membership.print_organization(socket.assigns.membership)
+
+    {message, membership_change} =
+      if reactivation_date != nil && reactivation_date != "" do
+        {
+          "Ihre Mitgliedschaft im / in der #{organization_name} wurde bis zum #{reactivation_date} pausiert.",
+          %{state: "PAUSED", reactivation_date: reactivation_date}
+        }
+      else
+        {
+          "Ihre Mitgliedschaft im / in der #{organization_name} wurde pausiert.",
+          %{state: "PAUSED", reactivation_date: ""}
+        }
+      end
+
+    execute_update(message, membership_change, nil, args, socket)
+  end
+
+  @impl true
+  def handle_event("validate_dialog", %{"action" => "REJECT"} = changes, socket) do
+    socket =
+      socket
+      |> assign(:allow_save, true)
+      |> rewrite_default_values(changes)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("save_dialog", %{"action" => "REJECT"} = args, socket) do
+    organization_name = Membership.print_organization(socket.assigns.membership)
+    message = "Ihr Aufnahmeantrag für den / die #{organization_name} wurde abgelehnt."
+    membership_change = %{state: "REJECTED"}
+    execute_update(message, membership_change, nil, args, socket)
+  end
+
+  @impl true
+  def handle_event(
+        "validate_dialog",
+        %{
+          "action" => "TERMINATE",
+          "termination_date" => termination_date,
+          "archive_date" => archive_date
+        } = changes,
+        socket
+      ) do
+    contract_errors = Legal.change_contract(socket.assigns.membership.contract, changes).errors
+
+    termination_date_error =
+      cond do
+        is_empty?(termination_date) ->
+          "Bitte das Datum angeben, an dem das Mitglied gekündigt hat."
+
+        contract_errors[:termination_date] != nil ->
+          Kernel.elem(contract_errors[:termination_date], 0)
+
+        true ->
+          nil
+      end
+
+    archive_date_error =
+      cond do
+        is_empty?(archive_date) ->
+          "Bitte eine Datum angeben, zu welchem die Mitgliedschaft endet."
+
+        contract_errors[:archive_date] != nil ->
+          Kernel.elem(contract_errors[:archive_date], 0)
+
+        true ->
+          nil
+      end
+
+    socket =
+      socket
+      |> assign(:termination_date_error, termination_date_error)
+      |> assign(:archive_date_error, archive_date_error)
+      |> assign(:termination_date, termination_date)
+      |> assign(:archive_date, archive_date)
+      |> assign(:allow_save, termination_date_error == nil && archive_date_error == nil)
+      |> rewrite_default_values(changes)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event(
+        "save_dialog",
+        %{
+          "action" => "TERMINATE",
+          "termination_date" => termination_date,
+          "archive_date" => archive_date
+        } = args,
+        socket
+      ) do
+    organization_name = Membership.print_organization(socket.assigns.membership)
+
+    message =
+      "Ihre Mitgliedschaft im / in der #{organization_name} wurde gekündigt und endet zum #{archive_date}"
+
+    membership_change = %{state: "TERMINATED"}
+
+    contract_change = %{
+      termination_date: termination_date,
+      archive_date: archive_date,
+      reactivation_date: nil
+    }
+
+    execute_update(message, membership_change, contract_change, args, socket)
+  end
+
+  @impl true
+  def handle_event(
+        "validate_dialog",
+        %{
+          "action" => "SUSPEND",
+          "suspension_date" => suspension_date
+        } = args,
+        socket
+      ) do
+    membership_errors = Legal.change_membership(socket.assigns.membership, args).errors
+
+    contract_errors =
+      Legal.change_contract(socket.assigns.membership.contract, %{
+        termination_date: suspension_date,
+        archive_date: suspension_date
+      }).errors
+
+    suspension_date_error =
+      cond do
+        is_empty?(suspension_date) ->
+          "Bitte das Datum angeben, an dem das Mitglied ausgeschlossen wurde."
+
+        membership_errors[:suspension_date] != nil ->
+          Kernel.elem(membership_errors[:suspension_date], 0)
+
+        true ->
+          nil
+      end
+
+    suspension_reason_error =
+      cond do
+        is_empty?(args[:suspension_date]) &&
+            socket.assigns.constitution.suspension_reason_mode == "required" ->
+          "Bitte angeben, warum das Mitglied ausgeschlossen wurde."
+
+        contract_errors[:termination_date] != nil ->
+          Kernel.elem(contract_errors[:termination_date], 0)
+
+        contract_errors[:archive_date] != nil ->
+          Kernel.elem(contract_errors[:archive_date], 0)
+
+        true ->
+          nil
+      end
+
+    socket =
+      socket
+      |> assign(:suspension_date_error, suspension_date_error)
+      |> assign(:suspension_reason_error, suspension_reason_error)
+      |> rewrite_default_values(args)
+      |> assign(:allow_save, suspension_date_error == nil && suspension_reason_error == nil)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event(
+        "save_dialog",
+        %{
+          "action" => "SUSPEND",
+          "suspension_date" => suspension_date
+        } = args,
+        socket
+      ) do
+    suspension_reason = args[:suspension_reason]
+    organization_name = Membership.print_organization(socket.assigns.membership)
+
+    message =
+      if suspension_reason != nil && suspension_reason != "" do
+        if socket.assigns.constitution.suspension_reason_mode == "required" do
+          raise "suspension_reason is required by constitution"
+        end
+
+        "Sie wurden aufgrund von #{suspension_reason} zum #{suspension_date} von der Mitgliedschaft im / in der #{organization_name} ausgeschlossen."
+      else
+        "Sie wurden zum #{suspension_date} von der Mitgliedschaft im / in der #{organization_name} ausgeschlossen."
+      end
+
+    membership_change = %{
+      state: "SUSPENDED",
+      suspension_reason: suspension_reason,
+      reactivation_date: nil
+    }
+
+    contract_change = %{termination_date: suspension_date, archive_date: suspension_date}
+    execute_update(message, membership_change, contract_change, args, socket)
+  end
+
+  @impl true
+  def handle_event(
+        "validate_dialog",
+        %{"action" => "DECEASE", "date_of_death" => date_of_death} = changes,
+        socket
+      ) do
+    contract_errors =
+      Legal.change_contract(socket.assigns.membership.contract, %{
+        termination_date: date_of_death,
+        archive_date: date_of_death
+      }).errors
+
+    date_of_death_error =
+      cond do
+        is_empty?(date_of_death) ->
+          "Bitte das Datum angeben, an dem das Mitglied verstorben ist."
+
+        contract_errors[:termination_date] != nil ->
+          Kernel.elem(contract_errors[:termination_date], 0)
+
+        contract_errors[:archive_date] != nil ->
+          Kernel.elem(contract_errors[:archive_date], 0)
+
+        true ->
+          nil
+      end
+
+    socket =
+      socket
+      |> assign(:date_of_death_error, date_of_death_error)
+      |> assign(:allow_save, date_of_death_error == nil)
+      |> rewrite_default_values(changes)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event(
+        "save_dialog",
+        %{"action" => "DECEASE", "date_of_death" => date_of_death} = args,
+        socket
+      ) do
+    membership = socket.assigns.membership
+    organization_name = Membership.print_organization(membership)
+
+    message =
+      "Die Mitgliedschaft von #{membership.contact.name} im / in der #{organization_name} wurde aufgrund des Todes beendet."
+
+    membership_change = %{state: "DECEASED", reactivation_date: nil}
+    contract_change = %{termination_date: date_of_death, archive_date: date_of_death}
+    execute_update(message, membership_change, contract_change, args, socket)
+  end
+
+  @impl true
+  def handle_event("toggle_show_contact_groups", _, socket) do
+    {:noreply, assign(socket, :show_contact_groups, !socket.assigns.show_contact_groups)}
+  end
+
+  defp execute_update(message, membership_changes, contract_changes, args, socket) do
+    membership = socket.assigns.membership
+    contract = update_contract(membership, contract_changes, socket.assigns.current_user)
+
+    changes_with_contract_update =
+      if contract == nil do
+        membership_changes
+      else
+        Map.put(membership_changes, :contract_id, contract.id)
+      end
+
+    result =
+      Legal.update_membership(
+        membership,
+        changes_with_contract_update,
+        socket.assigns.current_user
+      )
+
+    case result do
+      {:ok, _membership} ->
+        send_mail(args, message, socket)
+        update_following_memberships(args, membership_changes, contract_changes, socket)
+
+        {:noreply,
+         socket
+         |> put_flash(:info, "Status geändert")
+         |> push_navigate(to: ~p"/memberships/#{membership.id}/edit")}
+    end
+  end
+
+  defp rewrite_default_values(socket, params) do
+    send_email = params["send_email"]
+    update_following_memberships = params["update_following_memberships"]
+
+    socket
+    |> assign(:send_email, send_email)
+    |> assign(:update_following_memberships, update_following_memberships)
+  end
+
+  defp update_contract(membership, nil, _) do
+    membership.contract
+  end
+
+  defp update_contract(membership, contract_changes, user) do
+    if membership.contract == nil do
+      contract = %{
+        club_id: membership.club_id,
+        department_id: membership.department_id,
+        group_id: membership.group_id,
+        contact_id: membership.contact_id,
+        fee_id: contract_changes[:fee_id],
+        signing_date: contract_changes[:signing_date],
+        start_date: contract_changes[:start_date],
+        termination_date: nil,
+        archive_date: nil
+      }
+
+      {:ok, contract} = Legal.create_contract(contract, user)
+      contract
+    else
+      {:ok, contract} = Legal.update_contract(membership.contract, contract_changes, user)
+      contract
+    end
+  end
+
+  defp send_mail(%{"send_email" => "true"}, message, socket) do
+    contact = socket.assigns.membership.contact
+    ContactChangeNotifier.deliver_membership_state_change(contact, message)
+  end
+
+  defp send_mail(_, _message, _socket) do
+    # nothing to do
+  end
+
+  defp update_following_memberships(
+         %{"update_following_memberships" => "true"},
+         membership_changes,
+         contract_changes,
+         socket
+       ) do
+    following_memberships = socket.assigns.following_memberships
+
+    for membership <- following_memberships do
+      update_contract(membership, contract_changes, socket.assigns.current_user)
+
+      {:ok, _} =
+        Legal.update_membership(membership, membership_changes, socket.assigns.current_user)
+    end
+  end
+
+  defp update_following_memberships(_args, _membership_changes, _contract_changes, _socket) do
+    # update_following_memberships was not present -> nothing to do
+  end
+
+  def get_possible_actions(old_state) do
+    case old_state do
+      "PENDING" -> ["ADMIT", "REJECT"]
+      "REJECTED" -> ["ADMIT"]
+      "ACTIVE" -> ["PAUSE", "TERMINATE", "DECEASE", "SUSPEND"]
+      "PAUSED" -> ["REACTIVATE", "TERMINATE", "DECEASE", "SUSPEND"]
+      _ -> ["TERMINATE", "DECEASE", "SUSPEND"]
+    end
+  end
+
+  def get_change_action(old_state, new_state) do
+    case new_state do
+      "ACTIVE" ->
+        if old_state == "PENDING" || old_state == "REJECTED" do
+          "ADMIT"
+        else
+          "REACTIVATE"
+        end
+
+      "REJECTED" ->
+        "REJECT"
+
+      "PAUSED" ->
+        "PAUSE"
+
+      "TERMINATED" ->
+        "TERMINATE"
+
+      "SUSPENDED" ->
+        "SUSPEND"
+
+      "DECEASED" ->
+        "DECEASE"
+    end
+  end
+
+  def print_action(action) do
+    case action do
+      "ADMIT" -> "Annehmen"
+      "REJECT" -> "Ablehnen"
+      "PAUSE" -> "Pausieren"
+      "REACTIVATE" -> "Reaktivieren"
+      "TERMINATE" -> "Kündigen"
+      "SUSPEND" -> "Ausschließen"
+      "DECEASE" -> "Verstorben"
+    end
+  end
+
+  defp is_empty?(value) do
+    value == nil || value == ""
+  end
+
+  def print_other_contacts_in_group(contact_group, contact) do
+    contact_group.contacts
+    |> Enum.filter(fn c -> c.id != contact.id end)
+    |> Enum.map_join(", ", fn c -> c.name end)
+  end
+end

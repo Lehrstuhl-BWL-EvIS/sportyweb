@@ -5,6 +5,8 @@ defmodule Sportyweb.OrganizationFixtures do
   """
 
   import Sportyweb.PolymorphicFixtures
+  alias Sportyweb.Organization.Club
+  alias Sportyweb.Organization.Department
 
   @doc """
   Generate a unique club website_url.
@@ -37,13 +39,12 @@ defmodule Sportyweb.OrganizationFixtures do
   @doc """
   Generate a department.
   """
-  def department_fixture(attrs \\ %{}) do
-    club = club_fixture()
-
+  def department_fixture(attrs \\ %{}, %Club{} = club \\ club_fixture()) do
     {:ok, department} =
       attrs
       |> Enum.into(%{
         club_id: club.id,
+        club: club,
         name: "some name",
         reference_number: "some reference_number",
         description: "some description",
@@ -60,13 +61,12 @@ defmodule Sportyweb.OrganizationFixtures do
   @doc """
   Generate a group.
   """
-  def group_fixture(attrs \\ %{}) do
-    department = department_fixture()
-
+  def group_fixture(attrs \\ %{}, %Department{} = department \\ department_fixture()) do
     {:ok, group} =
       attrs
       |> Enum.into(%{
         department_id: department.id,
+        department: department,
         name: "some group name",
         reference_number: "some reference_number",
         description: "some description",

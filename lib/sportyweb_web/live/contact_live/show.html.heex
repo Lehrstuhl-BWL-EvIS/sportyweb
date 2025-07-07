@@ -1,6 +1,9 @@
 <.header>
   {@page_title}
   <:actions>
+    <a href={~p"/contacts/#{@contact}/export"}>
+      <.button>Daten exportieren</.button>
+    </a>
     <.link navigate={~p"/contacts/#{@contact}/edit"}>
       <.button>Kontakt bearbeiten</.button>
     </.link>
@@ -25,23 +28,23 @@
       {format_date_field_dmy(@contact.person_birthday)} - {Contact.age_in_years(@contact)} Jahre
     </:item>
     <:item title="Adresse">
-      <SportywebWeb.PolymorphicLive.PostalAddressesShowComponent.render postal_addresses={
-        @contact.postal_addresses
-      } />
+      <SportywebWeb.PolymorphicLive.PostalAddressesShowComponent.render postal_addresses={[
+        @contact.address
+      ]} />
     </:item>
     <:item title="E-Mail">
-      {format_struct_list(@contact.emails, :address)}
+      {format_string_field(@contact.email)}
     </:item>
     <:item title="Telefon">
-      {format_struct_list(@contact.phones, :number)}
+      {format_string_field(@contact.phone)}
     </:item>
     <:item title="Zahlungsdaten">
-      <SportywebWeb.PolymorphicLive.FinancialDataShowComponent.render financial_data={
+      <SportywebWeb.PolymorphicLive.FinancialDataShowComponent.render financial_data={[
         @contact.financial_data
-      } />
+      ]} />
     </:item>
     <:item title="Notizen">
-      <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@contact.notes} />
+      {format_string_field(@contact.note)}
     </:item>
     <:item :if={Contact.has_active_membership_contract?(@contact)} title="Aktives Mitglied">
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
@@ -50,7 +53,48 @@
 </.card>
 
 <.header level="2" class="mt-12">
-  Mitgliedschaftsverträge
+  Aufnahmeanträge
+</.header>
+
+<.card>
+  <%= if Enum.any?(@streams.requested_memberships.inserts) do %>
+    <.table
+      id="requested_memberships"
+      rows={@streams.requested_memberships}
+      row_click={fn {_id, membership} -> JS.navigate(~p"/memberships/#{membership}/edit") end}
+    >
+      <:col :let={{_id, membership}} label="In">
+        <p>
+          {format_string_field(Membership.get_organization(membership).name)}
+        </p>
+      </:col>
+      <:col :let={{_id, membership}} label="Status">
+        <.icon
+          name={Membership.get_state_icon(membership).icon}
+          class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(membership).color}"}
+        />
+        {get_key_for_value(Membership.get_valid_states(), membership.state)}
+      </:col>
+
+      <:action :let={{_id, membership}}>
+        <.link navigate={~p"/memberships/#{membership}/edit"}>
+          Antrag bearbeiten
+        </.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Keine Aufnahmeanträge vorhanden.
+    </p>
+  <% end %>
+
+  <.link navigate={~p"/clubs/#{@club}/memberships/new?contact=#{@contact}"}>
+    <.icon name="hero-plus-circle" /> Mitgliedschaft hinzufügen
+  </.link>
+</.card>
+
+<.header level="2" class="mt-12">
+  Mitgliedschaften & Verträge
 </.header>
 
 <.card>
@@ -58,10 +102,43 @@
     <.table
       id="contracts"
       rows={@streams.contracts}
-      row_click={fn {_id, contract} -> JS.navigate(~p"/contracts/#{contract}") end}
+      row_click={
+        fn {_id, contract} ->
+          if Contract.print_object(contract) == "Mitgliedschaft" do
+            JS.navigate(~p"/memberships/#{contract.membership}/edit")
+          else
+            JS.navigate(~p"/contracts/#{contract}")
+          end
+        end
+      }
     >
+      <:col :let={{_id, contract}}>
+        <.icon
+          name={Contract.get_state_icon(contract).icon}
+          class={"ml-1 inline-block w-[20px] #{Contract.get_state_icon(contract).color}"}
+        />
+      </:col>
       <:col :let={{_id, contract}} label="Vertragsobjekt">
-        {format_string_field(Contract.get_object(contract).name)}
+        {format_string_field(Contract.print_object(contract))}
+      </:col>
+      <:col :let={{_id, contract}} label="Status">
+        <%= if contract.membership != nil do %>
+          <p class="whitespace-nowrap">
+            <.icon
+              name={Membership.get_state_icon(contract.membership).icon}
+              class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(contract.membership).color}"}
+            />
+            {get_key_for_value(Membership.get_valid_states(), contract.membership.state)}
+          </p>
+          <p class="whitespace-nowrap">
+            Art: {contract.membership.type}
+          </p>
+        <% else %>
+          {get_key_for_value(Contract.get_valid_states(), Contract.get_state(contract))}
+        <% end %>
+      </:col>
+      <:col :let={{_id, contract}} label="Partner">
+        {format_string_field(Contract.print_partner(Contract.get_partner(contract)))}
       </:col>
       <:col :let={{_id, contract}} label="Gebühr">
         {format_string_field(contract.fee.name)}
@@ -71,12 +148,55 @@
       </:col>
 
       <:action :let={{_id, contract}}>
-        <.link navigate={~p"/contracts/#{contract}"}>Anzeigen</.link>
+        <%= if Contract.print_object(contract) == "Mitgliedschaft" do %>
+          <.link navigate={~p"/memberships/#{contract.membership}/edit"}>
+            Mitgliedschaft bearbeiten
+          </.link>
+        <% else %>
+          <.link navigate={~p"/contracts/#{contract}"}>Vertrag anzeigen</.link>
+        <% end %>
       </:action>
     </.table>
   <% else %>
     <p>
-      Bisher wurde noch kein Mitgliedschaftsvertrag erstellt.
+      Bisher wurde noch kein Vertrag und noch keine Mitgliedschaft erstellt.
     </p>
   <% end %>
+</.card>
+
+<.header level="2" class="mt-12">
+  Kontaktgruppen
+</.header>
+
+<.card>
+  <%= if Enum.any?(@streams.contact_groups.inserts) do %>
+    <.table
+      id="contact_groups"
+      rows={@streams.contact_groups}
+      row_click={
+        fn {_id, contact_groups} ->
+          JS.navigate(~p"/contact_groups/#{contact_groups}")
+        end
+      }
+    >
+      <:col :let={{_id, contact_group}} label="Name">
+        {format_string_field(contact_group.name)}
+      </:col>
+      <:col :let={{_id, contact_group}} label="Weitere Kontakte">
+        {print_other_contacts_in_group(contact_group, @contact)}
+      </:col>
+
+      <:action :let={{_id, contact_group}}>
+        <.link navigate={~p"/contact_groups/#{contact_group}"}>Gruppe anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p>
+      Der Kontakt ist kein Teil einer Kontaktgruppe.
+    </p>
+  <% end %>
+
+  <.link navigate={~p"/clubs/#{@club}/contact_groups/new?contact=#{@contact}"}>
+    <.icon name="hero-plus-circle" /> Neue Kontaktgruppe anlegen
+  </.link>
 </.card>

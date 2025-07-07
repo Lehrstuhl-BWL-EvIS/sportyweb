@@ -139,11 +139,18 @@ defmodule SportywebWeb.Router do
 
       live "/contacts", ContactLive.Index, :index_root
       live "/clubs/:club_id/contacts", ContactLive.Index, :index
+      get "/clubs/:club_id/contacts/export", ContactLive.ExportXlsx, :export_contact_list
 
       live "/clubs/:club_id/contacts/new", ContactLive.NewEdit, :new
       live "/contacts/:id/edit", ContactLive.NewEdit, :edit
+      get "/contacts/:id/export", ContactLive.ExportJson, :export_contact_data
 
       live "/contacts/:id", ContactLive.Show, :show
+
+      # ContactGroups
+      live "/contact_groups/:id/edit", ContactGroupLive.NewEdit, :edit
+      live "/clubs/:club_id/contact_groups/new", ContactGroupLive.NewEdit, :new
+      live "/contact_groups/:id", ContactGroupLive.Show, :show
 
       # Locations (Each belongs to a club)
 
@@ -191,13 +198,22 @@ defmodule SportywebWeb.Router do
            ForecastLive.Show,
            :show_subsidies_single
 
-      # Contracts (Polymorphic)
-
+      # Contracts
       live "/contracts", ContractLive.Index, :index_root
-
       live "/contracts/:id/edit", ContractLive.NewEdit, :edit
-
       live "/contracts/:id", ContractLive.Show, :show
+
+      # Memberships
+      live "/memberships", MembershipLive.Index, :index_root
+      live "/memberships/:id/edit", MembershipLive.Edit, :edit
+      live "/clubs/:club_id/memberships/new", MembershipLive.New, :new
+
+      # Constitution -> Settings for memberships
+      live "/clubs/:club_id/constitution", ConstitutionLive.NewEdit, :new
+
+      # Analysis
+      live "/analysis/:club_id", AnalysisLive.Show, :show
+      get "/analysis/:club_id/download", AnalysisLive.Export, :export_analysis
 
       # Transaction (Each belongs to a contract)
 
@@ -231,11 +247,13 @@ defmodule SportywebWeb.Router do
       live "/subsidies/:id", SubsidyLive.Show, :show
 
       # Roles
-
       live "/clubs/:club_id/roles", RoleLive.Index, :index
       live "/clubs/:club_id/roles/new", RoleLive.New, :new
       live "/clubs/:club_id/roles/:user_id/edit", RoleLive.Edit, :edit
       live "/clubs/:club_id/roles/show", RoleLive.Show, :show
+
+      # History
+      live "/history", ChangeLive.Index, :index
     end
   end
 

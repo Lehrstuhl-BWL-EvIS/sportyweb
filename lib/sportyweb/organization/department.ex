@@ -5,7 +5,6 @@ defmodule Sportyweb.Organization.Department do
   alias Sportyweb.Finance.Fee
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization.Club
-  alias Sportyweb.Organization.DepartmentContract
   alias Sportyweb.Organization.DepartmentEmail
   alias Sportyweb.Organization.DepartmentFee
   alias Sportyweb.Organization.DepartmentNote
@@ -20,7 +19,7 @@ defmodule Sportyweb.Organization.Department do
   schema "departments" do
     belongs_to :club, Club
     has_many :groups, Group, preload_order: [asc: :name]
-    many_to_many :contracts, Contract, join_through: DepartmentContract
+    has_many :contracts, Contract
     many_to_many :emails, Email, join_through: DepartmentEmail
     many_to_many :fees, Fee, join_through: DepartmentFee
     many_to_many :notes, Note, join_through: DepartmentNote
@@ -32,6 +31,7 @@ defmodule Sportyweb.Organization.Department do
     field :reference_number, :string, default: ""
     field :description, :string, default: ""
     field :creation_date, :date, default: nil
+    field :sport, :string, default: ""
 
     timestamps(type: :utc_datetime)
   end
@@ -46,7 +46,8 @@ defmodule Sportyweb.Organization.Department do
         :name,
         :reference_number,
         :description,
-        :creation_date
+        :creation_date,
+        :sport
       ],
       empty_values: ["", nil]
     )
