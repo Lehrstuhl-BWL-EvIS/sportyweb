@@ -131,34 +131,16 @@ defmodule SportywebWeb.AnalysisLive.Show do
   end
 
   def get_export_link(club, group_bys) do
-    count = Enum.count(group_bys)
+    params =
+      group_bys
+      |> Enum.with_index()
+      |> Enum.filter(fn {_, index} -> index <= 2 end)
+      |> Enum.map(fn {group_by, index} ->
+        write_group_by(group_by, index + 1)
+      end)
+      |> Enum.reduce("", fn x, acc -> if acc == "", do: x, else: acc <> "&" <> x end)
 
-    cond do
-      count == 0 ->
-        nil
-
-      count > 3 ->
-        nil
-
-      true ->
-        params = "#{write_group_by(group_bys, 0)}"
-
-        params =
-          if count >= 2 do
-            params <> "&#{write_group_by(group_bys, 1)}"
-          else
-            params
-          end
-
-        params =
-          if count >= 3 do
-            params <> "&#{write_group_by(group_bys, 2)}"
-          else
-            params
-          end
-
-        "/analysis/#{club.id}/download?#{params}"
-    end
+    "/analysis/#{club.id}/download?#{params}"
   end
 
   defp write_group_by({key, nil}, number), do: "group_by_#{number}=#{key}"
@@ -171,7 +153,7 @@ defmodule SportywebWeb.AnalysisLive.Show do
   defp write_group_by(group_bys, index) when is_list(group_bys),
     do: write_group_by(Enum.at(group_bys, index), index + 1)
 
-  defp write_options(:age_group, options) when is_list(options) do
+  defp write_options(:age_group, options) do
     options
     |> Enum.map_join(";", fn %{:start => start, :end => finish} -> "#{start}-#{finish}" end)
   end

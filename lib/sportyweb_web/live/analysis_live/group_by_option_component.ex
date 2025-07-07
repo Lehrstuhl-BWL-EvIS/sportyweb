@@ -100,10 +100,8 @@ defmodule SportywebWeb.AnalysisLive.GroupByOptionComponent do
   end
 
   @impl true
-  def update(%{group_by: group_by, index: _, id: id, options: options} = assigns, socket) do
+  def update(%{group_by: _, index: _, id: id, options: options} = assigns, socket) do
     age_group_dialog_id = "#{id}_age_group_dialog"
-
-    options = at_least_default_options(group_by, options)
 
     {:ok,
      socket
@@ -119,7 +117,7 @@ defmodule SportywebWeb.AnalysisLive.GroupByOptionComponent do
 
     options =
       if options == nil do
-        at_least_default_options(:age_group, nil)
+        default_options(:age_group, nil)
       else
         options ++ [%{start: nil, end: nil}]
       end
@@ -191,7 +189,7 @@ defmodule SportywebWeb.AnalysisLive.GroupByOptionComponent do
   def handle_event("group_by_option_changed", %{"group_by" => group_by}, socket) do
     index = socket.assigns.index
     group_by = String.to_existing_atom(group_by)
-    options = at_least_default_options(group_by, socket.assigns.options)
+    options = default_options(group_by, socket.assigns.options)
 
     send(
       self(),
@@ -210,8 +208,8 @@ defmodule SportywebWeb.AnalysisLive.GroupByOptionComponent do
     {:noreply, socket}
   end
 
-  defp at_least_default_options(:age_group, nil),
+  defp default_options(:age_group, nil),
     do: [%{start: nil, end: 18}, %{start: 18, end: nil}]
 
-  defp at_least_default_options(_, options), do: options
+  defp default_options(_, _), do: nil
 end
