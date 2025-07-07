@@ -140,9 +140,17 @@ defmodule SportywebWeb.ContactLive.ExportXlsx do
     sheets ++ [sheet]
   end
 
+  defp is_active_member(%Contact{} = contact) do
+    count =
+      contact.memberships
+      |> Enum.count(fn m -> m.state == "ACTIVE" || m.state == "PAUSED" end)
+
+    count > 0
+  end
+
   def write_contact_row(%Contact{} = contact, add_contract_groups, add_memberships) do
     row = [
-      if(ContactsTableComponent.is_active_member(contact), do: "x", else: ""),
+      if(is_active_member(contact), do: "x", else: ""),
       contact.type,
       contact.name,
       contact.person_last_name,

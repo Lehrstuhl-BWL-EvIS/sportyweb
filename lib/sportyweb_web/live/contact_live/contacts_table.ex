@@ -73,23 +73,23 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
                       name={Membership.get_state_icon(m).icon}
                       class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(m).color}"}
                     />
-                <span class="text-indigo-600 hover:underline">
-                    {Membership.get_organization(m).name}
-      </span>
+                    <span class="text-indigo-600 hover:underline">
+                      {Membership.get_organization(m).name}
+                    </span>
                   </.link>
                 </p>
               <% end %>
             <% end %>
           </:col>
           <:col :let={{_id, contact}} label="Art" sortable>
-      <span class="whitespace-nowrap">
-            <%= if contact.type == "person" do %>
-              <.icon name="hero-user" class="ml-1 inline-block w-[20px]" />
-            <% else %>
-              <.icon name="hero-building-office" class="ml-1 inline-block w-[20px]" />
-            <% end %>
-            {get_key_for_value(Contact.get_valid_types(), contact.type)}
-      </span>
+            <span class="whitespace-nowrap">
+              <%= if contact.type == "person" do %>
+                <.icon name="hero-user" class="ml-1 inline-block w-[20px]" />
+              <% else %>
+                <.icon name="hero-building-office" class="ml-1 inline-block w-[20px]" />
+              <% end %>
+              {get_key_for_value(Contact.get_valid_types(), contact.type)}
+            </span>
           </:col>
           <:col :let={{_id, contact}} label="Name" sortable filterable>
             {format_string_field(contact.name)}
@@ -107,9 +107,9 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
             {format_date_field_dmy(contact.person_birthday)}
           </:col>
           <:col :let={{_id, contact}} label="Adresse" sortable filterable>
-        <span class="whitespace-nowrap">
-            {format_string_field(PostalAddress.as_text(contact.address))}
-        </span>
+            <span class="whitespace-nowrap">
+              {format_string_field(PostalAddress.as_text(contact.address))}
+            </span>
           </:col>
           <:col :let={{_id, contact}} label="E-Mail" sortable filterable>
             {format_string_field(contact.email)}

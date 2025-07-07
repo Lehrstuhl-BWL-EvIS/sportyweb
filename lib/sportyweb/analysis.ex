@@ -159,6 +159,7 @@ defmodule Sportyweb.Analysis do
 
       membership.department != nil ->
         membership.department.name
+
       true ->
         membership.club.name
     end
