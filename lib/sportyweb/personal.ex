@@ -27,15 +27,22 @@ defmodule Sportyweb.Personal do
   end
 
   defp filter_only_memberships_in(club_id, only_members_of, preloads) do
+    membership_count_query =
+      from(m in Membership,
+        where:
+          m.club_id == ^club_id and
+            (m.club_id == ^only_members_of or
+               m.department_id == ^only_members_of or
+               m.group_id == ^only_members_of),
+        group_by: m.contact_id,
+        select: %{contact_id: m.contact_id, count: count()}
+      )
+
     query =
       from(c in Contact,
-        join: m in Membership,
+        join: m in subquery(membership_count_query),
         on: m.contact_id == c.id,
-        where:
-          c.club_id == ^club_id and
-            (m.club_id == ^only_members_of or m.department_id == ^only_members_of or
-               m.group_id == ^only_members_of),
-        distinct: c.id
+        where: c.club_id == ^club_id and m.count > 0
       )
 
     preloads =
