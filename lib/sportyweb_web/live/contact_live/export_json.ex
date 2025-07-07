@@ -89,7 +89,7 @@ defmodule SportywebWeb.ContactLive.ExportJson do
       financial_data: %{
         type: contact.financial_data.type,
         direct_debit_account_holder: contact.financial_data.direct_debit_account_holder,
-        direct_debit_iban: contact.financial_data.type,
+        direct_debit_iban: contact.financial_data.direct_debit_iban,
         direct_debit_institute: contact.financial_data.direct_debit_institute,
         invoice_recipient: contact.financial_data.invoice_recipient,
         invoice_additional_information: contact.financial_data.invoice_additional_information

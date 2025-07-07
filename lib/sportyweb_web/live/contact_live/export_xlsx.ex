@@ -6,7 +6,6 @@ defmodule SportywebWeb.ContactLive.ExportXlsx do
   alias Sportyweb.Personal.Contact
   alias Sportyweb.Legal.Membership
   alias SportywebWeb.CommonHelper
-  alias SportywebWeb.ContactLive.ContactsTableComponent
   alias SportywebWeb.XlsxExportController
 
   def export_contact_list(conn, %{"club_id" => club_id} = params) do
