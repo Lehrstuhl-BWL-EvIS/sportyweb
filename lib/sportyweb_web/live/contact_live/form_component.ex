@@ -61,7 +61,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                 </.input_grid>
               <% else %>
                 <.input_grid>
-                  <div class="col-span-12 md:col-span-4">
+                  <div class="col-span-12 md:col-span-6">
                     <.input field={@form[:person_last_name]} type="text" label="Nachname" />
                   </div>
 

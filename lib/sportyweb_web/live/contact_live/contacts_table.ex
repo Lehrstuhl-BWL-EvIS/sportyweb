@@ -22,10 +22,10 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
             <div class="col-span-4">
               <.input
                 name="my-input"
-                value={@filters["In"]}
+                value={@filters["Mitglied In"]}
                 label="Mitglied In"
                 phx-target={@myself}
-                phx-keyup={JS.push("quick_filter_changed", value: %{column_label: "In"})}
+                phx-keyup={JS.push("quick_filter_changed", value: %{column_label: "Mitglied In"})}
               />
             </div>
             <div class="col-span-4">
@@ -53,7 +53,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
         </.input_grids>
       </div>
 
-      <div class="overflow-auto max-w-full max-h-[28rem]">
+      <div class="overflow-auto max-w-full max-h-[33rem]">
         <.table
           id="contacts"
           filter_sort_target={@myself}
@@ -62,35 +62,34 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
           filters={@filters}
           row_click={fn {_id, contact} -> JS.navigate(~p"/contacts/#{contact}") end}
         >
-          <:col :let={{_id, contact}} label="Mitglied">
-            <%= if is_active_member(contact) do %>
-              <.icon name="hero-check-badge" class="ml-1 inline-block w-[20px] text-green-600" />
-            <% end %>
-          </:col>
-          <:col :let={{_id, contact}} label="In" sortable filterable>
+          <:col :let={{_id, contact}} label="Mitglied In" sortable filterable>
             <%= if Enum.empty?(contact.memberships) do %>
               {format_string_field(nil)}
             <% else %>
               <%= for m <- Membership.sort_by_organization_category(contact.memberships) do %>
                 <p>
-                  <.link navigate={~p"/memberships/#{m}/edit"}>
+                  <.link navigate={~p"/memberships/#{m}/edit"} class="whitespace-nowrap">
                     <.icon
                       name={Membership.get_state_icon(m).icon}
                       class={"ml-1 inline-block w-[20px] #{Membership.get_state_icon(m).color}"}
                     />
+                <span class="text-indigo-600 hover:underline">
                     {Membership.get_organization(m).name}
+      </span>
                   </.link>
                 </p>
               <% end %>
             <% end %>
           </:col>
           <:col :let={{_id, contact}} label="Art" sortable>
+      <span class="whitespace-nowrap">
             <%= if contact.type == "person" do %>
               <.icon name="hero-user" class="ml-1 inline-block w-[20px]" />
             <% else %>
               <.icon name="hero-building-office" class="ml-1 inline-block w-[20px]" />
             <% end %>
             {get_key_for_value(Contact.get_valid_types(), contact.type)}
+      </span>
           </:col>
           <:col :let={{_id, contact}} label="Name" sortable filterable>
             {format_string_field(contact.name)}
@@ -108,12 +107,14 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
             {format_date_field_dmy(contact.person_birthday)}
           </:col>
           <:col :let={{_id, contact}} label="Adresse" sortable filterable>
+        <span class="whitespace-nowrap">
             {format_string_field(PostalAddress.as_text(contact.address))}
+        </span>
           </:col>
           <:col :let={{_id, contact}} label="E-Mail" sortable filterable>
             {format_string_field(contact.email)}
           </:col>
-          <:col :let={{_id, contact}} label="Telefonnummer" sortable filterable>
+          <:col :let={{_id, contact}} label="Telefon" sortable filterable>
             {format_string_field(contact.phone)}
           </:col>
 
@@ -150,11 +151,11 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       "Vorname" -> :person_first_name
       "Geburtsdatum" -> :person_birthday
       "Geschlecht" -> :person_gender
-      "In" -> nil
+      "Mitglied In" -> nil
       "Mitglied" -> nil
       "Adresse" -> :address_as_text
       "E-Mail" -> :email
-      "Telefonnummer" -> :phone
+      "Telefon" -> :phone
     end
   end
 
@@ -179,14 +180,9 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       "Geschlecht" ->
         fn c -> c.person_gender end
 
-      "Mitglied" ->
+      "Mitglied In" ->
         fn c ->
-          if Enum.empty?(c.memberships), do: "false", else: "true"
-        end
-
-      "In" ->
-        fn c ->
-          Enum.map_join(c.membership, "", fn m -> Membership.get_organization(m).name end)
+          Enum.map_join(c.memberships, "", fn m -> Membership.get_organization(m).name end)
         end
 
       "Adresse" ->
@@ -195,7 +191,7 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       "E-Mail" ->
         fn c -> c.email end
 
-      "Telefonnummer" ->
+      "Telefon" ->
         fn c -> c.phone end
     end
   end
@@ -213,13 +209,5 @@ defmodule SportywebWeb.ContactLive.ContactsTableComponent do
       ],
       only_members_of
     )
-  end
-
-  def is_active_member(%Contact{} = contact) do
-    count =
-      contact.memberships
-      |> Enum.count(fn m -> m.state == "ACTIVE" || m.state == "PAUSED" end)
-
-    count > 0
   end
 end

@@ -42,7 +42,7 @@ defmodule SportywebWeb.AnalysisLive.GroupByOptionComponent do
           Altersgruppen definieren
         </.header>
         <p>
-          Bei mehreren passenden Gruppen wird die erste verwendet. Die Altersangaben werden inklusiv verstanden, d.h von 10 bis 12 beinhaltet sowohl 10 als auch 12.
+          Bei mehreren passenden Gruppen wird die erste verwendet. Die Altersangaben werden inklusiv verstanden, d.h. von 10 bis 12 beinhaltet sowohl 10 als auch 12.
         </p>
         <%= if @options != nil do %>
           <.input_grids>
@@ -52,7 +52,7 @@ defmodule SportywebWeb.AnalysisLive.GroupByOptionComponent do
                   <.input
                     name="start"
                     type="number"
-                    label="Von (Jahre)"
+                    label="Ab (Jahren)"
                     value={start}
                     phx-target={@myself}
                     phx-keyup={JS.push("age_option_changed", value: %{index: index, at: "start"})}

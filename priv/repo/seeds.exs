@@ -1260,7 +1260,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
           "seeds"
         )
 
-      for contact <- Enum.take_random(contacts, Enum.random(2..6)) do
+      for contact <- Enum.take_random(contacts, Enum.random(2..5)) do
         {:ok, _} =
           Personal.add_contact_group_contact(
             %ContactGroupContact{
