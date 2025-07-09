@@ -176,6 +176,8 @@
             <.icon name="hero-pencil-square" class="h-6 w-6 text-gray-600" />
           <% %DocumentLogEntry{action: "delete"} -> %>
             <.icon name="hero-trash-solid" class="h-6 w-6 text-gray-600" />
+          <% %DocumentLogEntry{action: "view"} -> %>
+            <.icon name="hero-eye" class="h-6 w-6 text-gray-600" />
           <% %DocumentLogEntry{} -> %>
             <.icon name="hero-question-mark-circle" class="h-6 w-6 text-gray-600" />
           <% end %>
@@ -188,7 +190,7 @@
               <% %DocumentComment{} -> %>
                 <%= entry.commented_by && entry.commented_by.email || "Unbekannter Benutzer" %>
               <% %DocumentLogEntry{} -> %>
-                <%= entry.changed_by   && entry.changed_by.email   || "Unbekannter Benutzer" %>
+                <%= entry.changed_by && entry.changed_by.email || entry.ip_address || "Unbekannter Benutzer" %>
               <% end %>
             </span>
           </div>
@@ -203,6 +205,8 @@
           <%= case entry do %>
           <% %DocumentComment{} -> %>
             <div class="bg-gray-100 p-2 mr-4 rounded space-y-1 text-sm"><%= entry.comment %></div>
+          <% %DocumentLogEntry{action: "view"} -> %>
+            
           <% %DocumentLogEntry{} -> %>
             <div class="bg-gray-100 p-2 mr-4 rounded space-y-1">
               <%= for {key, value} <- entry.changes || %{} do %>

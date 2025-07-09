@@ -7,6 +7,7 @@ defmodule Sportyweb.Documents do
   alias Sportyweb.Repo
 
   alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.DocumentLogEntry
 
   @doc """
   Returns a clubs list of documents.
@@ -159,5 +160,40 @@ defmodule Sportyweb.Documents do
   """
   def change_document(%Document{} = document, attrs \\ %{}) do
     Document.changeset(document, attrs)
+  end
+
+  @doc """
+  Logs that a document was viewed by a user or an anonymous visitor.
+
+  The log entry is debounced for 5 minutes based on user and IP address.
+  """
+  def log_document_view(document_id, user_id, ip_address) do
+    five_minutes_ago = DateTime.utc_now() |> DateTime.add(-300, :second)
+
+    base_query =
+      from l in DocumentLogEntry,
+        where:
+          l.document_id == ^document_id and l.action == "view" and
+            l.ip_address == ^ip_address and l.inserted_at > ^five_minutes_ago
+
+    query =
+      if user_id do
+        from l in base_query, where: l.changed_by_id == ^user_id
+      else
+        from l in base_query, where: is_nil(l.changed_by_id)
+      end
+
+    unless Repo.exists?(query) do
+      %DocumentLogEntry{}
+      |> DocumentLogEntry.changeset(%{
+        "document_id" => document_id,
+        "changed_by_id" => user_id,
+        "ip_address" => ip_address,
+        "action" => "view"
+      })
+      |> Repo.insert()
+    end
+
+    :ok
   end
 end

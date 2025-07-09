@@ -12,6 +12,7 @@ defmodule Sportyweb.Documents.DocumentLogEntry do
     field :action, :string
     field :changes, :map, default: %{}
     field :extension_changes, :map, default: %{}
+    field :ip_address, :string
 
     belongs_to :document, Document
     belongs_to :changed_by, User
@@ -21,8 +22,8 @@ defmodule Sportyweb.Documents.DocumentLogEntry do
 
   def changeset(document_log_entry, attrs) do
     document_log_entry
-    |> cast(attrs, [:document_id, :changed_by_id, :action, :changes, :extension_changes])
-    |> validate_required([:document_id, :changed_by_id, :action])
+    |> cast(attrs, [:document_id, :changed_by_id, :action, :changes, :extension_changes, :ip_address])
+    |> validate_required([:document_id, :action])
     |> assoc_constraint(:document)
     |> assoc_constraint(:changed_by)
   end

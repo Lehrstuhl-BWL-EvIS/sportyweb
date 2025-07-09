@@ -158,6 +158,7 @@ defmodule Sportyweb.SeedHelper do
         |> DocumentLogEntry.changeset(%{
           document_id: document.id,
           changed_by_id: uploader.id,
+          ip_address: "192.168.0.1",
           action: "create",
           changes: doc_params,
           extension_changes: %{type: type}

@@ -12,8 +12,15 @@ defmodule SportywebWeb.DocumentLive.Edit do
 
   @impl true
   def mount(_params, _session, socket) do
+    ip =
+      case get_connect_info(socket, :peer_data) do
+        %{address: ip_tuple} -> :inet.ntoa(ip_tuple) |> to_string()
+        _ -> "unknown"
+      end
+
     socket =
       socket
+      |> assign(:ip_address, ip)
       |> assign(:full_width, true)
       |> assign(:show_form, false)
       |> assign(:changed, false)
@@ -203,7 +210,8 @@ defmodule SportywebWeb.DocumentLive.Edit do
           log_params = %{
             "document_id" => doc.id,
             "changed_by_id" => socket.assigns.current_user.id,
-            "action" => "delete"
+            "action" => "delete",
+            "ip_address" => socket.assigns.ip_address
           }
 
           log_changeset =
@@ -251,7 +259,8 @@ defmodule SportywebWeb.DocumentLive.Edit do
             "document_id" => updated_doc.id,
             "changed_by_id" => socket.assigns.current_user.id,
             "action" => "update",
-            "changes" => changeset.changes
+            "changes" => changeset.changes,
+            "ip_address" => socket.assigns.ip_address
           }
 
           log_changeset =
@@ -309,7 +318,8 @@ defmodule SportywebWeb.DocumentLive.Edit do
             "document_id" => updated_doc.id,
             "changed_by_id" => socket.assigns.current_user.id,
             "action" => "update",
-            "changes" => changeset.changes
+            "changes" => changeset.changes,
+            "ip_address" => socket.assigns.ip_address
           }
 
           log_changeset =
@@ -377,7 +387,8 @@ defmodule SportywebWeb.DocumentLive.Edit do
             "changed_by_id" => socket.assigns.current_user.id,
             "action" => "update",
             "changes" => document_changeset.changes,
-            "extension_changes" => extension_changeset.changes
+            "extension_changes" => extension_changeset.changes,
+            "ip_address" => socket.assigns.ip_address
           }
 
           log_changeset =

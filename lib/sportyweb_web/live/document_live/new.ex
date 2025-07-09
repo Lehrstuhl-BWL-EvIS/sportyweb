@@ -11,7 +11,13 @@ defmodule SportywebWeb.DocumentLive.New do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    ip =
+      case get_connect_info(socket, :peer_data) do
+        %{address: ip_tuple} -> :inet.ntoa(ip_tuple) |> to_string()
+        _ -> "unknown"
+      end
+
+    {:ok, assign(socket, ip_address: ip)}
   end
 
   @impl true
@@ -162,7 +168,8 @@ defmodule SportywebWeb.DocumentLive.New do
                   "changed_by_id" => socket.assigns.current_user.id,
                   "action" => "create",
                   "changes" => doc_params,
-                  "extension_changes" => ext_params
+                  "extension_changes" => ext_params,
+                  "ip_address" => socket.assigns.ip_address
                 }
 
                 log_changeset =
