@@ -216,7 +216,7 @@
               <%= for {key, value} <- entry.extension_changes || %{} do %>
                 <.live_component
                   module={@extension_form_component}
-                  id={"doc-type-viewer-" <> key}
+                  id={"doc-type-viewer-" <> entry.id}
                   extension_module={@extension_module}
                   key={key}
                   variant="view"
