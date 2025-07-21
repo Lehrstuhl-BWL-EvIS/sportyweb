@@ -36,6 +36,32 @@
 </.card>
 
 <.header level="2" class="mt-12">
+  Dokumente
+  <:actions>
+    <.link navigate={
+      ~p"/documents/new?#{%{ref: @location.id, type: "location_document"}}"
+    }>
+      <.button>Dokument hochladen</.button>
+    </.link>
+  </:actions>
+</.header>
+<.card>
+  <%= if Enum.any?(@documents) do %>
+    <.live_component
+      module={SportywebWeb.DocumentListComponent}
+      id="documents"
+      documents={@documents}
+      document_module={Sportyweb.Documents.LocationDocument}
+      group_by_type={true}
+    />
+  <% else %>
+    <p>
+      Bisher wurden noch keine Dokumente hinzugefügt.
+    </p>
+  <% end %>
+</.card>
+
+<.header level="2" class="mt-12">
   Gebühren
   <:actions>
     <.link navigate={~p"/locations/#{@location}/fees/new"}>

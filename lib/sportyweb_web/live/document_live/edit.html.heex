@@ -1,0 +1,271 @@
+<div class="flex h-full flex-col lg:flex-row">
+  <!-- Shared PDF Viewer -->
+  <object
+    data={
+      if @live_action == :public do
+        "/share/#{@document.id}/file"
+      else
+        "/documents/#{@document.id}/file"
+      end
+    }
+    type="application/pdf"
+    class={"w-full h-full border-t lg:border-r #{if !@show_form, do: "flex-1", else: "hidden lg:block"}"}
+  >
+    <p class="p-4">
+      Ihr Browser unterstützt die Anzeige von PDFs nicht.
+      <a href={
+        if @live_action == :public do
+          "/share/#{@document.id}/file"
+        else
+          "/documents/#{@document.id}/file"
+        end
+      }>PDF herunterladen</a>
+    </p>
+  </object>
+  
+<!-- Mobile footer buttons (only visible on mobile) -->
+  <div class={"min-h-4 bg-gray-100 p-4 border-t gap-1 #{if !@show_form, do: "lg:hidden flex", else: "hidden"}"}>
+    <%= if @live_action !== :public do %>
+      <.link
+        navigate={@navigate}
+        class="bg-gray-300 text-black p-2 flex-1 rounded flex items-center justify-center gap-2"
+      >
+        <.icon name="hero-arrow-left" class="h-4 w-4" /> zurück
+      </.link>
+    <% end %>
+    <button
+      phx-click="show_form"
+      class="flex-[4] bg-blue-500 text-white py-2 rounded flex items-center justify-center gap-2"
+    >
+      <.icon name="hero-information-circle" class="h-4 w-4" /> Informationen
+    </button>
+  </div>
+  
+<!-- Shared Form -->
+  <div class={"border-t bg-gray-100 lg:max-w-[450px] lg:flex flex-col overflow-hidden lg:w-1/3 #{if @show_form, do: "flex flex-1", else: "hidden"}"}>
+    <%= if @live_action !== :public do %>
+      <div class="flex justify-between py-2 px-4 gap-2 bg-white border-b">
+        <%= if @show_form do %>
+          <.button
+            type="button"
+            phx-click="hide_form"
+            class="bg-gray-300 text-black hover:bg-gray-400 focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 lg:hidden flex items-center gap-2"
+          >
+            <.icon name="hero-arrow-left" class="h-4 w-4" /> zurück
+          </.button>
+        <% end %>
+
+        <.link
+          navigate={@navigate}
+          class="
+            inline-flex items-center justify-center
+            rounded-md bg-gray-300 text-black
+            px-4 py-2 text-sm font-semibold shadow-sm
+            hover:bg-gray-400
+            focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500
+            hidden lg:flex gap-2
+          "
+        >
+          <.icon name="hero-arrow-left" class="h-4 w-4" /> zurück
+        </.link>
+        <.button
+          type="button"
+          phx-click="show_delete_modal"
+          disabled={@document.locked}
+          class={
+            if @document.locked do
+              "bg-red-100 text-red-300 hover:bg-red-100 hover:text-red-300 cursor-not-allowed flex items-center gap-2"
+            else
+              "bg-red-600 text-white hover:bg-red-700 focus:ring-2 focus:ring-offset-2 focus:ring-red-500 flex items-center gap-2"
+            end
+          }
+        >
+          <.icon name="hero-trash-solid" class="h-4 w-4" /> Löschen
+        </.button>
+      </div>
+    <% end %>
+    <div class="flex-1 overflow-auto">
+      <div class="px-4 mt-2">
+        <h2 class="text-lg font-semibold">Details</h2>
+      </div>
+      <div class="bg-white p-4 border-y">
+        <.simple_form
+          for={@form_document}
+          id="document-form"
+          phx-change="validate"
+          phx-submit="save"
+          as="document"
+        >
+          <.document_form_fields
+            form_document={@form_document}
+            form_extension={@form_extension}
+            extension_form_component={@extension_form_component}
+            extension_module={@extension_module}
+            extension_changeset={@extension_changeset}
+            with_upload={false}
+            readonly={@document.locked or @live_action === :public}
+          />
+
+          <div class={"transition-all duration-500 overflow-hidden #{if @changed, do: "opacity-100 h-[56px]", else: "opacity-0 h-0"}"}>
+            <div class="flex items-center mt-4 space-x-2">
+              <.button phx-disable-with="Änderungen speichern...">Änderungen speichern</.button>
+            </div>
+          </div>
+        </.simple_form>
+      </div>
+      <%= if @live_action !== :public do %>
+        <div class="px-4 mt-4">
+          <h2 class="text-lg font-semibold">Freigeben</h2>
+        </div>
+        <div class="bg-white p-4 border-y">
+          <%= if @document.public do %>
+            <div
+              id="public-actions"
+              class="flex items-center gap-2 transition-opacity duration-200 ease-in-out opacity-100"
+            >
+              <.button
+                type="button"
+                onclick="navigator.clipboard.writeText(window.location.href.replace(/documents/,'share'))"
+                phx-click="copy_flash"
+                class="bg-gray-300 text-black hover:bg-gray-400 focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 flex items-center gap-2"
+              >
+                <.icon name="hero-clipboard-solid" class="h-4 w-4" /> Freigabelink kopieren
+              </.button>
+              <.button
+                type="button"
+                phx-click="unpublish"
+                class="bg-black text-white hover:bg-gray-900 focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 flex items-center gap-2"
+              >
+                <.icon name="hero-x-mark" class="h-4 w-4" /> Freigabe löschen
+              </.button>
+            </div>
+          <% else %>
+            <div
+              id="create-action"
+              class="flex items-center gap-2 transition-opacity duration-200 ease-in-out opacity-100"
+            >
+              <.button
+                type="button"
+                phx-click="publish"
+                class="bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-green-500 flex items-center gap-2"
+              >
+                <.icon name="hero-link-solid" class="h-4 w-4" /> Freigabelink erstellen
+              </.button>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+      
+      <%= if @live_action !== :public do %>
+  <div class="px-4 mt-4">
+    <h2 class="text-lg font-semibold">Verlauf</h2>
+  </div>
+  <div class="bg-white border-y">
+    <%= for entry <- Enum.sort_by(
+         Enum.concat(@document.document_comments || [], @document.document_logs || []),
+         & &1.inserted_at
+       ) do %>
+      <div class="flex items-start border-b py-2">
+        <div class="ml-4 mr-3 mt-1">
+          <%= case entry do %>
+          <% %DocumentComment{} -> %>
+            <.icon name="hero-chat-bubble-oval-left" class="h-6 w-6 text-gray-600" />
+          <% %DocumentLogEntry{action: "create"} -> %>
+            <.icon name="hero-plus-circle" class="h-6 w-6 text-gray-600" />
+          <% %DocumentLogEntry{action: "update"} -> %>
+            <.icon name="hero-pencil-square" class="h-6 w-6 text-gray-600" />
+          <% %DocumentLogEntry{action: "delete"} -> %>
+            <.icon name="hero-trash-solid" class="h-6 w-6 text-gray-600" />
+          <% %DocumentLogEntry{action: "view"} -> %>
+            <.icon name="hero-eye" class="h-6 w-6 text-gray-600" />
+          <% %DocumentLogEntry{} -> %>
+            <.icon name="hero-question-mark-circle" class="h-6 w-6 text-gray-600" />
+          <% end %>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center mb-1">
+            <.icon name="hero-user" class="h-4 w-4 text-gray-500 mr-1" />
+            <span class="text-sm font-semibold">
+              <%= case entry do %>
+              <% %DocumentComment{} -> %>
+                <%= entry.commented_by && entry.commented_by.email || "Unbekannter Benutzer" %>
+              <% %DocumentLogEntry{} -> %>
+                <%= entry.changed_by && entry.changed_by.email || entry.ip_address || "Unbekannter Benutzer" %>
+              <% end %>
+            </span>
+          </div>
+          <div class="flex items-center mb-1">
+            <.icon name="hero-calendar" class="h-4 w-4 text-gray-500 mr-1" />
+            <span class="text-xs text-gray-500">
+              <%= entry.inserted_at
+                |> Timex.Timezone.convert("Europe/Berlin")
+                |> Timex.format!("%d.%m.%Y %H:%M:%S", :strftime) %>
+            </span>
+          </div>
+          <%= case entry do %>
+          <% %DocumentComment{} -> %>
+            <div class="bg-gray-100 p-2 mr-4 rounded space-y-1 text-sm"><%= entry.comment %></div>
+          <% %DocumentLogEntry{action: "view"} -> %>
+            
+          <% %DocumentLogEntry{} -> %>
+            <div class="bg-gray-100 p-2 mr-4 rounded space-y-1">
+              <%= for {key, value} <- entry.changes || %{} do %>
+                <% {k, v} = format_field(key, value) %>
+                <div class="text-sm"><strong><%= k %>:</strong> <%= v %></div>
+              <% end %>
+              <%= for {key, value} <- entry.extension_changes || %{} do %>
+                <.live_component
+                  module={@extension_form_component}
+                  id={"doc-type-viewer-" <> entry.id}
+                  extension_module={@extension_module}
+                  key={key}
+                  variant="view"
+                  value={value}
+                />
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="pl-4 pr-3 pt-1 pb-3 border-t"><.simple_form for={@form_comment} id="comment-form" phx-submit="save_comment">
+      <.input
+        field={@form_comment[:comment]}
+        type="textarea"
+        placeholder="Ihr Kommentar"
+      />
+      <div class="mt-2">
+        <.button>Kommentar hinzufügen</.button>
+      </div>
+    </.simple_form></div>
+  </div>
+<% end %>
+
+    </div>
+  </div>
+  <%= if @show_delete_modal do %>
+    <.modal id="confirm-delete-modal" show={true} on_cancel={JS.push("hide_delete_modal")}>
+      <h2 class="text-lg font-semibold">Löschen bestätigen</h2>
+      <p class="mt-2">
+        Möchten Sie das Dokument wirklich löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.
+      </p>
+      <div class="mt-6 flex justify-end space-x-2">
+        <.button
+          type="button"
+          phx-click={JS.push("hide_delete_modal")}
+          class="px-4 py-2 rounded bg-gray-200 text-black hover:bg-gray-300"
+        >
+          Abbrechen
+        </.button>
+        <.button
+          type="button"
+          phx-click={JS.push("delete")}
+          class="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700"
+        >
+          <.icon name="hero-trash-solid" class="h-4 w-4" /> Ja, löschen
+        </.button>
+      </div>
+    </.modal>
+  <% end %>
+</div>

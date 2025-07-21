@@ -3,6 +3,8 @@ defmodule SportywebWeb.LocationLive.Show do
 
   alias Sportyweb.Asset
   alias Sportyweb.Organization.Club
+  alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.LocationDocument
 
   @impl true
   def mount(_params, _session, socket) do
@@ -19,13 +21,15 @@ defmodule SportywebWeb.LocationLive.Show do
         :notes,
         :phones,
         :postal_addresses,
-        fees: :internal_events
+        fees: :internal_events,
+        location_documents: Document.with_active_documents(LocationDocument)
       ])
 
     {:noreply,
      socket
      |> assign(:page_title, "Standort: #{location.name}")
      |> assign(:location, location)
+     |> assign(:documents, location.location_documents)
      |> assign(:club, location.club)
      |> stream(:equipment, location.equipment)}
   end

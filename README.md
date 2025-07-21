@@ -45,6 +45,16 @@ Current versions of:
 
 We recommend using a version manager to install Elixir & Erlang: https://elixir-lang.org/install.html#version-managers
 
+### Optional prerequisites
+
+These are only required if you want to enable thumbnail generation and fulltext extraction:
+
+- ImageMagick (for generating thumbnails)
+- ocrmypdf and pdftotext (for extracting fulltext from uploaded PDF files)
+
+You can install all of them on Debian/Ubuntu with: 
+`sudo apt install imagemagick ocrmypdf poppler-utils`
+
 ### Start the application
 
 - Install dependencies with `mix deps.get`

@@ -49,6 +49,16 @@ defmodule SportywebWeb.Router do
   ## Authentication routes
 
   scope "/", SportywebWeb do
+    pipe_through [:browser, :public_access]
+
+    live_session :public_access,
+      on_mount: [{SportywebWeb.UserAuth, :public_access}] do
+      live "/share/:id", DocumentLive.Edit, :public
+      get "/share/:id/file", DocumentController, :public
+    end
+  end
+
+  scope "/", SportywebWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
     live_session :redirect_if_user_is_authenticated,
@@ -145,6 +155,13 @@ defmodule SportywebWeb.Router do
 
       live "/contacts/:id", ContactLive.Show, :show
 
+      # Documents
+      live "/documents/new", DocumentLive.New, :new
+      live "/documents/:id", DocumentLive.Edit, :edit
+      live "/documents", DocumentLive.Index, :index_root
+      live "/clubs/:club_id/documents", DocumentLive.Index, :index
+
+
       # Locations (Each belongs to a club)
 
       live "/locations", LocationLive.Index, :index_root
@@ -236,6 +253,9 @@ defmodule SportywebWeb.Router do
       live "/clubs/:club_id/roles/new", RoleLive.New, :new
       live "/clubs/:club_id/roles/:user_id/edit", RoleLive.Edit, :edit
       live "/clubs/:club_id/roles/show", RoleLive.Show, :show
+
+      get "/documents/:id/file", DocumentController, :show
+      get "/documents/:id/thumbnail", DocumentController, :thumbnail
     end
   end
 

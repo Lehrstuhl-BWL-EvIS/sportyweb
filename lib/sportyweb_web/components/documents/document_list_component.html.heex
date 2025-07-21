@@ -1,0 +1,57 @@
+<div class="space-y-4">
+  <%= for {group_value, docs} <- grouped_documents(@documents, @group_by_type) do %>
+    <div class="bg-white rounded shadow-sm border">
+      <%= if @group_by_type do %>
+        <button
+          type="button"
+          phx-click={JS.toggle(to: "##{toggle_id(group_value)}")}
+          class="w-full text-left px-3 py-2 bg-zinc-100 hover:bg-zinc-200 text-sm font-medium text-zinc-700 flex justify-between items-center rounded-t"
+        >
+          <span>{label_for_group(@document_module, group_value)}</span>
+          <.icon name="hero-chevron-down" class="h-4 w-4 ml-2" />
+        </button>
+      <% end %>
+
+      <div id={toggle_id(group_value)} class={if @group_by_type, do: "hidden px-4 py-2", else: "px-2 py-2"}>
+        <%= for doc <- docs do %>
+          <a
+            href={"/documents/#{doc.document.id}"}
+            class="flex gap-4 items-center border-b last:border-none py-2 px-2 cursor-pointer group hover:bg-zinc-100 transition"
+          >
+            <div class="relative w-16 h-16">
+              <img
+                src={"/documents/#{doc.document.id}/thumbnail"}
+                class="w-16 h-16 object-cover rounded border border-gray-300 transition duration-200 group-hover:opacity-75"
+                loading="lazy"
+              />
+            </div>
+
+            <div class="flex flex-col flex-grow">
+              <div class="font-semibold">{doc.document.title}</div>
+              <div class="text-sm text-gray-600">{doc.document.description}</div>
+              <div class="flex gap-4 text-xs text-gray-500 mt-1 items-center">
+                <%= if assigns[:get_entity] do %>
+                  <div class="flex items-center gap-1">
+                    <.icon name="hero-link" class="h-4 w-4" />
+                    <%= case @get_entity.(doc) do
+                      %{name: name} when not is_nil(name) -> name
+                      _ -> "unbekannt"
+                    end %>
+                  </div>
+                <% end %>
+                <div class="flex items-center gap-1">
+                  <.icon name="hero-user" class="h-4 w-4" />
+                  {doc.document.uploaded_by.email}
+                </div>
+                <div class="flex items-center gap-1">
+                  <.icon name="hero-calendar" class="h-4 w-4" />
+                  {formatted_inserted_at(doc.document.inserted_at)}
+                </div>
+              </div>
+            </div>
+          </a>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

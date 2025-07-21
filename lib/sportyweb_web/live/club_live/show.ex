@@ -2,6 +2,8 @@ defmodule SportywebWeb.ClubLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Organization
+  alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.ClubDocument
 
   @impl true
   def mount(_params, _session, socket) do
@@ -17,12 +19,14 @@ defmodule SportywebWeb.ClubLive.Show do
         :financial_data,
         :notes,
         :phones,
-        :location
+        :location,
+        club_documents: Document.with_active_documents(ClubDocument)
       ])
 
     {:noreply,
      socket
      |> assign(:page_title, "Verein: #{club.name}")
+     |> assign(:documents, club.club_documents)
      |> assign(:club, club)}
   end
 end

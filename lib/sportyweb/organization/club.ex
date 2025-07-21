@@ -20,6 +20,8 @@ defmodule Sportyweb.Organization.Club do
   alias Sportyweb.Polymorphic.FinancialData
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
+  alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.ClubDocument
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -40,6 +42,10 @@ defmodule Sportyweb.Organization.Club do
     many_to_many :financial_data, FinancialData, join_through: ClubFinancialData
     many_to_many :notes, Note, join_through: ClubNote
     many_to_many :phones, Phone, join_through: ClubPhone
+
+    has_many :club_documents, ClubDocument
+    has_many :documents, through: [:club_documents, :document]
+    has_many :owned_documents, Document
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""

@@ -1,0 +1,199 @@
+defmodule Sportyweb.Documents do
+  @moduledoc """
+  The Calendar context.
+  """
+
+  import Ecto.Query, warn: false
+  alias Sportyweb.Repo
+
+  alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.DocumentLogEntry
+
+  @doc """
+  Returns a clubs list of documents.
+
+  ## Examples
+
+      iex> list_documents()
+      [%Document{}, ...]
+
+  """
+  def list_documents(club_id) do
+    Document
+    |> where([d], d.club_id == ^club_id and is_nil(d.deleted_at))
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns a clubs list of documents. Preloads associations.
+
+  ## Examples
+
+      iex> list_documents(1, [:club])
+      [%Document{}, ...]
+
+  """
+  def list_documents(club_id, preloads) do
+    Repo.preload(list_documents(club_id), preloads)
+  end
+
+  @doc """
+  Gets a single document.
+
+  Raises `Ecto.NoResultsError` if the Document does not exist.
+
+  ## Examples
+
+      iex> get_document!(123)
+      %Document{}
+
+      iex> get_document!(456)
+      ** (Ecto.NoResultsError)
+  """
+  def get_document!(id) do
+    Document
+    |> where([d], d.id == ^id and is_nil(d.deleted_at))
+    |> Repo.one!()
+  end
+
+  @doc """
+  Gets a single document. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Document does not exist.
+
+  ## Examples
+
+      iex> get_document!(123, [:club])
+      %Document{}
+
+      iex> get_document!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_document!(id, preloads) do
+    Document
+    |> where([d], d.id == ^id and is_nil(d.deleted_at))
+    |> Repo.one!()
+    |> Repo.preload(preloads)
+  end
+
+  @document_types [
+    {:contact_document, Sportyweb.Documents.ContactDocument},
+    {:club_document, Sportyweb.Documents.ClubDocument},
+    {:contract_document, Sportyweb.Documents.ContractDocument},
+    {:department_document, Sportyweb.Documents.DepartmentDocument},
+    {:equipment_document, Sportyweb.Documents.EquipmentDocument},
+    {:event_document, Sportyweb.Documents.EventDocument},
+    {:group_document, Sportyweb.Documents.GroupDocument},
+    {:location_document, Sportyweb.Documents.LocationDocument},
+  ]
+
+  def get_document_extension(%Document{id: document_id}) do
+    Enum.find_value(@document_types, fn {key, mod} ->
+      case Repo.one(from d in mod, where: d.document_id == ^document_id) do
+        nil -> nil
+        record -> {key, record}
+      end
+    end)
+  end
+
+  @doc """
+  Creates a document.
+
+  ## Examples
+
+      iex> create_document(%{field: value})
+      {:ok, %Document{}}
+
+      iex> create_document(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_document(attrs \\ %{}) do
+    %Document{}
+    |> Document.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a document.
+
+  ## Examples
+
+      iex> update_document(document, %{field: new_value})
+      {:ok, %Document{}}
+
+      iex> update_document(document, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_document(%Document{} = document, attrs) do
+    document
+    |> Document.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a document.
+
+  ## Examples
+
+      iex> delete_document(document)
+      {:ok, %Document{}}
+
+      iex> delete_document(document)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_document(%Document{} = document) do
+    Repo.delete(document)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking document changes.
+
+  ## Examples
+
+      iex> change_document(document)
+      %Ecto.Changeset{data: %Document{}}
+
+  """
+  def change_document(%Document{} = document, attrs \\ %{}) do
+    Document.changeset(document, attrs)
+  end
+
+  @doc """
+  Logs that a document was viewed by a user or an anonymous visitor.
+
+  The log entry is debounced for 5 minutes based on user and IP address.
+  """
+  def log_document_view(document_id, user_id, ip_address) do
+    five_minutes_ago = DateTime.utc_now() |> DateTime.add(-300, :second)
+
+    base_query =
+      from l in DocumentLogEntry,
+        where:
+          l.document_id == ^document_id and l.action == "view" and
+            l.ip_address == ^ip_address and l.inserted_at > ^five_minutes_ago
+
+    query =
+      if user_id do
+        from l in base_query, where: l.changed_by_id == ^user_id
+      else
+        from l in base_query, where: is_nil(l.changed_by_id)
+      end
+
+    unless Repo.exists?(query) do
+      %DocumentLogEntry{}
+      |> DocumentLogEntry.changeset(%{
+        "document_id" => document_id,
+        "changed_by_id" => user_id,
+        "ip_address" => ip_address,
+        "action" => "view"
+      })
+      |> Repo.insert()
+    end
+
+    :ok
+  end
+end

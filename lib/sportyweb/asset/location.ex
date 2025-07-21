@@ -14,6 +14,7 @@ defmodule Sportyweb.Asset.Location do
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
   alias Sportyweb.Polymorphic.PostalAddress
+  alias Sportyweb.Documents.LocationDocument
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -25,6 +26,8 @@ defmodule Sportyweb.Asset.Location do
     many_to_many :notes, Note, join_through: LocationNote
     many_to_many :phones, Phone, join_through: LocationPhone
     many_to_many :postal_addresses, PostalAddress, join_through: LocationPostalAddress
+    has_many :location_documents, LocationDocument
+    has_many :documents, through: [:location_documents, :document]
 
     field :name, :string, default: ""
     field :reference_number, :string, default: ""

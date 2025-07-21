@@ -2,6 +2,8 @@ defmodule SportywebWeb.DepartmentLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Organization
+  alias Sportyweb.Documents.Document
+  alias Sportyweb.Documents.DepartmentDocument
 
   @impl true
   def mount(_params, _session, socket) do
@@ -18,7 +20,8 @@ defmodule SportywebWeb.DepartmentLive.Show do
         :groups,
         :notes,
         :phones,
-        fees: :internal_events
+        fees: :internal_events,
+        department_documents: Document.with_active_documents(DepartmentDocument),
       ])
 
     {:noreply,
@@ -26,6 +29,7 @@ defmodule SportywebWeb.DepartmentLive.Show do
      |> assign(:page_title, "Abteilung: #{department.name}")
      |> assign(:department, department)
      |> assign(:club, department.club)
+     |> assign(:documents, department.department_documents)
      |> stream(:groups, department.groups)}
   end
 end

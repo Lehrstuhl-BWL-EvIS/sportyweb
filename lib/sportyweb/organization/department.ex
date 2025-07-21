@@ -14,12 +14,15 @@ defmodule Sportyweb.Organization.Department do
   alias Sportyweb.Polymorphic.Email
   alias Sportyweb.Polymorphic.Note
   alias Sportyweb.Polymorphic.Phone
+  alias Sportyweb.Documents.DepartmentDocument
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "departments" do
     belongs_to :club, Club
     has_many :groups, Group, preload_order: [asc: :name]
+    has_many :department_documents, DepartmentDocument
+    has_many :documents, through: [:department_documents, :document]
     many_to_many :contracts, Contract, join_through: DepartmentContract
     many_to_many :emails, Email, join_through: DepartmentEmail
     many_to_many :fees, Fee, join_through: DepartmentFee

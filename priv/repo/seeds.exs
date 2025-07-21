@@ -34,6 +34,18 @@ alias Sportyweb.Polymorphic.InternalEvent
 alias Sportyweb.Polymorphic.Note
 alias Sportyweb.Polymorphic.Phone
 alias Sportyweb.Polymorphic.PostalAddress
+alias Sportyweb.Documents
+alias Sportyweb.Documents.DocumentLogEntry
+alias Sportyweb.Documents.{
+  ClubDocument,
+  DepartmentDocument,
+  GroupDocument,
+  LocationDocument,
+  EquipmentDocument,
+  EventDocument,
+  ContactDocument,
+  ContractDocument
+}
 
 alias Sportyweb.RBAC.Role.ApplicationRole
 alias Sportyweb.RBAC.Role.ClubRole
@@ -110,6 +122,54 @@ defmodule Sportyweb.SeedHelper do
       content: if(:rand.uniform() < 0.7, do: Faker.Lorem.paragraph(), else: "")
     }
   end
+
+  def create_document_for(entity, uploader, base_attrs) do
+    {club_id, ext_module, ext_params} =
+      case entity do
+        %Club{id: id} -> {id, ClubDocument, %{club_id: id}}
+        %Department{id: id, club_id: cid} -> {cid, DepartmentDocument, %{department_id: id}}
+        %Group{id: id, department_id: dep_id} ->
+          cid = Repo.get!(Department, dep_id).club_id
+          {cid, GroupDocument, %{group_id: id}}
+        %Location{id: id, club_id: cid} -> {cid, LocationDocument, %{location_id: id}}
+        %Equipment{id: id, location_id: loc_id} ->
+          cid = Repo.get!(Location, loc_id).club_id
+          {cid, EquipmentDocument, %{equipment_id: id}}
+        %Event{id: id, club_id: cid} -> {cid, EventDocument, %{event_id: id}}
+        %Contact{id: id, club_id: cid} -> {cid, ContactDocument, %{contact_id: id}}
+        %Contract{id: id, club_id: cid} -> {cid, ContractDocument, %{contract_id: id}}
+      end
+
+    type = ext_module.valid_types() |> List.first()
+    doc_params = Map.take(base_attrs, [:title, :description])
+
+    {:ok, document} =
+      Repo.transaction(fn ->
+        {:ok, document} =
+          Documents.create_document(
+            Map.merge(base_attrs, %{club_id: club_id, uploaded_by_id: uploader.id})
+          )
+
+        struct(ext_module)
+        |> ext_module.changeset(Map.merge(ext_params, %{document_id: document.id, type: type}))
+        |> Repo.insert!()
+
+        %DocumentLogEntry{}
+        |> DocumentLogEntry.changeset(%{
+          document_id: document.id,
+          changed_by_id: uploader.id,
+          ip_address: "192.168.0.1",
+          action: "create",
+          changes: doc_params,
+          extension_changes: %{type: type}
+        })
+        |> Repo.insert!()
+
+        document
+      end)
+
+    document
+  end
 end
 
 ###################################
@@ -133,6 +193,11 @@ if Mix.env() in [:dev] do
   })
 
   Accounts.register_user(%{
+    email: "dominik.both@fernuni-hagen.de",
+    password: "ORqZfa42gf2ds77b"
+  })
+
+  Accounts.register_user(%{
     email: "TesterSportywebAdmin@test.de",
     password: "testtest"
   })
@@ -146,6 +211,29 @@ if Mix.env() in [:dev] do
   |> Repo.all()
   |> Enum.map(&Repo.update!(User.confirm_changeset(&1)))
 end
+
+uploader_user = Repo.all(User) |> List.first()
+seed_pdf_path = Path.join(__DIR__, "seeds.pdf")
+
+{:ok, seed_file_data} =
+  Documents.Storage.store_file(
+    %Plug.Upload{filename: "seeds.pdf", content_type: "application/pdf", path: seed_pdf_path},
+    Ecto.UUID.generate()
+  )
+
+base_doc_attrs = %{
+  title: "Beispieldokument",
+  description: "Ein Beispieldokument zum Test",
+  filename: seed_file_data.filename,
+  content_type: seed_file_data.content_type,
+  byte_size: seed_file_data.byte_size,
+  storage_path: seed_file_data.storage_path,
+  thumbnail_path: seed_file_data.thumbnail_path,
+  checksum: seed_file_data.checksum,
+  fulltext: seed_file_data.fulltext,
+  public: false,
+  locked: false
+}
 
 ###################################
 # Add Club 1
@@ -1093,3 +1181,31 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
     end
   end
 end)
+
+for club <- Repo.all(Club) do
+  Sportyweb.SeedHelper.create_document_for(club, uploader_user, base_doc_attrs)
+end
+
+for department <- Repo.all(Department) do
+  Sportyweb.SeedHelper.create_document_for(department, uploader_user, base_doc_attrs)
+end
+
+for group <- Repo.all(Group) do
+  Sportyweb.SeedHelper.create_document_for(group, uploader_user, base_doc_attrs)
+end
+
+for location <- Repo.all(Location) do
+  Sportyweb.SeedHelper.create_document_for(location, uploader_user, base_doc_attrs)
+end
+
+for equipment <- Repo.all(Equipment) do
+  Sportyweb.SeedHelper.create_document_for(equipment, uploader_user, base_doc_attrs)
+end
+
+for event <- Repo.all(Event) do
+  Sportyweb.SeedHelper.create_document_for(event, uploader_user, base_doc_attrs)
+end
+
+for contact <- Repo.all(Contact) do
+  Sportyweb.SeedHelper.create_document_for(contact, uploader_user, base_doc_attrs)
+end
