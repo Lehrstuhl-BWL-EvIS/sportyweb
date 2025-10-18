@@ -13,8 +13,10 @@
   <div>
     <.icon name="hero-information-circle" class="bg-blue-500 w-12 h-12 mt-6" />
   </div>
+  
   <div>
     <p class="font-bold text-zinc-800 text-xl mt-5">Rollen auf Vereinsebene</p>
+    
     <p class="text-zinc-800 text-md">
       gewähren Nutzern generell den Zugriff auf den allgemeinen Vereinsbereich sowie das Auflisten sich darin befindlicher Abteilungen.
     </p>
@@ -24,6 +26,7 @@
 <.card class="mt-5">
   <.table id="clubroles" rows={@clubroles}>
     <:col :let={clubroles} label="Name">{clubroles.name}</:col>
+    
     <:col :let={clubroles} label="Info">
       Die Rolle "{clubroles.name}" {clubroles.info}
     </:col>
@@ -34,8 +37,10 @@
   <div>
     <.icon name="hero-information-circle" class="bg-blue-500 w-12 h-12 mt-6" />
   </div>
+  
   <div>
     <p class="font-bold text-zinc-800 text-xl mt-5">Rollen auf Abteilungsebene</p>
+    
     <p class="text-zinc-800 text-md">
       gewähren Nutzern, neben dem Zugriff auf den allgemeinen Vereinsbereich und dem Auflisten sich darin befindlicher Abteilungen, den Zugriff auf die mit der Rolle in Verbindung stehende Abteilung.
     </p>
@@ -45,6 +50,7 @@
 <.card class="mt-5">
   <.table id="departmentroles" rows={@departmentroles}>
     <:col :let={departmentroles} label="Name">{departmentroles.name}</:col>
+    
     <:col :let={departmentroles} label="Info">
       Die Rolle "{departmentroles.name}" {departmentroles.info}
     </:col>

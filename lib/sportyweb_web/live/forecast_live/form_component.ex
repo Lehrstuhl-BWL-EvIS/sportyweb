@@ -13,7 +13,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
       <.header>
         {@title}
       </.header>
-
+      
       <.card>
         <.simple_form
           for={@form}
@@ -34,7 +34,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
                   phx-change="update_type"
                 />
               </div>
-
+              
               <%= if @type == "contact" do %>
                 <div class="col-span-12">
                   <.input
@@ -46,7 +46,7 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
                   />
                 </div>
               <% end %>
-
+              
               <%= if @type == "subsidy" do %>
                 <div class="col-span-12">
                   <.input
@@ -58,17 +58,17 @@ defmodule SportywebWeb.ForecastLive.FormComponent do
                   />
                 </div>
               <% end %>
-
+              
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:start_date]} type="date" label="Von" />
               </div>
-
+              
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:end_date]} type="date" label="Bis" />
               </div>
             </.input_grid>
           </.input_grids>
-
+          
           <:actions>
             <div>
               <.button phx-disable-with="Erstellen...">Prognose erstellen</.button>

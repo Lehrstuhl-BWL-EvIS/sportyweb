@@ -10,7 +10,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
       <.header>
         {@title}
       </.header>
-
+      
       <.card>
         <.simple_form
           for={@form}
@@ -24,7 +24,7 @@ defmodule SportywebWeb.ClubLive.FormComponent do
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:name]} type="text" label="Name" />
               </div>
-
+              
               <div class="col-span-12 md:col-span-6">
                 <.input
                   field={@form[:reference_number]}
@@ -32,20 +32,20 @@ defmodule SportywebWeb.ClubLive.FormComponent do
                   label="Referenznummer (optional)"
                 />
               </div>
-
+              
               <div class="col-span-12">
                 <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
               </div>
-
+              
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:website_url]} type="text" label="URL (optional)" />
               </div>
-
+              
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:foundation_date]} type="date" label="Gründungsdatum" />
               </div>
             </.input_grid>
-
+            
             <.input_grid :if={@club.id && Enum.any?(@club.locations)} class="pt-6">
               <div class="col-span-12">
                 <.input
@@ -57,29 +57,31 @@ defmodule SportywebWeb.ClubLive.FormComponent do
                 />
               </div>
             </.input_grid>
-
+            
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.EmailsFormComponent.render form={@form} />
             </.input_grid>
-
+            
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.PhonesFormComponent.render form={@form} />
             </.input_grid>
-
+            
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.FinancialDataFormComponent.render form={@form} />
             </.input_grid>
-
+            
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
             </.input_grid>
           </.input_grids>
-
+          
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
+              
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
+            
             <.button
               :if={@club.id}
               class="bg-rose-700 hover:bg-rose-800"

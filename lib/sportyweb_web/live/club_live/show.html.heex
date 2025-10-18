@@ -12,9 +12,11 @@
     <:item title="Referenznummer">
       {format_string_field(@club.reference_number)}
     </:item>
+    
     <:item title="Beschreibung">
       {format_string_field(@club.description)}
     </:item>
+    
     <:item title="URL">
       <%= if String.trim(@club.website_url) != "" do %>
         <.link href={@club.website_url} class="text-indigo-600 hover:underline" target="_blank">
@@ -24,9 +26,11 @@
         -
       <% end %>
     </:item>
+    
     <:item title="Gründungsdatum">
       {format_date_field_dmy(@club.foundation_date)}
     </:item>
+    
     <:item title="Hauptstandort">
       <%= if @club.location do %>
         <.link navigate={~p"/locations/#{@club.location}"} class="text-indigo-600 hover:underline">
@@ -36,17 +40,21 @@
         -
       <% end %>
     </:item>
+    
     <:item title="E-Mail">
       {format_struct_list(@club.emails, :address)}
     </:item>
+    
     <:item title="Telefon">
       {format_struct_list(@club.phones, :number)}
     </:item>
+    
     <:item title="Zahlungsdaten">
       <SportywebWeb.PolymorphicLive.FinancialDataShowComponent.render financial_data={
         @club.financial_data
       } />
     </:item>
+    
     <:item title="Notizen">
       <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@club.notes} />
     </:item>

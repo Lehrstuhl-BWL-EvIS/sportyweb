@@ -12,7 +12,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
       <.header>
         {@title}
       </.header>
-
+      
       <.card>
         <.simple_form
           for={@form}
@@ -24,7 +24,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
           <div class="hidden">
             <input field={@form[:type].value} type="hidden" readonly />
           </div>
-
+          
           <.input_grids>
             <%= if @step == 1 do %>
               <.input_grid>
@@ -39,14 +39,14 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                 </div>
               </.input_grid>
             <% end %>
-
+            
             <%= if @step == 2 do %>
               <%= if @contact_type == "organization" do %>
                 <.input_grid>
                   <div class="col-span-12 md:col-span-6">
                     <.input field={@form[:organization_name]} type="text" label="Organisationsname" />
                   </div>
-
+                  
                   <div class="col-span-12 md:col-span-6">
                     <.input
                       field={@form[:organization_type]}
@@ -62,11 +62,11 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                   <div class="col-span-12 md:col-span-4">
                     <.input field={@form[:person_last_name]} type="text" label="Nachname" />
                   </div>
-
+                  
                   <div class="col-span-12 md:col-span-4">
                     <.input field={@form[:person_first_name_1]} type="text" label="Vorname" />
                   </div>
-
+                  
                   <div class="col-span-12 md:col-span-4">
                     <.input
                       field={@form[:person_first_name_2]}
@@ -74,7 +74,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                       label="2. Vorname (optional)"
                     />
                   </div>
-
+                  
                   <div class="col-span-12 md:col-span-6">
                     <.input
                       field={@form[:person_gender]}
@@ -84,35 +84,35 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                       prompt="Bitte auswählen"
                     />
                   </div>
-
+                  
                   <div class="col-span-12 md:col-span-6">
                     <.input field={@form[:person_birthday]} type="date" label="Geburtsdatum" />
                   </div>
                 </.input_grid>
               <% end %>
-
+              
               <.input_grid class="pt-6">
                 <SportywebWeb.PolymorphicLive.PostalAddressesFormComponent.render form={@form} />
               </.input_grid>
-
+              
               <.input_grid class="pt-6">
                 <SportywebWeb.PolymorphicLive.EmailsFormComponent.render form={@form} />
               </.input_grid>
-
+              
               <.input_grid class="pt-6">
                 <SportywebWeb.PolymorphicLive.PhonesFormComponent.render form={@form} />
               </.input_grid>
-
+              
               <.input_grid class="pt-6">
                 <SportywebWeb.PolymorphicLive.FinancialDataFormComponent.render form={@form} />
               </.input_grid>
-
+              
               <.input_grid class="pt-6">
                 <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
               </.input_grid>
             <% end %>
           </.input_grids>
-
+          
           <:actions>
             <div>
               <%= if @step == 1 && @contact_type != "" do %>
@@ -125,13 +125,14 @@ defmodule SportywebWeb.ContactLive.FormComponent do
                   Weiter
                 </.button>
               <% end %>
-
+              
               <%= if @step == 2 do %>
                 <.button phx-disable-with="Speichern...">Speichern</.button>
               <% end %>
-
+              
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
+            
             <.button
               :if={@contact.id}
               class="bg-rose-700 hover:bg-rose-800"

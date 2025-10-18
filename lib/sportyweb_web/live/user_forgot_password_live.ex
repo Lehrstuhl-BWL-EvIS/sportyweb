@@ -10,7 +10,7 @@ defmodule SportywebWeb.UserForgotPasswordLive do
         Passwort vergessen?
         <:subtitle>Wir senden Ihnen einen Link um es zurückzusetzen.</:subtitle>
       </.header>
-
+      
       <.card class="mt-8">
         <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
           <.input field={@form[:email]} type="email" placeholder="E-Mail-Adresse" required />
@@ -21,8 +21,7 @@ defmodule SportywebWeb.UserForgotPasswordLive do
           </:actions>
         </.simple_form>
       </.card>
-
-      <SportywebWeb.UserRegistrationLoginLinksComponent.render />
+       <SportywebWeb.UserRegistrationLoginLinksComponent.render />
     </div>
     """
   end

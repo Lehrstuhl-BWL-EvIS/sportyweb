@@ -12,37 +12,47 @@
     <:item title="Art">
       {get_key_for_value(Contact.get_valid_types(), @contact.type)}
     </:item>
+    
     <:item title="Name">
       {format_string_field(@contact.name)}
     </:item>
+    
     <:item :if={Contact.is_organization?(@contact)} title="Organisationstyp">
       {get_key_for_value(Contact.get_valid_organization_types(), @contact.organization_type)}
     </:item>
+    
     <:item :if={Contact.is_person?(@contact)} title="Geschlecht">
       {get_key_for_value(Contact.get_valid_genders(), @contact.person_gender)}
     </:item>
+    
     <:item :if={Contact.is_person?(@contact)} title="Geburtsdatum">
       {format_date_field_dmy(@contact.person_birthday)} - {Contact.age_in_years(@contact)} Jahre
     </:item>
+    
     <:item title="Adresse">
       <SportywebWeb.PolymorphicLive.PostalAddressesShowComponent.render postal_addresses={
         @contact.postal_addresses
       } />
     </:item>
+    
     <:item title="E-Mail">
       {format_struct_list(@contact.emails, :address)}
     </:item>
+    
     <:item title="Telefon">
       {format_struct_list(@contact.phones, :number)}
     </:item>
+    
     <:item title="Zahlungsdaten">
       <SportywebWeb.PolymorphicLive.FinancialDataShowComponent.render financial_data={
         @contact.financial_data
       } />
     </:item>
+    
     <:item title="Notizen">
       <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@contact.notes} />
     </:item>
+    
     <:item :if={Contact.has_active_membership_contract?(@contact)} title="Aktives Mitglied">
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>
@@ -63,13 +73,14 @@
       <:col :let={{_id, contract}} label="Vertragsobjekt">
         {format_string_field(Contract.get_object(contract).name)}
       </:col>
+      
       <:col :let={{_id, contract}} label="Gebühr">
         {format_string_field(contract.fee.name)}
         <%= if Fee.is_archived?(contract.fee) do %>
           <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
         <% end %>
       </:col>
-
+      
       <:action :let={{_id, contract}}>
         <.link navigate={~p"/contracts/#{contract}"}>Anzeigen</.link>
       </:action>

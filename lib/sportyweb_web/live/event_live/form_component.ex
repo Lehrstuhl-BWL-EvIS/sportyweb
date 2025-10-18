@@ -13,7 +13,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
       <.header>
         {@title}
       </.header>
-
+      
       <.card>
         <.simple_form
           for={@form}
@@ -27,11 +27,11 @@ defmodule SportywebWeb.EventLive.FormComponent do
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:name]} type="text" label="Name" />
               </div>
-
+              
               <div class="col-span-12 md:col-span-3">
                 <.input field={@form[:reference_number]} type="text" label="Referenznummer" />
               </div>
-
+              
               <div class="col-span-12 md:col-span-3">
                 <.input
                   field={@form[:status]}
@@ -40,12 +40,12 @@ defmodule SportywebWeb.EventLive.FormComponent do
                   options={Event.get_valid_statuses()}
                 />
               </div>
-
+              
               <div class="col-span-12">
                 <.input field={@form[:description]} type="textarea" label="Beschreibung" />
               </div>
             </.input_grid>
-
+            
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
                 <.input
@@ -54,7 +54,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
                   label="Minimale Anzahl an Teilnehmern (optional)"
                 />
               </div>
-
+              
               <div class="col-span-12 md:col-span-6">
                 <.input
                   field={@form[:maximum_participants]}
@@ -63,7 +63,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
                 />
               </div>
             </.input_grid>
-
+            
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
                 <.input
@@ -72,7 +72,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
                   label="Mindestalter (optional)"
                 />
               </div>
-
+              
               <div class="col-span-12 md:col-span-6">
                 <.input
                   field={@form[:maximum_age_in_years]}
@@ -81,7 +81,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
                 />
               </div>
             </.input_grid>
-
+            
             <.input_grid class="pt-6">
               <div class="col-span-12">
                 <.input
@@ -91,7 +91,7 @@ defmodule SportywebWeb.EventLive.FormComponent do
                   options={Event.get_valid_venue_types()}
                 />
               </div>
-
+              
               <%= if @venue_type == "location" do %>
                 <div class="col-span-12">
                   <.inputs_for :let={location} field={@form[:locations]}>
@@ -104,36 +104,38 @@ defmodule SportywebWeb.EventLive.FormComponent do
                   </.inputs_for>
                 </div>
               <% end %>
-
+              
               <%= if @venue_type == "postal_address" do %>
                 <SportywebWeb.PolymorphicLive.PostalAddressesFormComponent.render form={@form} />
               <% end %>
-
+              
               <%= if @venue_type == "free_form" do %>
                 <div class="col-span-12">
                   <.input field={@form[:venue_description]} type="textarea" label="Veranstaltungsort" />
                 </div>
               <% end %>
             </.input_grid>
-
+            
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.EmailsFormComponent.render form={@form} />
             </.input_grid>
-
+            
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.PhonesFormComponent.render form={@form} />
             </.input_grid>
-
+            
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
             </.input_grid>
           </.input_grids>
-
+          
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
+              
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
+            
             <.button
               :if={@event.id}
               class="bg-rose-700 hover:bg-rose-800"

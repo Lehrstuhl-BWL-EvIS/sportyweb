@@ -12,15 +12,19 @@
       <:col :let={{_id, transaction}} label="Name">
         {format_string_field(transaction.name)}
       </:col>
+      
       <:col :let={{_id, transaction}} label="Betrag">
         {transaction.amount}
       </:col>
+      
       <:col :let={{_id, transaction}} label="Erstellung">
         {format_date_field_dmy(transaction.creation_date)}
       </:col>
+      
       <:col :let={{_id, transaction}} label="Zahlung">
         {format_date_field_dmy(transaction.payment_date)}
       </:col>
+      
       <:col :let={{_id, transaction}} label="Kontakt">
         <.link
           navigate={~p"/contacts/#{transaction.contract.contact}"}
@@ -29,7 +33,7 @@
           {format_string_field(transaction.contract.contact.name)}
         </.link>
       </:col>
-
+      
       <:action :let={{_id, transaction}}>
         <.link navigate={~p"/transactions/#{transaction}"}>Anzeigen</.link>
       </:action>
@@ -39,6 +43,7 @@
       Transaktionen werden bei der automatisch stattfindenden Berechnung
       von Gebühren erzeugt und anschließend hier angezeigt.
     </p>
+    
     <p>
       Eine manuelle Erstellung ist nicht möglich.
     </p>

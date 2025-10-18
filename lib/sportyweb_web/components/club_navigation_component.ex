@@ -31,7 +31,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
           <.icon name="hero-rocket-launch" class={@classes_icon} />
           <span class="truncate">Dashboard</span>
         </.link>
-
+        
         <.link
           navigate={~p"/clubs/#{@club}/events"}
           class={[
@@ -42,7 +42,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
           <.icon name="hero-calendar" class={@classes_icon} />
           <span class="truncate">Veranstaltungen</span>
         </.link>
-
+        
         <.link
           navigate={~p"/clubs/#{@club}/departments"}
           class={[
@@ -53,7 +53,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
           <.icon name="hero-squares-plus" class={@classes_icon} />
           <span class="truncate">Abteilungen & Gruppen</span>
         </.link>
-
+        
         <.link
           navigate={~p"/clubs/#{@club}/contacts"}
           class={[
@@ -64,7 +64,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
           <.icon name="hero-user-group" class={@classes_icon} />
           <span class="truncate">Kontakte & Mitglieder</span>
         </.link>
-
+        
         <.link
           navigate={~p"/clubs/#{@club}/locations"}
           class={[
@@ -75,7 +75,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
           <.icon name="hero-building-office-2" class={@classes_icon} />
           <span class="truncate">Standorte & Equipment</span>
         </.link>
-
+        
         <.link
           phx-target={@myself}
           phx-click="toggle_submenu"
@@ -85,15 +85,27 @@ defmodule SportywebWeb.ClubNavigationComponent do
             if(@club_navigation_current_item == :finances, do: @classes_menu_item_active)
           ]}
         >
-          <.icon name="hero-banknotes" class={@classes_icon} />
-          <span class="truncate">Finanzen</span>
+          <.icon name="hero-banknotes" class={@classes_icon} /> <span class="truncate">Finanzen</span>
           <.icon
             name="hero-chevron-right"
             class={Enum.join([@classes_chevron, if(@show_submenu_finances, do: "rotate-90")], " ")}
           />
         </.link>
-
+        
         <ul class={["mb-1 px-2", if(!@show_submenu_finances, do: "hidden")]}>
+          <li>
+            <.link
+              navigate={~p"/clubs/#{@club}/accounts"}
+              class={[
+                @classes_menu_item,
+                @classes_submenu_item,
+                if(@club_navigation_current_item == :accounts, do: @classes_menu_item_active)
+              ]}
+            >
+              <span class="truncate">Kontenplan</span>
+            </.link>
+          </li>
+          
           <li>
             <.link
               navigate={~p"/clubs/#{@club}/transactions"}
@@ -106,6 +118,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
               <span class="truncate">Transaktionen</span>
             </.link>
           </li>
+          
           <li>
             <.link
               navigate={~p"/clubs/#{@club}/forecasts"}
@@ -118,6 +131,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
               <span class="truncate">Prognose</span>
             </.link>
           </li>
+          
           <li>
             <.link
               navigate={~p"/clubs/#{@club}/fees"}
@@ -130,6 +144,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
               <span class="truncate">Gebühren</span>
             </.link>
           </li>
+          
           <li>
             <.link
               navigate={~p"/clubs/#{@club}/subsidies"}
@@ -143,7 +158,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
             </.link>
           </li>
         </ul>
-
+        
         <.link
           navigate={~p"/clubs/#{@club}/roles"}
           class={[
@@ -165,6 +180,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
       assigns.club_navigation_current_item == :transactions ||
         assigns.club_navigation_current_item == :forecasts ||
         assigns.club_navigation_current_item == :fees ||
+        assigns.club_navigation_current_item == :accounts ||
         assigns.club_navigation_current_item == :subsidies
 
     {:ok,

@@ -208,6 +208,16 @@ defmodule SportywebWeb.Router do
 
       live "/transactions/:id", TransactionLive.Show, :show
 
+      # Account (Each belongs to a club)
+
+      live "/accounts", AccountLive.Index, :index_root
+      live "/clubs/:club_id/accounts", AccountLive.Index, :index
+
+      live "/clubs/:club_id/accounts/new", AccountLive.NewEdit, :new
+      live "/accounts/:id/edit", AccountLive.NewEdit, :edit
+
+      live "/accounts/:id", AccountLive.Show, :show
+
       # Fees (Polymorphic)
 
       live "/fees", FeeLive.Index, :index_root

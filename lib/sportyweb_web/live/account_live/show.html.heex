@@ -1,0 +1,16 @@
+<.header>
+  {@page_title}
+  <:actions>
+    <.link patch={~p"/accounts/#{@account}/edit"}>
+      <.button>Konto bearbeiten</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <.list>
+    <:item title="Kontonummer">{@account.account_number}</:item>
+    <:item title="Name">{@account.name}</:item>
+    <:item title="Kontoklasse">{@account.class}</:item>
+  </.list>
+</.card>

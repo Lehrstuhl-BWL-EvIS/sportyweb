@@ -1,0 +1,29 @@
+<.header>
+  {@page_title}
+  <:actions>
+    <.link patch={~p"/clubs/#{@club}/accounts/new"}>
+      <.button>Konto erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@streams.accounts.inserts) do %>
+    <.table
+      id="accounts"
+      rows={@streams.accounts}
+      row_click={fn {_id, account} -> JS.navigate(~p"/accounts/#{account}") end}
+    >
+      <:col :let={{_id, account}} label="Kontonummer">{account.account_number}</:col>
+      <:col :let={{_id, account}} label="Name">{account.name}</:col>
+      <:col :let={{_id, account}} label="Kontoklasse">{account.class}</:col>
+      <:action :let={{_id, account}}>
+        <.link navigate={~p"/accounts/#{account}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p class="mb-3">
+      Bisher wurden noch keine Konten erstellt.
+    </p>
+  <% end %>
+</.card>

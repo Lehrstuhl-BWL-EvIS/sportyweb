@@ -106,4 +106,62 @@ defmodule Sportyweb.AccountingTest do
       assert %Ecto.Changeset{} = Accounting.change_transaction(transaction)
     end
   end
+
+  describe "accounts" do
+    alias Sportyweb.Accounting.Account
+
+    import Sportyweb.AccountingFixtures
+
+    @invalid_attrs %{name: nil, type: nil, number: nil}
+
+    test "list_accounts/0 returns all accounts" do
+      account = account_fixture()
+      assert Accounting.list_accounts() == [account]
+    end
+
+    test "get_account!/1 returns the account with given id" do
+      account = account_fixture()
+      assert Accounting.get_account!(account.id) == account
+    end
+
+    test "create_account/1 with valid data creates a account" do
+      valid_attrs = %{name: "some name", type: "some type", number: 42}
+
+      assert {:ok, %Account{} = account} = Accounting.create_account(valid_attrs)
+      assert account.name == "some name"
+      assert account.type == "some type"
+      assert account.number == 42
+    end
+
+    test "create_account/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounting.create_account(@invalid_attrs)
+    end
+
+    test "update_account/2 with valid data updates the account" do
+      account = account_fixture()
+      update_attrs = %{name: "some updated name", type: "some updated type", number: 43}
+
+      assert {:ok, %Account{} = account} = Accounting.update_account(account, update_attrs)
+      assert account.name == "some updated name"
+      assert account.type == "some updated type"
+      assert account.number == 43
+    end
+
+    test "update_account/2 with invalid data returns error changeset" do
+      account = account_fixture()
+      assert {:error, %Ecto.Changeset{}} = Accounting.update_account(account, @invalid_attrs)
+      assert account == Accounting.get_account!(account.id)
+    end
+
+    test "delete_account/1 deletes the account" do
+      account = account_fixture()
+      assert {:ok, %Account{}} = Accounting.delete_account(account)
+      assert_raise Ecto.NoResultsError, fn -> Accounting.get_account!(account.id) end
+    end
+
+    test "change_account/1 returns a account changeset" do
+      account = account_fixture()
+      assert %Ecto.Changeset{} = Accounting.change_account(account)
+    end
+  end
 end

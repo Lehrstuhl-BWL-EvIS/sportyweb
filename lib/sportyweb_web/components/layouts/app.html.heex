@@ -6,19 +6,15 @@
         <div class="flex items-center">
           <.link navigate={~p"/clubs"} class="flex items-center">
             <svg viewBox="0 0 80 140" fill="#374151" stroke="black" stroke-width=".5" class="h-12">
-              <path d="M60 30 l-13-13 l13-13 l13 13 z" />
-              <path d="M40 30 v16 l-16,16 v-16 z" />
-              <path d="M40 30 h40 l-40,40 z" />
-              <path d="M55 95 v-40 l-40,40 z" />
-              <path d="M55 76 v40 l20,-20 z" />
-              <path d="M55 115 v20 l-10,-10 z" />
+              <path d="M60 30 l-13-13 l13-13 l13 13 z" /> <path d="M40 30 v16 l-16,16 v-16 z" />
+              <path d="M40 30 h40 l-40,40 z" /> <path d="M55 95 v-40 l-40,40 z" />
+              <path d="M55 76 v40 l20,-20 z" /> <path d="M55 115 v20 l-10,-10 z" />
               <path d="M16 94 h-14 v14 z" />
             </svg>
-
-            <span class="ml-3 text-xl font-bold text-zinc-700">Sportyweb</span>
+             <span class="ml-3 text-xl font-bold text-zinc-700">Sportyweb</span>
           </.link>
         </div>
-
+        
         <%= if @current_user do %>
           <div class="lg:hidden flex items-center absolute inset-y-0 right-0">
             <!-- Mobile menu button -->
@@ -35,7 +31,7 @@
               </span>
             </button>
           </div>
-
+          
           <div class="hidden lg:flex items-center justify-end">
             <!-- Profile dropdown -->
             <div class="relative ml-5 flex-shrink-0">
@@ -80,7 +76,7 @@
                 <div class="px-4 pt-2 pb-3 text-sm font-medium text-zinc-800 truncate">
                   {@current_user.email}
                 </div>
-
+                
                 <.link
                   navigate={~p"/users/settings"}
                   class="block hover:bg-zinc-100 px-4 py-2 text-sm text-zinc-700"
@@ -89,7 +85,7 @@
                 >
                   Profil bearbeiten
                 </.link>
-
+                
                 <.link
                   href={~p"/users/log_out"}
                   method="delete"
@@ -105,7 +101,7 @@
         <% end %>
       </div>
     </div>
-
+    
     <%= if @current_user do %>
       <!-- Mobile menu, show/hide based on menu state. -->
       <nav class="hidden" id="mobile-menu" aria-label="Global">
@@ -121,14 +117,14 @@
             </div>
           </div>
         <% end %>
-
+        
         <div class="border-t border-zinc-200 px-2 sm:px-4 py-4">
           <div class="mx-auto max-w-3xl">
             <div class="px-4 text-base font-medium text-zinc-800 truncate">
               {@current_user.email}
             </div>
           </div>
-
+          
           <div class="mx-auto max-w-3xl space-y-1 mt-4">
             <.link
               navigate={~p"/users/settings"}
@@ -136,7 +132,7 @@
             >
               Profil bearbeiten
             </.link>
-
+            
             <.link
               href={~p"/users/log_out"}
               method="delete"
@@ -149,7 +145,7 @@
       </nav>
     <% end %>
   </header>
-
+  
   <div class="py-10">
     <div class="mx-auto max-w-7xl sm:px-6 lg:grid lg:grid-cols-12 lg:gap-8 lg:px-8">
       <%= if show_club_navigation(assigns) do %>
@@ -165,8 +161,7 @@
       <!-- Set the col-span classes based on whether a user is logged in, in which case the navigation (sidebar) is visible. -->
       <main class={"lg:block #{if show_club_navigation(assigns), do: ~c"lg:col-span-9", else: ~c"lg:col-span-12"}"}>
         <div>
-          <.flash_group flash={@flash} />
-          {@inner_content}
+          <.flash_group flash={@flash} /> {@inner_content}
         </div>
       </main>
     </div>

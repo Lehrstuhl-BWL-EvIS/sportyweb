@@ -6,9 +6,11 @@ defmodule SportywebWeb.UserSettingsLive do
   def render(assigns) do
     ~H"""
     <.header>Nutzereinstellungen</.header>
+
     <.card>
       <%= if @current_user.confirmed_at == nil do %>
         <p class="text-red-500">Bitte bestätigen Sie ihr Konto.</p>
+        
         <.button class="mt-4" phx-click={JS.push("send_instructions")}>
           Bestätigungslink anfordern
         </.button>
@@ -20,7 +22,7 @@ defmodule SportywebWeb.UserSettingsLive do
     <div class="mt-10 grid grid-cols-2 gap-x-4 gap-y-12">
       <div class="col-span-2 md:col-span-1">
         <.header>E-Mail-Adresse ändern</.header>
-
+        
         <.card>
           <.simple_form
             for={@email_form}
@@ -33,7 +35,7 @@ defmodule SportywebWeb.UserSettingsLive do
                 <div class="col-span-12">
                   <.input field={@email_form[:email]} type="email" label="E-Mail-Adresse" required />
                 </div>
-
+                
                 <div class="col-span-12">
                   <.input
                     field={@email_form[:current_password]}
@@ -47,17 +49,17 @@ defmodule SportywebWeb.UserSettingsLive do
                 </div>
               </.input_grid>
             </.input_grids>
-
+            
             <:actions>
               <.button phx-disable-with="E-Mail-Adresse ändern...">E-Mail-Adresse ändern</.button>
             </:actions>
           </.simple_form>
         </.card>
       </div>
-
+      
       <div class="col-span-2 md:col-span-1">
         <.header>Passwort ändern</.header>
-
+        
         <.card>
           <.simple_form
             for={@password_form}
@@ -76,7 +78,7 @@ defmodule SportywebWeb.UserSettingsLive do
                 value={@current_email}
               />
             </div>
-
+            
             <.input_grids>
               <.input_grid>
                 <div class="col-span-12">
@@ -87,7 +89,7 @@ defmodule SportywebWeb.UserSettingsLive do
                     required
                   />
                 </div>
-
+                
                 <div class="col-span-12">
                   <.input
                     field={@password_form[:password_confirmation]}
@@ -95,7 +97,7 @@ defmodule SportywebWeb.UserSettingsLive do
                     label="Neues Passwort"
                   />
                 </div>
-
+                
                 <div class="col-span-12">
                   <.input
                     field={@password_form[:current_password]}
@@ -109,7 +111,7 @@ defmodule SportywebWeb.UserSettingsLive do
                 </div>
               </.input_grid>
             </.input_grids>
-
+            
             <:actions>
               <.button phx-disable-with="Passwort ändern...">Passwort ändern</.button>
             </:actions>

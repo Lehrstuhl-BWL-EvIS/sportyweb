@@ -11,15 +11,17 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
       <.header>
         {@title}
       </.header>
-
+      
       <.card>
         <.list>
           <:item title="Betrag">
             {@transaction.amount}
           </:item>
+          
           <:item title="Erstellungsdatum">
             {format_date_field_dmy(@transaction.creation_date)}
           </:item>
+          
           <:item title="Kontakt">
             <.link
               navigate={~p"/contacts/#{@transaction.contract.contact}"}
@@ -29,9 +31,7 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
             </.link>
           </:item>
         </.list>
-
-        <hr class="mt-12 mb-6" />
-
+         <hr class="mt-12 mb-6" />
         <.simple_form
           for={@form}
           id="transaction-form"
@@ -46,10 +46,11 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
               </div>
             </.input_grid>
           </.input_grids>
-
+          
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
+              
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
           </:actions>
