@@ -16,7 +16,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
       <.header>
         {@title}
       </.header>
-      
+
       <.card>
         <.simple_form
           for={@form}
@@ -37,7 +37,7 @@ defmodule SportywebWeb.ContractLive.FormComponent do
                   phx-change="update_fee_options"
                 />
               </div>
-              
+
               <div class="col-span-12 md:col-span-6">
                 <.input
                   field={@form[:fee_id]}
@@ -47,21 +47,21 @@ defmodule SportywebWeb.ContractLive.FormComponent do
                   prompt="Bitte auswählen"
                 />
               </div>
-              
+
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:signing_date]} type="date" label="Unterzeichnungsdatum" />
               </div>
-              
+
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:start_date]} type="date" label="Vertragsbeginn" />
               </div>
             </.input_grid>
           </.input_grids>
-          
+
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
-              
+
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
           </:actions>

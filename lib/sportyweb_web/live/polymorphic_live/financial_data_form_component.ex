@@ -18,7 +18,7 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataFormComponent do
               options={FinancialData.get_valid_types()}
             />
           </div>
-          
+
           <%= if financial_data[:type].value == "direct_debit" do %>
             <div class="col-span-12 md:col-span-7">
               <.input
@@ -27,11 +27,11 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataFormComponent do
                 label="Kontoinhaber"
               />
             </div>
-            
+
             <div class="col-span-12 md:col-span-5">
               <.input field={financial_data[:direct_debit_iban]} type="text" label="IBAN" />
             </div>
-            
+
             <div class="col-span-12">
               <.input
                 field={financial_data[:direct_debit_institute]}
@@ -40,7 +40,7 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataFormComponent do
               />
             </div>
           <% end %>
-          
+
           <%= if financial_data[:type].value == "invoice" do %>
             <div class="col-span-12">
               <.input
@@ -49,7 +49,7 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataFormComponent do
                 label="Rechnungsempfänger"
               />
             </div>
-            
+
             <div class="col-span-12">
               <.input
                 field={financial_data[:invoice_additional_information]}

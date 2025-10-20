@@ -12,15 +12,15 @@
     <:item title="Betrag">
       {@transaction.amount}
     </:item>
-    
+
     <:item title="Erstellungsdatum">
       {format_date_field_dmy(@transaction.creation_date)}
     </:item>
-    
+
     <:item title="Zahlungsdatum">
       {format_date_field_dmy(@transaction.payment_date)}
     </:item>
-    
+
     <:item title="Kontakt">
       <.link
         navigate={~p"/contacts/#{@transaction.contract.contact}"}

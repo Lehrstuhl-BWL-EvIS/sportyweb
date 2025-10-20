@@ -10,7 +10,7 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
       <.header>
         {@title}
       </.header>
-      
+
       <.card>
         <.simple_form
           for={@form}
@@ -33,11 +33,11 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
                   />
                 </div>
               <% end %>
-              
+
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:name]} type="text" label="Name" />
               </div>
-              
+
               <div class="col-span-12 md:col-span-3">
                 <.input
                   field={@form[:reference_number]}
@@ -45,48 +45,48 @@ defmodule SportywebWeb.EquipmentLive.FormComponent do
                   label="Referenznummer (optional)"
                 />
               </div>
-              
+
               <div class="col-span-12 md:col-span-3">
                 <.input field={@form[:serial_number]} type="text" label="Seriennummer (optional)" />
               </div>
-              
+
               <div class="col-span-12">
                 <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
               </div>
-              
+
               <div class="col-span-12 md:col-span-4">
                 <.input field={@form[:purchase_date]} type="date" label="Gekauft am (optional)" />
               </div>
-              
+
               <div class="col-span-12 md:col-span-4">
                 <.input field={@form[:commission_date]} type="date" label="Nutzung ab (optional)" />
               </div>
-              
+
               <div class="col-span-12 md:col-span-4">
                 <.input field={@form[:decommission_date]} type="date" label="Nutzung bis (optional)" />
               </div>
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.EmailsFormComponent.render form={@form} />
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.PhonesFormComponent.render form={@form} />
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
             </.input_grid>
           </.input_grids>
-          
+
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
-              
+
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
-            
+
             <.button
               :if={@equipment.id}
               class="bg-rose-700 hover:bg-rose-800"

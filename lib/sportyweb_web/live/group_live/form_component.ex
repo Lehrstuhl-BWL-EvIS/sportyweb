@@ -10,7 +10,7 @@ defmodule SportywebWeb.GroupLive.FormComponent do
       <.header>
         {@title}
       </.header>
-      
+
       <.card>
         <.simple_form
           for={@form}
@@ -35,12 +35,12 @@ defmodule SportywebWeb.GroupLive.FormComponent do
                 </div>
               </.input_grid>
             <% end %>
-            
+
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:name]} type="text" label="Name" />
               </div>
-              
+
               <div class="col-span-12 md:col-span-6">
                 <.input
                   field={@form[:reference_number]}
@@ -48,36 +48,36 @@ defmodule SportywebWeb.GroupLive.FormComponent do
                   label="Referenznummer (optional)"
                 />
               </div>
-              
+
               <div class="col-span-12">
                 <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
               </div>
-              
+
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:creation_date]} type="date" label="Erstellungsdatum" />
               </div>
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.EmailsFormComponent.render form={@form} />
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.PhonesFormComponent.render form={@form} />
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
             </.input_grid>
           </.input_grids>
-          
+
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
-              
+
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
-            
+
             <.button
               :if={@group.id}
               class="bg-rose-700 hover:bg-rose-800"

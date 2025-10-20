@@ -26,7 +26,7 @@ defmodule SportywebWeb.PolymorphicLive.InternalEventShowComponent do
                   <% end %>
                   immer am {Calendar.strftime(internal_event.commission_date, "%d.")} des jeweiligen Monats.
                 <% end %>
-                
+
                 <%= if internal_event.frequency == "year" do %>
                   <%= if internal_event.interval == 1 do %>
                     Einmal jährlich,
@@ -40,7 +40,7 @@ defmodule SportywebWeb.PolymorphicLive.InternalEventShowComponent do
                 )}.)
               <% end %>
             </p>
-            
+
             <p>
               <%= if internal_event.archive_date do %>
                 Das Archivierungsdatum wurde auf den {format_date_field_dmy(

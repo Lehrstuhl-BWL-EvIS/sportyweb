@@ -12,29 +12,29 @@
     <:item title="Referenznummer">
       {format_string_field(@subsidy.reference_number)}
     </:item>
-    
+
     <:item title="Beschreibung">
       {format_string_field(@subsidy.description)}
     </:item>
-    
+
     <:item title="Betrag">
       {@subsidy.amount}
     </:item>
-    
+
     <:item title="Art der Abrechnung">
       <SportywebWeb.PolymorphicLive.InternalEventShowComponent.render internal_events={
         @subsidy.internal_events
       } />
     </:item>
-    
+
     <:item :if={Subsidy.is_archived?(@subsidy)} title="Archiviert">
       <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
     </:item>
-    
+
     <:item title="Notizen">
       <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@subsidy.notes} />
     </:item>
-    
+
     <:item title="Einsatz">
       Dieser Zuschuss wird derzeit in {Enum.count(@subsidy.fees)} Gebühren verwendet.
     </:item>

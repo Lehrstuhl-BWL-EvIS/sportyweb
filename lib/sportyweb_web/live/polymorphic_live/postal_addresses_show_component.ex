@@ -19,7 +19,7 @@ defmodule SportywebWeb.PolymorphicLive.PostalAddressesShowComponent do
                       String.trim(postal_address.street_additional_information) == "") do %>
               {format_string_field(postal_address.street_additional_information)}<br />
             <% end %>
-             {format_string_field(postal_address.zipcode)} {format_string_field(postal_address.city)}<br /> {get_key_for_value(
+            {format_string_field(postal_address.zipcode)} {format_string_field(postal_address.city)}<br /> {get_key_for_value(
               PostalAddress.get_valid_countries(),
               postal_address.country
             )}

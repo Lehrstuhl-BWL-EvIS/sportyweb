@@ -529,6 +529,76 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
+  Imports prototypically selected accounts of the SKR 42 chart of accounts.
+
+  ## Examples
+
+      iex> import_accounts(club_id)
+      {:ok}
+
+      iex> import_accounts(club_id)
+      {:error}
+
+  """
+  def import_accounts(club_id) do
+    accounts = [
+      %{account_number: "14010", name: "Abziehbare Vorsteuer 7 %", class: "Umlaufvermögen"},
+      %{account_number: "14060", name: "Abziehbare Vorsteuer 19 %", class: "Umlaufvermögen"},
+      %{account_number: "18000", name: "Bank", class: "Umlaufvermögen"},
+      %{account_number: "16000", name: "Kasse", class: "Umlaufvermögen"},
+      %{
+        account_number: "21000",
+        name: "Freie Rücklagen nach § 62 Abs. 1 Nr. 4 AO",
+        class: "Eigen-/Fremdkapital"
+      },
+      %{account_number: "38010", name: "Umsatzsteuer 7 %", class: "Fremdkapital"},
+      %{account_number: "38060", name: "Umsatzsteuer 19 %", class: "Fremdkapital"},
+      %{account_number: "40000", name: "Echte Mitgliedsbeiträge", class: "Einnahmen"},
+      %{account_number: "43340", name: "Erlöse 7 % USt", class: "Einnahmen"},
+      %{account_number: "44000", name: "Erlöse 19 % USt", class: "Einnahmen"},
+      %{
+        account_number: "40450",
+        name: "Geldzuwendungen gegen Zuwendungsbestätigung",
+        class: "Einnahmen"
+      },
+      %{account_number: "42010", name: "Erlöse aus Eintrittsgeldern", class: "Einnahmen"},
+      %{
+        account_number: "48280",
+        name: "Zuschüsse von Verbänden und Behörden",
+        class: "Einnahmen"
+      },
+      %{account_number: "63250", name: "Gas, Strom, Wasser", class: "Ausgaben"},
+      %{account_number: "60040", name: "Übungsleiterpauschale", class: "Ausgaben"},
+      %{
+        account_number: "62050",
+        name: "Abschreibungen auf den Geschäfts- oder Firmenwert",
+        class: "Ausgaben"
+      },
+      %{
+        account_number: "63100",
+        name: "Miete (unbewegliche Wirtschaftsgüter)",
+        class: "Ausgaben"
+      },
+      %{account_number: "68150", name: "Bürobedarf", class: "Ausgaben"},
+      %{
+        account_number: "76000",
+        name: "Körperschaftsteuer",
+        class: "Weitere Einnahmen und Ausgaben"
+      },
+      %{account_number: "76100", name: "Gewerbesteuer", class: "Weitere Einnahmen und Ausgaben"}
+    ]
+
+    accounts =
+      Enum.map(accounts, fn account ->
+        Enum.into(account, %{
+          :club_id => club_id
+        })
+      end)
+
+    Enum.each(accounts, fn account -> create_account(account) end)
+  end
+
+  @doc """
   Updates a account.
 
   ## Examples

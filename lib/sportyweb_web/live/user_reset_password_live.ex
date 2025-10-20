@@ -7,7 +7,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
     ~H"""
     <div class="mx-auto max-w-sm">
       <.header class="text-center">Passwort ändern</.header>
-      
+
       <.card class="mt-8">
         <.simple_form
           for={@form}
@@ -18,7 +18,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
           <.error :if={@form.errors[:password] != nil}>
             Bitte überprüfen Sie ihre Eingaben.
           </.error>
-           <.input field={@form[:password]} type="password" label="Neues Passwort" required />
+          <.input field={@form[:password]} type="password" label="Neues Passwort" required />
           <.input
             field={@form[:password_confirmation]}
             type="password"
@@ -30,7 +30,7 @@ defmodule SportywebWeb.UserResetPasswordLive do
           </:actions>
         </.simple_form>
       </.card>
-       <SportywebWeb.UserRegistrationLoginLinksComponent.render />
+      <SportywebWeb.UserRegistrationLoginLinksComponent.render />
     </div>
     """
   end

@@ -11,7 +11,7 @@ defmodule SportywebWeb.PolymorphicLive.EmailsFormComponent do
       <div class="col-span-12 md:col-span-8">
         <.input field={email[:address]} type="text" label="E-Mail (optional)" />
       </div>
-      
+
       <div class="col-span-12 md:col-span-4">
         <.input field={email[:type]} type="select" label="Art" options={Email.get_valid_types()} />
       </div>

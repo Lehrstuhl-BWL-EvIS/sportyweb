@@ -7,7 +7,7 @@ defmodule SportywebWeb.UserConfirmationLive do
     ~H"""
     <div class="mx-auto max-w-sm">
       <.header class="text-center">Kontobestätigung</.header>
-      
+
       <.card class="mt-8">
         <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
           <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
@@ -16,7 +16,7 @@ defmodule SportywebWeb.UserConfirmationLive do
           </:actions>
         </.simple_form>
       </.card>
-       <SportywebWeb.UserRegistrationLoginLinksComponent.render />
+      <SportywebWeb.UserRegistrationLoginLinksComponent.render />
     </div>
     """
   end

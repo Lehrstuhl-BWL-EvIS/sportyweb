@@ -19,16 +19,16 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataShowComponent do
                   financial_data_single.type
                 )}
               </li>
-              
+
               <%= if financial_data_single.type == "direct_debit" do %>
                 <li>
                   Kontoinhaber: {format_string_field(
                     financial_data_single.direct_debit_account_holder
                   )}
                 </li>
-                
+
                 <li>IBAN: {format_string_field(financial_data_single.direct_debit_iban)}</li>
-                
+
                 <li>
                   Name des Instituts: {format_string_field(
                     financial_data_single.direct_debit_institute
@@ -38,7 +38,7 @@ defmodule SportywebWeb.PolymorphicLive.FinancialDataShowComponent do
                 <li>
                   Rechnungsempfänger: {format_string_field(financial_data_single.invoice_recipient)}
                 </li>
-                
+
                 <li>
                   Zusatzinformationen: {format_string_field(
                     financial_data_single.invoice_additional_information

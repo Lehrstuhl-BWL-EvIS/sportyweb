@@ -28,4 +28,23 @@ defmodule SportywebWeb.AccountLive.Index do
     |> assign(:club, club)
     |> stream(:accounts, accounts)
   end
+
+  @impl true
+  def handle_event("import", _params, socket) do
+    club_id = socket.assigns.club.id
+
+    case Accounting.import_accounts(club_id) do
+      :ok ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Kontenrahmen erfolgreich importiert")
+         |> push_patch(to: ~p"/clubs/#{club_id}/accounts")}
+
+      :error ->
+        {:noreply,
+         socket
+         |> put_flash(:error, "Kontenrahmen konnte nicht importiert werden")
+         |> push_patch(to: ~p"/clubs/#{club_id}/accounts")}
+    end
+  end
 end

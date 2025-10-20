@@ -12,23 +12,23 @@
     <:item :if={@fee.is_general} title="Für">
       {get_key_for_value(Fee.get_valid_types(), @fee.type)}
     </:item>
-    
+
     <:item title="Referenznummer">
       {format_string_field(@fee.reference_number)}
     </:item>
-    
+
     <:item title="Beschreibung">
       {format_string_field(@fee.description)}
     </:item>
-    
+
     <:item title="Grundbetrag">
       {@fee.amount}
     </:item>
-    
+
     <:item title="Einmalzahlung">
       {@fee.amount_one_time}
     </:item>
-    
+
     <:item title="Zuschuss">
       <%= if @fee.subsidy do %>
         <.link navigate={~p"/subsidies/#{@fee.subsidy}"} class="text-indigo-600 hover:underline">
@@ -38,19 +38,19 @@
         -
       <% end %>
     </:item>
-    
+
     <:item title="Nur für Kontaktgruppen-Mitglieder?">
       {format_boolean_field(@fee.is_for_contact_group_contacts_only)}
     </:item>
-    
+
     <:item title="Mindestalter">
       {format_integer_field(@fee.minimum_age_in_years)}
     </:item>
-    
+
     <:item title="Höchstalter">
       {format_integer_field(@fee.maximum_age_in_years)}
     </:item>
-    
+
     <:item title="Nachfolger-Gebühr">
       <%= if @fee.successor do %>
         <.link navigate={~p"/fees/#{@fee.successor}"} class="text-indigo-600 hover:underline">
@@ -60,21 +60,21 @@
         -
       <% end %>
     </:item>
-    
+
     <:item title="Art der Abrechnung">
       <SportywebWeb.PolymorphicLive.InternalEventShowComponent.render internal_events={
         @fee.internal_events
       } />
     </:item>
-    
+
     <:item :if={Fee.is_archived?(@fee)} title="Archiviert">
       <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
     </:item>
-    
+
     <:item title="Notizen">
       <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@fee.notes} />
     </:item>
-    
+
     <:item title="Einsatz">
       Diese Gebühr wird derzeit in {Enum.count(@fee.contracts)} Verträgen verwendet
       und dient {Enum.count(@fee.ancestors)} anderen Gebühren als Nachfolger.

@@ -20,7 +20,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
       <.header>
         {@title}
       </.header>
-      
+
       <.card>
         <.simple_form
           for={@form}
@@ -33,13 +33,13 @@ defmodule SportywebWeb.FeeLive.FormComponent do
             <.input field={@form[:type]} type="text" readonly />
             <.input field={@form[:is_general]} type="checkbox" />
           </div>
-          
+
           <.input_grids>
             <.input_grid>
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:name]} type="text" label="Name" />
               </div>
-              
+
               <div class="col-span-12 md:col-span-6">
                 <.input
                   field={@form[:reference_number]}
@@ -47,12 +47,12 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                   label="Referenznummer (optional)"
                 />
               </div>
-              
+
               <div class="col-span-12">
                 <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
               </div>
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:amount]} type="text" label="Grundbetrag in Euro" />
@@ -60,7 +60,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                   Das €-Zeichen kann, muss aber nicht angegeben werden.
                 </.input_description>
               </div>
-              
+
               <div class="col-span-12 md:col-span-6">
                 <.input
                   field={@form[:amount_one_time]}
@@ -72,7 +72,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                 </.input_description>
               </div>
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <div class="col-span-12">
                 <.input
@@ -84,7 +84,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                 />
               </div>
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <div class="col-span-12">
                 <.input
@@ -94,7 +94,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                 />
               </div>
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <div class="col-span-12 md:col-span-6">
                 <.input
@@ -104,7 +104,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                   min="0"
                 />
               </div>
-              
+
               <div class="col-span-12 md:col-span-6">
                 <.input
                   field={@form[:maximum_age_in_years]}
@@ -113,7 +113,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                   min="0"
                 />
               </div>
-              
+
               <div :if={Enum.any?(@successor_fee_options)} class="col-span-12">
                 <.input
                   field={@form[:successor_id]}
@@ -124,15 +124,15 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                 />
               </div>
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.InternalEventFormComponent.render form={@form} />
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
             </.input_grid>
-            
+
             <.input_grid :if={show_archive_message?(@fee)} class="pt-6">
               <div class="col-span-12">
                 <div
@@ -144,7 +144,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                     <li :if={Enum.any?(@fee.contracts)}>
                       Sie wird in {Enum.count(@fee.contracts)} Verträgen verwendet.
                     </li>
-                    
+
                     <li :if={Enum.any?(@fee.ancestors)}>
                       Sie dient {Enum.count(@fee.ancestors)} anderen Gebühren als Nachfolger.
                     </li>
@@ -153,7 +153,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                 </div>
               </div>
             </.input_grid>
-            
+
             <.input_grid :if={@fee.id && Fee.is_archived?(@fee)} class="pt-6">
               <div class="col-span-12">
                 <div
@@ -167,14 +167,14 @@ defmodule SportywebWeb.FeeLive.FormComponent do
               </div>
             </.input_grid>
           </.input_grids>
-          
+
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
-              
+
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
-            
+
             <.button
               :if={show_delete_button?(@fee)}
               class="bg-rose-700 hover:bg-rose-800"

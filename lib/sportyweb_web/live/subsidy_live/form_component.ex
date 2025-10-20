@@ -11,7 +11,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
       <.header>
         {@title}
       </.header>
-      
+
       <.card>
         <.simple_form
           for={@form}
@@ -25,7 +25,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:name]} type="text" label="Name" />
               </div>
-              
+
               <div class="col-span-12 md:col-span-6">
                 <.input
                   field={@form[:reference_number]}
@@ -33,12 +33,12 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
                   label="Referenznummer (optional)"
                 />
               </div>
-              
+
               <div class="col-span-12">
                 <.input field={@form[:description]} type="textarea" label="Beschreibung (optional)" />
               </div>
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <div class="col-span-12">
                 <.input field={@form[:amount]} type="text" label="Betrag in Euro" />
@@ -47,15 +47,15 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
                 </.input_description>
               </div>
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.InternalEventFormComponent.render form={@form} />
             </.input_grid>
-            
+
             <.input_grid class="pt-6">
               <SportywebWeb.PolymorphicLive.NotesFormComponent.render form={@form} />
             </.input_grid>
-            
+
             <.input_grid :if={show_archive_message?(@subsidy)} class="pt-6">
               <div class="col-span-12">
                 <div
@@ -72,7 +72,7 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
                 </div>
               </div>
             </.input_grid>
-            
+
             <.input_grid :if={@subsidy.id && Subsidy.is_archived?(@subsidy)} class="pt-6">
               <div class="col-span-12">
                 <div
@@ -86,14 +86,14 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
               </div>
             </.input_grid>
           </.input_grids>
-          
+
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
-              
+
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
-            
+
             <.button
               :if={show_delete_button?(@subsidy)}
               class="bg-rose-700 hover:bg-rose-800"
