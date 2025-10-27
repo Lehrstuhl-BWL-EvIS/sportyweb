@@ -9,8 +9,16 @@
 
 <.card>
   <.list>
+    <:item title="Art">
+      {format_string_field(@transaction.type)}
+    </:item>
+
     <:item title="Betrag">
       {@transaction.amount}
+    </:item>
+
+    <:item title="Belegnummer">
+      {format_string_field(@transaction.receipt_number)}
     </:item>
 
     <:item title="Erstellungsdatum">
@@ -22,12 +30,16 @@
     </:item>
 
     <:item title="Kontakt">
-      <.link
-        navigate={~p"/contacts/#{@transaction.contract.contact}"}
-        class="text-indigo-600 hover:underline"
-      >
-        {format_string_field(@transaction.contract.contact.name)}
-      </.link>
+      <%= if @transaction.contact_id do %>
+        <.link
+          navigate={~p"/contacts/#{@transaction.contact_id}"}
+          class="text-indigo-600 hover:underline"
+        >
+          {format_string_field(@transaction.contact.name)}
+        </.link>
+      <% else %>
+        {format_string_field(@transaction.contact)}
+      <% end %>
     </:item>
   </.list>
 </.card>

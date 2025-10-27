@@ -199,11 +199,12 @@ defmodule SportywebWeb.Router do
 
       live "/contracts/:id", ContractLive.Show, :show
 
-      # Transaction (Each belongs to a contract)
+      # Transaction (Each belongs to a club)
 
       live "/transactions", TransactionLive.Index, :index_root
       live "/clubs/:club_id/transactions", TransactionLive.Index, :index
 
+      live "/clubs/:club_id/transactions/new", TransactionLive.NewEdit, :new
       live "/transactions/:id/edit", TransactionLive.NewEdit, :edit
 
       live "/transactions/:id", TransactionLive.Show, :show

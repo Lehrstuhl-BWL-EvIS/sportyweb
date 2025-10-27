@@ -1,5 +1,10 @@
 <.header>
   {@page_title}
+  <:actions>
+    <.link patch={~p"/clubs/#{@club}/transactions/new"}>
+      <.button>Transaktion erstellen</.button>
+    </.link>
+  </:actions>
 </.header>
 
 <.card>
@@ -25,13 +30,12 @@
         {format_date_field_dmy(transaction.payment_date)}
       </:col>
 
-      <:col :let={{_id, transaction}} label="Kontakt">
-        <.link
-          navigate={~p"/contacts/#{transaction.contract.contact}"}
-          class="text-indigo-600 hover:underline"
-        >
-          {format_string_field(transaction.contract.contact.name)}
-        </.link>
+      <:col :let={{_id, transaction}} label="Beleg">
+        {transaction.receipt_number}
+      </:col>
+
+      <:col :let={{_id, transaction}} label="Art">
+        {transaction.type}
       </:col>
 
       <:action :let={{_id, transaction}}>
@@ -40,12 +44,10 @@
     </.table>
   <% else %>
     <p class="mb-3">
-      Transaktionen werden bei der automatisch stattfindenden Berechnung
-      von Gebühren erzeugt und anschließend hier angezeigt.
+      Bisher wurden noch keine Transaktionen erstellt.
     </p>
-
     <p>
-      Eine manuelle Erstellung ist nicht möglich.
+      Transaktionen werden bei der automatisch stattfindenden Berechnung von Gebühren erzeugt. Sie können zudem manuell erstellt werden.
     </p>
   <% end %>
 </.card>

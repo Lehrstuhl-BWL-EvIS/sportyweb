@@ -2,6 +2,8 @@ defmodule SportywebWeb.TransactionLive.NewEdit do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Accounting
+  alias Sportyweb.Accounting.Transaction
+  alias Sportyweb.Organization
 
   @impl true
   def render(assigns) do
@@ -34,15 +36,34 @@ defmodule SportywebWeb.TransactionLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    transaction = Accounting.get_transaction!(id, contract: [:club, :contact])
+    transaction = Accounting.get_transaction!(id, [:club, :contact])
 
     socket
     |> assign(:page_title, "Transaktion bearbeiten")
     |> assign(:transaction, transaction)
-    |> assign(:club, transaction.contract.club)
+    |> assign(:club, transaction.club)
   end
 
-  # There is currently no function for :new because transactions are
-  # exclusively generated automatically to avoid possible manual errors.
-  # Because transactions can't be created, they consequently can't be deleted.
+  defp apply_action(socket, :new, %{"club_id" => club_id}) do
+    club = Organization.get_club!(club_id)
+
+    socket
+    |> assign(:page_title, "Transaktion erstellen")
+    |> assign(:transaction, %Transaction{
+      club_id: club.id,
+      club: club
+    })
+    |> assign(:club, club)
+  end
+
+  @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    transaction = Accounting.get_transaction!(id)
+    {:ok, _} = Accounting.delete_transaction(transaction)
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Transaktion erfolgreich gelöscht")
+     |> push_navigate(to: "/clubs/#{transaction.club_id}/transactions")}
+  end
 end

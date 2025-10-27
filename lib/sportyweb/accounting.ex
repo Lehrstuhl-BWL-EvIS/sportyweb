@@ -26,11 +26,9 @@ defmodule Sportyweb.Accounting do
     query =
       from(
         t in Transaction,
-        join: contract in assoc(t, :contract),
-        join: contact in assoc(contract, :contact),
-        join: club in assoc(contract, :club),
+        join: club in assoc(t, :club),
         where: club.id == ^club_id,
-        order_by: [t.creation_date, t.name, contact.name]
+        order_by: [t.creation_date]
       )
 
     Repo.all(query)
