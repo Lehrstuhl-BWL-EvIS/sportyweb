@@ -6,6 +6,7 @@ defmodule Sportyweb.Accounting.Transaction do
   alias Sportyweb.Legal.Contract
   alias Sportyweb.Organization.Club
   alias Sportyweb.Personal.Contact
+  alias Sportyweb.Accounting.Entry
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -13,6 +14,7 @@ defmodule Sportyweb.Accounting.Transaction do
     belongs_to :club, Club
     belongs_to :contract, Contract
     belongs_to :contact, Contact
+    has_many :entry, Entry
 
     field :name, :string, default: ""
     field :amount, Money.Ecto.Composite.Type, default_currency: :EUR
@@ -38,7 +40,7 @@ defmodule Sportyweb.Accounting.Transaction do
       :receipt_number,
       :type
     ])
-    |> validate_required([:club_id, :name, :amount, :creation_date, :type])
+    |> validate_required([:club_id, :name, :amount, :creation_date, :type, :payment_date])
     |> update_change(:name, &String.trim/1)
     |> validate_length(:name, max: 60)
     |> validate_length(:receipt_number, max: 30)
@@ -50,5 +52,6 @@ defmodule Sportyweb.Accounting.Transaction do
     )
     |> foreign_key_constraint(:contact_id)
     |> foreign_key_constraint(:contract_id)
+    |> validate_amount(:amount)
   end
 end

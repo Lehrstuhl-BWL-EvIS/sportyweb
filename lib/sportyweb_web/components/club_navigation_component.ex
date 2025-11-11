@@ -112,7 +112,9 @@ defmodule SportywebWeb.ClubNavigationComponent do
               class={[
                 @classes_menu_item,
                 @classes_submenu_item,
-                if(@club_navigation_current_item == :transactions, do: @classes_menu_item_active)
+                if(@club_navigation_current_item == :transactions,
+                  do: @classes_menu_item_active
+                )
               ]}
             >
               <span class="truncate">Transaktionen</span>
@@ -178,6 +180,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
   def update(assigns, socket) do
     show_submenu_finances =
       assigns.club_navigation_current_item == :transactions ||
+        assigns.club_navigation_current_item == :entries ||
         assigns.club_navigation_current_item == :forecasts ||
         assigns.club_navigation_current_item == :fees ||
         assigns.club_navigation_current_item == :accounts ||

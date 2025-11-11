@@ -46,6 +46,14 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                 </div>
                 <div class="col-span-12">
                   <.input
+                    field={@form[:account_id]}
+                    type="select"
+                    label="Finanzkonto"
+                    options={@financial_account_options |> Enum.map(&{&1.name, &1.id})}
+                  />
+                </div>
+                <div class="col-span-12">
+                  <.input
                     field={@form[:contact_id]}
                     type="select"
                     label="Kontakt (optional)"
@@ -105,6 +113,14 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                 </div>
                 <div class="col-span-12">
                   <.input
+                    field={@form[:account_id]}
+                    type="select"
+                    label="Finanzkonto"
+                    options={@financial_account_options |> Enum.map(&{&1.name, &1.id})}
+                  />
+                </div>
+                <div class="col-span-12">
+                  <.input
                     field={@form[:contact_id]}
                     type="select"
                     label="Kontakt (optional)"
@@ -117,7 +133,7 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                     field={@form[:type]}
                     type="select"
                     label="Art"
-                    options={["Einnahme", "Ausgabe", "Umbuchung"]}
+                    options={["Einnahme", "Ausgabe"]}
                   />
                 </div>
               </.input_grid>
@@ -142,6 +158,10 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
      socket
      |> assign(assigns)
      |> assign(:contact_options, Personal.list_contacts(assigns.transaction.club.id))
+     |> assign(
+       :financial_account_options,
+       Accounting.list_financial_accounts(assigns.transaction.club.id)
+     )
      |> assign_new(:form, fn ->
        to_form(Accounting.change_transaction(transaction))
      end)}
@@ -158,7 +178,7 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
   end
 
   defp save_transaction(socket, :edit, transaction_params) do
-    case Accounting.update_transaction(socket.assigns.transaction, transaction_params) do
+    case Accounting.update_transaction_and_entry(socket.assigns.transaction, transaction_params) do
       {:ok, _transaction} ->
         {:noreply,
          socket
@@ -173,11 +193,10 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
   defp save_transaction(socket, :new, transaction_params) do
     transaction_params =
       Enum.into(transaction_params, %{
-        "club_id" => socket.assigns.transaction.club.id,
-        "creation_date" => Date.utc_today()
+        "club_id" => socket.assigns.transaction.club.id
       })
 
-    case Accounting.create_transaction(transaction_params) do
+    case Accounting.create_transaction_and_entry(transaction_params) do
       {:ok, _transaction} ->
         {:noreply,
          socket

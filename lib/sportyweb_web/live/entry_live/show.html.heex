@@ -1,0 +1,29 @@
+<%= if show_edit_button?(@entry.account.account_number) do %>
+  <.header>
+    {@page_title}
+    <:actions>
+      <.link navigate={~p"/transaction/#{@transaction}/entries/#{@entry}/edit"}>
+        <.button>Buchung bearbeiten</.button>
+      </.link>
+    </:actions>
+  </.header>
+<% else %>
+  <.header>
+    {@page_title}
+  </.header>
+<% end %>
+<.card>
+  <.list>
+    <:item title="Konto">
+      {"#{@entry.account.account_number} #{format_string_field(@entry.account.name)}"}
+    </:item>
+
+    <:item title="Betrag">
+      {@entry.amount}
+    </:item>
+
+    <:item title="Sphäre">
+      {format_string_field(Sportyweb.Accounting.Entry.sphere(@entry.sphere))}
+    </:item>
+  </.list>
+</.card>

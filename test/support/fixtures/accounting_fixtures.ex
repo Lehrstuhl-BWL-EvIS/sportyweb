@@ -41,4 +41,18 @@ defmodule Sportyweb.AccountingFixtures do
 
     account
   end
+
+  @doc """
+  Generate a entry.
+  """
+  def entry_fixture(attrs \\ %{}) do
+    {:ok, entry} =
+      attrs
+      |> Enum.into(%{
+        type: "some type"
+      })
+      |> Sportyweb.Accounting.create_entry()
+
+    entry
+  end
 end

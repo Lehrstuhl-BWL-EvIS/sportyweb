@@ -209,6 +209,14 @@ defmodule SportywebWeb.Router do
 
       live "/transactions/:id", TransactionLive.Show, :show
 
+      # Entry (Each belongs to an account and to a transaction)
+
+      live "/transactions/:transaction_id/entries/new", EntryLive.NewEdit, :new
+      live "/transaction/:transaction_id/entries/:id/edit", EntryLive.NewEdit, :edit
+
+      live "/transactions/:transaction_id/entries/:id", EntryLive.Show, :show
+      live "/entries/:id/show/edit", EntryLive.Show, :edit
+
       # Account (Each belongs to a club)
 
       live "/accounts", AccountLive.Index, :index_root

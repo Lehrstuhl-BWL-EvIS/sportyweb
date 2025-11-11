@@ -29,6 +29,7 @@ defmodule SportywebWeb.AccountLive.FormComponent do
                   label="Kontonummer"
                   phx-change="validate_number"
                   phx-update="ignore"
+                  phx-debounce="blur"
                 />
               </div>
               <div class="col-span-12 md:col-span-6">
@@ -71,7 +72,9 @@ defmodule SportywebWeb.AccountLive.FormComponent do
 
   @impl true
   def handle_event("validate_number", %{"account" => account_params}, socket) do
-    account_params = determine_class(account_params)
+    account_class = Accounting.determine_account_class(account_params["account_number"])
+
+    account_params = account_params |> Map.put("class", account_class)
 
     changeset =
       %Account{}
@@ -119,42 +122,6 @@ defmodule SportywebWeb.AccountLive.FormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
-    end
-  end
-
-  # Determines the class of an account according to the first digit of it's account number
-  defp determine_class(account_params) do
-    case String.first(account_params["account_number"]) do
-      "0" ->
-        account_params |> Map.put("class", "Anlagevermögen")
-
-      "1" ->
-        account_params |> Map.put("class", "Umlaufvermögen")
-
-      "2" ->
-        account_params |> Map.put("class", "Eigen-/Fremdkapital")
-
-      "3" ->
-        account_params |> Map.put("class", "Fremdkapital")
-
-      "4" ->
-        account_params |> Map.put("class", "Einnahmen")
-
-      "5" ->
-        account_params |> Map.put("class", "Ausgaben")
-
-      "6" ->
-        account_params |> Map.put("class", "Ausgaben")
-
-      "7" ->
-        account_params |> Map.put("class", "Weitere Einnahmen und Ausgaben")
-
-      "8" ->
-        account_params |> Map.put("class", "")
-
-      "9" ->
-        account_params
-        |> Map.put("class", "Vortrags-, Kapital-, Korrektur- und statistische Konten ")
     end
   end
 end

@@ -78,4 +78,29 @@ defmodule SportywebWeb.CommonValidations do
       changeset
     end
   end
+
+  @doc """
+  Validates that the amount of the given field is greater than 0.
+
+  The type of the field must be Money.Ecto.Composite.Type, as defined by https://github.com/kipcole9/money
+
+  ## Examples
+
+      changeset
+      |> validate_amount(:amount)
+
+  """
+  def validate_amount(changeset, field) do
+    case get_field(changeset, field) do
+      %Money{} = money ->
+        if Money.positive?(money) do
+          changeset
+        else
+          add_error(changeset, field, "The amount has to be greater than 0")
+        end
+
+      _ ->
+        changeset
+    end
+  end
 end

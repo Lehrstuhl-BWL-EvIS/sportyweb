@@ -29,6 +29,10 @@
       {format_date_field_dmy(@transaction.payment_date)}
     </:item>
 
+    <:item title="Finanzkonto">
+      {format_string_field(@financial_account.name)}
+    </:item>
+
     <:item title="Kontakt">
       <%= if @transaction.contact_id do %>
         <.link
@@ -43,3 +47,53 @@
     </:item>
   </.list>
 </.card>
+
+<%= if Enum.any?(@streams.entries.inserts) do %>
+  <br /> <br />
+  <.header>
+    {"Buchungen"}
+    <:actions>
+      <.link navigate={~p"/transactions/#{@transaction}/entries/new"}>
+        <.button>Buchung erstellen</.button>
+      </.link>
+    </:actions>
+  </.header>
+  <.card>
+    <.table
+      id="entries"
+      rows={@streams.entries}
+      row_click={
+        fn {_id, entry} -> JS.navigate(~p"/transactions/#{@transaction}/entries/#{entry}") end
+      }
+    >
+      <:col :let={{_id, entry}} label="Konto">
+        {"#{entry.account.account_number} #{format_string_field(entry.account.name)}"}
+      </:col>
+
+      <:col :let={{_id, entry}} label="Betrag">
+        {entry.amount}
+      </:col>
+
+      <:col :let={{_id, entry}} label="Sphäre">
+        {format_string_field(Sportyweb.Accounting.Entry.sphere(entry.sphere))}
+      </:col>
+      <:action :let={{_id, entry}}>
+        <.link navigate={~p"/transactions/#{@transaction}/entries/#{entry}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  </.card>
+<% else %>
+  <br /> <br />
+  <.header>
+    {"Buchungen"}
+    <:actions>
+      <.link navigate={~p"/transactions/#{@transaction}/entries/new"}>
+        <.button>Buchung erstellen</.button>
+      </.link>
+    </:actions>
+  </.header>
+
+  <.card>
+    <p>Bisher wurden noch keine Buchungen erstellt.</p>
+  </.card>
+<% end %>
