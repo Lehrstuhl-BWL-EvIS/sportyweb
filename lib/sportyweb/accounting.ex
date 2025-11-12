@@ -701,20 +701,15 @@ defmodule Sportyweb.Accounting do
   """
   def import_accounts(club_id) do
     accounts = [
-      %{account_number: "14010", name: "Abziehbare Vorsteuer 7 %", class: "Umlaufvermögen"},
-      %{account_number: "14060", name: "Abziehbare Vorsteuer 19 %", class: "Umlaufvermögen"},
+      %{account_number: "17000", name: "Bank (Postbank)", class: "Umlaufvermögen"},
       %{account_number: "18000", name: "Bank", class: "Umlaufvermögen"},
       %{account_number: "16000", name: "Kasse", class: "Umlaufvermögen"},
-      %{
-        account_number: "21000",
-        name: "Freie Rücklagen nach § 62 Abs. 1 Nr. 4 AO",
-        class: "Eigen-/Fremdkapital"
-      },
-      %{account_number: "38010", name: "Umsatzsteuer 7 %", class: "Fremdkapital"},
-      %{account_number: "38060", name: "Umsatzsteuer 19 %", class: "Fremdkapital"},
+      %{account_number: "16100", name: "Nebenkasse 1", class: "Umlaufvermögen"},
       %{account_number: "40000", name: "Echte Mitgliedsbeiträge", class: "Einnahmen"},
+      %{account_number: "40100", name: "Aufnahmegebühren", class: "Einnahmen"},
       %{account_number: "43340", name: "Erlöse 7 % USt", class: "Einnahmen"},
       %{account_number: "44000", name: "Erlöse 19 % USt", class: "Einnahmen"},
+      %{account_number: "42900", name: "Erlöse 0 % USt", class: "Einnahmen"},
       %{
         account_number: "40450",
         name: "Geldzuwendungen gegen Zuwendungsbestätigung",
@@ -722,12 +717,35 @@ defmodule Sportyweb.Accounting do
       },
       %{account_number: "42010", name: "Erlöse aus Eintrittsgeldern", class: "Einnahmen"},
       %{
+        account_number: "42030",
+        name: "Erlöse aus Teilnehmer-/Nutzungsgebühren",
+        class: "Einnahmen"
+      },
+      %{account_number: "42050", name: "Erlöse aus Veranstaltungen", class: "Einnahmen"},
+      %{
         account_number: "48280",
         name: "Zuschüsse von Verbänden und Behörden",
         class: "Einnahmen"
       },
+      %{
+        account_number: "48620",
+        name: "Erlöse aus Vermietung und Verpachtung 19 % USt",
+        class: "Einnahmen"
+      },
+      %{
+        account_number: "48630",
+        name: "Erlöse aus Vermietung und Verpachtung 7 % USt",
+        class: "Einnahmen"
+      },
+      %{
+        account_number: "49270",
+        name: "Erträge aus der Auflösung einer steuerlichen Rücklage nach § 6b Abs. 3 EStG ",
+        class: "Einnahmen"
+      },
       %{account_number: "63250", name: "Gas, Strom, Wasser", class: "Ausgaben"},
+      %{account_number: "63300", name: "Reinigung", class: "Ausgaben"},
       %{account_number: "60040", name: "Übungsleiterpauschale", class: "Ausgaben"},
+      %{account_number: "60020", name: "Ehrenamtspauschale", class: "Ausgaben"},
       %{
         account_number: "62050",
         name: "Abschreibungen auf den Geschäfts- oder Firmenwert",
@@ -739,6 +757,27 @@ defmodule Sportyweb.Accounting do
         class: "Ausgaben"
       },
       %{account_number: "68150", name: "Bürobedarf", class: "Ausgaben"},
+      %{account_number: "64000", name: "Versicherungen", class: "Ausgaben"},
+      %{
+        account_number: "69220",
+        name: "Einstellungen in die steuerliche Rücklage nach § 6b Abs. 3 EStG",
+        class: "Ausgaben"
+      },
+      %{
+        account_number: "69270",
+        name: "Einstellungen in sonstige steuerliche Rücklagen",
+        class: "Ausgaben"
+      },
+      %{
+        account_number: "70200",
+        name: "Zins- und Dividendenerträge",
+        class: "Weitere Einnahmen und Ausgaben"
+      },
+      %{
+        account_number: "73000",
+        name: "Zinsen und ähnliche Aufwendungen",
+        class: "Weitere Einnahmen und Ausgaben"
+      },
       %{
         account_number: "76000",
         name: "Körperschaftsteuer",
