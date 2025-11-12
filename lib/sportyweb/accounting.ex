@@ -571,10 +571,13 @@ defmodule Sportyweb.Accounting do
   """
 
   def list_accounts(account_classes, club_id) do
+    date = Date.utc_today()
+
     query =
       from(
         a in Account,
         where: a.club_id == ^club_id and a.class in ^account_classes,
+        where: a.archive_date > ^date or is_nil(a.archive_date),
         order_by: [a.account_number]
       )
 
@@ -592,11 +595,14 @@ defmodule Sportyweb.Accounting do
   """
 
   def list_financial_accounts(club_id) do
+    date = Date.utc_today()
+
     query =
       from(
         a in Account,
         join: club in assoc(a, :club),
         where: club.id == ^club_id and a.account_number >= 15500 and a.account_number <= 18899,
+        where: a.archive_date > ^date or is_nil(a.archive_date),
         order_by: [a.account_number]
       )
 

@@ -14,6 +14,7 @@ defmodule Sportyweb.Accounting.Account do
     field :name, :string, default: ""
     field :class, :string, default: ""
     field :account_number, :integer, default: nil
+    field :archive_date, :date, default: nil
 
     timestamps(type: :utc_datetime)
   end
@@ -21,7 +22,7 @@ defmodule Sportyweb.Accounting.Account do
   @doc false
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:club_id, :account_number, :name, :class])
+    |> cast(attrs, [:club_id, :account_number, :name, :class, :archive_date])
     |> validate_required([:club_id, :account_number, :name, :class])
     |> validate_inclusion(:class, [
       "Anlagevermögen",
@@ -53,5 +54,9 @@ defmodule Sportyweb.Accounting.Account do
   defp valid_account_number?(account_number) do
     account_number = Integer.to_string(account_number)
     Regex.match?(~r/^[1-79]\d{4}$/, account_number)
+  end
+
+  def is_archived?(account, %Date{} = date \\ Date.utc_today()) do
+    account.archive_date && Date.compare(date, account.archive_date) != :lt
   end
 end

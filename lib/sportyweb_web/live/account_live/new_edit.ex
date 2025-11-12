@@ -36,7 +36,7 @@ defmodule SportywebWeb.AccountLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    account = Accounting.get_account!(id, [:club])
+    account = Accounting.get_account!(id, [:club, :entry])
 
     socket
     |> assign(:page_title, "Konto bearbeiten")

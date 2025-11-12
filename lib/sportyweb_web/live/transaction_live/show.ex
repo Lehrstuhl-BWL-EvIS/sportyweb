@@ -2,6 +2,7 @@ defmodule SportywebWeb.TransactionLive.Show do
   use SportywebWeb, :live_view
 
   alias Sportyweb.Accounting
+  alias Sportyweb.Accounting.Account
 
   @impl true
   def mount(_params, _session, socket) do
