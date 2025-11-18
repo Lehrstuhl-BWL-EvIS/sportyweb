@@ -46,7 +46,7 @@ defmodule SportywebWeb.EntryLive.FormComponent do
                 />
               </div>
               <div class="col-span-12">
-                <.input field={@form[:amount]} type="number" label="Betrag" />
+                <.input field={@form[:amount]} type="number" label="Betrag" value={@entry.amount.amount} />
               </div>
               <div class="col-span-12">
                 <.input
