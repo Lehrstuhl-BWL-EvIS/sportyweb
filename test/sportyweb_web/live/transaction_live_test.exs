@@ -7,18 +7,11 @@
 # #######################################################
 
 # defmodule SportywebWeb.TransactionLiveTest do
-#   use SportywebWeb.ConnCase, async: true
+#   use SportywebWeb.ConnCase, async: false
 
 #   import Phoenix.LiveViewTest
 #   import Sportyweb.AccountingFixtures
 #   import Sportyweb.AccountsFixtures
-
-#   @update_attrs %{
-#     payment_date: "2023-06-05" # Only allowed attribute to be updated.
-#   }
-#   @invalid_attrs %{
-#     payment_date: "invalid"
-#   }
 
 #   setup do
 #     %{user: user_fixture()}
@@ -58,28 +51,6 @@
 
 #   describe "New/Edit" do
 #     setup [:create_transaction]
-
-#     test "updates transaction", %{conn: conn, user: user, transaction: transaction} do
-#       {:error, _} = live(conn, ~p"/transactions/#{transaction}/edit")
-
-#       conn = conn |> log_in_user(user)
-#       {:ok, edit_live, html} = live(conn, ~p"/transactions/#{transaction}/edit")
-
-#       assert html =~ "Transaktion bearbeiten"
-
-#       assert edit_live
-#             |> form("#transaction-form", transaction: @invalid_attrs)
-#             |> render_change() =~ "can&#39;t be blank"
-
-#       {:ok, _, html} =
-#         edit_live
-#         |> form("#transaction-form", transaction: @update_attrs)
-#         |> render_submit()
-#         |> follow_redirect(conn, ~p"/transactions/#{transaction}")
-
-#       assert html =~ "Transaktion erfolgreich aktualisiert"
-#       assert html =~ "06.05.2023"
-#     end
 
 #     test "cancels updates transaction", %{conn: conn, user: user, transaction: transaction} do
 #       conn = conn |> log_in_user(user)

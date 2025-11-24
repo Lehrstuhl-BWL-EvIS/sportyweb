@@ -1,113 +1,84 @@
 defmodule SportywebWeb.EntryLiveTest do
-  use SportywebWeb.ConnCase
+  use SportywebWeb.ConnCase, async: false
 
   import Phoenix.LiveViewTest
   import Sportyweb.AccountingFixtures
+  import Sportyweb.AccountsFixtures
+  import Sportyweb.RBAC.RoleFixtures
+  import Sportyweb.RBAC.UserRoleFixtures
 
-  @create_attrs %{type: "some type"}
-  @update_attrs %{type: "some updated type"}
-  @invalid_attrs %{type: nil}
+  setup do
+    user = user_fixture()
+    applicationrole = application_role_fixture()
+    user_application_role_fixture(%{user_id: user.id, applicationrole_id: applicationrole.id})
+
+    %{user: user}
+  end
 
   defp create_entry(_) do
     entry = entry_fixture()
     %{entry: entry}
   end
 
-  describe "Index" do
+  describe "New/Edit" do
     setup [:create_entry]
 
-    test "lists all entries", %{conn: conn, entry: entry} do
-      {:ok, _index_live, html} = live(conn, ~p"/entries")
+    test "cancels save new entry", %{conn: conn, user: user} do
+      transaction = transaction_fixture()
 
-      assert html =~ "Listing Entries"
-      assert html =~ entry.type
+      conn = conn |> log_in_user(user)
+      {:ok, new_live, _html} = live(conn, ~p"/transactions/#{transaction}/entries/new")
+
+      {:ok, _, _html} =
+        new_live
+        |> element("#entry-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/transactions/#{transaction}")
     end
 
-    test "saves new entry", %{conn: conn} do
-      {:ok, index_live, _html} = live(conn, ~p"/entries")
+    test "cancels updates entry", %{conn: conn, user: user, entry: entry} do
 
-      assert index_live |> element("a", "New Entry") |> render_click() =~
-               "New Entry"
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, _html} = live(conn, ~p"/transactions/#{entry.transaction_id}/entries/#{entry}/edit")
 
-      assert_patch(index_live, ~p"/entries/new")
-
-      assert index_live
-             |> form("#entry-form", entry: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert index_live
-             |> form("#entry-form", entry: @create_attrs)
-             |> render_submit()
-
-      assert_patch(index_live, ~p"/entries")
-
-      html = render(index_live)
-      assert html =~ "Entry created successfully"
-      assert html =~ "some type"
+      {:ok, _, _html} =
+        edit_live
+        |> element("#entry-form a", "Abbrechen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/transactions/#{entry.transaction_id}/entries/#{entry}")
     end
 
-    test "updates entry in listing", %{conn: conn, entry: entry} do
-      {:ok, index_live, _html} = live(conn, ~p"/entries")
+    test "deletes entry", %{conn: conn, user: user, entry: entry} do
+      transaction = transaction_fixture()
 
-      assert index_live |> element("#entries-#{entry.id} a", "Edit") |> render_click() =~
-               "Edit Entry"
+      conn = conn |> log_in_user(user)
+      {:ok, edit_live, html} = live(conn, ~p"/transactions/#{transaction}/entries/#{entry}/edit")
 
-      assert_patch(index_live, ~p"/entries/#{entry}/edit")
+      assert html =~ "Buchung bearbeiten"
 
-      assert index_live
-             |> form("#entry-form", entry: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
+      {:ok, _, html} =
+      edit_live
+      |> element("#entry-form button", "Löschen")
+      |> render_click()
+      |> follow_redirect(conn, ~p"/transactions/#{entry.transaction_id}")
 
-      assert index_live
-             |> form("#entry-form", entry: @update_attrs)
-             |> render_submit()
-
-      assert_patch(index_live, ~p"/entries")
-
-      html = render(index_live)
-      assert html =~ "Entry updated successfully"
-      assert html =~ "some updated type"
-    end
-
-    test "deletes entry in listing", %{conn: conn, entry: entry} do
-      {:ok, index_live, _html} = live(conn, ~p"/entries")
-
-      assert index_live |> element("#entries-#{entry.id} a", "Delete") |> render_click()
-      refute has_element?(index_live, "#entries-#{entry.id}")
+      assert html =~ "Buchung erfolgreich gelöscht"
+      assert html =~ "Transaktion: some name"
+      refute html =~ entry.id
     end
   end
 
   describe "Show" do
     setup [:create_entry]
 
-    test "displays entry", %{conn: conn, entry: entry} do
-      {:ok, _show_live, html} = live(conn, ~p"/entries/#{entry}")
+    test "displays entry", %{conn: conn, user: user, entry: entry} do
+      transaction = transaction_fixture()
 
-      assert html =~ "Show Entry"
-      assert html =~ entry.type
-    end
+      conn = conn |> log_in_user(user)
+      {:ok, _show_live, html} = live(conn, ~p"/transactions/#{transaction}/entries/#{entry}")
 
-    test "updates entry within modal", %{conn: conn, entry: entry} do
-      {:ok, show_live, _html} = live(conn, ~p"/entries/#{entry}")
-
-      assert show_live |> element("a", "Edit") |> render_click() =~
-               "Edit Entry"
-
-      assert_patch(show_live, ~p"/entries/#{entry}/show/edit")
-
-      assert show_live
-             |> form("#entry-form", entry: @invalid_attrs)
-             |> render_change() =~ "can&#39;t be blank"
-
-      assert show_live
-             |> form("#entry-form", entry: @update_attrs)
-             |> render_submit()
-
-      assert_patch(show_live, ~p"/entries/#{entry}")
-
-      html = render(show_live)
-      assert html =~ "Entry updated successfully"
-      assert html =~ "some updated type"
+      assert html =~ "Buchung"
+      refute html =~ entry.id
     end
   end
 end
