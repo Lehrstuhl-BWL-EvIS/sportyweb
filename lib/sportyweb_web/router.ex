@@ -212,7 +212,7 @@ defmodule SportywebWeb.Router do
       # Entry (Each belongs to an account and to a transaction)
 
       live "/transactions/:transaction_id/entries/new", EntryLive.NewEdit, :new
-      live "/transaction/:transaction_id/entries/:id/edit", EntryLive.NewEdit, :edit
+      live "/transactions/:transaction_id/entries/:id/edit", EntryLive.NewEdit, :edit
 
       live "/transactions/:transaction_id/entries/:id", EntryLive.Show, :show
       live "/entries/:id/show/edit", EntryLive.Show, :edit
