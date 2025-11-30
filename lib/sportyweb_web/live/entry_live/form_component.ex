@@ -1,6 +1,5 @@
 defmodule SportywebWeb.EntryLive.FormComponent do
   use SportywebWeb, :live_component
-  import SportywebWeb.CommonHelper
 
   alias Sportyweb.Accounting
   alias Sportyweb.Accounting.Entry
