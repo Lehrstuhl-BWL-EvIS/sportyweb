@@ -53,6 +53,21 @@ defmodule Sportyweb.Legal do
   end
 
   @doc """
+  Returns a contacts list of contracts. Preloads associations.
+
+  ## Examples
+
+      iex> list_contact_contract_options(1, [:club])
+      [%Contract{}, ...]
+
+  """
+  def list_contact_contract_options(contact_id, preloads) do
+    query = from(c in Contract, where: c.contact_id == ^contact_id)
+    Repo.all(query)
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
   Gets a single contract.
 
   Raises `Ecto.NoResultsError` if the Contract does not exist.
