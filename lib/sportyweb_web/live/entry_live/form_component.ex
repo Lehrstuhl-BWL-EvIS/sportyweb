@@ -20,20 +20,6 @@ defmodule SportywebWeb.EntryLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <%= if @action == :new do %>
-          <.card>
-            <.list>
-              <:item title="Art">
-                {format_string_field(@entry.transaction.type)}
-              </:item>
-
-              <:item title="Betrag">
-                {@entry.transaction.amount}
-              </:item>
-            </.list>
-          </.card>
-          <br /> <br />
-        <% end %>
         <.card>
           <.input_grids>
             <.input_grid>
@@ -46,7 +32,11 @@ defmodule SportywebWeb.EntryLive.FormComponent do
                 />
               </div>
               <div class="col-span-12">
+              <%= if @action == :edit do %>
                 <.input field={@form[:amount]} type="number" label="Betrag" value={@entry.amount.amount} />
+                <% else %>
+                <.input field={@form[:amount]} type="number" label="Betrag" value={@entry.amount} />
+                <% end %>
               </div>
               <div class="col-span-12">
                 <.input
@@ -88,8 +78,8 @@ defmodule SportywebWeb.EntryLive.FormComponent do
      |> assign(assigns)
      |> assign(
        :account_options,
-       Accounting.determine_account_classes(assigns.entry.transaction.type)
-       |> Accounting.list_accounts(assigns.entry.transaction.club.id)
+       Accounting.determine_usable_account_classes(assigns.entry.transaction.type)
+         |> Accounting.list_accounts(assigns.entry.transaction.club.id)
      )
      |> assign_new(:form, fn ->
        to_form(Accounting.change_entry(entry))
