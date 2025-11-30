@@ -85,30 +85,25 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Gets the amount of a single transaction.
+  Creates a transaction from the UI.
 
   ## Examples
 
-      iex> get_transaction_amount(123)
-      %Transaction{}
+      iex> create_transaction_from_ui(%{field: value})
+      {:ok, %Transaction{}}
 
-      iex> get_transaction_amount(456)
-      nil
+      iex> create_transaction_from_ui(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
 
   """
-  def get_transaction_amount(id) do
-    transaction_amount =
-      from(t in Transaction,
-        where: t.id == ^id,
-        select: fragment("(?) .amount", t.amount)
-      )
-      |> Sportyweb.Repo.one()
-
-    transaction_amount
+  def create_transaction_from_ui(attrs \\ %{}) do
+    %Transaction{}
+    |> Transaction.changeset(attrs)
+    |> Repo.insert()
   end
 
-  @doc """
-  Creates a transaction.
+    @doc """
+  Creates a transaction from the system.
 
   ## Examples
 
@@ -121,12 +116,12 @@ defmodule Sportyweb.Accounting do
   """
   def create_transaction(attrs \\ %{}) do
     %Transaction{}
-    |> Transaction.changeset(attrs)
+    |> Transaction.changeset_system(attrs)
     |> Repo.insert()
   end
 
   @doc """
-  Creates a transaction and an entry for a financial account.
+  Creates a transaction and the associated entry for a financial account.
 
   ## Examples
 
@@ -143,7 +138,7 @@ defmodule Sportyweb.Accounting do
         attrs
         |> Map.put("creation_date", Date.utc_today())
 
-      {:ok, transaction} = create_transaction(transaction_attrs)
+      {:ok, transaction} = create_transaction_from_ui(transaction_attrs)
 
       account = get_account!(transaction_attrs["account_id"])
       entry_type = determine_entry_type(transaction.type, account.class)
@@ -157,7 +152,7 @@ defmodule Sportyweb.Accounting do
 
       {:ok, _entry} = create_financial_account_entry(entry_attrs)
 
-      {:ok, transaction}
+      transaction
     end)
   end
 
@@ -180,7 +175,7 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Updates a transaction and an entry for a financial account.
+  Updates a transaction and the associated entry for a financial account.
 
   ## Examples
 
@@ -197,13 +192,28 @@ defmodule Sportyweb.Accounting do
 
       entry = get_financial_account_entry(transaction.id)
 
+      if entry == nil do
+
+        account = get_account!(attrs["account_id"])
+        entry_type = determine_entry_type(transaction.type, account.class)
+        entry_attrs = %{
+        "account_id" => attrs["account_id"],
+        "transaction_id" => transaction.id,
+        "amount" => transaction.amount,
+        "type" => entry_type
+      }
+
+      {:ok, _entry} = create_financial_account_entry(entry_attrs)
+    else
+
       entry_attrs = %{
         "account_id" => attrs["account_id"]
       }
 
       {:ok, _entry} = update_entry(entry, entry_attrs)
+    end
 
-      {:ok, transaction}
+      transaction
     end)
   end
 
@@ -543,7 +553,7 @@ defmodule Sportyweb.Accounting do
 
   ## Examples
 
-      iex> list_accounts()
+      iex> list_accounts(1)
       [%Account{}, ...]
 
   """
@@ -561,11 +571,11 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Returns a clubs list of accounts belonging to specific account classes.
+  Returns a clubs list of accounts belonging to specific account classes excluding archived accounts.
 
   ## Examples
 
-      iex> list_accounts()
+      iex> list_accounts(["Einnahmen", "Weitere Einnahmen und Ausgaben"], 1)
       [%Account{}, ...]
 
   """
@@ -646,7 +656,7 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Gets the financial account's name of an entry belonging to a specific transaction. Preloads associations.
+  Gets the financial account of an entry belonging to a specific transaction. Preloads associations.
 
   ## Examples
 
@@ -661,7 +671,6 @@ defmodule Sportyweb.Accounting do
     query =
       from(
         a in Account,
-        select: [:name],
         join: entry in assoc(a, :entry),
         where:
           entry.transaction_id == ^transaction_id and entry.account_id == a.id and
@@ -670,6 +679,7 @@ defmodule Sportyweb.Accounting do
 
     Repo.one(query)
     |> Repo.preload(preloads)
+
   end
 
   @doc """
@@ -690,16 +700,9 @@ defmodule Sportyweb.Accounting do
     |> Repo.insert()
   end
 
-  @doc """
-  Prototypically imports selected accounts of the SKR 42 chart of accounts.
 
-  ## Examples
-
-      iex> import_accounts(club_id)
-      {:ok}
-
-  """
-  def import_accounts(club_id) do
+  #Returns a list of selected accounts from the SKR 42 chart of accounts.
+  defp get_import_accounts() do
     accounts = [
       %{account_number: "17000", name: "Bank (Postbank)", class: "Umlaufvermögen"},
       %{account_number: "18000", name: "Bank", class: "Umlaufvermögen"},
@@ -786,6 +789,21 @@ defmodule Sportyweb.Accounting do
       %{account_number: "76100", name: "Gewerbesteuer", class: "Weitere Einnahmen und Ausgaben"}
     ]
 
+    accounts
+  end
+
+  @doc """
+  Prototypically imports selected accounts of the SKR 42 chart of accounts.
+
+  ## Examples
+
+      iex> import_accounts(club_id)
+      {:ok}
+
+  """
+  def import_accounts(club_id) do
+    accounts = get_import_accounts()
+
     accounts =
       Enum.map(accounts, fn account ->
         Enum.into(account, %{
@@ -844,11 +862,11 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Determines the class of an account according to the first digit of it's account number
+  Determines the class of an account according to the first digit of it's account number.
 
   ## Examples
 
-      iex> determine_class(15560)
+      iex> determine_account_class(15560)
       "Umlaufvermögen"
 
   """
@@ -877,7 +895,7 @@ defmodule Sportyweb.Accounting do
 
   """
 
-  def determine_account_classes(transaction_type) do
+  def determine_usable_account_classes(transaction_type) do
     case transaction_type do
       "Einnahme" ->
         ["Einnahmen", "Weitere Einnahmen und Ausgaben"]
@@ -890,11 +908,11 @@ defmodule Sportyweb.Accounting do
   alias Sportyweb.Accounting.Entry
 
   @doc """
-  Returns a transactions list of entries.
+  Returns a transactions list of entries. Preloads associations.
 
   ## Examples
 
-      iex> list_entries(1)
+      iex> list_entries(1, )
       [%Entry{}, ...]
 
   """
@@ -974,7 +992,7 @@ defmodule Sportyweb.Accounting do
           e.transaction_id == ^transaction_id and account.account_number >= 15500 and
             account.account_number <= 18899
       )
-      |> Sportyweb.Repo.one()
+      |> Sportyweb.Repo.one() || Decimal.new("0")
 
     fiancial_account_entry_amount
   end
@@ -997,7 +1015,7 @@ defmodule Sportyweb.Accounting do
         where: e.transaction_id == ^transaction_id,
         select: sum(fragment("(?) .amount", e.amount))
       )
-      |> Sportyweb.Repo.one()
+      |> Sportyweb.Repo.one() || Decimal.new("0")
 
     total_entries_amount
   end
@@ -1052,29 +1070,6 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Gets the amount of a single entry.
-
-  ## Examples
-
-      iex> get_entry_amount(123)
-      %Transaction{}
-
-      iex> get_entry_amount(456)
-      nil
-
-  """
-  def get_entry_amount(id) do
-    entry_amount =
-      from(e in Entry,
-        where: e.id == ^id,
-        select: fragment("(?) .amount", e.amount)
-      )
-      |> Sportyweb.Repo.one()
-
-    entry_amount
-  end
-
-  @doc """
   Creates a entry.
 
   ## Examples
@@ -1089,7 +1084,7 @@ defmodule Sportyweb.Accounting do
   def create_entry(attrs \\ %{}) do
     %Entry{}
     |> Entry.changeset(attrs)
-    |> validate_allowed_entry_amount(:amount)
+    |> validate_allowed_entry_amount_create(:amount)
     |> Repo.insert()
   end
 
@@ -1098,10 +1093,10 @@ defmodule Sportyweb.Accounting do
 
   ## Examples
 
-      iex> create_entry(%{field: value})
+      iex> create_financial_account_entry(%{field: value})
       {:ok, %Entry{}}
 
-      iex> create_entry(%{field: bad_value})
+      iex> create_financial_account_entry(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
@@ -1169,22 +1164,27 @@ defmodule Sportyweb.Accounting do
       %Ecto.Changeset{data: %Entry{}}
 
   """
-  def validate_allowed_entry_amount(changeset, field) do
+  def validate_allowed_entry_amount_create(changeset, field) do
     amount = get_field(changeset, field)
 
     case amount do
       %Money{currency: _currency, amount: amount} ->
-        transaction = get_field(changeset, :transaction_id)
+        transaction_id = get_field(changeset, :transaction_id)
 
-        transaction_amount = get_transaction_amount(transaction)
+        transaction = get_transaction!(transaction_id)
+        transaction_amount = transaction.amount.amount
 
-        total_entries_amount = get_entries_amount_total(transaction)
+        total_entries_amount = get_entries_amount_total(transaction_id)
 
-        fiancial_account_entry_amount = get_financial_account_entry_amount(transaction)
+        financial_account_entry_amount = get_financial_account_entry_amount(transaction.id)
 
-        total = Decimal.sub(total_entries_amount, fiancial_account_entry_amount)
+        # Subtract the amount of the entry to a financial account from the total amount of a transaction's entries
+        total = Decimal.sub(total_entries_amount, financial_account_entry_amount)
+
+        # Add the amount of the entry that is being added
         new_total = Decimal.add(amount, total)
 
+        # Check if new_total would exceed the transaction's amount
         if Decimal.compare(new_total, transaction_amount) == :gt do
           add_error(changeset, :amount, "Gesamtbetrag der Transaktion überschritten")
         else
@@ -1204,7 +1204,7 @@ defmodule Sportyweb.Accounting do
 
   ## Examples
 
-      iex> validate_allowed_entry_amount(%Ecto.Changeset{data: %Entry{}}, :amount)
+      iex> validate_allowed_entry_amount_update(%Ecto.Changeset{data: %Entry{}}, :amount)
       %Ecto.Changeset{data: %Entry{}}
 
   """
@@ -1213,20 +1213,29 @@ defmodule Sportyweb.Accounting do
 
     case amount do
       %Money{currency: _currency, amount: amount} ->
-        transaction = get_field(changeset, :transaction_id)
-        entry = get_field(changeset, :id)
+        transaction_id = get_field(changeset, :transaction_id)
+        entry_id = get_field(changeset, :id)
 
-        transaction_amount = get_transaction_amount(transaction)
-        entry_amount = get_entry_amount(entry)
+        transaction = get_transaction!(transaction_id)
+        transaction_amount = transaction.amount.amount
 
-        total_entries_amount = get_entries_amount_total(transaction)
+        entry = get_entry!(entry_id)
+        entry_amount = entry.amount.amount
+
+        total_entries_amount = get_entries_amount_total(transaction_id)
+
+        # Subtract the entry's current amount
         updated_entries_amount = Decimal.sub(total_entries_amount, entry_amount)
 
-        fiancial_account_entry_amount = get_financial_account_entry_amount(transaction)
+        financial_account_entry_amount = get_financial_account_entry_amount(transaction_id)
 
-        total = Decimal.sub(updated_entries_amount, fiancial_account_entry_amount)
+        # Subtract the amount of the entry to a financial account from the total amount of a transaction's entries
+        total = Decimal.sub(updated_entries_amount, financial_account_entry_amount)
+
+        # Add the amount of the entry that is being added
         new_total = Decimal.add(amount, total)
 
+        # Check if new_total would exceed the transaction's amount
         if Decimal.compare(new_total, transaction_amount) == :gt do
           add_error(changeset, :amount, "Gesamtbetrag der Transaktion überschritten")
         else
