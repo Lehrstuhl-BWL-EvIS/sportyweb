@@ -4,6 +4,7 @@ defmodule SportywebWeb.TransactionLive.NewEdit do
   alias Sportyweb.Accounting
   alias Sportyweb.Accounting.Transaction
   alias Sportyweb.Organization
+  alias Sportyweb.Legal
 
   @impl true
   def render(assigns) do
@@ -15,6 +16,8 @@ defmodule SportywebWeb.TransactionLive.NewEdit do
         title={@page_title}
         action={@live_action}
         transaction={@transaction}
+        contract_options={@contract_options}
+        contract_enabled={@contract_enabled}
         navigate={
           if @transaction.id,
             do: ~p"/transactions/#{@transaction}",
@@ -36,12 +39,24 @@ defmodule SportywebWeb.TransactionLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    transaction = Accounting.get_transaction!(id, [:club, :contact])
-
+    transaction = Accounting.get_transaction!(id, [:club, :contact, contract: :fee])
+    if transaction.contact in [nil, ""] do
     socket
     |> assign(:page_title, "Transaktion bearbeiten")
     |> assign(:transaction, transaction)
     |> assign(:club, transaction.club)
+    |> assign(:contract_options, [])
+    |> assign(:contract_enabled, false)
+    else
+    contract_options = Legal.list_contact_contract_options(transaction.contact_id, [:fee])
+    socket
+    |> assign(:page_title, "Transaktion bearbeiten")
+    |> assign(:transaction, transaction)
+    |> assign(:club, transaction.club)
+    |> assign(:contract_options, contract_options)
+    |> assign(:contract_enabled, true)
+  end
+
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
@@ -54,6 +69,8 @@ defmodule SportywebWeb.TransactionLive.NewEdit do
       club: club
     })
     |> assign(:club, club)
+    |> assign(:contract_options, [])
+    |> assign(:contract_enabled, false)
   end
 
   @impl true

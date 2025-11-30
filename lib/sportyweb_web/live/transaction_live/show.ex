@@ -11,7 +11,7 @@ defmodule SportywebWeb.TransactionLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    transaction = Accounting.get_transaction!(id, [:club, :contact, entry: [:account]])
+    transaction = Accounting.get_transaction!(id, [:club, :contact, :contract, entry: [:account], contract: [:contact, :fee]])
     entries = Accounting.list_entries(id, [:account])
     financial_account = Accounting.get_financial_account(id, [:entry])
 

@@ -29,21 +29,37 @@
       {format_date_field_dmy(@transaction.payment_date)}
     </:item>
 
-    <:item title="Finanzkonto">
-      {format_string_field(@financial_account.name)}
-    </:item>
+      <:item title="Finanzkonto">
+      <%= if @financial_account do %>
+        {format_string_field(@financial_account.name)}
+      <% else %>
+        {format_string_field(@financial_account)}  
+      <% end %>
+      </:item>
 
     <:item title="Kontakt">
-      <%= if @transaction.contact_id do %>
+    <%= if @transaction.contact_id do %>
         <.link
           navigate={~p"/contacts/#{@transaction.contact_id}"}
           class="text-indigo-600 hover:underline"
         >
           {format_string_field(@transaction.contact.name)}
         </.link>
-      <% else %>
+        <% else %>
         {format_string_field(@transaction.contact)}
-      <% end %>
+        <% end %>
+            </:item>
+    <:item title="Mitgliedschaftsvertrag">
+     <%= if @transaction.contract_id do %>
+        <.link
+          navigate={~p"/contracts/#{@transaction.contract_id}"}
+          class="text-indigo-600 hover:underline"
+        >
+          {format_string_field(@transaction.contract.fee.name)}
+        </.link>
+        <% else %>
+         {format_string_field(@transaction.contract)}
+        <% end %>
     </:item>
   </.list>
 </.card>
@@ -89,11 +105,6 @@
   <br /> <br />
   <.header>
     {"Buchungen"}
-    <:actions>
-      <.link navigate={~p"/transactions/#{@transaction}/entries/new"}>
-        <.button>Buchung erstellen</.button>
-      </.link>
-    </:actions>
   </.header>
 
   <.card>

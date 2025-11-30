@@ -4,6 +4,7 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
 
   alias Sportyweb.Accounting
   alias Sportyweb.Personal
+  alias Sportyweb.Legal
 
   @impl true
   def render(assigns) do
@@ -55,10 +56,22 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                 <div class="col-span-12">
                   <.input
                     field={@form[:contact_id]}
+                    phx-change="change_contact"
                     type="select"
                     label="Kontakt (optional)"
                     options={@contact_options |> Enum.map(&{&1.name, &1.id})}
                     prompt="Kein Kontakt"
+                  />
+                </div>
+                <div class="col-span-12">
+                  <.input
+                    field={@form[:contract_id]}
+                    type="select"
+                    label="Mitgliedschaftsvertrag (optional)"
+                    disabled={not @contract_enabled}
+                    options={@contract_options |> Enum.map(&{&1.fee.name, &1.id})}
+                    prompt="Kein Vertrag"
+
                   />
                 </div>
               </.input_grid>
@@ -122,10 +135,21 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                 <div class="col-span-12">
                   <.input
                     field={@form[:contact_id]}
+                    phx-change="change_contact"
                     type="select"
                     label="Kontakt (optional)"
                     options={@contact_options |> Enum.map(&{&1.name, &1.id})}
                     prompt="Kein Kontakt"
+                  />
+                </div>
+                <div class="col-span-12">
+                  <.input
+                    field={@form[:contract_id]}
+                    type="select"
+                    label="Mitgliedschaftsvertrag (optional)"
+                    disabled={not @contract_enabled}
+                    options={@contract_options |> Enum.map(&{&1.fee.name, &1.id})}
+                    prompt="Kein Vertrag"
                   />
                 </div>
                 <div class="col-span-12">
@@ -171,6 +195,23 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
   def handle_event("validate", %{"transaction" => transaction_params}, socket) do
     changeset = Accounting.change_transaction(socket.assigns.transaction, transaction_params)
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
+  end
+
+  @impl true
+  def handle_event("change_contact", %{"transaction" => %{"contact_id" => contact}}, socket) do
+    if contact in [nil, ""] do
+    {:noreply,
+    socket
+    |> assign(:contract_options, [])
+    |> assign(:contract_enabled, false)}
+    else
+    contract_options = Legal.list_contact_contract_options(contact, [:fee])
+    {:noreply,
+    socket
+    |> assign(:contract_options, contract_options)
+    |> assign(:contract_enabled, true)
+  }
+end
   end
 
   def handle_event("save", %{"transaction" => transaction_params}, socket) do
