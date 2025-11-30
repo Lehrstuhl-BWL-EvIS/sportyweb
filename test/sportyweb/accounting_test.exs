@@ -47,12 +47,6 @@ defmodule Sportyweb.AccountingTest do
       assert Accounting.get_transaction!(transaction.id, [:club, :contact, :contract, entry: [:account]]).club.id == transaction.club_id
     end
 
-    test "get_transaction_amount/1 returns the amount of a transaction with given id" do
-      transaction = transaction_fixture()
-
-      assert Accounting.get_transaction_amount(transaction.id) == transaction.amount.amount
-    end
-
     test "create_transaction/1 with valid data creates a transaction" do
       contract = contract_fixture()
       club = club_fixture()
@@ -65,7 +59,6 @@ defmodule Sportyweb.AccountingTest do
         amount: "42 €",
         creation_date: ~D[2023-06-04],
         name: "some name",
-        payment_date: ~D[2023-06-04],
         receipt_number: "INV-123",
         type: "Einnahme"
       }
@@ -74,13 +67,40 @@ defmodule Sportyweb.AccountingTest do
       assert transaction.amount == Money.new(:EUR, 42)
       assert transaction.creation_date == ~D[2023-06-04]
       assert transaction.name == "some name"
-      assert transaction.payment_date == ~D[2023-06-04]
       assert transaction.type == "Einnahme"
       assert transaction.receipt_number == "INV-123"
     end
 
     test "create_transaction/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Accounting.create_transaction(@invalid_attrs)
+    end
+
+    test "create_transaction_from_ui/1 with valid data creates a transaction" do
+      club = club_fixture()
+      contact = contact_fixture()
+
+      valid_attrs = %{
+        contact_id: contact.id,
+        club_id: club.id,
+        amount: "42 €",
+        creation_date: ~D[2025-11-30],
+        name: "some name",
+        receipt_number: "INV-123",
+        type: "Einnahme",
+        payment_date: ~D[2025-11-30]
+      }
+
+      assert {:ok, %Transaction{} = transaction} = Accounting.create_transaction_from_ui(valid_attrs)
+      assert transaction.amount == Money.new(:EUR, 42)
+      assert transaction.creation_date == ~D[2025-11-30]
+      assert transaction.name == "some name"
+      assert transaction.type == "Einnahme"
+      assert transaction.receipt_number == "INV-123"
+      assert transaction.payment_date == ~D[2025-11-30]
+    end
+
+    test "create_transaction_from_ui/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounting.create_transaction_from_ui(@invalid_attrs)
     end
 
     test "update_transaction/2 with valid data updates the transaction" do
