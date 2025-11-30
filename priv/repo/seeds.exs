@@ -12,6 +12,10 @@
 
 alias Sportyweb.Repo
 
+alias Sportyweb.Accounting
+alias Sportyweb.Accounting.Account
+alias Sportyweb.Accounting.Entry
+alias Sportyweb.Accounting.Transaction
 alias Sportyweb.Accounts
 alias Sportyweb.Accounts.User
 alias Sportyweb.Asset
@@ -1090,6 +1094,68 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
         notes: [%Note{}],
         events: [event]
       })
+    end
+
+     # Accounts
+
+    for _i <- 0..Enum.random(1..3) do
+      account_number = Enum.random(15500..18500)
+
+        Repo.insert!(%Account{
+        club_id: club.id,
+        account_number: account_number,
+        name: "Finanzkonto: #{Faker.Lorem.word()}",
+        class: Accounting.determine_account_class(to_string(account_number)),
+        archive_date: nil
+      })
+    end
+
+    for _i <- 0..Enum.random(8..13) do
+      account_number = Enum.random(40000..77890)
+
+        Repo.insert!(%Account{
+        club_id: club.id,
+        account_number: account_number,
+        name: "#{Accounting.determine_account_class(to_string(account_number))}-Konto: #{Faker.Lorem.word()}",
+        class: Accounting.determine_account_class(to_string(account_number)),
+        archive_date: nil
+      })
+    end
+
+    # Transactions
+
+    for _i <- 0..Enum.random(10..15) do
+
+    contact = Personal.list_contacts(club.id) |> Enum.random()
+    financial_account = Accounting.list_financial_accounts(club.id) |> Enum.random()
+    transaction_type = Enum.random(["Einnahme", "Ausgabe"])
+
+        {:ok, %Transaction{} = transaction} = Accounting.create_transaction_and_entry(%{
+        "club_id" => club.id,
+        "name" => Faker.Lorem.word(),
+        "receipt_number" => Sportyweb.SeedHelper.get_random_string(5),
+        "amount" => Money.new(:EUR, Enum.random(100..1000)),
+        "creation_date" => ~D[2025-11-29],
+        "payment_date" => ~D[2025-11-28],
+        "type" => transaction_type,
+        "contact_id" => contact.id,
+        "account_id" => financial_account.id
+    })
+
+    # Entries
+
+    account = Accounting.list_accounts(["Einnahmen", "Ausgaben"], club.id) |> Enum.random()
+
+    sphere = Enum.random([1,2,3,4,9])
+
+    Repo.insert!(%Entry{
+        transaction_id: transaction.id,
+        account_id: account.id,
+        type: Accounting.determine_entry_type(transaction.type, account.class),
+        amount: Money.new(:EUR, transaction.amount.amount),
+        sphere: sphere
+    })
+
     end
   end
 end)
