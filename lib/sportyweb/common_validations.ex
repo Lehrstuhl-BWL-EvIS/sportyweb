@@ -103,4 +103,31 @@ defmodule SportywebWeb.CommonValidations do
         changeset
     end
   end
+
+    @doc """
+  Validates that the date value of date_field is smaller or equal to the current date.
+
+  Takes a custom error message as optional parameter.
+
+  In the example below, the value of the payment_date field
+  must be smaller or equal to the current date.
+
+  ## Examples
+
+      changeset
+      |> validate_date_not_in_future(:payment_date, "Custom error")
+
+  """
+  def validate_date_not_in_future(changeset, date_field, message \\ "Error!") do
+    date_value = get_field(changeset, date_field)
+    today = Date.utc_today()
+
+    if date_value &&
+         Date.compare(date_value, today) == :gt do
+      changeset
+      |> add_error(date_field, message)
+    else
+      changeset
+    end
+  end
 end
