@@ -45,15 +45,15 @@ defmodule Sportyweb.AccountingFixtures do
       |> Enum.into(%{
         club_id: club.id,
         name: "some name",
-        account_number: 16000,
-        class: "Umlaufvermögen",
+        account_number: 16_000,
+        class: "Umlaufvermögen"
       })
       |> Sportyweb.Accounting.create_account()
 
     account
   end
 
-    @doc """
+  @doc """
   Generate a account.
   """
   def account_fixture1(attrs \\ %{}) do
@@ -64,8 +64,8 @@ defmodule Sportyweb.AccountingFixtures do
       |> Enum.into(%{
         club_id: club.id,
         name: "some name",
-        account_number: 46789,
-        class: "Einnahmen",
+        account_number: 46_789,
+        class: "Einnahmen"
       })
       |> Sportyweb.Accounting.create_account()
 

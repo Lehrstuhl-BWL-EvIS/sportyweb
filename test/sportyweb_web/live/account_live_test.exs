@@ -1,5 +1,5 @@
 defmodule SportywebWeb.AccountLiveTest do
-  use SportywebWeb.ConnCase
+  use SportywebWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Sportyweb.AccountsFixtures
@@ -8,8 +8,13 @@ defmodule SportywebWeb.AccountLiveTest do
   import Sportyweb.RBAC.UserRoleFixtures
   import Sportyweb.OrganizationFixtures
 
-  @create_attrs %{name: "some name", class: "Umlaufvermögen", account_number: 16000}
-  @update_attrs %{name: "some updated name", class: "Einnahmen", account_number: 41234, archive_date: ~D[2025-11-20]}
+  @create_attrs %{name: "some name", class: "Umlaufvermögen", account_number: 16_000}
+  @update_attrs %{
+    name: "some updated name",
+    class: "Einnahmen",
+    account_number: 41_234,
+    archive_date: ~D[2025-11-20]
+  }
   @invalid_attrs %{name: nil, class: "", account_number: nil}
 
   setup do
@@ -31,14 +36,14 @@ defmodule SportywebWeb.AccountLiveTest do
     test "lists all accounts - default redirect", %{conn: conn, user: user} do
       {:error, _} = live(conn, ~p"/accounts")
 
-       conn = conn |> log_in_user(user)
+      conn = conn |> log_in_user(user)
 
-       {:ok, conn} =
-       conn
-       |> live(~p"/accounts")
-       |> follow_redirect(conn, ~p"/clubs")
+      {:ok, conn} =
+        conn
+        |> live(~p"/accounts")
+        |> follow_redirect(conn, ~p"/clubs")
 
-    assert conn.resp_body =~ "Vereinsübersicht"
+      assert conn.resp_body =~ "Vereinsübersicht"
     end
 
     test "lists all accounts", %{conn: conn, user: user, account: account} do
@@ -52,7 +57,7 @@ defmodule SportywebWeb.AccountLiveTest do
     end
   end
 
-    describe "New/Edit" do
+  describe "New/Edit" do
     setup [:create_account]
 
     test "saves new account", %{conn: conn, user: user} do
@@ -66,8 +71,8 @@ defmodule SportywebWeb.AccountLiveTest do
       assert html =~ "Konto erstellen"
 
       assert new_live
-              |> form("#account-form", account: @invalid_attrs)
-              |> render_change() =~ "can&#39;t be blank"
+             |> form("#account-form", account: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         new_live
@@ -93,15 +98,14 @@ defmodule SportywebWeb.AccountLiveTest do
     end
 
     test "updates account", %{conn: conn, user: user, account: account} do
-
       conn = conn |> log_in_user(user)
       {:ok, edit_live, html} = live(conn, ~p"/accounts/#{account}/edit")
 
       assert html =~ "Konto bearbeiten"
 
       assert edit_live
-        |> form("#account-form", account: @invalid_attrs)
-        |> render_change() =~ "can&#39;t be blank"
+             |> form("#account-form", account: @invalid_attrs)
+             |> render_change() =~ "can&#39;t be blank"
 
       {:ok, _, html} =
         edit_live
@@ -130,10 +134,10 @@ defmodule SportywebWeb.AccountLiveTest do
       assert html =~ "some name"
 
       {:ok, _, html} =
-      edit_live
-      |> element("#account-form button", "Löschen")
-      |> render_click()
-      |> follow_redirect(conn, ~p"/clubs/#{account.club_id}/accounts")
+        edit_live
+        |> element("#account-form button", "Löschen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/clubs/#{account.club_id}/accounts")
 
       assert html =~ "Konto erfolgreich gelöscht"
       assert html =~ "Kontenplan"
@@ -141,18 +145,15 @@ defmodule SportywebWeb.AccountLiveTest do
     end
   end
 
-
   describe "Show" do
     setup [:create_account]
 
     test "displays account", %{conn: conn, user: user, account: account} do
-
       conn = conn |> log_in_user(user)
       {:ok, _show_live, html} = live(conn, ~p"/accounts/#{account}")
 
       assert html =~ "Konto:"
       assert html =~ account.name
     end
-
   end
 end

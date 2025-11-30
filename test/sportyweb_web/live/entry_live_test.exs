@@ -37,9 +37,10 @@ defmodule SportywebWeb.EntryLiveTest do
     end
 
     test "cancels updates entry", %{conn: conn, user: user, entry: entry} do
-
       conn = conn |> log_in_user(user)
-      {:ok, edit_live, _html} = live(conn, ~p"/transactions/#{entry.transaction_id}/entries/#{entry}/edit")
+
+      {:ok, edit_live, _html} =
+        live(conn, ~p"/transactions/#{entry.transaction_id}/entries/#{entry}/edit")
 
       {:ok, _, _html} =
         edit_live
@@ -57,10 +58,10 @@ defmodule SportywebWeb.EntryLiveTest do
       assert html =~ "Buchung bearbeiten"
 
       {:ok, _, html} =
-      edit_live
-      |> element("#entry-form button", "Löschen")
-      |> render_click()
-      |> follow_redirect(conn, ~p"/transactions/#{entry.transaction_id}")
+        edit_live
+        |> element("#entry-form button", "Löschen")
+        |> render_click()
+        |> follow_redirect(conn, ~p"/transactions/#{entry.transaction_id}")
 
       assert html =~ "Buchung erfolgreich gelöscht"
       assert html =~ "Transaktion: some name"

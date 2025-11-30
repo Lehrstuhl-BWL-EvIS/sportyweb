@@ -71,7 +71,6 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                     disabled={not @contract_enabled}
                     options={@contract_options |> Enum.map(&{&1.fee.name, &1.id})}
                     prompt="Kein Vertrag"
-
                   />
                 </div>
               </.input_grid>
@@ -200,18 +199,18 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
   @impl true
   def handle_event("change_contact", %{"transaction" => %{"contact_id" => contact}}, socket) do
     if contact in [nil, ""] do
-    {:noreply,
-    socket
-    |> assign(:contract_options, [])
-    |> assign(:contract_enabled, false)}
+      {:noreply,
+       socket
+       |> assign(:contract_options, [])
+       |> assign(:contract_enabled, false)}
     else
-    contract_options = Legal.list_contact_contract_options(contact, [:fee])
-    {:noreply,
-    socket
-    |> assign(:contract_options, contract_options)
-    |> assign(:contract_enabled, true)
-  }
-end
+      contract_options = Legal.list_contact_contract_options(contact, [:fee])
+
+      {:noreply,
+       socket
+       |> assign(:contract_options, contract_options)
+       |> assign(:contract_enabled, true)}
+    end
   end
 
   def handle_event("save", %{"transaction" => transaction_params}, socket) do

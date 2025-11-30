@@ -102,7 +102,7 @@ defmodule Sportyweb.Accounting do
     |> Repo.insert()
   end
 
-    @doc """
+  @doc """
   Creates a transaction from the system.
 
   ## Examples
@@ -193,25 +193,24 @@ defmodule Sportyweb.Accounting do
       entry = get_financial_account_entry(transaction.id)
 
       if entry == nil do
-
         account = get_account!(attrs["account_id"])
         entry_type = determine_entry_type(transaction.type, account.class)
+
         entry_attrs = %{
-        "account_id" => attrs["account_id"],
-        "transaction_id" => transaction.id,
-        "amount" => transaction.amount,
-        "type" => entry_type
-      }
+          "account_id" => attrs["account_id"],
+          "transaction_id" => transaction.id,
+          "amount" => transaction.amount,
+          "type" => entry_type
+        }
 
-      {:ok, _entry} = create_financial_account_entry(entry_attrs)
-    else
+        {:ok, _entry} = create_financial_account_entry(entry_attrs)
+      else
+        entry_attrs = %{
+          "account_id" => attrs["account_id"]
+        }
 
-      entry_attrs = %{
-        "account_id" => attrs["account_id"]
-      }
-
-      {:ok, _entry} = update_entry(entry, entry_attrs)
-    end
+        {:ok, _entry} = update_entry(entry, entry_attrs)
+      end
 
       transaction
     end)
@@ -611,7 +610,7 @@ defmodule Sportyweb.Accounting do
       from(
         a in Account,
         join: club in assoc(a, :club),
-        where: club.id == ^club_id and a.account_number >= 15500 and a.account_number <= 18899,
+        where: club.id == ^club_id and a.account_number >= 15_500 and a.account_number <= 18_899,
         where: a.archive_date > ^date or is_nil(a.archive_date),
         order_by: [a.account_number]
       )
@@ -674,12 +673,13 @@ defmodule Sportyweb.Accounting do
         join: entry in assoc(a, :entry),
         where:
           entry.transaction_id == ^transaction_id and entry.account_id == a.id and
-            a.account_number >= 15500 and a.account_number <= 18899
+            a.account_number >= 15_500 and a.account_number <= 18_899
       )
 
-    Repo.one(query)
-    |> Repo.preload(preloads)
+    financial_account = Repo.one(query)
 
+    financial_account
+    |> Repo.preload(preloads)
   end
 
   @doc """
@@ -700,8 +700,7 @@ defmodule Sportyweb.Accounting do
     |> Repo.insert()
   end
 
-
-  #Returns a list of selected accounts from the SKR 42 chart of accounts.
+  # Returns a list of selected accounts from the SKR 42 chart of accounts.
   defp get_import_accounts() do
     accounts = [
       %{account_number: "17000", name: "Bank (Postbank)", class: "Umlaufvermögen"},
@@ -926,7 +925,9 @@ defmodule Sportyweb.Accounting do
         order_by: [e.account_id]
       )
 
-    Repo.all(query)
+    entries = Repo.all(query)
+
+    entries
     |> Repo.preload(preloads)
   end
 
@@ -964,8 +965,8 @@ defmodule Sportyweb.Accounting do
         e in Entry,
         join: account in assoc(e, :account),
         where:
-          e.transaction_id == ^transaction_id and account.account_number >= 15500 and
-            account.account_number <= 18899
+          e.transaction_id == ^transaction_id and account.account_number >= 15_500 and
+            account.account_number <= 18_899
       )
 
     Repo.one(query)
@@ -984,15 +985,16 @@ defmodule Sportyweb.Accounting do
 
   """
   def get_financial_account_entry_amount(transaction_id) do
-    fiancial_account_entry_amount =
+    query =
       from(e in Entry,
         select: fragment("(?) .amount", e.amount),
         join: account in assoc(e, :account),
         where:
-          e.transaction_id == ^transaction_id and account.account_number >= 15500 and
-            account.account_number <= 18899
+          e.transaction_id == ^transaction_id and account.account_number >= 15_500 and
+            account.account_number <= 18_899
       )
-      |> Sportyweb.Repo.one() || Decimal.new("0")
+
+    fiancial_account_entry_amount = Sportyweb.Repo.one(query) || Decimal.new("0")
 
     fiancial_account_entry_amount
   end
@@ -1010,12 +1012,13 @@ defmodule Sportyweb.Accounting do
 
   """
   def get_entries_amount_total(transaction_id) do
-    total_entries_amount =
+    query =
       from(e in Entry,
         where: e.transaction_id == ^transaction_id,
         select: sum(fragment("(?) .amount", e.amount))
       )
-      |> Sportyweb.Repo.one() || Decimal.new("0")
+
+    total_entries_amount = Sportyweb.Repo.one(query) || Decimal.new("0")
 
     total_entries_amount
   end

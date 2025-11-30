@@ -71,7 +71,15 @@ defmodule Sportyweb.Accounting.Transaction do
       :type,
       :contact_id
     ])
-    |> validate_required([:club_id, :name, :amount, :creation_date, :type, :contract_id, :contact_id])
+    |> validate_required([
+      :club_id,
+      :name,
+      :amount,
+      :creation_date,
+      :type,
+      :contract_id,
+      :contact_id
+    ])
     |> update_change(:name, &String.trim/1)
     |> validate_length(:name, max: 60)
     |> validate_length(:receipt_number, max: 30)

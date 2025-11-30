@@ -104,7 +104,7 @@ defmodule SportywebWeb.CommonValidations do
     end
   end
 
-    @doc """
+  @doc """
   Validates that the date value of date_field is smaller or equal to the current date.
 
   Takes a custom error message as optional parameter.

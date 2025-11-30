@@ -22,6 +22,6 @@ defmodule SportywebWeb.EntryLive.Show do
   end
 
   defp show_edit_button?(account_number) do
-    account_number < 15500 || account_number > 18899
+    account_number < 15_500 || account_number > 18_899
   end
 end

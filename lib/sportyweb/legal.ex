@@ -63,7 +63,10 @@ defmodule Sportyweb.Legal do
   """
   def list_contact_contract_options(contact_id, preloads) do
     query = from(c in Contract, where: c.contact_id == ^contact_id)
-    Repo.all(query)
+
+    contracts = Repo.all(query)
+
+    contracts
     |> Repo.preload(preloads)
   end
 

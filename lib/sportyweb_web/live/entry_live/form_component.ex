@@ -31,10 +31,15 @@ defmodule SportywebWeb.EntryLive.FormComponent do
                 />
               </div>
               <div class="col-span-12">
-              <%= if @action == :edit do %>
-                <.input field={@form[:amount]} type="number" label="Betrag" value={@entry.amount.amount} />
+                <%= if @action == :edit do %>
+                  <.input
+                    field={@form[:amount]}
+                    type="number"
+                    label="Betrag"
+                    value={@entry.amount.amount}
+                  />
                 <% else %>
-                <.input field={@form[:amount]} type="number" label="Betrag" value={@entry.amount} />
+                  <.input field={@form[:amount]} type="number" label="Betrag" value={@entry.amount} />
                 <% end %>
               </div>
               <div class="col-span-12">
@@ -72,13 +77,14 @@ defmodule SportywebWeb.EntryLive.FormComponent do
 
   @impl true
   def update(%{entry: entry} = assigns, socket) do
+    account_classes = Accounting.determine_usable_account_classes(assigns.entry.transaction.type)
+
     {:ok,
      socket
      |> assign(assigns)
      |> assign(
        :account_options,
-       Accounting.determine_usable_account_classes(assigns.entry.transaction.type)
-         |> Accounting.list_accounts(assigns.entry.transaction.club.id)
+       account_classes |> Accounting.list_accounts(assigns.entry.transaction.club.id)
      )
      |> assign_new(:form, fn ->
        to_form(Accounting.change_entry(entry))

@@ -17,8 +17,8 @@
     <:item title="Konto">
       {"#{@entry.account.account_number} #{format_string_field(@entry.account.name)}"}
       <%= if Account.is_archived?(@entry.account) do %>
-          <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
-    <% end %>
+        <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
+      <% end %>
     </:item>
 
     <:item title="Betrag">

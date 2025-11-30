@@ -40,23 +40,24 @@ defmodule SportywebWeb.TransactionLive.NewEdit do
 
   defp apply_action(socket, :edit, %{"id" => id}) do
     transaction = Accounting.get_transaction!(id, [:club, :contact, contract: :fee])
-    if transaction.contact in [nil, ""] do
-    socket
-    |> assign(:page_title, "Transaktion bearbeiten")
-    |> assign(:transaction, transaction)
-    |> assign(:club, transaction.club)
-    |> assign(:contract_options, [])
-    |> assign(:contract_enabled, false)
-    else
-    contract_options = Legal.list_contact_contract_options(transaction.contact_id, [:fee])
-    socket
-    |> assign(:page_title, "Transaktion bearbeiten")
-    |> assign(:transaction, transaction)
-    |> assign(:club, transaction.club)
-    |> assign(:contract_options, contract_options)
-    |> assign(:contract_enabled, true)
-  end
 
+    if transaction.contact in [nil, ""] do
+      socket
+      |> assign(:page_title, "Transaktion bearbeiten")
+      |> assign(:transaction, transaction)
+      |> assign(:club, transaction.club)
+      |> assign(:contract_options, [])
+      |> assign(:contract_enabled, false)
+    else
+      contract_options = Legal.list_contact_contract_options(transaction.contact_id, [:fee])
+
+      socket
+      |> assign(:page_title, "Transaktion bearbeiten")
+      |> assign(:transaction, transaction)
+      |> assign(:club, transaction.club)
+      |> assign(:contract_options, contract_options)
+      |> assign(:contract_enabled, true)
+    end
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
