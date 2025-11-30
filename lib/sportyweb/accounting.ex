@@ -1039,11 +1039,21 @@ defmodule Sportyweb.Accounting do
         "S"
 
       transaction_type == "Einnahme" and
-          account_type in ["Eigen-/Fremdkapital", "Fremdkapital", "Einnahmen"] ->
+          account_type in [
+            "Eigen-/Fremdkapital",
+            "Fremdkapital",
+            "Einnahmen",
+            "Weitere Einnahmen und Ausgaben"
+          ] ->
         "H"
 
       transaction_type == "Ausgabe" and
-          account_type in ["Eigen-/Fremdkapital", "Fremdkapital", "Ausgaben"] ->
+          account_type in [
+            "Eigen-/Fremdkapital",
+            "Fremdkapital",
+            "Ausgaben",
+            "Weitere Einnahmen und Ausgaben"
+          ] ->
         "S"
 
       transaction_type == "Ausgabe" and
