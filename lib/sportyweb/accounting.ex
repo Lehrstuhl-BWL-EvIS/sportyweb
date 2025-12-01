@@ -980,9 +980,6 @@ defmodule Sportyweb.Accounting do
       iex> get_financial_account_entry_amount(123)
       %Entry{}
 
-      iex> get_financial_account_entry_amount(456)
-      nil
-
   """
   def get_financial_account_entry_amount(transaction_id) do
     query =
@@ -1006,9 +1003,6 @@ defmodule Sportyweb.Accounting do
 
       iex> get_entries_amount_total(123)
       %Transaction{}
-
-      iex> get_entries_amount_total(456)
-      nil
 
   """
   def get_entries_amount_total(transaction_id) do
