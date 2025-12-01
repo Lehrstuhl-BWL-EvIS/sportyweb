@@ -46,6 +46,10 @@ defmodule Sportyweb.Accounting.Transaction do
     |> update_change(:name, &String.trim/1)
     |> validate_length(:name, max: 60)
     |> validate_length(:receipt_number, max: 30)
+    |> validate_format(:receipt_number, ~r/^([\w$%&*+\-\/]{0,36})$/,
+      message:
+        "Belegnummer darf nur Buchstaben, Zahlen und die Sonderzeichen $ & % * + - / enthalten"
+    )
     |> validate_currency(:amount, :EUR)
     |> validate_date_not_in_future(
       :payment_date,
@@ -83,7 +87,12 @@ defmodule Sportyweb.Accounting.Transaction do
     |> update_change(:name, &String.trim/1)
     |> validate_length(:name, max: 60)
     |> validate_length(:receipt_number, max: 30)
+    |> validate_format(:receipt_number, ~r/^([\w$%&*+\-\/]{0,36})$/,
+      message:
+        "Belegnummer darf nur Buchstaben, Zahlen und die Sonderzeichen $ & % * + - / enthalten"
+    )
     |> validate_currency(:amount, :EUR)
+    |> foreign_key_constraint(:contact_id)
     |> foreign_key_constraint(:contract_id)
     |> validate_amount(:amount)
   end

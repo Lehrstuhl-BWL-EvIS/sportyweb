@@ -24,6 +24,7 @@ defmodule Sportyweb.Accounting.Account do
     account
     |> cast(attrs, [:club_id, :account_number, :name, :class, :archive_date])
     |> validate_required([:club_id, :account_number, :name, :class])
+    |> validate_length(:name, max: 40)
     |> validate_inclusion(:class, [
       "Anlagevermögen",
       "Umlaufvermögen",
