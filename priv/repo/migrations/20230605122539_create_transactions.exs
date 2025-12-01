@@ -11,9 +11,11 @@ defmodule Sportyweb.Repo.Migrations.CreateTransactions do
       add :receipt_number, :string, null: true
       add :type, :string, null: false
 
-      add :contract_id, references(:contracts, on_delete: :nothing, type: :binary_id), null: true
+      add :contract_id, references(:contracts, on_delete: :delete_all, type: :binary_id),
+        null: true
+
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false
-      add :contact_id, references(:contacts, on_delete: :nothing, type: :binary_id), null: true
+      add :contact_id, references(:contacts, on_delete: :delete_all, type: :binary_id), null: true
 
       timestamps(type: :utc_datetime)
     end
