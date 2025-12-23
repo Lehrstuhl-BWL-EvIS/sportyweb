@@ -29,7 +29,7 @@ defmodule Sportyweb.Accounting do
         t in Transaction,
         join: club in assoc(t, :club),
         where: club.id == ^club_id,
-        order_by: [t.creation_date]
+        order_by: [desc_nulls_first: t.payment_date]
       )
 
     Repo.all(query)
