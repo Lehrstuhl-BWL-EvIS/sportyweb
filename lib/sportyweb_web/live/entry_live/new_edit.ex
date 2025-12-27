@@ -60,7 +60,7 @@ defmodule SportywebWeb.EntryLive.NewEdit do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     entry = Accounting.get_entry!(id)
-    {:ok, _} = Accounting.delete_entry(entry)
+    {:ok, _} = Accounting.delete_entry_and_update_account_balance(entry)
 
     {:noreply,
      socket

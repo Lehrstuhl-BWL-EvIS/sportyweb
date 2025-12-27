@@ -22,6 +22,7 @@
       </:col>
       <:col :let={{_id, account}} label="Name">{account.name}</:col>
       <:col :let={{_id, account}} label="Kontoklasse">{account.class}</:col>
+      <:col :let={{_id, account}} label="Saldo">{account.balance}</:col>
       <:action :let={{_id, account}}>
         <.link navigate={~p"/accounts/#{account}"}>Anzeigen</.link>
       </:action>

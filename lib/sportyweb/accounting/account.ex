@@ -15,6 +15,8 @@ defmodule Sportyweb.Accounting.Account do
     field :class, :string, default: ""
     field :account_number, :integer, default: nil
     field :archive_date, :date, default: nil
+    field :balance, Money.Ecto.Composite.Type, default_currency: :EUR, default: Money.new(:EUR, 0)
+    field :opening_balance, Money.Ecto.Composite.Type, default_currency: :EUR, default: Money.new(:EUR, 0)
 
     timestamps(type: :utc_datetime)
   end
@@ -22,7 +24,7 @@ defmodule Sportyweb.Accounting.Account do
   @doc false
   def changeset(account, attrs) do
     account
-    |> cast(attrs, [:club_id, :account_number, :name, :class, :archive_date])
+    |> cast(attrs, [:club_id, :account_number, :name, :class, :archive_date, :balance, :opening_balance])
     |> validate_required([:club_id, :account_number, :name, :class])
     |> validate_length(:name, max: 40)
     |> validate_inclusion(:class, [
