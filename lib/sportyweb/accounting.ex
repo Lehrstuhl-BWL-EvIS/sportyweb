@@ -844,54 +844,62 @@ defmodule Sportyweb.Accounting do
 
   """
   def update_account_balance(%Account{} = account, amount, type) do
-  digits = Integer.digits(account.account_number)
-  first_digit = hd(digits)
-  account_balance =
-    cond do
-      first_digit in [0, 1, 5, 6] ->
-        case type do
-          "S" -> Decimal.add(account.balance.amount, amount)
-          "H" -> Decimal.sub(account.balance.amount, amount)
-        end
-      first_digit in [2, 3, 4] ->
-        case type do
-          "H" -> Decimal.add(account.balance.amount, amount)
-          "S" -> Decimal.sub(account.balance.amount, amount)
-        end
-      first_digit == 7 ->
-        second_digit = Enum.at(digits, 1)
-        cond do
-        second_digit in [0, 1, 4] ->
-          case type do
-            "H" -> Decimal.add(account.balance.amount, amount)
-            "S" -> Decimal.sub(account.balance.amount, amount)
-          end
-        second_digit == 7 ->
-          third_digit = Enum.at(digits, 2)
-          cond do
-            third_digit in [0, 1, 2, 3, 4, 5] ->
-            case type do
-            "S" -> Decimal.add(account.balance.amount, amount)
-            "H" -> Decimal.sub(account.balance.amount, amount)
-            end
-            third_digit in [6, 7, 8, 9] ->
-            case type do
-            "H" -> Decimal.add(account.balance.amount, amount)
-            "S" -> Decimal.sub(account.balance.amount, amount)
-            end
-           true ->
-          case type do
-            "S" -> Decimal.add(account.balance.amount, amount)
-            "H" -> Decimal.sub(account.balance.amount, amount)
-          end
-        end
-        end
-      end
+    digits = Integer.digits(account.account_number)
+    first_digit = hd(digits)
 
+    account_balance =
+      cond do
+        first_digit in [0, 1, 5, 6] ->
+          case type do
+            "S" -> Decimal.add(account.balance.amount, amount)
+            "H" -> Decimal.sub(account.balance.amount, amount)
+          end
+
+        first_digit in [2, 3, 4] ->
+          case type do
+            "H" -> Decimal.add(account.balance.amount, amount)
+            "S" -> Decimal.sub(account.balance.amount, amount)
+          end
+
+        first_digit == 7 ->
+          second_digit = Enum.at(digits, 1)
+
+          cond do
+            second_digit in [0, 1, 4] ->
+              case type do
+                "H" -> Decimal.add(account.balance.amount, amount)
+                "S" -> Decimal.sub(account.balance.amount, amount)
+              end
+
+            second_digit == 7 ->
+              third_digit = Enum.at(digits, 2)
+
+              cond do
+                third_digit in [0, 1, 2, 3, 4, 5] ->
+                  case type do
+                    "S" -> Decimal.add(account.balance.amount, amount)
+                    "H" -> Decimal.sub(account.balance.amount, amount)
+                  end
+
+                third_digit in [6, 7, 8, 9] ->
+                  case type do
+                    "H" -> Decimal.add(account.balance.amount, amount)
+                    "S" -> Decimal.sub(account.balance.amount, amount)
+                  end
+
+                true ->
+                  case type do
+                    "S" -> Decimal.add(account.balance.amount, amount)
+                    "H" -> Decimal.sub(account.balance.amount, amount)
+                  end
+              end
+          end
+      end
 
     account_attrs = %{
       "balance" => Money.new(:EUR, account_balance)
-      }
+    }
+
     update_account(account, account_attrs)
   end
 
@@ -1093,7 +1101,12 @@ defmodule Sportyweb.Accounting do
   def determine_entry_type(transaction_type, account_type) do
     cond do
       transaction_type == "Einnahme" and
-          account_type in ["Anlagevermögen", "Umlaufvermögen", "Ausgaben", "Weitere Einnahmen und Ausgaben"] ->
+          account_type in [
+            "Anlagevermögen",
+            "Umlaufvermögen",
+            "Ausgaben",
+            "Weitere Einnahmen und Ausgaben"
+          ] ->
         "S"
 
       transaction_type == "Einnahme" and
@@ -1113,7 +1126,12 @@ defmodule Sportyweb.Accounting do
         "S"
 
       transaction_type == "Ausgabe" and
-          account_type in ["Anlagevermögen", "Umlaufvermögen", "Einnahmen", "Weitere Einnahmen und Ausgaben"] ->
+          account_type in [
+            "Anlagevermögen",
+            "Umlaufvermögen",
+            "Einnahmen",
+            "Weitere Einnahmen und Ausgaben"
+          ] ->
         "H"
     end
   end
@@ -1157,7 +1175,7 @@ defmodule Sportyweb.Accounting do
     |> Repo.insert()
   end
 
-    @doc """
+  @doc """
   Creates an entry and updates the account's balance.
 
   ## Examples
@@ -1171,14 +1189,17 @@ defmodule Sportyweb.Accounting do
   """
   def create_entry_and_update_account_balance(attrs \\ %{}) do
     account = get_account!(attrs["account_id"])
+
     Repo.transaction(fn ->
       case create_entry(attrs) do
         {:ok, entry} ->
           case update_account_balance(account, entry.amount.amount, entry.type) do
-          {:ok, _} -> {:ok, entry}
-          {:error, reason} -> Repo.rollback(reason)
-            end
-        {:error, reason} -> Repo.rollback(reason)
+            {:ok, _} -> {:ok, entry}
+            {:error, reason} -> Repo.rollback(reason)
+          end
+
+        {:error, reason} ->
+          Repo.rollback(reason)
       end
     end)
   end
@@ -1201,7 +1222,7 @@ defmodule Sportyweb.Accounting do
     |> Repo.insert()
   end
 
-      @doc """
+  @doc """
   Creates an entry for a financial account and updates the account's balance.
 
   ## Examples
@@ -1215,14 +1236,17 @@ defmodule Sportyweb.Accounting do
   """
   def create_financial_account_entry_and_update_account_balance(attrs \\ %{}) do
     account = get_account!(attrs["account_id"])
+
     Repo.transaction(fn ->
       case create_financial_account_entry(attrs) do
         {:ok, entry} ->
           case update_account_balance(account, entry.amount.amount, entry.type) do
-          {:ok, _} -> {:ok, entry}
-          {:error, reason} -> Repo.rollback(reason)
-            end
-        {:error, reason} -> Repo.rollback(reason)
+            {:ok, _} -> {:ok, entry}
+            {:error, reason} -> Repo.rollback(reason)
+          end
+
+        {:error, reason} ->
+          Repo.rollback(reason)
       end
     end)
   end
@@ -1246,7 +1270,7 @@ defmodule Sportyweb.Accounting do
     |> Repo.update()
   end
 
-    @doc """
+  @doc """
   Updates an entry and the account's balance.
 
   ## Examples
@@ -1260,23 +1284,31 @@ defmodule Sportyweb.Accounting do
   """
   def update_entry_and_account_balance(%Entry{} = entry, attrs) do
     old_entry = entry
+
     Repo.transaction(fn ->
       case update_entry(old_entry, attrs) do
         {:ok, new_entry} ->
           old_account = get_account!(entry.account_id)
           new_account = get_account!(attrs["account_id"])
+
           if old_account.id == new_account.id do
             amount = Decimal.sub(new_entry.amount.amount, old_entry.amount.amount)
             updated_amount = Decimal.add(old_account.balance.amount, amount)
 
             account_attrs = %{"balance" => Money.new(:EUR, updated_amount)}
             update_account(old_account, account_attrs)
-
           else
-          update_account_balance(old_account, Decimal.negate(old_entry.amount.amount), old_entry.type)
-          update_account_balance(new_account, new_entry.amount.amount, new_entry.type)
+            update_account_balance(
+              old_account,
+              Decimal.negate(old_entry.amount.amount),
+              old_entry.type
+            )
+
+            update_account_balance(new_account, new_entry.amount.amount, new_entry.type)
           end
-        {:error, reason} -> Repo.rollback(reason)
+
+        {:error, reason} ->
+          Repo.rollback(reason)
       end
     end)
   end
@@ -1297,7 +1329,7 @@ defmodule Sportyweb.Accounting do
     Repo.delete(entry)
   end
 
-    @doc """
+  @doc """
   Deletes an entry and updates the account's balance.
 
   ## Examples
@@ -1312,14 +1344,17 @@ defmodule Sportyweb.Accounting do
   def delete_entry_and_update_account_balance(%Entry{} = entry) do
     account_id = entry.account_id
     account = get_account!(account_id)
+
     Repo.transaction(fn ->
       case delete_entry(entry) do
         {:ok, entry} ->
           case update_account_balance(account, Decimal.negate(entry.amount.amount), entry.type) do
-          {:ok, _} -> {:ok, entry}
-          {:error, reason} -> Repo.rollback(reason)
-            end
-        {:error, reason} -> Repo.rollback(reason)
+            {:ok, _} -> {:ok, entry}
+            {:error, reason} -> Repo.rollback(reason)
+          end
+
+        {:error, reason} ->
+          Repo.rollback(reason)
       end
     end)
   end

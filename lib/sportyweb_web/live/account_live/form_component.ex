@@ -46,9 +46,13 @@ defmodule SportywebWeb.AccountLive.FormComponent do
                 <.input field={@form[:class]} type="text" label="Kontoklasse" readonly />
               </div>
               <%= if @action == :new || @account.opening_balance == Money.new(:EUR, 0) && not Enum.any?(@account.entry) do %>
-              <div class="col-span-12 md:col-span-6">
-                <.input field={@form[:opening_balance]} type="number" label="Anfangsbestand (optional)" />
-              </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input
+                    field={@form[:opening_balance]}
+                    type="number"
+                    label="Anfangsbestand (optional)"
+                  />
+                </div>
               <% end %>
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:archive_date]} type="date" label="Archiviert ab (optional)" />
@@ -142,6 +146,7 @@ defmodule SportywebWeb.AccountLive.FormComponent do
       Enum.into(account_params, %{
         "balance" => account_params["opening_balance"]
       })
+
     case Accounting.update_account(socket.assigns.account, account_params) do
       {:ok, _account} ->
         {:noreply,

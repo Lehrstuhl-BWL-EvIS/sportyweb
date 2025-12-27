@@ -27,7 +27,11 @@ defmodule SportywebWeb.EntryLive.FormComponent do
                   field={@form[:account_id]}
                   type="select"
                   label="Konto"
-                  options={@account_options |> Enum.map(&{&1.name, &1.id})}
+                  options={
+                    for a <- @account_options do
+                      {"#{a.account_number} #{a.name}", a.id}
+                    end
+                  }
                 />
               </div>
               <div class="col-span-12">

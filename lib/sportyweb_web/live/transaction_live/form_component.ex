@@ -128,7 +128,11 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                     field={@form[:account_id]}
                     type="select"
                     label="Finanzkonto"
-                    options={@financial_account_options |> Enum.map(&{&1.name, &1.id})}
+                    options={
+                      for a <- @financial_account_options do
+                        {"#{a.account_number} #{a.name}", a.id}
+                      end
+                    }
                   />
                 </div>
                 <div class="col-span-12">
