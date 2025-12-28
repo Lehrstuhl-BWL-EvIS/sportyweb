@@ -233,6 +233,36 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
+  Deletes a transaction and updates balances of all associated accounts.
+
+  ## Examples
+
+      iex> delete_transaction_and_update_account_balance(transaction)
+      {:ok, %Transaction{}}
+
+      iex> delete_transaction_and_update_account_balance(transaction)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_transaction_and_update_account_balance(%Transaction{} = transaction) do
+    entries = list_entries(transaction.id, [:account])
+
+    Repo.transaction(fn ->
+      case delete_transaction(transaction) do
+        {:ok, transaction} ->
+          Enum.each(entries, fn entry ->
+            case update_account_balance(entry.account, Decimal.negate(entry.amount.amount), entry.type) do
+            {:ok, _} -> {:ok, entry}
+            {:error, reason} -> Repo.rollback(reason)
+          end
+          end)
+        {:error, reason} ->
+          Repo.rollback(reason)
+      end
+    end)
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking transaction changes.
 
   ## Examples

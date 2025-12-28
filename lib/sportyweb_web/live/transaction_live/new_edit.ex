@@ -77,7 +77,7 @@ defmodule SportywebWeb.TransactionLive.NewEdit do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     transaction = Accounting.get_transaction!(id)
-    {:ok, _} = Accounting.delete_transaction(transaction)
+    {:ok, _} = Accounting.delete_transaction_and_update_account_balance(transaction)
 
     {:noreply,
      socket
