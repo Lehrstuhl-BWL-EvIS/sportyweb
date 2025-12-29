@@ -249,13 +249,18 @@ defmodule Sportyweb.Accounting do
 
     Repo.transaction(fn ->
       case delete_transaction(transaction) do
-        {:ok, transaction} ->
+        {:ok, _transaction} ->
           Enum.each(entries, fn entry ->
-            case update_account_balance(entry.account, Decimal.negate(entry.amount.amount), entry.type) do
-            {:ok, _} -> {:ok, entry}
-            {:error, reason} -> Repo.rollback(reason)
-          end
+            case update_account_balance(
+                   entry.account,
+                   Decimal.negate(entry.amount.amount),
+                   entry.type
+                 ) do
+              {:ok, _} -> {:ok, entry}
+              {:error, reason} -> Repo.rollback(reason)
+            end
           end)
+
         {:error, reason} ->
           Repo.rollback(reason)
       end
@@ -1006,6 +1011,48 @@ defmodule Sportyweb.Accounting do
     end
   end
 
+  # Calculates an account's balance based on debit and credit values and it's account number
+  defp calculate_account_balance(debit, credit, account_number) do
+    digits = Integer.digits(account_number)
+    first_digit = hd(digits)
+
+    balance =
+      cond do
+        first_digit in [0, 1] ->
+          Decimal.sub(debit, credit)
+
+        first_digit in [2, 3] ->
+          Decimal.sub(credit, debit)
+
+        first_digit in [4] ->
+          Decimal.sub(credit, debit)
+
+        first_digit in [5, 6] ->
+          Decimal.sub(debit, credit)
+
+        first_digit == 7 ->
+          second_digit = Enum.at(digits, 1)
+
+          cond do
+            second_digit in [0, 1, 4] ->
+              Decimal.sub(credit, debit)
+
+            second_digit in [2, 3, 5, 6] ->
+              Decimal.sub(debit, credit)
+
+            second_digit == 7 ->
+              third_digit = Enum.at(digits, 2)
+
+              cond do
+                third_digit in [0, 1, 2, 3, 4, 5] -> Decimal.sub(debit, credit)
+                third_digit in [6, 7, 8, 9] -> Decimal.sub(credit, debit)
+              end
+          end
+      end
+
+    balance = Money.new(:EUR, balance)
+  end
+
   alias Sportyweb.Accounting.Entry
 
   @doc """
@@ -1496,5 +1543,329 @@ defmodule Sportyweb.Accounting do
       _ ->
         changeset
     end
+  end
+
+  @doc """
+  Determines the amount of entries associated to sphere nine in a given period of time.
+
+  """
+  def determine_entries_in_sphere_nine(start_date, end_date, club_id) do
+    query =
+      from(
+        e in Entry,
+        join: t in assoc(e, :transaction),
+        join: club in assoc(t, :club),
+        where: club.id == ^club_id,
+        where: t.payment_date >= ^start_date and t.payment_date <= ^end_date,
+        where: e.sphere == 9
+      )
+
+    Repo.aggregate(query, :count, :id)
+  end
+
+  @doc """
+  Returns a list of maps with the following data:
+  - balances for nominal accounts and spheres in a given period of time
+  - balances for accounts over all spheres
+  - the resulting profit or loss.
+
+  """
+
+  def determine_income_statement(start_date, end_date, club_id) do
+    revenues = get_income_statement_data(start_date, end_date, club_id, "Einnahme")
+
+    revenues
+    |> list_account_balances_for_spheres()
+    |> calculate_total_balances("Einnahmen")
+    |> add_header("Einnahmen")
+
+    expenses = get_income_statement_data(start_date, end_date, club_id, "Ausgabe")
+
+    expenses
+    |> list_account_balances_for_spheres()
+    |> calculate_total_balances("Ausgaben")
+    |> add_header("Ausgaben")
+
+    revenues_and_expenses = revenues ++ expenses
+    revenue_total = List.last(revenues)
+    expense_total = List.last(expenses)
+
+    profit_loss = [
+      %{
+        id: "profit_loss",
+        name: "Gewinn / Verlust",
+        account_number: nil,
+        balance_sphere_1:
+          Money.new(
+            :EUR,
+            Decimal.sub(
+              revenue_total.balance_sphere_1.amount,
+              expense_total.balance_sphere_1.amount
+            )
+          ),
+        balance_sphere_2:
+          Money.new(
+            :EUR,
+            Decimal.sub(
+              revenue_total.balance_sphere_2.amount,
+              expense_total.balance_sphere_2.amount
+            )
+          ),
+        balance_sphere_3:
+          Money.new(
+            :EUR,
+            Decimal.sub(
+              revenue_total.balance_sphere_3.amount,
+              expense_total.balance_sphere_3.amount
+            )
+          ),
+        balance_sphere_4:
+          Money.new(
+            :EUR,
+            Decimal.sub(
+              revenue_total.balance_sphere_4.amount,
+              expense_total.balance_sphere_4.amount
+            )
+          ),
+        balance_total:
+          Money.new(
+            :EUR,
+            Decimal.sub(
+              revenue_total.balance_total.amount,
+              expense_total.balance_total.amount
+            )
+          )
+      }
+    ]
+
+    revenues_and_expenses = revenues_and_expenses ++ profit_loss
+  end
+
+  # Determines debit and credit values for every nominal account for all entries in a given period of time
+  defp get_income_statement_data(start_date, end_date, club_id, type) do
+    query =
+      from(
+        a in Account,
+        join: club in assoc(a, :club),
+        join: e in assoc(a, :entry),
+        join: t in assoc(e, :transaction),
+        where: club.id == ^club_id,
+        where: t.payment_date >= ^start_date and t.payment_date <= ^end_date,
+        where: a.class in ["Einnahmen", "Ausgaben", "Weitere Einnahmen und Ausgaben"],
+        where: e.sphere in [1, 2, 3, 4],
+        where: t.type == ^type,
+        select: %{
+          id: a.id,
+          account_number: a.account_number,
+          name: a.name,
+          debit_sphere_1:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' AND ? = 1 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          credit_sphere_1:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' AND ? = 1 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          debit_sphere_2:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' AND ? = 2 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          credit_sphere_2:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' AND ? = 2 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          debit_sphere_3:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' AND ? = 3 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          credit_sphere_3:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' AND ? = 3 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          debit_sphere_4:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' AND ? = 4 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          credit_sphere_4:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' AND ? = 4 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          debit_total:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' AND ? <> 9 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          credit_total:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' AND ? <> 9 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            )
+        },
+        group_by: [a.id]
+      )
+
+    accounts = Repo.all(query)
+  end
+
+  # Lists the account's overall balances and balances for every sphere
+  defp list_account_balances_for_spheres(income_statement_data) do
+    # Calculate balances for every account and every sphere als well as the account's total balance
+    income_statement_data =
+      Enum.map(income_statement_data, fn account ->
+        balance_sphere_1 =
+          calculate_account_balance(
+            account.debit_sphere_1,
+            account.credit_sphere_1,
+            account.account_number
+          )
+
+        balance_sphere_2 =
+          calculate_account_balance(
+            account.debit_sphere_2,
+            account.credit_sphere_2,
+            account.account_number
+          )
+
+        balance_sphere_3 =
+          calculate_account_balance(
+            account.debit_sphere_3,
+            account.credit_sphere_3,
+            account.account_number
+          )
+
+        balance_sphere_4 =
+          calculate_account_balance(
+            account.debit_sphere_4,
+            account.credit_sphere_4,
+            account.account_number
+          )
+
+        balance_total =
+          calculate_account_balance(
+            account.debit_total,
+            account.credit_total,
+            account.account_number
+          )
+
+        # Add balances and drop debit and credit values
+        account
+        |> Map.put(:balance_sphere_1, balance_sphere_1)
+        |> Map.drop([:debit_sphere_1, :credit_sphere_1])
+        |> Map.put(:balance_sphere_2, balance_sphere_2)
+        |> Map.drop([:debit_sphere_2, :credit_sphere_2])
+        |> Map.put(:balance_sphere_3, balance_sphere_3)
+        |> Map.drop([:debit_sphere_3, :credit_sphere_3])
+        |> Map.put(:balance_sphere_4, balance_sphere_4)
+        |> Map.drop([:debit_sphere_4, :credit_sphere_4])
+        |> Map.put(:balance_total, balance_total)
+        |> Map.drop([:debit_total, :credit_total])
+      end)
+  end
+
+  # Adds an header line for an income statement
+  defp add_header(income_statement_data, type) do
+    header = %{
+      id: "header" <> type,
+      name: type,
+      account_number: nil,
+      balance_sphere_1: nil,
+      balance_sphere_2: nil,
+      balance_sphere_3: nil,
+      balance_sphere_4: nil,
+      balance_total: nil
+    }
+
+    income_statement_data = [header | income_statement_data]
+  end
+
+  # Calculates total balances for spheres and a total balance for all spheres
+  defp calculate_total_balances(income_statement_data, type) do
+    total_balance = Money.new(:EUR, 0)
+
+    sum_sphere_1 =
+      Enum.reduce(income_statement_data, total_balance.amount, fn account, sum ->
+        Decimal.add(sum, account.balance_sphere_1.amount)
+      end)
+
+    sum_sphere_2 =
+      Enum.reduce(income_statement_data, total_balance.amount, fn account, sum ->
+        Decimal.add(sum, account.balance_sphere_2.amount)
+      end)
+
+    sum_sphere_3 =
+      Enum.reduce(income_statement_data, total_balance.amount, fn account, sum ->
+        Decimal.add(sum, account.balance_sphere_3.amount)
+      end)
+
+    sum_sphere_4 =
+      Enum.reduce(income_statement_data, total_balance.amount, fn account, sum ->
+        Decimal.add(sum, account.balance_sphere_4.amount)
+      end)
+
+    sum_spheres_total =
+      Enum.reduce(income_statement_data, total_balance.amount, fn account, sum ->
+        Decimal.add(sum, account.balance_total.amount)
+      end)
+
+    total = %{
+      id: "total" <> type,
+      name: "Summe " <> type,
+      account_number: nil,
+      balance_sphere_1: Money.new(:EUR, sum_sphere_1),
+      balance_sphere_2: Money.new(:EUR, sum_sphere_2),
+      balance_sphere_3: Money.new(:EUR, sum_sphere_3),
+      balance_sphere_4: Money.new(:EUR, sum_sphere_4),
+      balance_total: Money.new(:EUR, sum_spheres_total)
+    }
+
+    income_statement_data = List.insert_at(income_statement_data, -1, total)
   end
 end

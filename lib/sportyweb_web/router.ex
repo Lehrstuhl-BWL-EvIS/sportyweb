@@ -227,6 +227,14 @@ defmodule SportywebWeb.Router do
 
       live "/accounts/:id", AccountLive.Show, :show
 
+      # Income Statements
+
+      live "/clubs/:club_id/income_statements", IncomeStatementLive.NewEdit, :new
+
+      live "/clubs/:club_id/income_statements/start/:start_date/end/:end_date",
+           IncomeStatementLive.Show,
+           :show
+
       # Fees (Polymorphic)
 
       live "/fees", FeeLive.Index, :index_root

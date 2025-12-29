@@ -1,0 +1,25 @@
+<.header>
+  {@page_title}
+</.header>
+<.card class="flex flex-wrap sm:flex-nowrap justify-between space-x-6">
+  <.table id="transactions" rows={@streams.income_statement} class="mt-0">
+    <:col :let={{_id, income_statement}} label="Konto">
+      {"#{income_statement.account_number} #{format_string_field(income_statement.name)}"}
+    </:col>
+    <:col :let={{_id, income_statement}} label="Ideeller Bereich">
+      {income_statement.balance_sphere_1}
+    </:col>
+    <:col :let={{_id, income_statement}} label="Vermögensverwaltung">
+      {income_statement.balance_sphere_2}
+    </:col>
+    <:col :let={{_id, income_statement}} label="Zweckbetrieb">
+      {income_statement.balance_sphere_3}
+    </:col>
+    <:col :let={{_id, income_statement}} label="Wirtschaftlicher Geschäftsbetrieb">
+      {income_statement.balance_sphere_4}
+    </:col>
+    <:col :let={{_id, income_statement}} label="Gesamt">
+      {income_statement.balance_total}
+    </:col>
+  </.table>
+</.card>

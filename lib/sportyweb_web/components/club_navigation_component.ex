@@ -123,6 +123,21 @@ defmodule SportywebWeb.ClubNavigationComponent do
 
           <li>
             <.link
+              navigate={~p"/clubs/#{@club}/income_statements"}
+              class={[
+                @classes_menu_item,
+                @classes_submenu_item,
+                if(@club_navigation_current_item == :income_statements,
+                  do: @classes_menu_item_active
+                )
+              ]}
+            >
+              <span class="truncate">EÜR</span>
+            </.link>
+          </li>
+
+          <li>
+            <.link
               navigate={~p"/clubs/#{@club}/forecasts"}
               class={[
                 @classes_menu_item,
@@ -184,6 +199,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
         assigns.club_navigation_current_item == :forecasts ||
         assigns.club_navigation_current_item == :fees ||
         assigns.club_navigation_current_item == :accounts ||
+        assigns.club_navigation_current_item == :income_statements ||
         assigns.club_navigation_current_item == :subsidies
 
     {:ok,
