@@ -35,7 +35,7 @@
 
     <:item title="Finanzkonto">
       <%= if @financial_account do %>
-        {format_string_field(@financial_account.name)}
+        {"#{@financial_account.account_number} #{format_string_field(@financial_account.name)}"}
       <% else %>
         {format_string_field(@financial_account)}
       <% end %>

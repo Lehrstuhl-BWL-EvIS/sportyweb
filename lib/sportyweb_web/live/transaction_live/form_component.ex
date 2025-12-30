@@ -125,7 +125,10 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                   />
                 </div>
                 <div class="col-span-12 md:col-span-6">
-                  <.input field={@form[:amount]} type="number" label="Betrag" phx-update="ignore" />
+                  <.input field={@form[:amount]} type="text" label="Betrag" phx-update="ignore" />
+                  <.input_description>
+                    Das €-Zeichen kann, muss aber nicht angegeben werden.
+                  </.input_description>
                 </div>
                 <div class="col-span-12 md:col-span-6">
                   <.input field={@form[:receipt_number]} type="text" label="Belegnummer (optional)" />

@@ -18,8 +18,8 @@
         {format_string_field(transaction.name)}
       </:col>
 
-      <:col :let={{_id, transaction}} label="Betrag">
-        {transaction.amount}
+      <:col :let={{_id, transaction}} label="Beleg">
+        {transaction.receipt_number}
       </:col>
 
       <:col :let={{_id, transaction}} label="Erstellung">
@@ -30,12 +30,12 @@
         {format_date_field_dmy(transaction.payment_date)}
       </:col>
 
-      <:col :let={{_id, transaction}} label="Beleg">
-        {transaction.receipt_number}
-      </:col>
-
       <:col :let={{_id, transaction}} label="Art">
         {transaction.type}
+      </:col>
+
+      <:col :let={{_id, transaction}} label="Betrag">
+        {transaction.amount}
       </:col>
 
       <:action :let={{_id, transaction}}>
