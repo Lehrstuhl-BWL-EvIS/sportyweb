@@ -1099,7 +1099,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
     # Accounts
 
     for _i <- 0..Enum.random(1..3) do
-      account_number = Enum.random(15500..18500)
+      account_number = Enum.random(15500..18500) |> Integer.to_string()
 
       Repo.insert!(%Account{
         club_id: club.id,
@@ -1111,7 +1111,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
     end
 
     for _i <- 0..Enum.random(8..13) do
-      account_number = Enum.random(40000..77890)
+      account_number = Enum.random(40000..77890) |> Integer.to_string()
 
       Repo.insert!(%Account{
         club_id: club.id,
@@ -1145,17 +1145,33 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 
       # Entries
 
-      account = Accounting.list_accounts(["Einnahmen", "Ausgaben"], club.id) |> Enum.random()
+      case transaction.type do
+        "Einnahme" ->
+          account = Accounting.list_accounts(["Einnahmen"], club.id) |> Enum.random()
 
-      sphere = Enum.random([1, 2, 3, 4, 9])
+          sphere = Enum.random([1, 2, 3, 4, 9])
 
-      Repo.insert!(%Entry{
-        transaction_id: transaction.id,
-        account_id: account.id,
-        type: Accounting.determine_entry_type(transaction.type, account.class),
-        amount: Money.new(:EUR, transaction.amount.amount),
-        sphere: sphere
-      })
+          Repo.insert!(%Entry{
+            transaction_id: transaction.id,
+            account_id: account.id,
+            type: Accounting.determine_entry_type(transaction.type, account.class),
+            amount: Money.new(:EUR, transaction.amount.amount),
+            sphere: sphere
+          })
+
+        "Ausgabe" ->
+          account = Accounting.list_accounts(["Ausgaben"], club.id) |> Enum.random()
+
+          sphere = Enum.random([1, 2, 3, 4, 9])
+
+          Repo.insert!(%Entry{
+            transaction_id: transaction.id,
+            account_id: account.id,
+            type: Accounting.determine_entry_type(transaction.type, account.class),
+            amount: Money.new(:EUR, transaction.amount.amount),
+            sphere: sphere
+          })
+      end
     end
   end
 end)
