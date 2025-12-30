@@ -25,6 +25,9 @@ defmodule Sportyweb.Repo.Migrations.CreateTransactions do
     create index(:transactions, [:contract_id])
     create index(:transactions, [:contact_id])
     create index(:transactions, [:club_id])
-    create unique_index(:transactions, [:receipt_number, :club_id], name: :unique_receipt_number_club_index)
+
+    create unique_index(:transactions, [:receipt_number, :club_id],
+             name: :unique_receipt_number_club_index
+           )
   end
 end
