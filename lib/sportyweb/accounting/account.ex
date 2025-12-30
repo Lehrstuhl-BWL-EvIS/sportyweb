@@ -13,7 +13,7 @@ defmodule Sportyweb.Accounting.Account do
 
     field :name, :string, default: ""
     field :class, :string, default: ""
-    field :account_number, :integer, default: nil
+    field :account_number, :string, default: ""
     field :archive_date, :date, default: nil
     field :balance, Money.Ecto.Composite.Type, default_currency: :EUR, default: Money.new(:EUR, 0)
 
@@ -66,8 +66,7 @@ defmodule Sportyweb.Accounting.Account do
   end
 
   defp valid_account_number?(account_number) do
-    account_number = Integer.to_string(account_number)
-    Regex.match?(~r/^[1-79]\d{4}$/, account_number)
+    Regex.match?(~r/^[0-79]\d{4}$/, account_number)
   end
 
   def is_archived?(account, %Date{} = date \\ Date.utc_today()) do

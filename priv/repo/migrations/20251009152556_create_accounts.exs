@@ -4,7 +4,7 @@ defmodule Sportyweb.Repo.Migrations.CreateAccounts do
   def change do
     create table(:accounts, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :account_number, :integer, null: false
+      add :account_number, :string, null: false
       add :name, :string, null: false
       add :class, :string, null: false
       add :archive_date, :date, null: true
