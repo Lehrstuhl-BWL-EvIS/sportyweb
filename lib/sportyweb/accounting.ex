@@ -203,13 +203,13 @@ defmodule Sportyweb.Accounting do
           "type" => entry_type
         }
 
-        {:ok, _entry} = create_financial_account_entry(entry_attrs)
+        {:ok, _entry} = create_financial_account_entry_and_update_account_balance(entry_attrs)
       else
         entry_attrs = %{
           "account_id" => attrs["account_id"]
         }
 
-        {:ok, _entry} = update_entry(entry, entry_attrs)
+        {:ok, _entry} = update_entry_and_account_balance(entry, entry_attrs)
       end
 
       transaction
@@ -251,14 +251,11 @@ defmodule Sportyweb.Accounting do
       case delete_transaction(transaction) do
         {:ok, _transaction} ->
           Enum.each(entries, fn entry ->
-            case update_account_balance(
-                   entry.account,
-                   Decimal.negate(entry.amount.amount),
-                   entry.type
-                 ) do
-              {:ok, _} -> {:ok, entry}
-              {:error, reason} -> Repo.rollback(reason)
-            end
+            update_account_balance(
+              entry.account,
+              Decimal.negate(entry.amount.amount),
+              entry.type
+            )
           end)
 
         {:error, reason} ->
@@ -645,7 +642,8 @@ defmodule Sportyweb.Accounting do
       from(
         a in Account,
         join: club in assoc(a, :club),
-        where: club.id == ^club_id and a.account_number >= 15_500 and a.account_number <= 18_899,
+        where: club.id == ^club_id,
+        where: fragment("?::int BETWEEN ? AND ?", a.account_number, 15_500, 18_899),
         where: a.archive_date > ^date or is_nil(a.archive_date),
         order_by: [a.account_number]
       )
@@ -708,7 +706,7 @@ defmodule Sportyweb.Accounting do
         join: entry in assoc(a, :entry),
         where:
           entry.transaction_id == ^transaction_id and entry.account_id == a.id and
-            a.account_number >= 15_500 and a.account_number <= 18_899
+            fragment("?::int BETWEEN ? AND ?", a.account_number, 15_500, 18_899)
       )
 
     financial_account = Repo.one(query)
@@ -735,9 +733,156 @@ defmodule Sportyweb.Accounting do
     |> Repo.insert()
   end
 
-  # Returns a list of selected accounts from the SKR 42 chart of accounts.
+  @doc """
+  Prototypically imports selected accounts of the SKR 42 chart of accounts.
+
+  ## Examples
+
+      iex> import_accounts(club_id)
+      {:ok}
+
+  """
+  def import_accounts(club_id) do
+    accounts = get_import_accounts()
+
+    accounts =
+      Enum.map(accounts, fn account ->
+        Enum.into(account, %{
+          :club_id => club_id
+        })
+      end)
+
+    Enum.each(accounts, fn account -> create_account(account) end)
+  end
+
+  @doc """
+  Updates a account.
+
+  ## Examples
+
+      iex> update_account(account, %{field: new_value})
+      {:ok, %Account{}}
+
+      iex> update_account(account, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_account(%Account{} = account, attrs) do
+    account
+    |> Account.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Updates an account's balance.
+
+  ## Examples
+
+      iex> update_account_balance(%Account{field: value}, Decimal.new(100), "S")
+      {:ok, %Account{}}
+
+      iex> update_account_balance(account, amount, type)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_account_balance(%Account{} = account, amount, type) do
+    first_digit = String.to_integer(String.at(account.account_number, 0))
+    second_digit = String.to_integer(String.at(account.account_number, 1))
+    third_digit = String.to_integer(String.at(account.account_number, 2))
+
+    account_balance =
+      determine_current_account_balance(
+        first_digit,
+        second_digit,
+        third_digit,
+        account.balance.amount,
+        amount,
+        type
+      )
+
+    account_attrs = %{
+      "balance" => Money.new(:EUR, account_balance)
+    }
+
+    update_account(account, account_attrs)
+  end
+
+  @doc """
+  Deletes a account.
+
+  ## Examples
+
+      iex> delete_account(account)
+      {:ok, %Account{}}
+
+      iex> delete_account(account)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_account(%Account{} = account) do
+    Repo.delete(account)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking account changes.
+
+  ## Examples
+
+      iex> change_account(account)
+      %Ecto.Changeset{data: %Account{}}
+
+  """
+  def change_account(%Account{} = account, attrs \\ %{}) do
+    Account.changeset(account, attrs)
+  end
+
+  @doc """
+  Determines the class of an account according to the first digit of it's account number.
+
+  ## Examples
+
+      iex> determine_account_class(15560)
+      "Umlaufvermögen"
+
+  """
+  def determine_account_class(account_number) do
+    case String.first(account_number) do
+      "0" -> "Anlagevermögen"
+      "1" -> "Umlaufvermögen"
+      "2" -> "Eigen-/Fremdkapital"
+      "3" -> "Fremdkapital"
+      "4" -> "Einnahmen"
+      "5" -> "Ausgaben"
+      "6" -> "Ausgaben"
+      "7" -> "Weitere Einnahmen und Ausgaben"
+      "8" -> ""
+      "9" -> "Vortrags-, Kapital-, Korrektur- und statistische Konten"
+    end
+  end
+
+  @doc """
+  Determines the usable account classes for a given type of transaction.
+
+  ## Examples
+
+      iex> determine_account_classes("Einnahme")
+      ["Einnahmen", "Weitere Einnahmen und Ausgaben"]
+
+  """
+
+  def determine_usable_account_classes(transaction_type) do
+    case transaction_type do
+      "Einnahme" ->
+        ["Einnahmen", "Weitere Einnahmen und Ausgaben"]
+
+      "Ausgabe" ->
+        ["Ausgaben", "Weitere Einnahmen und Ausgaben"]
+    end
+  end
+
+  # Returns a list of selected accounts from the SKR 42 chart of accounts that is used for an import.
   defp get_import_accounts() do
-    accounts = [
+    [
       %{account_number: "17000", name: "Bank (Postbank)", class: "Umlaufvermögen"},
       %{account_number: "18000", name: "Bank", class: "Umlaufvermögen"},
       %{account_number: "16000", name: "Kasse", class: "Umlaufvermögen"},
@@ -822,235 +967,195 @@ defmodule Sportyweb.Accounting do
       },
       %{account_number: "76100", name: "Gewerbesteuer", class: "Weitere Einnahmen und Ausgaben"}
     ]
-
-    accounts
   end
 
-  @doc """
-  Prototypically imports selected accounts of the SKR 42 chart of accounts.
-
-  ## Examples
-
-      iex> import_accounts(club_id)
-      {:ok}
-
-  """
-  def import_accounts(club_id) do
-    accounts = get_import_accounts()
-
-    accounts =
-      Enum.map(accounts, fn account ->
-        Enum.into(account, %{
-          :club_id => club_id
-        })
-      end)
-
-    Enum.each(accounts, fn account -> create_account(account) end)
+  # Controls how an account's balance is calculated
+  defp determine_current_account_balance(
+         first_digit,
+         _second_digit,
+         _third_digit,
+         account_balance,
+         amount,
+         type
+       )
+       when first_digit in [0, 1, 5, 6] do
+    calculate_current_account_balance(account_balance, amount, type, :debit)
   end
 
-  @doc """
-  Updates a account.
-
-  ## Examples
-
-      iex> update_account(account, %{field: new_value})
-      {:ok, %Account{}}
-
-      iex> update_account(account, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_account(%Account{} = account, attrs) do
-    account
-    |> Account.changeset(attrs)
-    |> Repo.update()
+  defp determine_current_account_balance(
+         first_digit,
+         _second_digit,
+         _third_digit,
+         account_balance,
+         amount,
+         type
+       )
+       when first_digit in [2, 3, 4] do
+    calculate_current_account_balance(account_balance, amount, type, :credit)
   end
 
-  @doc """
-  Updates an account's balance.
-
-  ## Examples
-
-      iex> update_account_balance(%Account{field: value}, Decimal.new(100), "S")
-      {:ok, %Account{}}
-
-      iex> update_account_balance(account, amount, type)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_account_balance(%Account{} = account, amount, type) do
-    digits = Integer.digits(account.account_number)
-    first_digit = hd(digits)
-
-    account_balance =
-      cond do
-        first_digit in [0, 1, 5, 6] ->
-          case type do
-            "S" -> Decimal.add(account.balance.amount, amount)
-            "H" -> Decimal.sub(account.balance.amount, amount)
-          end
-
-        first_digit in [2, 3, 4] ->
-          case type do
-            "H" -> Decimal.add(account.balance.amount, amount)
-            "S" -> Decimal.sub(account.balance.amount, amount)
-          end
-
-        first_digit == 7 ->
-          second_digit = Enum.at(digits, 1)
-
-          cond do
-            second_digit in [0, 1, 4] ->
-              case type do
-                "H" -> Decimal.add(account.balance.amount, amount)
-                "S" -> Decimal.sub(account.balance.amount, amount)
-              end
-
-            second_digit == 7 ->
-              third_digit = Enum.at(digits, 2)
-
-              cond do
-                third_digit in [0, 1, 2, 3, 4, 5] ->
-                  case type do
-                    "S" -> Decimal.add(account.balance.amount, amount)
-                    "H" -> Decimal.sub(account.balance.amount, amount)
-                  end
-
-                third_digit in [6, 7, 8, 9] ->
-                  case type do
-                    "H" -> Decimal.add(account.balance.amount, amount)
-                    "S" -> Decimal.sub(account.balance.amount, amount)
-                  end
-
-                true ->
-                  case type do
-                    "S" -> Decimal.add(account.balance.amount, amount)
-                    "H" -> Decimal.sub(account.balance.amount, amount)
-                  end
-              end
-          end
-      end
-
-    account_attrs = %{
-      "balance" => Money.new(:EUR, account_balance)
-    }
-
-    update_account(account, account_attrs)
+  defp determine_current_account_balance(
+         first_digit,
+         second_digit,
+         _third_digit,
+         account_balance,
+         amount,
+         type
+       )
+       when first_digit == 7 and second_digit in [0, 1, 4, 8] do
+    calculate_current_account_balance(account_balance, amount, type, :credit)
   end
 
-  @doc """
-  Deletes a account.
-
-  ## Examples
-
-      iex> delete_account(account)
-      {:ok, %Account{}}
-
-      iex> delete_account(account)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_account(%Account{} = account) do
-    Repo.delete(account)
+  defp determine_current_account_balance(
+         first_digit,
+         second_digit,
+         _third_digit,
+         account_balance,
+         amount,
+         type
+       )
+       when first_digit == 7 and second_digit in [2, 3, 5, 6, 9] do
+    calculate_current_account_balance(account_balance, amount, type, :debit)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking account changes.
-
-  ## Examples
-
-      iex> change_account(account)
-      %Ecto.Changeset{data: %Account{}}
-
-  """
-  def change_account(%Account{} = account, attrs \\ %{}) do
-    Account.changeset(account, attrs)
+  defp determine_current_account_balance(
+         first_digit,
+         second_digit,
+         third_digit,
+         account_balance,
+         amount,
+         type
+       )
+       when first_digit == 7 and second_digit == 7 and third_digit in [0, 1, 2, 3, 4, 5] do
+    calculate_current_account_balance(account_balance, amount, type, :debit)
   end
 
-  @doc """
-  Determines the class of an account according to the first digit of it's account number.
+  defp determine_current_account_balance(
+         first_digit,
+         second_digit,
+         third_digit,
+         account_balance,
+         amount,
+         type
+       )
+       when first_digit == 7 and second_digit == 7 and third_digit in [6, 7, 8, 9] do
+    calculate_current_account_balance(account_balance, amount, type, :credit)
+  end
 
-  ## Examples
-
-      iex> determine_account_class(15560)
-      "Umlaufvermögen"
-
-  """
-  def determine_account_class(account_number) do
-    case String.first(account_number) do
-      "0" -> "Anlagevermögen"
-      "1" -> "Umlaufvermögen"
-      "2" -> "Eigen-/Fremdkapital"
-      "3" -> "Fremdkapital"
-      "4" -> "Einnahmen"
-      "5" -> "Ausgaben"
-      "6" -> "Ausgaben"
-      "7" -> "Weitere Einnahmen und Ausgaben"
-      "8" -> ""
-      "9" -> "Vortrags-, Kapital-, Korrektur- und statistische Konten"
+  # Calculates an account's balance based on the entry's type
+  defp calculate_current_account_balance(account_balance, amount, type, :debit) do
+    case type do
+      "S" -> Decimal.add(account_balance, amount)
+      "H" -> Decimal.sub(account_balance, amount)
     end
   end
 
-  @doc """
-  Determines the usable account classes for a given type of transaction.
-
-  ## Examples
-
-      iex> determine_account_classes("Einnahme")
-      ["Einnahmen", "Weitere Einnahmen und Ausgaben"]
-
-  """
-
-  def determine_usable_account_classes(transaction_type) do
-    case transaction_type do
-      "Einnahme" ->
-        ["Einnahmen", "Weitere Einnahmen und Ausgaben"]
-
-      "Ausgabe" ->
-        ["Ausgaben", "Weitere Einnahmen und Ausgaben"]
+  # Calculates an account's balance based on the entry's type
+  defp calculate_current_account_balance(account_balance, amount, type, :credit) do
+    case type do
+      "H" -> Decimal.add(account_balance, amount)
+      "S" -> Decimal.sub(account_balance, amount)
     end
+  end
+
+  # Controls how an account's balance is calculated based on debit and credit values and it's account number
+  defp determine_account_balance(debit, credit, account_number) do
+    first_digit = String.to_integer(String.at(account_number, 0))
+    second_digit = String.to_integer(String.at(account_number, 1))
+    third_digit = String.to_integer(String.at(account_number, 2))
+
+    balance = calculate_account_balance(first_digit, second_digit, third_digit, debit, credit)
+
+    Money.new(:EUR, balance)
   end
 
   # Calculates an account's balance based on debit and credit values and it's account number
-  defp calculate_account_balance(debit, credit, account_number) do
-    digits = Integer.digits(account_number)
-    first_digit = hd(digits)
+  defp calculate_account_balance(
+         first_digit,
+         _second_digit,
+         _third_digit,
+         debit,
+         credit
+       )
+       when first_digit in [0, 1] do
+    Decimal.sub(debit, credit)
+  end
 
-    balance =
-      cond do
-        first_digit in [0, 1] ->
-          Decimal.sub(debit, credit)
+  defp calculate_account_balance(
+         first_digit,
+         _second_digit,
+         _third_digit,
+         debit,
+         credit
+       )
+       when first_digit in [2, 3] do
+    Decimal.sub(credit, debit)
+  end
 
-        first_digit in [2, 3] ->
-          Decimal.sub(credit, debit)
+  defp calculate_account_balance(
+         first_digit,
+         _second_digit,
+         _third_digit,
+         debit,
+         credit
+       )
+       when first_digit in [4] do
+    Decimal.sub(credit, debit)
+  end
 
-        first_digit in [4] ->
-          Decimal.sub(credit, debit)
+  defp calculate_account_balance(
+         first_digit,
+         _second_digit,
+         _third_digit,
+         debit,
+         credit
+       )
+       when first_digit in [5, 6] do
+    Decimal.sub(debit, credit)
+  end
 
-        first_digit in [5, 6] ->
-          Decimal.sub(debit, credit)
+  defp calculate_account_balance(
+         first_digit,
+         second_digit,
+         _third_digit,
+         debit,
+         credit
+       )
+       when first_digit == 7 and second_digit in [0, 1, 4, 8] do
+    Decimal.sub(credit, debit)
+  end
 
-        first_digit == 7 ->
-          second_digit = Enum.at(digits, 1)
+  defp calculate_account_balance(
+         first_digit,
+         second_digit,
+         _third_digit,
+         debit,
+         credit
+       )
+       when first_digit == 7 and second_digit in [2, 3, 5, 6, 9] do
+    Decimal.sub(debit, credit)
+  end
 
-          cond do
-            second_digit in [0, 1, 4] ->
-              Decimal.sub(credit, debit)
+  defp calculate_account_balance(
+         first_digit,
+         second_digit,
+         third_digit,
+         debit,
+         credit
+       )
+       when first_digit == 7 and second_digit == 7 and third_digit in [0, 1, 2, 3, 4, 5] do
+    Decimal.sub(debit, credit)
+  end
 
-            second_digit in [2, 3, 5, 6] ->
-              Decimal.sub(debit, credit)
-
-            second_digit == 7 ->
-              third_digit = Enum.at(digits, 2)
-
-              cond do
-                third_digit in [0, 1, 2, 3, 4, 5] -> Decimal.sub(debit, credit)
-                third_digit in [6, 7, 8, 9] -> Decimal.sub(credit, debit)
-              end
-          end
-      end
-
-    balance = Money.new(:EUR, balance)
+  defp calculate_account_balance(
+         first_digit,
+         second_digit,
+         third_digit,
+         debit,
+         credit
+       )
+       when first_digit == 7 and second_digit == 7 and third_digit in [6, 7, 8, 9] do
+    Decimal.sub(credit, debit)
   end
 
   alias Sportyweb.Accounting.Entry
@@ -1097,6 +1202,26 @@ defmodule Sportyweb.Accounting do
   def get_entry!(id), do: Repo.get!(Entry, id)
 
   @doc """
+  Gets a single entry. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Entry does not exist.
+
+  ## Examples
+
+      iex> get_entry!(123, [:transaction, :account])
+      %Entry{}
+
+      iex> get_entry!(123, [:transaction, :account])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_entry!(id, preloads) do
+    Entry
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
   Gets an entry for the financial account of a specific transaction.
 
   ## Examples
@@ -1114,35 +1239,11 @@ defmodule Sportyweb.Accounting do
         e in Entry,
         join: account in assoc(e, :account),
         where:
-          e.transaction_id == ^transaction_id and account.account_number >= 15_500 and
-            account.account_number <= 18_899
+          e.transaction_id == ^transaction_id and
+            fragment("?::int BETWEEN ? AND ?", account.account_number, 15_500, 18_899)
       )
 
     Repo.one(query)
-  end
-
-  @doc """
-  Gets the amount of the entry for a financial account of a specific transaction.
-
-  ## Examples
-
-      iex> get_financial_account_entry_amount(123)
-      %Entry{}
-
-  """
-  def get_financial_account_entry_amount(transaction_id) do
-    query =
-      from(e in Entry,
-        select: fragment("(?) .amount", e.amount),
-        join: account in assoc(e, :account),
-        where:
-          e.transaction_id == ^transaction_id and account.account_number >= 15_500 and
-            account.account_number <= 18_899
-      )
-
-    fiancial_account_entry_amount = Sportyweb.Repo.one(query) || Decimal.new("0")
-
-    fiancial_account_entry_amount
   end
 
   @doc """
@@ -1181,8 +1282,7 @@ defmodule Sportyweb.Accounting do
           account_type in [
             "Anlagevermögen",
             "Umlaufvermögen",
-            "Ausgaben",
-            "Weitere Einnahmen und Ausgaben"
+            "Ausgaben"
           ] ->
         "S"
 
@@ -1190,7 +1290,8 @@ defmodule Sportyweb.Accounting do
           account_type in [
             "Eigen-/Fremdkapital",
             "Fremdkapital",
-            "Einnahmen"
+            "Einnahmen",
+            "Weitere Einnahmen und Ausgaben"
           ] ->
         "H"
 
@@ -1198,7 +1299,8 @@ defmodule Sportyweb.Accounting do
           account_type in [
             "Eigen-/Fremdkapital",
             "Fremdkapital",
-            "Ausgaben"
+            "Ausgaben",
+            "Weitere Einnahmen und Ausgaben"
           ] ->
         "S"
 
@@ -1206,31 +1308,10 @@ defmodule Sportyweb.Accounting do
           account_type in [
             "Anlagevermögen",
             "Umlaufvermögen",
-            "Einnahmen",
-            "Weitere Einnahmen und Ausgaben"
+            "Einnahmen"
           ] ->
         "H"
     end
-  end
-
-  @doc """
-  Gets a single entry. Preloads associations.
-
-  Raises `Ecto.NoResultsError` if the Entry does not exist.
-
-  ## Examples
-
-      iex> get_entry!(123, [:transaction, :account])
-      %Entry{}
-
-      iex> get_entry!(123, [:transaction, :account])
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_entry!(id, preloads) do
-    Entry
-    |> Repo.get!(id)
-    |> Repo.preload(preloads)
   end
 
   @doc """
@@ -1471,7 +1552,8 @@ defmodule Sportyweb.Accounting do
 
         total_entries_amount = get_entries_amount_total(transaction_id)
 
-        financial_account_entry_amount = get_financial_account_entry_amount(transaction.id)
+        financial_account_entry = get_financial_account_entry(transaction.id)
+        financial_account_entry_amount = financial_account_entry.amount.amount
 
         # Subtract the amount of the entry to a financial account from the total amount of a transaction's entries
         total = Decimal.sub(total_entries_amount, financial_account_entry_amount)
@@ -1522,7 +1604,8 @@ defmodule Sportyweb.Accounting do
         # Subtract the entry's current amount
         updated_entries_amount = Decimal.sub(total_entries_amount, entry_amount)
 
-        financial_account_entry_amount = get_financial_account_entry_amount(transaction_id)
+        financial_account_entry = get_financial_account_entry(transaction.id)
+        financial_account_entry_amount = financial_account_entry.amount.amount
 
         # Subtract the amount of the entry to a financial account from the total amount of a transaction's entries
         total = Decimal.sub(updated_entries_amount, financial_account_entry_amount)
@@ -1546,17 +1629,27 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Determines the amount of entries associated to sphere nine in a given period of time.
+  Determines the amount of entries associated to sphere nine in a given period of time +/- 10 days.
 
   """
   def determine_entries_in_sphere_nine(start_date, end_date, club_id) do
+    start_date_minus_ten_days = Date.add(start_date, -10)
+    end_date_plus_ten_days = Date.add(end_date, 10)
+
     query =
       from(
         e in Entry,
-        join: t in assoc(e, :transaction),
-        join: club in assoc(t, :club),
+        join: transaction in assoc(e, :transaction),
+        join: club in assoc(transaction, :club),
         where: club.id == ^club_id,
-        where: t.payment_date >= ^start_date and t.payment_date <= ^end_date,
+        where: transaction.payment_date >= ^start_date and transaction.payment_date <= ^end_date,
+        or_where:
+          (transaction.is_recurring == true and transaction.due_date >= ^start_date and
+             transaction.due_date <= ^end_date and
+             (transaction.payment_date >= ^start_date_minus_ten_days and
+                transaction.payment_date < ^start_date)) or
+            (transaction.payment_date <= ^end_date_plus_ten_days and
+               transaction.payment_date > ^end_date),
         where: e.sphere == 9
       )
 
@@ -1565,21 +1658,22 @@ defmodule Sportyweb.Accounting do
 
   @doc """
   Returns a list of maps with the following data:
-  - balances for nominal accounts and spheres in a given period of time
-  - balances for accounts over all spheres
+  - balances for nominal accounts and per sphere and overall in a given period of time
   - the resulting profit or loss.
 
   """
 
   def determine_income_statement(start_date, end_date, club_id) do
     revenues =
-      get_income_statement_data(start_date, end_date, club_id, "Einnahme")
+      start_date
+      |> get_income_statement_data(end_date, club_id, "Einnahme")
       |> list_account_balances_for_spheres()
       |> calculate_total_balances("Einnahmen")
       |> add_header("Einnahmen")
 
     expenses =
-      get_income_statement_data(start_date, end_date, club_id, "Ausgabe")
+      start_date
+      |> get_income_statement_data(end_date, club_id, "Ausgabe")
       |> list_account_balances_for_spheres()
       |> calculate_total_balances("Ausgaben")
       |> add_header("Ausgaben")
@@ -1588,6 +1682,7 @@ defmodule Sportyweb.Accounting do
     revenue_total = List.last(revenues)
     expense_total = List.last(expenses)
 
+    # Calculate profit/loss with summarized revenues and expenses
     profit_loss = [
       %{
         id: "profit_loss",
@@ -1636,10 +1731,11 @@ defmodule Sportyweb.Accounting do
       }
     ]
 
-    revenues_and_expenses = revenues_and_expenses ++ profit_loss
+    # Add profit/loss to list
+    revenues_and_expenses ++ profit_loss
   end
 
-  # Determines debit and credit values for every nominal account for all entries in a given period of time
+  # Determines debit and credit values for every nominal account for all entries in a given period of time +/- 10 days
   defp get_income_statement_data(start_date, end_date, club_id, type) do
     start_date_minus_ten_days = Date.add(start_date, -10)
     end_date_plus_ten_days = Date.add(end_date, 10)
@@ -1653,9 +1749,9 @@ defmodule Sportyweb.Accounting do
         where: club.id == ^club_id,
         where: t.payment_date >= ^start_date and t.payment_date <= ^end_date,
         or_where:
-          (t.is_recurring == true and t.due_date >= ^start_date and t.due_date <= ^end_date and
-             (t.payment_date >= ^start_date_minus_ten_days and t.payment_date < ^start_date)) or
-            (t.payment_date <= ^end_date_plus_ten_days and t.payment_date > ^end_date),
+          t.is_recurring == true and t.due_date >= ^start_date and t.due_date <= ^end_date and
+            ((t.payment_date >= ^start_date_minus_ten_days and t.payment_date < ^start_date) or
+               (t.payment_date <= ^end_date_plus_ten_days and t.payment_date > ^end_date)),
         where: a.class in ["Einnahmen", "Ausgaben", "Weitere Einnahmen und Ausgaben"],
         where: e.sphere in [1, 2, 3, 4],
         where: t.type == ^type,
@@ -1757,62 +1853,61 @@ defmodule Sportyweb.Accounting do
         group_by: [a.id]
       )
 
-    accounts = Repo.all(query)
+    Repo.all(query)
   end
 
   # Lists the account's overall balances and balances for every sphere
   defp list_account_balances_for_spheres(income_statement_data) do
     # Calculate balances for every account and every sphere als well as the account's total balance
-    income_statement_data =
-      Enum.map(income_statement_data, fn account ->
-        balance_sphere_1 =
-          calculate_account_balance(
-            account.debit_sphere_1,
-            account.credit_sphere_1,
-            account.account_number
-          )
+    Enum.map(income_statement_data, fn account ->
+      balance_sphere_1 =
+        determine_account_balance(
+          account.debit_sphere_1,
+          account.credit_sphere_1,
+          account.account_number
+        )
 
-        balance_sphere_2 =
-          calculate_account_balance(
-            account.debit_sphere_2,
-            account.credit_sphere_2,
-            account.account_number
-          )
+      balance_sphere_2 =
+        determine_account_balance(
+          account.debit_sphere_2,
+          account.credit_sphere_2,
+          account.account_number
+        )
 
-        balance_sphere_3 =
-          calculate_account_balance(
-            account.debit_sphere_3,
-            account.credit_sphere_3,
-            account.account_number
-          )
+      balance_sphere_3 =
+        determine_account_balance(
+          account.debit_sphere_3,
+          account.credit_sphere_3,
+          account.account_number
+        )
 
-        balance_sphere_4 =
-          calculate_account_balance(
-            account.debit_sphere_4,
-            account.credit_sphere_4,
-            account.account_number
-          )
+      balance_sphere_4 =
+        determine_account_balance(
+          account.debit_sphere_4,
+          account.credit_sphere_4,
+          account.account_number
+        )
 
-        balance_total =
-          calculate_account_balance(
-            account.debit_total,
-            account.credit_total,
-            account.account_number
-          )
+      balance_total =
+        determine_account_balance(
+          account.debit_total,
+          account.credit_total,
+          account.account_number
+        )
 
-        # Add balances and drop debit and credit values
-        account
-        |> Map.put(:balance_sphere_1, balance_sphere_1)
-        |> Map.drop([:debit_sphere_1, :credit_sphere_1])
-        |> Map.put(:balance_sphere_2, balance_sphere_2)
-        |> Map.drop([:debit_sphere_2, :credit_sphere_2])
-        |> Map.put(:balance_sphere_3, balance_sphere_3)
-        |> Map.drop([:debit_sphere_3, :credit_sphere_3])
-        |> Map.put(:balance_sphere_4, balance_sphere_4)
-        |> Map.drop([:debit_sphere_4, :credit_sphere_4])
-        |> Map.put(:balance_total, balance_total)
-        |> Map.drop([:debit_total, :credit_total])
-      end)
+      # Add balances and drop debit and credit values
+      account
+      |> Map.put(:balance_sphere_1, balance_sphere_1)
+      |> Map.drop([:debit_sphere_1, :credit_sphere_1])
+      |> Map.put(:balance_sphere_2, balance_sphere_2)
+      |> Map.drop([:debit_sphere_2, :credit_sphere_2])
+      |> Map.put(:balance_sphere_3, balance_sphere_3)
+      |> Map.drop([:debit_sphere_3, :credit_sphere_3])
+      |> Map.put(:balance_sphere_4, balance_sphere_4)
+      |> Map.drop([:debit_sphere_4, :credit_sphere_4])
+      |> Map.put(:balance_total, balance_total)
+      |> Map.drop([:debit_total, :credit_total])
+    end)
   end
 
   # Adds an header line for an income statement
@@ -1828,7 +1923,7 @@ defmodule Sportyweb.Accounting do
       balance_total: nil
     }
 
-    income_statement_data = [header | income_statement_data]
+    [header | income_statement_data]
   end
 
   # Calculates total balances for spheres and a total balance for all spheres
@@ -1871,6 +1966,6 @@ defmodule Sportyweb.Accounting do
       balance_total: Money.new(:EUR, sum_spheres_total)
     }
 
-    income_statement_data = List.insert_at(income_statement_data, -1, total)
+    List.insert_at(income_statement_data, -1, total)
   end
 end
