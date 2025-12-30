@@ -15,6 +15,7 @@ defmodule SportywebWeb.AccountLive.NewEdit do
         title={@page_title}
         action={@live_action}
         account={@account}
+        activate_opening_balance={@activate_opening_balance}
         navigate={
           if @account.id,
             do: ~p"/accounts/#{@account}",
@@ -38,10 +39,18 @@ defmodule SportywebWeb.AccountLive.NewEdit do
   defp apply_action(socket, :edit, %{"id" => id}) do
     account = Accounting.get_account!(id, [:club, :entry])
 
+    activate_opening_balance = nil
+    if account.opening_balance == Money.new(:EUR, 0) && not Enum.any?(account.entry) && account.class in ["Anlagevermögen", "Umlaufvermögen", "Eigen-/Fremdkapital","Fremdkapital"] do
+      activate_opening_balance = true
+    else
+      activate_opening_balance = false
+    end
+
     socket
     |> assign(:page_title, "Konto bearbeiten")
     |> assign(:account, account)
     |> assign(:club, account.club)
+    |> assign(:activate_opening_balance, activate_opening_balance)
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
@@ -54,6 +63,7 @@ defmodule SportywebWeb.AccountLive.NewEdit do
       club: club
     })
     |> assign(:club, club)
+    |> assign(:activate_opening_balance, false)
   end
 
   @impl true
