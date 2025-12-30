@@ -21,7 +21,7 @@ defmodule Sportyweb.Accounting.Transaction do
     field :creation_date, :date, default: nil
     field :payment_date, :date, default: nil
     field :due_date, :date, default: nil
-    field :receipt_number, :string, default: ""
+    field :receipt_number, :string, default: nil
     field :type, :string, default: ""
     field :is_recurring, :boolean, default: false
 
@@ -53,6 +53,13 @@ defmodule Sportyweb.Accounting.Transaction do
     |> validate_format(:receipt_number, ~r/^([\w$%&*+\-\/]{0,36})$/,
       message:
         "Belegnummer darf nur Buchstaben, Zahlen und die Sonderzeichen $ & % * + - / enthalten"
+    )
+    |> unsafe_validate_unique([:receipt_number, :club_id], Sportyweb.Repo,
+      message: "Belegnummer existiert bereits"
+    )
+    |> unique_constraint(:unique_receipt_number_club_constraint,
+      name: :unique_receipt_number_club_index,
+      message: "Belegnummer existiert bereits"
     )
     |> validate_currency(:amount, :EUR)
     |> validate_date_not_in_future(
@@ -96,6 +103,13 @@ defmodule Sportyweb.Accounting.Transaction do
     |> validate_format(:receipt_number, ~r/^([\w$%&*+\-\/]{0,36})$/,
       message:
         "Belegnummer darf nur Buchstaben, Zahlen und die Sonderzeichen $ & % * + - / enthalten"
+    )
+    |> unsafe_validate_unique([:receipt_number, :club_id], Sportyweb.Repo,
+      message: "Belegnummer existiert bereits"
+    )
+    |> unique_constraint(:unique_receipt_number_club_constraint,
+      name: :unique_receipt_number_club_index,
+      message: "Belegnummer existiert bereits"
     )
     |> validate_currency(:amount, :EUR)
     |> foreign_key_constraint(:contact_id)
