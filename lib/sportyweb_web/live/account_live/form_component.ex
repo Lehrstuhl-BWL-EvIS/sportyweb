@@ -34,8 +34,6 @@ defmodule SportywebWeb.AccountLive.FormComponent do
                   type="number"
                   label="Kontonummer"
                   phx-change="validate_number"
-                  phx-update="ignore"
-                  phx-debounce="blur"
                   readonly={@account.id && Account.is_archived?(@account)}
                 />
               </div>
@@ -49,18 +47,24 @@ defmodule SportywebWeb.AccountLive.FormComponent do
                 <div class="col-span-12 md:col-span-6">
                   <.input
                     field={@form[:opening_balance]}
-                    type="number"
+                    type="text"
                     label="Anfangsbestand (optional)"
                   />
+                  <.input_description>
+                    Das €-Zeichen kann, muss aber nicht angegeben werden.
+                  </.input_description>
                 </div>
               <% else %>
-              <div class="opacity-70 col-span-12 md:col-span-6">
+                <div class="opacity-70 col-span-12 md:col-span-6">
                   <.input
                     field={@form[:opening_balance]}
-                    type="number"
+                    type="text"
                     label="Anfangsbestand (optional)"
                     readonly
                   />
+                  <.input_description>
+                    Das €-Zeichen kann, muss aber nicht angegeben werden.
+                  </.input_description>
                 </div>
               <% end %>
               <div class="col-span-12 md:col-span-6">
@@ -118,14 +122,12 @@ defmodule SportywebWeb.AccountLive.FormComponent do
 
   @impl true
   def update(%{account: account} = assigns, socket) do
-
     {:ok,
      socket
      |> assign(assigns)
      |> assign_new(:form, fn ->
        to_form(Accounting.change_account(account))
-     end)
-     }
+     end)}
   end
 
   @impl true
@@ -139,17 +141,21 @@ defmodule SportywebWeb.AccountLive.FormComponent do
       |> Accounting.change_account(account_params)
       |> Map.put(:action, :insert)
 
-    if account_params["class"] in ["Anlagevermögen", "Umlaufvermögen", "Eigen-/Fremdkapital","Fremdkapital"] do
+    if account_params["class"] in [
+         "Anlagevermögen",
+         "Umlaufvermögen",
+         "Eigen-/Fremdkapital",
+         "Fremdkapital"
+       ] do
       {:noreply,
-      socket
-      |> assign(form: to_form(changeset, action: :validate))
-      |> assign(:activate_opening_balance, true)
-    }
+       socket
+       |> assign(form: to_form(changeset, action: :validate))
+       |> assign(:activate_opening_balance, true)}
     else
-    {:noreply,
-      socket
-      |> assign(form: to_form(changeset, action: :validate))
-      |> assign(:activate_opening_balance, false)}
+      {:noreply,
+       socket
+       |> assign(form: to_form(changeset, action: :validate))
+       |> assign(:activate_opening_balance, false)}
     end
   end
 
@@ -206,13 +212,5 @@ defmodule SportywebWeb.AccountLive.FormComponent do
 
   defp show_archive_message?(account) do
     account.id && Enum.any?(account.entry) && !Account.is_archived?(account)
-  end
-
-  defp show_opening_balance?(account_class) do
-   account_class in ["Anlagevermögen", "Umlaufvermögen", "Eigen-/Fremdkapital","Fremdkapital"]
-  end
-
-  defp show_opening_balance?(action, opening_balance, entries, account_class) do
-   (action == :new && account_class in ["Anlagevermögen", "Umlaufvermögen", "Eigen-/Fremdkapital","Fremdkapital"]) || (opening_balance == Money.new(:EUR, 0) && not entries && account_class in ["Anlagevermögen", "Umlaufvermögen", "Eigen-/Fremdkapital","Fremdkapital"])
   end
 end
