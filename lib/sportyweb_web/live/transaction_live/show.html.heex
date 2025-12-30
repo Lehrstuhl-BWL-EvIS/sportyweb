@@ -67,10 +67,10 @@
       <% end %>
     </:item>
     <:item title="Regelmäßig wiederkehrende Einnahme bzw. Ausgabe">
-    <%= if @transaction.is_recurring == true do %>
-      {"Ja"}
+      <%= if @transaction.is_recurring == true do %>
+        {"Ja"}
       <% else %>
-      {"Nein"}
+        {"Nein"}
       <% end %>
     </:item>
   </.list>
