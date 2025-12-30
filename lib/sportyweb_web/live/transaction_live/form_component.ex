@@ -42,8 +42,11 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                 <div class="col-span-12">
                   <.input field={@form[:receipt_number]} type="text" label="Belegnummer (optional)" />
                 </div>
-                <div class="col-span-12">
+                <div class="col-span-12 md:col-span-6">
                   <.input field={@form[:payment_date]} type="date" label="Zahlungsdatum" />
+                </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input field={@form[:due_date]} type="date" label="Fälligkeitsdatum (optional)" />
                 </div>
                 <div class="col-span-12">
                   <.input
@@ -71,6 +74,13 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                     disabled={not @contract_enabled}
                     options={@contract_options |> Enum.map(&{&1.fee.name, &1.id})}
                     prompt="Kein Vertrag"
+                  />
+                </div>
+                <div class="col-span-12">
+                  <.input
+                    field={@form[:is_recurring]}
+                    type="checkbox"
+                    label="Handelt es sich um eine regelmäßig wiederkehrende Einnahme bzw. Ausgabe?"
                   />
                 </div>
               </.input_grid>
@@ -105,7 +115,7 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
           >
             <.input_grids>
               <.input_grid>
-                <div class="col-span-12 md:col-span-6">
+                <div class="col-span-12">
                   <.input
                     field={@form[:name]}
                     type="text"
@@ -118,10 +128,13 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                   <.input field={@form[:amount]} type="number" label="Betrag" phx-update="ignore" />
                 </div>
                 <div class="col-span-12 md:col-span-6">
+                  <.input field={@form[:receipt_number]} type="text" label="Belegnummer (optional)" />
+                </div>
+                <div class="col-span-12 md:col-span-6">
                   <.input field={@form[:payment_date]} type="date" label="Zahlungsdatum" />
                 </div>
                 <div class="col-span-12 md:col-span-6">
-                  <.input field={@form[:receipt_number]} type="text" label="Belegnummer (optional)" />
+                  <.input field={@form[:due_date]} type="date" label="Fälligkeitsdatum (optional)" />
                 </div>
                 <div class="col-span-12">
                   <.input
@@ -161,6 +174,13 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                     type="select"
                     label="Art"
                     options={["Einnahme", "Ausgabe"]}
+                  />
+                </div>
+                <div class="col-span-12">
+                  <.input
+                    field={@form[:is_recurring]}
+                    type="checkbox"
+                    label="Handelt es sich um eine regelmäßig wiederkehrende Einnahme bzw. Ausgabe?"
                   />
                 </div>
               </.input_grid>

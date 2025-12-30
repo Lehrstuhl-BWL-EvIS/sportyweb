@@ -20,8 +20,10 @@ defmodule Sportyweb.Accounting.Transaction do
     field :amount, Money.Ecto.Composite.Type, default_currency: :EUR
     field :creation_date, :date, default: nil
     field :payment_date, :date, default: nil
+    field :due_date, :date, default: nil
     field :receipt_number, :string, default: ""
     field :type, :string, default: ""
+    field :is_recurring, :boolean, default: false
 
     timestamps(type: :utc_datetime)
   end
@@ -39,8 +41,10 @@ defmodule Sportyweb.Accounting.Transaction do
       :amount,
       :creation_date,
       :payment_date,
+      :due_date,
       :receipt_number,
-      :type
+      :type,
+      :is_recurring
     ])
     |> validate_required([:club_id, :name, :amount, :creation_date, :type, :payment_date])
     |> update_change(:name, &String.trim/1)
@@ -71,9 +75,11 @@ defmodule Sportyweb.Accounting.Transaction do
       :name,
       :amount,
       :creation_date,
+      :due_date,
       :receipt_number,
       :type,
-      :contact_id
+      :contact_id,
+      :is_recurring
     ])
     |> validate_required([
       :club_id,

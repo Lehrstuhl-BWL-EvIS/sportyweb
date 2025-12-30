@@ -12,23 +12,27 @@
     <:item title="Art">
       {format_string_field(@transaction.type)}
     </:item>
-    
+
     <:item title="Betrag">
       {@transaction.amount}
     </:item>
-    
+
     <:item title="Belegnummer">
       {format_string_field(@transaction.receipt_number)}
     </:item>
-    
+
     <:item title="Erstellungsdatum">
       {format_date_field_dmy(@transaction.creation_date)}
     </:item>
-    
+
     <:item title="Zahlungsdatum">
       {format_date_field_dmy(@transaction.payment_date)}
     </:item>
-    
+
+    <:item title="Fälligkeitsdatum">
+      {format_date_field_dmy(@transaction.due_date)}
+    </:item>
+
     <:item title="Finanzkonto">
       <%= if @financial_account do %>
         {format_string_field(@financial_account.name)}
@@ -36,7 +40,7 @@
         {format_string_field(@financial_account)}
       <% end %>
     </:item>
-    
+
     <:item title="Kontakt">
       <%= if @transaction.contact_id do %>
         <.link
@@ -49,7 +53,7 @@
         {format_string_field(@transaction.contact)}
       <% end %>
     </:item>
-    
+
     <:item title="Mitgliedschaftsvertrag">
       <%= if @transaction.contract_id do %>
         <.link
@@ -60,6 +64,13 @@
         </.link>
       <% else %>
         {format_string_field(@transaction.contract)}
+      <% end %>
+    </:item>
+    <:item title="Regelmäßig wiederkehrende Einnahme bzw. Ausgabe">
+    <%= if @transaction.is_recurring == true do %>
+      {"Ja"}
+      <% else %>
+      {"Nein"}
       <% end %>
     </:item>
   </.list>
@@ -75,7 +86,7 @@
       </.link>
     </:actions>
   </.header>
-  
+
   <.card>
     <.table
       id="entries"
@@ -90,15 +101,15 @@
           <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
         <% end %>
       </:col>
-      
+
       <:col :let={{_id, entry}} label="Betrag">
         {entry.amount}
       </:col>
-      
+
       <:col :let={{_id, entry}} label="Sphäre">
         {format_string_field(Sportyweb.Accounting.Entry.sphere(entry.sphere))}
       </:col>
-      
+
       <:action :let={{_id, entry}}>
         <.link navigate={~p"/transactions/#{@transaction}/entries/#{entry}"}>Anzeigen</.link>
       </:action>
@@ -109,7 +120,7 @@
   <.header>
     {"Buchungen"}
   </.header>
-  
+
   <.card>
     <p>Bisher wurden noch keine Buchungen erstellt.</p>
   </.card>
