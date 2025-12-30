@@ -1572,19 +1572,17 @@ defmodule Sportyweb.Accounting do
   """
 
   def determine_income_statement(start_date, end_date, club_id) do
-    revenues = get_income_statement_data(start_date, end_date, club_id, "Einnahme")
+    revenues =
+      get_income_statement_data(start_date, end_date, club_id, "Einnahme")
+      |> list_account_balances_for_spheres()
+      |> calculate_total_balances("Einnahmen")
+      |> add_header("Einnahmen")
 
-    revenues
-    |> list_account_balances_for_spheres()
-    |> calculate_total_balances("Einnahmen")
-    |> add_header("Einnahmen")
-
-    expenses = get_income_statement_data(start_date, end_date, club_id, "Ausgabe")
-
-    expenses
-    |> list_account_balances_for_spheres()
-    |> calculate_total_balances("Ausgaben")
-    |> add_header("Ausgaben")
+    expenses =
+      get_income_statement_data(start_date, end_date, club_id, "Ausgabe")
+      |> list_account_balances_for_spheres()
+      |> calculate_total_balances("Ausgaben")
+      |> add_header("Ausgaben")
 
     revenues_and_expenses = revenues ++ expenses
     revenue_total = List.last(revenues)
@@ -1643,6 +1641,9 @@ defmodule Sportyweb.Accounting do
 
   # Determines debit and credit values for every nominal account for all entries in a given period of time
   defp get_income_statement_data(start_date, end_date, club_id, type) do
+    start_date_minus_ten_days = Date.add(start_date, -10)
+    end_date_plus_ten_days = Date.add(end_date, 10)
+
     query =
       from(
         a in Account,
@@ -1651,6 +1652,10 @@ defmodule Sportyweb.Accounting do
         join: t in assoc(e, :transaction),
         where: club.id == ^club_id,
         where: t.payment_date >= ^start_date and t.payment_date <= ^end_date,
+        or_where:
+          (t.is_recurring == true and t.due_date >= ^start_date and t.due_date <= ^end_date and
+             (t.payment_date >= ^start_date_minus_ten_days and t.payment_date < ^start_date)) or
+            (t.payment_date <= ^end_date_plus_ten_days and t.payment_date > ^end_date),
         where: a.class in ["Einnahmen", "Ausgaben", "Weitere Einnahmen und Ausgaben"],
         where: e.sphere in [1, 2, 3, 4],
         where: t.type == ^type,
