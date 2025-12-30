@@ -6,7 +6,7 @@ defmodule SportywebWeb.EntryLive.Show do
 
   @impl true
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :club_navigation_current_item, :entries)}
+    {:ok, assign(socket, :club_navigation_current_item, :transactions)}
   end
 
   @impl true
@@ -22,6 +22,7 @@ defmodule SportywebWeb.EntryLive.Show do
   end
 
   defp show_edit_button?(account_number) do
+    account_number = String.to_integer(account_number)
     account_number < 15_500 || account_number > 18_899
   end
 end

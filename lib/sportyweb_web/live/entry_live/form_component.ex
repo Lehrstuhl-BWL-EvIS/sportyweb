@@ -38,12 +38,25 @@ defmodule SportywebWeb.EntryLive.FormComponent do
                 <%= if @action == :edit do %>
                   <.input
                     field={@form[:amount]}
-                    type="number"
+                    type="text"
                     label="Betrag"
                     value={@entry.amount.amount}
+                    phx-update="ignore"
                   />
+                  <.input_description>
+                    Das €-Zeichen kann, muss aber nicht angegeben werden.
+                  </.input_description>
                 <% else %>
-                  <.input field={@form[:amount]} type="number" label="Betrag" value={@entry.amount} />
+                  <.input
+                    field={@form[:amount]}
+                    type="text"
+                    label="Betrag"
+                    value={@entry.amount}
+                    phx-update="ignore"
+                  />
+                  <.input_description>
+                    Das €-Zeichen kann, muss aber nicht angegeben werden.
+                  </.input_description>
                 <% end %>
               </div>
               <div class="col-span-12">
