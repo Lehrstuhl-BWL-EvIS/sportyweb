@@ -1552,8 +1552,14 @@ defmodule Sportyweb.Accounting do
 
         total_entries_amount = get_entries_amount_total(transaction_id)
 
-        financial_account_entry = get_financial_account_entry(transaction.id)
-        financial_account_entry_amount = financial_account_entry.amount.amount
+        financial_account_entry_amount =
+          case financial_account_entry = get_financial_account_entry(transaction.id) do
+            nil ->
+              Decimal.new(0)
+
+            _ ->
+              financial_account_entry.amount.amount
+          end
 
         # Subtract the amount of the entry to a financial account from the total amount of a transaction's entries
         total = Decimal.sub(total_entries_amount, financial_account_entry_amount)
@@ -1604,8 +1610,14 @@ defmodule Sportyweb.Accounting do
         # Subtract the entry's current amount
         updated_entries_amount = Decimal.sub(total_entries_amount, entry_amount)
 
-        financial_account_entry = get_financial_account_entry(transaction.id)
-        financial_account_entry_amount = financial_account_entry.amount.amount
+        financial_account_entry_amount =
+          case financial_account_entry = get_financial_account_entry(transaction.id) do
+            nil ->
+              Decimal.new(0)
+
+            _ ->
+              financial_account_entry.amount.amount
+          end
 
         # Subtract the amount of the entry to a financial account from the total amount of a transaction's entries
         total = Decimal.sub(updated_entries_amount, financial_account_entry_amount)
