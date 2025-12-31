@@ -16,7 +16,7 @@ defmodule SportywebWeb.IncomeStatementLive.FormComponent do
       <.card>
         <.simple_form
           for={@form}
-          id="forecast-form"
+          id="income_statement-form"
           phx-target={@myself}
           phx-change="validate"
           phx-submit="start"
