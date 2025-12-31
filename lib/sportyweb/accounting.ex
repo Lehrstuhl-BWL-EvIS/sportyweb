@@ -1633,9 +1633,6 @@ defmodule Sportyweb.Accounting do
 
   """
   def determine_entries_in_sphere_nine(start_date, end_date, club_id) do
-    start_date_minus_ten_days = Date.add(start_date, -10)
-    end_date_plus_ten_days = Date.add(end_date, 10)
-
     query =
       from(
         e in Entry,
@@ -1643,13 +1640,6 @@ defmodule Sportyweb.Accounting do
         join: club in assoc(transaction, :club),
         where: club.id == ^club_id,
         where: transaction.payment_date >= ^start_date and transaction.payment_date <= ^end_date,
-        or_where:
-          (transaction.is_recurring == true and transaction.due_date >= ^start_date and
-             transaction.due_date <= ^end_date and
-             (transaction.payment_date >= ^start_date_minus_ten_days and
-                transaction.payment_date < ^start_date)) or
-            (transaction.payment_date <= ^end_date_plus_ten_days and
-               transaction.payment_date > ^end_date),
         where: e.sphere == 9
       )
 
@@ -1737,9 +1727,6 @@ defmodule Sportyweb.Accounting do
 
   # Determines debit and credit values for every nominal account for all entries in a given period of time +/- 10 days
   defp get_income_statement_data(start_date, end_date, club_id, type) do
-    start_date_minus_ten_days = Date.add(start_date, -10)
-    end_date_plus_ten_days = Date.add(end_date, 10)
-
     query =
       from(
         a in Account,
@@ -1748,10 +1735,6 @@ defmodule Sportyweb.Accounting do
         join: t in assoc(e, :transaction),
         where: club.id == ^club_id,
         where: t.payment_date >= ^start_date and t.payment_date <= ^end_date,
-        or_where:
-          t.is_recurring == true and t.due_date >= ^start_date and t.due_date <= ^end_date and
-            ((t.payment_date >= ^start_date_minus_ten_days and t.payment_date < ^start_date) or
-               (t.payment_date <= ^end_date_plus_ten_days and t.payment_date > ^end_date)),
         where: a.class in ["Einnahmen", "Ausgaben", "Weitere Einnahmen und Ausgaben"],
         where: e.sphere in [1, 2, 3, 4],
         where: t.type == ^type,
