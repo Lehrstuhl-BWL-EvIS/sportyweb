@@ -66,13 +66,6 @@
         {format_string_field(@transaction.contract)}
       <% end %>
     </:item>
-    <:item title="Regelmäßig wiederkehrende Einnahme bzw. Ausgabe">
-      <%= if @transaction.is_recurring == true do %>
-        {"Ja"}
-      <% else %>
-        {"Nein"}
-      <% end %>
-    </:item>
   </.list>
 </.card>
 

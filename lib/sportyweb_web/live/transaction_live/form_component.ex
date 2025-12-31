@@ -76,13 +76,6 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                     prompt="Kein Vertrag"
                   />
                 </div>
-                <div class="col-span-12">
-                  <.input
-                    field={@form[:is_recurring]}
-                    type="checkbox"
-                    label="Handelt es sich um eine regelmäßig wiederkehrende Einnahme bzw. Ausgabe?"
-                  />
-                </div>
               </.input_grid>
             </.input_grids>
             <:actions>
@@ -177,13 +170,6 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                     type="select"
                     label="Art"
                     options={["Einnahme", "Ausgabe"]}
-                  />
-                </div>
-                <div class="col-span-12">
-                  <.input
-                    field={@form[:is_recurring]}
-                    type="checkbox"
-                    label="Handelt es sich um eine regelmäßig wiederkehrende Einnahme bzw. Ausgabe?"
                   />
                 </div>
               </.input_grid>

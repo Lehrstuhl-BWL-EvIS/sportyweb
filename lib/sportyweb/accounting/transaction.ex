@@ -23,7 +23,6 @@ defmodule Sportyweb.Accounting.Transaction do
     field :due_date, :date, default: nil
     field :receipt_number, :string, default: nil
     field :type, :string, default: ""
-    field :is_recurring, :boolean, default: false
 
     timestamps(type: :utc_datetime)
   end
@@ -43,8 +42,7 @@ defmodule Sportyweb.Accounting.Transaction do
       :payment_date,
       :due_date,
       :receipt_number,
-      :type,
-      :is_recurring
+      :type
     ])
     |> validate_required([:club_id, :name, :amount, :creation_date, :type, :payment_date])
     |> update_change(:name, &String.trim/1)
@@ -85,8 +83,7 @@ defmodule Sportyweb.Accounting.Transaction do
       :due_date,
       :receipt_number,
       :type,
-      :contact_id,
-      :is_recurring
+      :contact_id
     ])
     |> validate_required([
       :club_id,
