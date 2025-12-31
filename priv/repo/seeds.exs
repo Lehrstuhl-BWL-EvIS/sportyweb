@@ -14,7 +14,6 @@ alias Sportyweb.Repo
 
 alias Sportyweb.Accounting
 alias Sportyweb.Accounting.Account
-alias Sportyweb.Accounting.Entry
 alias Sportyweb.Accounting.Transaction
 alias Sportyweb.Accounts
 alias Sportyweb.Accounts.User
@@ -1151,12 +1150,12 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 
           sphere = Enum.random([1, 2, 3, 4, 9])
 
-          Repo.insert!(%Entry{
-            transaction_id: transaction.id,
-            account_id: account.id,
-            type: Accounting.determine_entry_type(transaction.type, account.class),
-            amount: Money.new(:EUR, transaction.amount.amount),
-            sphere: sphere
+          Accounting.create_entry_and_update_account_balance(%{
+            "transaction_id" => transaction.id,
+            "account_id" => account.id,
+            "type" => Accounting.determine_entry_type(transaction.type, account.class),
+            "amount" => Money.new(:EUR, transaction.amount.amount),
+            "sphere" => sphere
           })
 
         "Ausgabe" ->
@@ -1164,12 +1163,12 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 
           sphere = Enum.random([1, 2, 3, 4, 9])
 
-          Repo.insert!(%Entry{
-            transaction_id: transaction.id,
-            account_id: account.id,
-            type: Accounting.determine_entry_type(transaction.type, account.class),
-            amount: Money.new(:EUR, transaction.amount.amount),
-            sphere: sphere
+          Accounting.create_entry_and_update_account_balance(%{
+            "transaction_id" => transaction.id,
+            "account_id" => account.id,
+            "type" => Accounting.determine_entry_type(transaction.type, account.class),
+            "amount" => Money.new(:EUR, transaction.amount.amount),
+            "sphere" => sphere
           })
       end
     end
