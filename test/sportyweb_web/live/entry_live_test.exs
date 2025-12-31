@@ -79,7 +79,7 @@ defmodule SportywebWeb.EntryLiveTest do
       {:ok, _show_live, html} = live(conn, ~p"/transactions/#{transaction}/entries/#{entry}")
 
       assert html =~ "Buchung"
-      refute html =~ entry.id
+      assert html =~ entry.id
     end
   end
 end

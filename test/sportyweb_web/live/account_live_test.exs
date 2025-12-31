@@ -8,11 +8,11 @@ defmodule SportywebWeb.AccountLiveTest do
   import Sportyweb.RBAC.UserRoleFixtures
   import Sportyweb.OrganizationFixtures
 
-  @create_attrs %{name: "some name", class: "Umlaufvermögen", account_number: 16_000}
+  @create_attrs %{name: "some name", class: "Umlaufvermögen", account_number: "16000"}
   @update_attrs %{
     name: "some updated name",
     class: "Einnahmen",
-    account_number: 41_234,
+    account_number: "41234",
     archive_date: ~D[2025-11-20]
   }
   @invalid_attrs %{name: nil, class: "", account_number: nil}

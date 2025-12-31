@@ -15,21 +15,23 @@ defmodule Sportyweb.AccountingFixtures do
     contract = contract_fixture()
     club = club_fixture()
     contact = contact_fixture()
+    account = account_fixture()
 
     {:ok, transaction} =
       attrs
       |> Enum.into(%{
-        contract_id: contract.id,
-        contact_id: contact.id,
-        club_id: club.id,
-        name: "some name",
-        amount: Money.new(:EUR, 42),
-        creation_date: ~D[2025-11-19],
-        payment_date: ~D[2025-11-19],
-        receipt_number: "INV-123",
-        type: "Einnahme"
+        "contract_id" => contract.id,
+        "contact_id" => contact.id,
+        "club_id" => club.id,
+        "name" => "some name",
+        "amount" => Money.new(:EUR, 42),
+        "creation_date" => ~D[2025-11-19],
+        "payment_date" => ~D[2025-11-19],
+        "receipt_number" => "INV-123",
+        "type" => "Einnahme",
+        "account_id" => account.id
       })
-      |> Sportyweb.Accounting.create_transaction()
+      |> Sportyweb.Accounting.create_transaction_and_entry()
 
     transaction
   end
@@ -45,7 +47,7 @@ defmodule Sportyweb.AccountingFixtures do
       |> Enum.into(%{
         club_id: club.id,
         name: "some name",
-        account_number: 16_000,
+        account_number: "16000",
         class: "Umlaufvermögen"
       })
       |> Sportyweb.Accounting.create_account()
@@ -64,7 +66,7 @@ defmodule Sportyweb.AccountingFixtures do
       |> Enum.into(%{
         club_id: club.id,
         name: "some name",
-        account_number: 46_789,
+        account_number: "46789",
         class: "Einnahmen"
       })
       |> Sportyweb.Accounting.create_account()
@@ -77,7 +79,7 @@ defmodule Sportyweb.AccountingFixtures do
   """
   def entry_fixture(attrs \\ %{}) do
     transaction = transaction_fixture()
-    account = account_fixture()
+    account = account_fixture1()
 
     {:ok, entry} =
       attrs

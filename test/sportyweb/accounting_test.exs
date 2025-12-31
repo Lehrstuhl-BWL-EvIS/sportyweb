@@ -155,6 +155,34 @@ defmodule Sportyweb.AccountingTest do
       assert transaction == Accounting.get_transaction!(transaction.id)
     end
 
+    test "update_transaction_and_entry/2 with valid data updates the transaction and the associated entry" do
+      transaction = transaction_fixture()
+      account = account_fixture()
+
+      update_attrs = %{
+        "amount" => "43 €",
+        "creation_date" => ~D[2025-11-20],
+        "name" => "some updated name",
+        "payment_date" => ~D[2025-11-20],
+        "receipt_number" => "INV-345",
+        "type" => "Ausgabe",
+        "account_id" => account.id
+      }
+
+      assert {:ok, %Transaction{} = transaction} =
+               Accounting.update_transaction_and_entry(transaction, update_attrs)
+
+      entry = Accounting.get_financial_account_entry(transaction.id)
+
+      assert transaction.amount == Money.new(:EUR, 43)
+      assert transaction.creation_date == ~D[2025-11-20]
+      assert transaction.name == "some updated name"
+      assert transaction.payment_date == ~D[2025-11-20]
+      assert transaction.receipt_number == "INV-345"
+      assert transaction.type == "Ausgabe"
+      assert entry.account_id == account.id
+    end
+
     test "delete_transaction/1 deletes the transaction" do
       transaction = transaction_fixture()
       assert {:ok, %Transaction{}} = Accounting.delete_transaction(transaction)
@@ -186,7 +214,7 @@ defmodule Sportyweb.AccountingTest do
       valid_attrs = %{
         club_id: club.id,
         class: "Einnahmen",
-        account_number: 45_678,
+        account_number: "45678",
         name: "some name"
       }
 
@@ -225,14 +253,14 @@ defmodule Sportyweb.AccountingTest do
       valid_attrs = %{
         name: "some name",
         class: "Einnahmen",
-        account_number: 45_678,
+        account_number: "45678",
         club_id: club.id
       }
 
       assert {:ok, %Account{} = account} = Accounting.create_account(valid_attrs)
       assert account.name == "some name"
       assert account.class == "Einnahmen"
-      assert account.account_number == 45_678
+      assert account.account_number == "45678"
     end
 
     test "create_account/1 with invalid data returns error changeset" do
@@ -245,14 +273,14 @@ defmodule Sportyweb.AccountingTest do
       update_attrs = %{
         name: "some updated name",
         class: "Eigen-/Fremdkapital",
-        account_number: 23_456,
+        account_number: "23456",
         archive_date: ~D[2025-11-18]
       }
 
       assert {:ok, %Account{} = account} = Accounting.update_account(account, update_attrs)
       assert account.name == "some updated name"
       assert account.class == "Eigen-/Fremdkapital"
-      assert account.account_number == 23_456
+      assert account.account_number == "23456"
       assert account.archive_date == ~D[2025-11-18]
     end
 
@@ -260,6 +288,18 @@ defmodule Sportyweb.AccountingTest do
       account = account_fixture()
       assert {:error, %Ecto.Changeset{}} = Accounting.update_account(account, @invalid_attrs)
       assert account == Accounting.get_account!(account.id)
+    end
+
+    test "update_account_balance/3 with valid data updates the account's balance" do
+      account = account_fixture()
+
+      amount = Decimal.new(100)
+      type = "S"
+
+      assert {:ok, %Account{} = account} =
+               Accounting.update_account_balance(account, amount, type)
+
+      assert account.balance == Money.new(:EUR, 100)
     end
 
     test "delete_account/1 deletes the account" do
@@ -282,6 +322,7 @@ defmodule Sportyweb.AccountingTest do
     alias Sportyweb.Accounting.Entry
 
     import Sportyweb.AccountingFixtures
+    import Sportyweb.OrganizationFixtures
 
     @invalid_attrs %{type: "", amount: nil, sphere: nil, account_id: nil, transaction_id: nil}
 
@@ -305,8 +346,9 @@ defmodule Sportyweb.AccountingTest do
     end
 
     test "get_financial_account_entry/1 returns the transactions entry to a financial account" do
-      entry = entry_fixture()
-      assert Accounting.get_financial_account_entry(entry.transaction_id) == entry
+      transaction = transaction_fixture()
+      [entry] = Accounting.list_entries(transaction.id, [])
+      assert Accounting.get_financial_account_entry(transaction.id) == entry
     end
 
     test "create_entry/1 with valid data creates a entry" do
@@ -359,14 +401,27 @@ defmodule Sportyweb.AccountingTest do
 
       update_attrs = %{
         type: "H",
-        amount: Money.new(:EUR, 50),
+        amount: Money.new(:EUR, 41),
         sphere: 1
       }
 
       assert {:ok, %Entry{} = entry} = Accounting.update_entry(entry, update_attrs)
       assert entry.type == "H"
-      assert entry.amount == Money.new(:EUR, 50)
+      assert entry.amount == Money.new(:EUR, 41)
       assert entry.sphere == 1
+    end
+
+    test "update_entry/2 with higher amount than the transaction's amount returns error changeset" do
+      entry = entry_fixture()
+
+      update_attrs = %{
+        type: "H",
+        amount: Money.new(:EUR, 50),
+        sphere: 1
+      }
+
+      assert {:error, %Ecto.Changeset{}} = Accounting.update_entry(entry, update_attrs)
+      assert entry == Accounting.get_entry!(entry.id)
     end
 
     test "update_entry/2 with invalid data returns error changeset" do
