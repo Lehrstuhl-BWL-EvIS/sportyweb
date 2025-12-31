@@ -31,6 +31,7 @@ defmodule SportywebWeb.IncomeStatementLive.FormComponent do
                 <.input field={@form[:end_date]} type="date" label="Bis" />
               </div>
             </.input_grid>
+
             <.input_grid :if={@amount_entries_sphere_nine > 0} class="pt-6">
               <div class="col-span-12">
                 <div
@@ -45,6 +46,7 @@ defmodule SportywebWeb.IncomeStatementLive.FormComponent do
               </div>
             </.input_grid>
           </.input_grids>
+
           <:actions>
             <div>
               <.button phx-disable-with="Erstellen...">EÜR erstellen</.button>
