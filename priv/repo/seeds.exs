@@ -1124,7 +1124,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 
     # Transactions
 
-    for _i <- 0..Enum.random(10..15) do
+    for _i <- 0..Enum.random(20..30) do
       contact = Personal.list_contacts(club.id) |> Enum.random()
       financial_account = Accounting.list_financial_accounts(club.id) |> Enum.random()
       transaction_type = Enum.random(["Einnahme", "Ausgabe"])
@@ -1150,7 +1150,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 
           sphere = Enum.random([1, 2, 3, 4, 9])
 
-          Accounting.create_entry_and_update_account_balance(%{
+          Accounting.create_entry(%{
             "transaction_id" => transaction.id,
             "account_id" => account.id,
             "type" => Accounting.determine_entry_type(transaction.type, account.class),
@@ -1163,7 +1163,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 
           sphere = Enum.random([1, 2, 3, 4, 9])
 
-          Accounting.create_entry_and_update_account_balance(%{
+          Accounting.create_entry(%{
             "transaction_id" => transaction.id,
             "account_id" => account.id,
             "type" => Accounting.determine_entry_type(transaction.type, account.class),
