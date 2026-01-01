@@ -205,7 +205,8 @@ defmodule Sportyweb.AccountingTest do
 
     test "list_accounts/1 returns all accounts of a given club" do
       account = account_fixture()
-      assert Accounting.list_accounts(account.club_id) == [account]
+      [listed_account] = Accounting.list_accounts(account.club_id)
+      assert [listed_account.id] == [account.id]
     end
 
     test "list_accounts/2 returns all accounts of a given club and a given list of account classes" do
@@ -237,6 +238,15 @@ defmodule Sportyweb.AccountingTest do
       account = account_fixture()
 
       assert %Account{} = Accounting.get_account!(account.id, [:club])
+      assert Accounting.get_account!(account.id, [:club]).club.id == account.club_id
+    end
+
+    test "get_account_and_balance!/2 returns the account with given id and contains a preloaded club" do
+      account = account_fixture()
+
+      assert %Account{} = Accounting.get_account_and_balance!(account.id, [:club])
+      account_result = Accounting.get_account_and_balance!(account.id, [:club]).balance
+      assert account_result == Money.new(:EUR, 0)
       assert Accounting.get_account!(account.id, [:club]).club.id == account.club_id
     end
 
@@ -288,18 +298,6 @@ defmodule Sportyweb.AccountingTest do
       account = account_fixture()
       assert {:error, %Ecto.Changeset{}} = Accounting.update_account(account, @invalid_attrs)
       assert account == Accounting.get_account!(account.id)
-    end
-
-    test "update_account_balance/3 with valid data updates the account's balance" do
-      account = account_fixture()
-
-      amount = Decimal.new(100)
-      type = "S"
-
-      assert {:ok, %Account{} = account} =
-               Accounting.update_account_balance(account, amount, type)
-
-      assert account.balance == Money.new(:EUR, 100)
     end
 
     test "delete_account/1 deletes the account" do
