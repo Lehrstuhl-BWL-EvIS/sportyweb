@@ -8,7 +8,6 @@ defmodule Sportyweb.Repo.Migrations.CreateAccounts do
       add :name, :string, null: false
       add :class, :string, null: false
       add :archive_date, :date, null: true
-      add :balance, :money_with_currency, null: true
       add :opening_balance, :money_with_currency, null: true
 
       add :club_id, references(:clubs, on_delete: :delete_all, type: :binary_id), null: false

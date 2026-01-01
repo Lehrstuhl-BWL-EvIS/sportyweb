@@ -150,7 +150,7 @@ defmodule Sportyweb.Accounting do
         "type" => entry_type
       }
 
-      {:ok, _entry} = create_financial_account_entry_and_update_account_balance(entry_attrs)
+      {:ok, _entry} = create_financial_account_entry(entry_attrs)
 
       transaction
     end)
@@ -203,13 +203,13 @@ defmodule Sportyweb.Accounting do
           "type" => entry_type
         }
 
-        {:ok, _entry} = create_financial_account_entry_and_update_account_balance(entry_attrs)
+        {:ok, _entry} = create_financial_account_entry(entry_attrs)
       else
         entry_attrs = %{
           "account_id" => attrs["account_id"]
         }
 
-        {:ok, _entry} = update_entry_and_account_balance(entry, entry_attrs)
+        {:ok, _entry} = update_entry(entry, entry_attrs)
       end
 
       transaction
@@ -230,38 +230,6 @@ defmodule Sportyweb.Accounting do
   """
   def delete_transaction(%Transaction{} = transaction) do
     Repo.delete(transaction)
-  end
-
-  @doc """
-  Deletes a transaction and updates balances of all associated accounts.
-
-  ## Examples
-
-      iex> delete_transaction_and_update_account_balance(transaction)
-      {:ok, %Transaction{}}
-
-      iex> delete_transaction_and_update_account_balance(transaction)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_transaction_and_update_account_balance(%Transaction{} = transaction) do
-    entries = list_entries(transaction.id, [:account])
-
-    Repo.transaction(fn ->
-      case delete_transaction(transaction) do
-        {:ok, _transaction} ->
-          Enum.each(entries, fn entry ->
-            update_account_balance(
-              entry.account,
-              Decimal.negate(entry.amount.amount),
-              entry.type
-            )
-          end)
-
-        {:error, reason} ->
-          Repo.rollback(reason)
-      end
-    end)
   end
 
   @doc """
@@ -580,7 +548,7 @@ defmodule Sportyweb.Accounting do
   alias Sportyweb.Accounting.Account
 
   @doc """
-  Returns a clubs list of accounts.
+  Returns a clubs list of accounts including the account's balance.
 
   ## Examples
 
@@ -594,11 +562,56 @@ defmodule Sportyweb.Accounting do
       from(
         a in Account,
         join: club in assoc(a, :club),
+        left_join: e in assoc(a, :entry),
         where: club.id == ^club_id,
+        group_by: a.id,
+        select: %{
+          id: a.id,
+          club_id: a.club_id,
+          account_number: a.account_number,
+          name: a.name,
+          class: a.class,
+          archive_date: a.archive_date,
+          opening_balance: a.opening_balance,
+          debit:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.amount
+              )
+            ),
+          credit:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.amount
+              )
+            )
+        },
         order_by: [a.account_number]
       )
 
-    Repo.all(query)
+    accounts = Repo.all(query)
+
+    # Calculate balance and add it to maps
+    accounts =
+      Enum.map(accounts, fn account ->
+        balance =
+          determine_account_balance(
+            account.debit,
+            account.credit,
+            account.account_number,
+            account.opening_balance
+          )
+
+        account
+        |> Map.put(:balance, balance)
+      end)
+
+    # Transform maps into structs
+    Enum.map(accounts, fn account -> struct(Account, account) end)
   end
 
   @doc """
@@ -688,6 +701,72 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
+  Gets a single account and its balance.
+
+  Raises `Ecto.NoResultsError` if the Account does not exist.
+
+  ## Examples
+
+      iex> get_account!(123)
+      %Account{}
+
+      iex> get_account!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_account_and_balance!(id, preloads) do
+    query =
+      from(
+        a in Account,
+        left_join: entry in assoc(a, :entry),
+        where: a.id == ^id,
+        group_by: a.id,
+        select: %{
+          id: a.id,
+          club_id: a.club_id,
+          account_number: a.account_number,
+          name: a.name,
+          class: a.class,
+          archive_date: a.archive_date,
+          opening_balance: a.opening_balance,
+          debit:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' THEN (?) .amount ELSE 0 END",
+                entry.type,
+                entry.amount
+              )
+            ),
+          credit:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' THEN (?) .amount ELSE 0 END",
+                entry.type,
+                entry.amount
+              )
+            )
+        }
+      )
+
+    account = Repo.one(query)
+
+    # Calculate balance and add it to map
+    balance =
+      determine_account_balance(
+        account.debit,
+        account.credit,
+        account.account_number,
+        account.opening_balance
+      )
+
+    account = struct(Account, account)
+
+    account
+    |> Map.put(:balance, balance)
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
   Gets the financial account of an entry belonging to a specific transaction. Preloads associations.
 
   ## Examples
@@ -771,40 +850,6 @@ defmodule Sportyweb.Accounting do
     account
     |> Account.changeset(attrs)
     |> Repo.update()
-  end
-
-  @doc """
-  Updates an account's balance.
-
-  ## Examples
-
-      iex> update_account_balance(%Account{field: value}, Decimal.new(100), "S")
-      {:ok, %Account{}}
-
-      iex> update_account_balance(account, amount, type)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_account_balance(%Account{} = account, amount, type) do
-    first_digit = String.to_integer(String.at(account.account_number, 0))
-    second_digit = String.to_integer(String.at(account.account_number, 1))
-    third_digit = String.to_integer(String.at(account.account_number, 2))
-
-    account_balance =
-      determine_current_account_balance(
-        first_digit,
-        second_digit,
-        third_digit,
-        account.balance.amount,
-        amount,
-        type
-      )
-
-    account_attrs = %{
-      "balance" => Money.new(:EUR, account_balance)
-    }
-
-    update_account(account, account_attrs)
   end
 
   @doc """
@@ -969,102 +1014,18 @@ defmodule Sportyweb.Accounting do
     ]
   end
 
-  # Controls how an account's balance is calculated
-  defp determine_current_account_balance(
-         first_digit,
-         _second_digit,
-         _third_digit,
-         account_balance,
-         amount,
-         type
-       )
-       when first_digit in [0, 1, 5, 6] do
-    calculate_current_account_balance(account_balance, amount, type, :debit)
-  end
-
-  defp determine_current_account_balance(
-         first_digit,
-         _second_digit,
-         _third_digit,
-         account_balance,
-         amount,
-         type
-       )
-       when first_digit in [2, 3, 4] do
-    calculate_current_account_balance(account_balance, amount, type, :credit)
-  end
-
-  defp determine_current_account_balance(
-         first_digit,
-         second_digit,
-         _third_digit,
-         account_balance,
-         amount,
-         type
-       )
-       when first_digit == 7 and second_digit in [0, 1, 4, 8] do
-    calculate_current_account_balance(account_balance, amount, type, :credit)
-  end
-
-  defp determine_current_account_balance(
-         first_digit,
-         second_digit,
-         _third_digit,
-         account_balance,
-         amount,
-         type
-       )
-       when first_digit == 7 and second_digit in [2, 3, 5, 6, 9] do
-    calculate_current_account_balance(account_balance, amount, type, :debit)
-  end
-
-  defp determine_current_account_balance(
-         first_digit,
-         second_digit,
-         third_digit,
-         account_balance,
-         amount,
-         type
-       )
-       when first_digit == 7 and second_digit == 7 and third_digit in [0, 1, 2, 3, 4, 5] do
-    calculate_current_account_balance(account_balance, amount, type, :debit)
-  end
-
-  defp determine_current_account_balance(
-         first_digit,
-         second_digit,
-         third_digit,
-         account_balance,
-         amount,
-         type
-       )
-       when first_digit == 7 and second_digit == 7 and third_digit in [6, 7, 8, 9] do
-    calculate_current_account_balance(account_balance, amount, type, :credit)
-  end
-
-  # Calculates an account's balance based on the entry's type
-  defp calculate_current_account_balance(account_balance, amount, type, :debit) do
-    case type do
-      "S" -> Decimal.add(account_balance, amount)
-      "H" -> Decimal.sub(account_balance, amount)
-    end
-  end
-
-  # Calculates an account's balance based on the entry's type
-  defp calculate_current_account_balance(account_balance, amount, type, :credit) do
-    case type do
-      "H" -> Decimal.add(account_balance, amount)
-      "S" -> Decimal.sub(account_balance, amount)
-    end
-  end
-
   # Controls how an account's balance is calculated based on debit and credit values and it's account number
-  defp determine_account_balance(debit, credit, account_number) do
+  defp determine_account_balance(debit, credit, account_number, opening_balance) do
     first_digit = String.to_integer(String.at(account_number, 0))
     second_digit = String.to_integer(String.at(account_number, 1))
     third_digit = String.to_integer(String.at(account_number, 2))
 
-    balance = calculate_account_balance(first_digit, second_digit, third_digit, debit, credit)
+    # Add opening balance to the balance
+    balance =
+      Decimal.add(
+        opening_balance.amount,
+        calculate_account_balance(first_digit, second_digit, third_digit, debit, credit)
+      )
 
     Money.new(:EUR, balance)
   end
@@ -1334,35 +1295,6 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Creates an entry and updates the account's balance.
-
-  ## Examples
-
-      iex> create_entry_and_update_account_balance(%{field: value})
-      {:ok, %Entry{}}
-
-      iex> create_entry_and_update_account_balance(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_entry_and_update_account_balance(attrs \\ %{}) do
-    account = get_account!(attrs["account_id"])
-
-    Repo.transaction(fn ->
-      case create_entry(attrs) do
-        {:ok, entry} ->
-          case update_account_balance(account, entry.amount.amount, entry.type) do
-            {:ok, _} -> {:ok, entry}
-            {:error, reason} -> Repo.rollback(reason)
-          end
-
-        {:error, reason} ->
-          Repo.rollback(reason)
-      end
-    end)
-  end
-
-  @doc """
   Creates an entry for a financial account.
 
   ## Examples
@@ -1378,35 +1310,6 @@ defmodule Sportyweb.Accounting do
     %Entry{}
     |> Entry.changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Creates an entry for a financial account and updates the account's balance.
-
-  ## Examples
-
-      iex> create_financial_account_entry_and_update_account_balance(%{field: value})
-      {:ok, %Entry{}}
-
-      iex> create_financial_account_entry_and_update_account_balance(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_financial_account_entry_and_update_account_balance(attrs \\ %{}) do
-    account = get_account!(attrs["account_id"])
-
-    Repo.transaction(fn ->
-      case create_financial_account_entry(attrs) do
-        {:ok, entry} ->
-          case update_account_balance(account, entry.amount.amount, entry.type) do
-            {:ok, _} -> {:ok, entry}
-            {:error, reason} -> Repo.rollback(reason)
-          end
-
-        {:error, reason} ->
-          Repo.rollback(reason)
-      end
-    end)
   end
 
   @doc """
@@ -1429,49 +1332,6 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Updates an entry and the account's balance.
-
-  ## Examples
-
-      iex> update_entry_and_account_balance(entry, %{field: new_value})
-      {:ok, %Entry{}}
-
-      iex> update_entry_and_account_balance(entry, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_entry_and_account_balance(%Entry{} = entry, attrs) do
-    old_entry = entry
-
-    Repo.transaction(fn ->
-      case update_entry(old_entry, attrs) do
-        {:ok, new_entry} ->
-          old_account = get_account!(entry.account_id)
-          new_account = get_account!(attrs["account_id"])
-
-          if old_account.id == new_account.id do
-            amount = Decimal.sub(new_entry.amount.amount, old_entry.amount.amount)
-            updated_amount = Decimal.add(old_account.balance.amount, amount)
-
-            account_attrs = %{"balance" => Money.new(:EUR, updated_amount)}
-            update_account(old_account, account_attrs)
-          else
-            update_account_balance(
-              old_account,
-              Decimal.negate(old_entry.amount.amount),
-              old_entry.type
-            )
-
-            update_account_balance(new_account, new_entry.amount.amount, new_entry.type)
-          end
-
-        {:error, reason} ->
-          Repo.rollback(reason)
-      end
-    end)
-  end
-
-  @doc """
   Deletes a entry.
 
   ## Examples
@@ -1485,36 +1345,6 @@ defmodule Sportyweb.Accounting do
   """
   def delete_entry(%Entry{} = entry) do
     Repo.delete(entry)
-  end
-
-  @doc """
-  Deletes an entry and updates the account's balance.
-
-  ## Examples
-
-      iex> delete_entry_and_update_account_balance(entry)
-      {:ok, %Entry{}}
-
-      iex> delete_entry_and_update_account_balance(entry)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_entry_and_update_account_balance(%Entry{} = entry) do
-    account_id = entry.account_id
-    account = get_account!(account_id)
-
-    Repo.transaction(fn ->
-      case delete_entry(entry) do
-        {:ok, entry} ->
-          case update_account_balance(account, Decimal.negate(entry.amount.amount), entry.type) do
-            {:ok, _} -> {:ok, entry}
-            {:error, reason} -> Repo.rollback(reason)
-          end
-
-        {:error, reason} ->
-          Repo.rollback(reason)
-      end
-    end)
   end
 
   @doc """
@@ -1754,6 +1584,7 @@ defmodule Sportyweb.Accounting do
           id: a.id,
           account_number: a.account_number,
           name: a.name,
+          opening_balance: a.opening_balance,
           debit_sphere_1:
             sum(
               fragment(
@@ -1859,35 +1690,40 @@ defmodule Sportyweb.Accounting do
         determine_account_balance(
           account.debit_sphere_1,
           account.credit_sphere_1,
-          account.account_number
+          account.account_number,
+          account.opening_balance
         )
 
       balance_sphere_2 =
         determine_account_balance(
           account.debit_sphere_2,
           account.credit_sphere_2,
-          account.account_number
+          account.account_number,
+          account.opening_balance
         )
 
       balance_sphere_3 =
         determine_account_balance(
           account.debit_sphere_3,
           account.credit_sphere_3,
-          account.account_number
+          account.account_number,
+          account.opening_balance
         )
 
       balance_sphere_4 =
         determine_account_balance(
           account.debit_sphere_4,
           account.credit_sphere_4,
-          account.account_number
+          account.account_number,
+          account.opening_balance
         )
 
       balance_total =
         determine_account_balance(
           account.debit_total,
           account.credit_total,
-          account.account_number
+          account.account_number,
+          account.opening_balance
         )
 
       # Add balances and drop debit and credit values

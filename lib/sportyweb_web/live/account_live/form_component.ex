@@ -170,11 +170,6 @@ defmodule SportywebWeb.AccountLive.FormComponent do
   end
 
   defp save_account(socket, :edit, account_params) do
-    account_params =
-      Enum.into(account_params, %{
-        "balance" => account_params["opening_balance"]
-      })
-
     case Accounting.update_account(socket.assigns.account, account_params) do
       {:ok, _account} ->
         {:noreply,
@@ -190,8 +185,7 @@ defmodule SportywebWeb.AccountLive.FormComponent do
   defp save_account(socket, :new, account_params) do
     account_params =
       Enum.into(account_params, %{
-        "club_id" => socket.assigns.account.club.id,
-        "balance" => account_params["opening_balance"]
+        "club_id" => socket.assigns.account.club.id
       })
 
     case Accounting.create_account(account_params) do

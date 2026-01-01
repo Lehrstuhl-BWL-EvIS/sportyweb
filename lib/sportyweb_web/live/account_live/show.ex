@@ -11,7 +11,7 @@ defmodule SportywebWeb.AccountLive.Show do
 
   @impl true
   def handle_params(%{"id" => id}, _, socket) do
-    account = Accounting.get_account!(id, [:club])
+    account = Accounting.get_account_and_balance!(id, [:club])
 
     {:noreply,
      socket

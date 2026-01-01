@@ -15,7 +15,11 @@ defmodule Sportyweb.Accounting.Account do
     field :class, :string, default: ""
     field :account_number, :string, default: ""
     field :archive_date, :date, default: nil
-    field :balance, Money.Ecto.Composite.Type, default_currency: :EUR, default: Money.new(:EUR, 0)
+
+    field :balance, Money.Ecto.Composite.Type,
+      default_currency: :EUR,
+      default: Money.new(:EUR, 0),
+      virtual: true
 
     field :opening_balance, Money.Ecto.Composite.Type,
       default_currency: :EUR,

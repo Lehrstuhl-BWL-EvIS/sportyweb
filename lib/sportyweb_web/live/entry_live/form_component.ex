@@ -119,7 +119,7 @@ defmodule SportywebWeb.EntryLive.FormComponent do
   end
 
   defp save_entry(socket, :edit, entry_params) do
-    case Accounting.update_entry_and_account_balance(socket.assigns.entry, entry_params) do
+    case Accounting.update_entry(socket.assigns.entry, entry_params) do
       {:ok, _entry} ->
         {:noreply,
          socket
@@ -143,7 +143,7 @@ defmodule SportywebWeb.EntryLive.FormComponent do
         "type" => entry_type
       })
 
-    case Accounting.create_entry_and_update_account_balance(entry_params) do
+    case Accounting.create_entry(entry_params) do
       {:ok, _entry} ->
         {:noreply,
          socket
