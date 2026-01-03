@@ -47,21 +47,21 @@ defmodule Sportyweb.AccountingTest do
                :club,
                :contact,
                :contract,
-               entry: [:account]
+               entries: [:account]
              ]).contract.id == transaction.contract_id
 
       assert Accounting.get_transaction!(transaction.id, [
                :club,
                :contact,
                :contract,
-               entry: [:account]
+               entries: [:account]
              ]).contact.id == transaction.contact_id
 
       assert Accounting.get_transaction!(transaction.id, [
                :club,
                :contact,
                :contract,
-               entry: [:account]
+               entries: [:account]
              ]).club.id == transaction.club_id
     end
 
@@ -254,7 +254,8 @@ defmodule Sportyweb.AccountingTest do
       account = account_fixture()
       entry = entry_fixture()
 
-      assert Accounting.get_financial_account(entry.transaction_id, [:entry]).name == account.name
+      assert Accounting.get_financial_account(entry.transaction_id, [:entries]).name ==
+               account.name
     end
 
     test "create_account/1 with valid data creates a account" do
