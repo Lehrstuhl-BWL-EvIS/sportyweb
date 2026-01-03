@@ -209,7 +209,7 @@ defmodule Sportyweb.AccountingTest do
       assert [listed_account.id] == [account.id]
     end
 
-    test "list_accounts/2 returns all accounts of a given club and a given list of account classes" do
+    test "list_accounts/2 returns all accounts of a given club and a given list of account numbers" do
       club = club_fixture()
 
       valid_attrs = %{
@@ -220,8 +220,8 @@ defmodule Sportyweb.AccountingTest do
       }
 
       assert {:ok, %Account{} = account} = Accounting.create_account(valid_attrs)
-      account_classes = ["Einnahmen", "Weitere Einnahmen und Ausgaben"]
-      assert Accounting.list_accounts(account_classes, account.club_id) == [account]
+      options = ["4%", "70%", "71%", "74%", "770%", "771%", "773%", "774%", "775%", "78%"]
+      assert Accounting.list_accounts(options, account.club_id) == [account]
     end
 
     test "list_financial_accounts/1 returns all financial accounts of a given club" do
