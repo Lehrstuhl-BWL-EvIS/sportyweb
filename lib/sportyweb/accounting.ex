@@ -615,22 +615,23 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Returns a clubs list of accounts belonging to specific account classes excluding archived accounts.
+  Returns a clubs list of accounts starting with specific digits excluding archived accounts.
 
   ## Examples
 
-      iex> list_accounts(["Einnahmen", "Weitere Einnahmen und Ausgaben"], 1)
+      iex> list_accounts(["4%", "70%", "71%", "74%", "770%", "771%", "773%", "774%", "775%","78%"], 1)
       [%Account{}, ...]
 
   """
 
-  def list_accounts(account_classes, club_id) do
+  def list_accounts(options, club_id) do
     date = Date.utc_today()
 
     query =
       from(
         a in Account,
-        where: a.club_id == ^club_id and a.class in ^account_classes,
+        where: a.club_id == ^club_id,
+        where: fragment("? LIKE ANY(?)", a.account_number, ^options),
         where: a.archive_date > ^date or is_nil(a.archive_date),
         order_by: [a.account_number]
       )
@@ -906,22 +907,22 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Determines the usable account classes for a given type of transaction.
+  Determines the usable account's for a given type of transaction according to the first digits of their account number.
 
   ## Examples
 
-      iex> determine_account_classes("Einnahme")
-      ["Einnahmen", "Weitere Einnahmen und Ausgaben"]
+      iex> determine_accounts("Einnahme")
+      ["4%", "70%", "71%", "74%", "770%", "771%", "773%", "774%", "775%","78%"]
 
   """
 
-  def determine_usable_account_classes(transaction_type) do
+  def determine_usable_accounts(transaction_type) do
     case transaction_type do
       "Einnahme" ->
-        ["Einnahmen", "Weitere Einnahmen und Ausgaben"]
+        ["4%", "70%", "71%", "74%", "770%", "771%", "773%", "774%", "775%", "78%"]
 
       "Ausgabe" ->
-        ["Ausgaben", "Weitere Einnahmen und Ausgaben"]
+        ["5%", "6%", "772%", "776%", "777%", "778%", "79%"]
     end
   end
 
@@ -1015,7 +1016,7 @@ defmodule Sportyweb.Accounting do
   end
 
   # Controls how an account's balance is calculated based on debit and credit values and it's account number
-  defp determine_account_balance(debit, credit, account_number, opening_balance) do
+  def determine_account_balance(debit, credit, account_number, opening_balance) do
     first_digit = String.to_integer(String.at(account_number, 0))
     second_digit = String.to_integer(String.at(account_number, 1))
     third_digit = String.to_integer(String.at(account_number, 2))
@@ -1104,8 +1105,8 @@ defmodule Sportyweb.Accounting do
          debit,
          credit
        )
-       when first_digit == 7 and second_digit == 7 and third_digit in [0, 1, 2, 3, 4, 5] do
-    Decimal.sub(debit, credit)
+       when first_digit == 7 and second_digit == 7 and third_digit in [0, 1, 3, 4, 5] do
+    Decimal.sub(credit, debit)
   end
 
   defp calculate_account_balance(
@@ -1115,8 +1116,8 @@ defmodule Sportyweb.Accounting do
          debit,
          credit
        )
-       when first_digit == 7 and second_digit == 7 and third_digit in [6, 7, 8, 9] do
-    Decimal.sub(credit, debit)
+       when first_digit == 7 and second_digit == 7 and third_digit in [2, 6, 7, 8, 9] do
+    Decimal.sub(debit, credit)
   end
 
   alias Sportyweb.Accounting.Entry

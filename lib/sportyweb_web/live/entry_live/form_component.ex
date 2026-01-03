@@ -94,14 +94,14 @@ defmodule SportywebWeb.EntryLive.FormComponent do
 
   @impl true
   def update(%{entry: entry} = assigns, socket) do
-    account_classes = Accounting.determine_usable_account_classes(assigns.entry.transaction.type)
+    accounts = Accounting.determine_usable_accounts(assigns.entry.transaction.type)
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(
        :account_options,
-       account_classes |> Accounting.list_accounts(assigns.entry.transaction.club.id)
+       accounts |> Accounting.list_accounts(assigns.entry.transaction.club.id)
      )
      |> assign_new(:form, fn ->
        to_form(Accounting.change_entry(entry))
