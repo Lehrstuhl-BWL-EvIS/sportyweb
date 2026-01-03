@@ -9,7 +9,7 @@ defmodule Sportyweb.Accounting.Account do
   @foreign_key_type :binary_id
   schema "accounts" do
     belongs_to :club, Club
-    has_many :entry, Entry
+    has_many :entries, Entry
 
     field :name, :string, default: ""
     field :class, :string, default: ""

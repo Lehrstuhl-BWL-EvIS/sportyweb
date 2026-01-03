@@ -37,9 +37,9 @@ defmodule SportywebWeb.AccountLive.NewEdit do
   end
 
   defp apply_action(socket, :edit, %{"id" => id}) do
-    account = Accounting.get_account!(id, [:club, :entry])
+    account = Accounting.get_account!(id, [:club, :entries])
 
-    if not Enum.any?(account.entry) &&
+    if not Enum.any?(account.entries) &&
          account.class in [
            "Anlagevermögen",
            "Umlaufvermögen",

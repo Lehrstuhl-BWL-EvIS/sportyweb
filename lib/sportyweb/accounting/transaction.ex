@@ -14,7 +14,7 @@ defmodule Sportyweb.Accounting.Transaction do
     belongs_to :club, Club
     belongs_to :contract, Contract
     belongs_to :contact, Contact
-    has_many :entry, Entry
+    has_many :entries, Entry
 
     field :name, :string, default: ""
     field :amount, Money.Ecto.Composite.Type, default_currency: :EUR

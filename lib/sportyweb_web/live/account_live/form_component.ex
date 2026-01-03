@@ -79,8 +79,8 @@ defmodule SportywebWeb.AccountLive.FormComponent do
                 >
                   Dieses Konto kann nicht gelöscht, sondern nur archiviert werden, denn:
                   <ul class="list-disc pl-4 mb-3">
-                    <li :if={Enum.any?(@account.entry)}>
-                      Es wird in {Enum.count(@account.entry)} Buchungen verwendet.
+                    <li :if={Enum.any?(@account.entries)}>
+                      Es wird in {Enum.count(@account.entries)} Buchungen verwendet.
                     </li>
                   </ul>
                   Zur Archivierung bitte das gewünschte Datum im Feld "Archiviert ab" eintragen und "Speichern" klicken.
@@ -201,10 +201,10 @@ defmodule SportywebWeb.AccountLive.FormComponent do
   end
 
   defp show_delete_button?(account) do
-    account.id && !Enum.any?(account.entry)
+    account.id && !Enum.any?(account.entries)
   end
 
   defp show_archive_message?(account) do
-    account.id && Enum.any?(account.entry) && !Account.is_archived?(account)
+    account.id && Enum.any?(account.entries) && !Account.is_archived?(account)
   end
 end

@@ -16,12 +16,12 @@ defmodule SportywebWeb.TransactionLive.Show do
         :club,
         :contact,
         :contract,
-        entry: [:account],
+        entries: [:account],
         contract: [:contact, :fee]
       ])
 
     entries = Accounting.list_entries(id, [:account])
-    financial_account = Accounting.get_financial_account(id, [:entry])
+    financial_account = Accounting.get_financial_account(id, [:entries])
 
     {:noreply,
      socket

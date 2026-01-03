@@ -562,7 +562,7 @@ defmodule Sportyweb.Accounting do
       from(
         a in Account,
         join: club in assoc(a, :club),
-        left_join: e in assoc(a, :entry),
+        left_join: e in assoc(a, :entries),
         where: club.id == ^club_id,
         group_by: a.id,
         select: %{
@@ -718,7 +718,7 @@ defmodule Sportyweb.Accounting do
     query =
       from(
         a in Account,
-        left_join: entry in assoc(a, :entry),
+        left_join: entry in assoc(a, :entries),
         where: a.id == ^id,
         group_by: a.id,
         select: %{
@@ -771,10 +771,10 @@ defmodule Sportyweb.Accounting do
 
   ## Examples
 
-      iex> get_financial_account(123, [:entry])
+      iex> get_financial_account(123, [:entries])
       %Account{}
 
-      iex> get_financial_account(456, [:entry])
+      iex> get_financial_account(456, [:entries])
       nil
 
   """
@@ -782,7 +782,7 @@ defmodule Sportyweb.Accounting do
     query =
       from(
         a in Account,
-        join: entry in assoc(a, :entry),
+        join: entry in assoc(a, :entries),
         where:
           entry.transaction_id == ^transaction_id and entry.account_id == a.id and
             fragment("?::int BETWEEN ? AND ?", a.account_number, 15_500, 18_899)
@@ -1573,7 +1573,7 @@ defmodule Sportyweb.Accounting do
       from(
         a in Account,
         join: club in assoc(a, :club),
-        join: e in assoc(a, :entry),
+        join: e in assoc(a, :entries),
         join: t in assoc(e, :transaction),
         where: club.id == ^club_id,
         where: t.payment_date >= ^start_date and t.payment_date <= ^end_date,
