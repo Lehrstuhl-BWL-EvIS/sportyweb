@@ -1022,12 +1022,19 @@ defmodule Sportyweb.Accounting do
     second_digit = String.to_integer(String.at(account_number, 1))
     third_digit = String.to_integer(String.at(account_number, 2))
 
-    # Add opening balance to the balance
+    # Accounts from account class 9 are not used for single-entry bookkeeping and their balance is not calculated uniformly within the class
+    # Currently it's not possible to create entries for this account class through the UI
+    # Because of that their debit and credit values are always 0. Their balance eqals their opening balance
     balance =
-      Decimal.add(
-        opening_balance.amount,
-        calculate_account_balance(first_digit, second_digit, third_digit, debit, credit)
-      )
+      if credit == Decimal.new(0) && debit == Decimal.new(0) do
+        opening_balance.amount
+      else
+        # Add opening balance to the balance
+        Decimal.add(
+          opening_balance.amount,
+          calculate_account_balance(first_digit, second_digit, third_digit, debit, credit)
+        )
+      end
 
     Money.new(:EUR, balance)
   end
