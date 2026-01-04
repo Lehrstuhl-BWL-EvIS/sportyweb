@@ -1686,7 +1686,8 @@ defmodule Sportyweb.Accounting do
               )
             )
         },
-        group_by: [a.id]
+        group_by: [a.id],
+        order_by: [a.account_number]
       )
 
     Repo.all(query)
