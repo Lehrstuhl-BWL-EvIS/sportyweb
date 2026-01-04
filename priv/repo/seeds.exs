@@ -1118,7 +1118,8 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
         name:
           "#{Accounting.determine_account_class(to_string(account_number))}-Konto: #{Faker.Lorem.word()}",
         class: Accounting.determine_account_class(to_string(account_number)),
-        archive_date: nil
+        archive_date: nil,
+        is_relevant_for_income_statement: true
       })
     end
 
@@ -1146,7 +1147,10 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
 
       case transaction.type do
         "Einnahme" ->
-          account = Accounting.list_accounts(["Einnahmen"], club.id) |> Enum.random()
+          account =
+            Accounting.determine_usable_accounts("Einnahme")
+            |> Accounting.list_accounts(club.id)
+            |> Enum.random()
 
           sphere = Enum.random([1, 2, 3, 4, 9])
 
@@ -1159,7 +1163,10 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
           })
 
         "Ausgabe" ->
-          account = Accounting.list_accounts(["Ausgaben"], club.id) |> Enum.random()
+          account =
+            Accounting.determine_usable_accounts("Ausgabe")
+            |> Accounting.list_accounts(club.id)
+            |> Enum.random()
 
           sphere = Enum.random([1, 2, 3, 4, 9])
 
