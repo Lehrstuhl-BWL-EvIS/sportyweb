@@ -16,5 +16,11 @@
     <:item :if={Account.is_archived?(@account)} title="Archiviert">
       <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
     </:item>
+    <:item :if={@account.is_relevant_for_income_statement} title="Relevant für EÜR?">
+      Ja
+    </:item>
+    <:item :if={@account.is_relevant_for_income_statement == false} title="Relevant für EÜR?">
+      Nein
+    </:item>
   </.list>
 </.card>

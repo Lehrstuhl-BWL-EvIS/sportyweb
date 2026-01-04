@@ -730,6 +730,7 @@ defmodule Sportyweb.Accounting do
           class: a.class,
           archive_date: a.archive_date,
           opening_balance: a.opening_balance,
+          is_relevant_for_income_statement: a.is_relevant_for_income_statement,
           debit:
             sum(
               fragment(
@@ -1578,6 +1579,7 @@ defmodule Sportyweb.Accounting do
         join: t in assoc(e, :transaction),
         where: club.id == ^club_id,
         where: t.payment_date >= ^start_date and t.payment_date <= ^end_date,
+        where: a.is_relevant_for_income_statement == true,
         where: a.class in ["Einnahmen", "Ausgaben", "Weitere Einnahmen und Ausgaben"],
         where: e.sphere in [1, 2, 3, 4],
         where: t.type == ^type,

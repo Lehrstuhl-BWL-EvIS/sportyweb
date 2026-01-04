@@ -16,6 +16,7 @@ defmodule SportywebWeb.AccountLive.NewEdit do
         action={@live_action}
         account={@account}
         activate_opening_balance={@activate_opening_balance}
+        is_relevant_for_income_statement={@is_relevant_for_income_statement}
         navigate={
           if @account.id,
             do: ~p"/accounts/#{@account}",
@@ -44,19 +45,22 @@ defmodule SportywebWeb.AccountLive.NewEdit do
            "Anlagevermögen",
            "Umlaufvermögen",
            "Eigen-/Fremdkapital",
-           "Fremdkapital"
+           "Fremdkapital",
+           "Vortrags-, Kapital-, Korrektur- und statistische Konten"
          ] do
       socket
       |> assign(:page_title, "Konto bearbeiten")
       |> assign(:account, account)
       |> assign(:club, account.club)
       |> assign(:activate_opening_balance, true)
+      |> assign(:is_relevant_for_income_statement, false)
     else
       socket
       |> assign(:page_title, "Konto bearbeiten")
       |> assign(:account, account)
       |> assign(:club, account.club)
       |> assign(:activate_opening_balance, false)
+      |> assign(:is_relevant_for_income_statement, false)
     end
   end
 
@@ -71,6 +75,7 @@ defmodule SportywebWeb.AccountLive.NewEdit do
     })
     |> assign(:club, club)
     |> assign(:activate_opening_balance, false)
+    |> assign(:is_relevant_for_income_statement, false)
   end
 
   @impl true

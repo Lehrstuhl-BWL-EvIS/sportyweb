@@ -71,6 +71,17 @@ defmodule SportywebWeb.AccountLive.FormComponent do
                 <.input field={@form[:archive_date]} type="date" label="Archiviert ab (optional)" />
               </div>
             </.input_grid>
+            <%= if @is_relevant_for_income_statement do %>
+              <.input_grid class="pt-6">
+                <div class="col-span-12">
+                  <.input
+                    field={@form[:is_relevant_for_income_statement]}
+                    type="checkbox"
+                    label="Soll dieses Konto in der EÜR berücksichtigt werden?"
+                  />
+                </div>
+              </.input_grid>
+            <% end %>
             <.input_grid :if={show_archive_message?(@account)} class="pt-6">
               <div class="col-span-12">
                 <div
@@ -122,12 +133,29 @@ defmodule SportywebWeb.AccountLive.FormComponent do
 
   @impl true
   def update(%{account: account} = assigns, socket) do
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign_new(:form, fn ->
-       to_form(Accounting.change_account(account))
-     end)}
+    if account.class in [
+         "Anlagevermögen",
+         "Umlaufvermögen",
+         "Eigen-/Fremdkapital",
+         "Fremdkapital",
+         "Vortrags-, Kapital-, Korrektur- und statistische Konten"
+       ] || assigns.action == :new do
+      {:ok,
+       socket
+       |> assign(assigns)
+       |> assign_new(:form, fn ->
+         to_form(Accounting.change_account(account))
+       end)
+       |> assign(:is_relevant_for_income_statement, false)}
+    else
+      {:ok,
+       socket
+       |> assign(assigns)
+       |> assign_new(:form, fn ->
+         to_form(Accounting.change_account(account))
+       end)
+       |> assign(:is_relevant_for_income_statement, true)}
+    end
   end
 
   @impl true
@@ -145,17 +173,20 @@ defmodule SportywebWeb.AccountLive.FormComponent do
          "Anlagevermögen",
          "Umlaufvermögen",
          "Eigen-/Fremdkapital",
-         "Fremdkapital"
+         "Fremdkapital",
+         "Vortrags-, Kapital-, Korrektur- und statistische Konten"
        ] do
       {:noreply,
        socket
        |> assign(form: to_form(changeset, action: :validate))
-       |> assign(:activate_opening_balance, true)}
+       |> assign(:activate_opening_balance, true)
+       |> assign(:is_relevant_for_income_statement, false)}
     else
       {:noreply,
        socket
        |> assign(form: to_form(changeset, action: :validate))
-       |> assign(:activate_opening_balance, false)}
+       |> assign(:activate_opening_balance, false)
+       |> assign(:is_relevant_for_income_statement, true)}
     end
   end
 

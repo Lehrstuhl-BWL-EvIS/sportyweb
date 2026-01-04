@@ -15,6 +15,7 @@ defmodule Sportyweb.Accounting.Account do
     field :class, :string, default: ""
     field :account_number, :string, default: ""
     field :archive_date, :date, default: nil
+    field :is_relevant_for_income_statement, :boolean, default: nil
 
     field :balance, Money.Ecto.Composite.Type,
       default_currency: :EUR,
@@ -38,7 +39,8 @@ defmodule Sportyweb.Accounting.Account do
       :class,
       :archive_date,
       :balance,
-      :opening_balance
+      :opening_balance,
+      :is_relevant_for_income_statement
     ])
     |> validate_required([:club_id, :account_number, :name, :class])
     |> validate_length(:name, max: 40)
@@ -52,6 +54,7 @@ defmodule Sportyweb.Accounting.Account do
       "Weitere Einnahmen und Ausgaben",
       "Vortrags-, Kapital-, Korrektur- und statistische Konten"
     ])
+    |> maybe_set_default_relevance_for_income_statement()
     |> unsafe_validate_unique([:account_number, :club_id], Sportyweb.Repo,
       message: "Konto existiert bereits"
     )
@@ -75,5 +78,19 @@ defmodule Sportyweb.Accounting.Account do
 
   def is_archived?(account, %Date{} = date \\ Date.utc_today()) do
     account.archive_date && Date.compare(date, account.archive_date) != :lt
+  end
+
+  # Sets default for attribute is_relevant_for_income_statement when it is a nominal account
+  # Nominal accounts are usually relevant for the income statement
+  defp maybe_set_default_relevance_for_income_statement(changeset) do
+    class = get_field(changeset, :class)
+    is_relevant_for_income_statement = get_field(changeset, :is_relevant_for_income_statement)
+
+    if class in ["Einnahmen", "Ausgaben", "Weitere Einnahmen und Ausgaben"] and
+         is_nil(is_relevant_for_income_statement) do
+      put_change(changeset, :is_relevant_for_income_statement, true)
+    else
+      changeset
+    end
   end
 end
