@@ -39,8 +39,20 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
           >
             <.input_grids>
               <.input_grid>
-                <div class="col-span-12">
+                <div class="col-span-12 md:col-span-6">
                   <.input field={@form[:receipt_number]} type="text" label="Belegnummer (optional)" />
+                </div>
+                <div class="col-span-12 md:col-span-6">
+                  <.input
+                    field={@form[:account_id]}
+                    type="select"
+                    label="Finanzkonto"
+                    options={
+                      for a <- @financial_account_options do
+                        {"#{a.account_number} #{a.name}", a.id}
+                      end
+                    }
+                  />
                 </div>
                 <div class="col-span-12 md:col-span-6">
                   <.input field={@form[:payment_date]} type="date" label="Zahlungsdatum" />
@@ -48,14 +60,8 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                 <div class="col-span-12 md:col-span-6">
                   <.input field={@form[:due_date]} type="date" label="Fälligkeitsdatum (optional)" />
                 </div>
-                <div class="col-span-12">
-                  <.input
-                    field={@form[:account_id]}
-                    type="select"
-                    label="Finanzkonto"
-                    options={@financial_account_options |> Enum.map(&{&1.name, &1.id})}
-                  />
-                </div>
+              </.input_grid>
+              <.input_grid class="pt-6">
                 <div class="col-span-12">
                   <.input
                     field={@form[:contact_id]}
@@ -146,6 +152,16 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                 </div>
                 <div class="col-span-12">
                   <.input
+                    field={@form[:type]}
+                    type="select"
+                    label="Art"
+                    options={["Einnahme", "Ausgabe"]}
+                  />
+                </div>
+              </.input_grid>
+              <.input_grid class="pt-6">
+                <div class="col-span-12">
+                  <.input
                     field={@form[:contact_id]}
                     phx-change="change_contact"
                     type="select"
@@ -162,14 +178,6 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
                     disabled={not @contract_enabled}
                     options={@contract_options |> Enum.map(&{&1.fee.name, &1.id})}
                     prompt="Kein Vertrag"
-                  />
-                </div>
-                <div class="col-span-12">
-                  <.input
-                    field={@form[:type]}
-                    type="select"
-                    label="Art"
-                    options={["Einnahme", "Ausgabe"]}
                   />
                 </div>
               </.input_grid>
