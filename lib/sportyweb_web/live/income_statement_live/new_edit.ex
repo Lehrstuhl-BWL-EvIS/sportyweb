@@ -36,7 +36,7 @@ defmodule SportywebWeb.IncomeStatementLive.NewEdit do
     today = Date.utc_today()
 
     socket
-    |> assign(:page_title, "EÜR erstellen")
+    |> assign(:page_title, "Einnahmenüberschussrechnung (EÜR) erstellen")
     |> assign(:income_statement, %IncomeStatement{
       start_date: today,
       end_date: today

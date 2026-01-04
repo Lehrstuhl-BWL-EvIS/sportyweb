@@ -40,7 +40,7 @@ defmodule SportywebWeb.IncomeStatementLive.Show do
       )
 
     socket
-    |> assign(:page_title, "EÜR")
+    |> assign(:page_title, "Einnahmenüberschussrechnung (EÜR)")
     |> stream(:income_statement, income_statement)
   end
 end
