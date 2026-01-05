@@ -1105,7 +1105,12 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
         account_number: account_number,
         name: "Finanzkonto: #{Faker.Lorem.word()}",
         class: Accounting.determine_account_class(to_string(account_number)),
-        archive_date: nil
+        archive_date: nil,
+        type:
+          Accounting.determine_account_type(
+            Accounting.determine_account_class(to_string(account_number)),
+            ""
+          )
       })
     end
 
@@ -1119,7 +1124,12 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
           "#{Accounting.determine_account_class(to_string(account_number))}-Konto: #{Faker.Lorem.word()}",
         class: Accounting.determine_account_class(to_string(account_number)),
         archive_date: nil,
-        is_relevant_for_income_statement: true
+        is_relevant_for_income_statement: true,
+        type:
+          Accounting.determine_account_type(
+            Accounting.determine_account_class(to_string(account_number)),
+            Enum.random(["Einnahmen", "Ausgaben"])
+          )
       })
     end
 
@@ -1157,7 +1167,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
           Accounting.create_entry(%{
             "transaction_id" => transaction.id,
             "account_id" => account.id,
-            "type" => Accounting.determine_entry_type(transaction.type, account.class),
+            "type" => Accounting.determine_entry_type(transaction.type, account.type),
             "amount" => Money.new(:EUR, transaction.amount.amount),
             "sphere" => sphere
           })
@@ -1173,7 +1183,7 @@ Organization.list_clubs(departments: [:fees, groups: :fees])
           Accounting.create_entry(%{
             "transaction_id" => transaction.id,
             "account_id" => account.id,
-            "type" => Accounting.determine_entry_type(transaction.type, account.class),
+            "type" => Accounting.determine_entry_type(transaction.type, account.type),
             "amount" => Money.new(:EUR, transaction.amount.amount),
             "sphere" => sphere
           })
