@@ -157,7 +157,7 @@ defmodule Sportyweb.AccountingTest do
 
     test "update_transaction_and_entry/2 with valid data updates the transaction and the associated entry" do
       transaction = transaction_fixture()
-      account = account_fixture()
+      account = financial_account_fixture()
 
       update_attrs = %{
         "amount" => "43 €",
@@ -216,33 +216,34 @@ defmodule Sportyweb.AccountingTest do
         club_id: club.id,
         class: "Einnahmen",
         account_number: "45678",
-        name: "some name"
+        name: "some name",
+        type: "Einnahmen"
       }
 
       assert {:ok, %Account{} = account} = Accounting.create_account(valid_attrs)
-      options = ["4%", "70%", "71%", "74%", "770%", "771%", "773%", "774%", "775%", "78%"]
+      options = Accounting.determine_usable_accounts("Einnahme")
       assert Accounting.list_accounts(options, account.club_id) == [account]
     end
 
     test "list_financial_accounts/1 returns all financial accounts of a given club" do
-      account = account_fixture()
+      account = financial_account_fixture()
       assert Accounting.list_financial_accounts(account.club_id) == [account]
     end
 
     test "get_account!/1 returns the account with given id" do
-      account = account_fixture()
+      account = financial_account_fixture()
       assert Accounting.get_account!(account.id) == account
     end
 
     test "get_account!/2 returns the account with given id and contains a preloaded club" do
-      account = account_fixture()
+      account = financial_account_fixture()
 
       assert %Account{} = Accounting.get_account!(account.id, [:club])
       assert Accounting.get_account!(account.id, [:club]).club.id == account.club_id
     end
 
     test "get_account_and_balance!/2 returns the account with given id and contains a preloaded club" do
-      account = account_fixture()
+      account = financial_account_fixture()
 
       assert %Account{} = Accounting.get_account_and_balance!(account.id, [:club])
       account_result = Accounting.get_account_and_balance!(account.id, [:club]).balance
@@ -251,7 +252,7 @@ defmodule Sportyweb.AccountingTest do
     end
 
     test "get_financial_account/2 returns the financial account's name with given transaction id and contains preloaded associations" do
-      account = account_fixture()
+      account = financial_account_fixture()
       entry = entry_fixture()
 
       assert Accounting.get_financial_account(entry.transaction_id, [:entries]).name ==
@@ -265,7 +266,8 @@ defmodule Sportyweb.AccountingTest do
         name: "some name",
         class: "Einnahmen",
         account_number: "45678",
-        club_id: club.id
+        club_id: club.id,
+        type: "Einnahmen"
       }
 
       assert {:ok, %Account{} = account} = Accounting.create_account(valid_attrs)
@@ -279,7 +281,7 @@ defmodule Sportyweb.AccountingTest do
     end
 
     test "update_account/2 with valid data updates the account" do
-      account = account_fixture()
+      account = financial_account_fixture()
 
       update_attrs = %{
         name: "some updated name",
@@ -296,19 +298,19 @@ defmodule Sportyweb.AccountingTest do
     end
 
     test "update_account/2 with invalid data returns error changeset" do
-      account = account_fixture()
+      account = financial_account_fixture()
       assert {:error, %Ecto.Changeset{}} = Accounting.update_account(account, @invalid_attrs)
       assert account == Accounting.get_account!(account.id)
     end
 
     test "delete_account/1 deletes the account" do
-      account = account_fixture()
+      account = financial_account_fixture()
       assert {:ok, %Account{}} = Accounting.delete_account(account)
       assert_raise Ecto.NoResultsError, fn -> Accounting.get_account!(account.id) end
     end
 
     test "change_account/1 returns a account changeset" do
-      account = account_fixture()
+      account = financial_account_fixture()
       assert %Ecto.Changeset{} = Accounting.change_account(account)
     end
 
@@ -352,7 +354,7 @@ defmodule Sportyweb.AccountingTest do
 
     test "create_entry/1 with valid data creates a entry" do
       transaction = transaction_fixture()
-      account = account_fixture()
+      account = financial_account_fixture()
 
       valid_attrs = %{
         transaction_id: transaction.id,
@@ -374,7 +376,7 @@ defmodule Sportyweb.AccountingTest do
 
     test "create_financial_account_entry/1 with valid data creates a entry for a financial account" do
       transaction = transaction_fixture()
-      account = account_fixture()
+      account = financial_account_fixture()
 
       valid_attrs = %{
         transaction_id: transaction.id,
