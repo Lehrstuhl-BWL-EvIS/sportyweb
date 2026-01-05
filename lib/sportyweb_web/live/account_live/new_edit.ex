@@ -17,6 +17,7 @@ defmodule SportywebWeb.AccountLive.NewEdit do
         account={@account}
         activate_opening_balance={@activate_opening_balance}
         is_relevant_for_income_statement={@is_relevant_for_income_statement}
+        activate_account_type={@activate_account_type}
         navigate={
           if @account.id,
             do: ~p"/accounts/#{@account}",
@@ -40,28 +41,16 @@ defmodule SportywebWeb.AccountLive.NewEdit do
   defp apply_action(socket, :edit, %{"id" => id}) do
     account = Accounting.get_account!(id, [:club, :entries])
 
-    if not Enum.any?(account.entries) &&
-         account.class in [
-           "Anlagevermögen",
-           "Umlaufvermögen",
-           "Eigen-/Fremdkapital",
-           "Fremdkapital",
-           "Vortrags-, Kapital-, Korrektur- und statistische Konten"
-         ] do
-      socket
-      |> assign(:page_title, "Konto bearbeiten")
-      |> assign(:account, account)
-      |> assign(:club, account.club)
-      |> assign(:activate_opening_balance, true)
-      |> assign(:is_relevant_for_income_statement, false)
-    else
-      socket
-      |> assign(:page_title, "Konto bearbeiten")
-      |> assign(:account, account)
-      |> assign(:club, account.club)
-      |> assign(:activate_opening_balance, false)
-      |> assign(:is_relevant_for_income_statement, false)
-    end
+    activate_opening_balance =
+      Account.activate_opening_balance?(account.class) && not Enum.any?(account.entries)
+
+    socket
+    |> assign(:page_title, "Konto bearbeiten")
+    |> assign(:account, account)
+    |> assign(:club, account.club)
+    |> assign(:activate_opening_balance, activate_opening_balance)
+    |> assign(:is_relevant_for_income_statement, false)
+    |> assign(:activate_account_type, false)
   end
 
   defp apply_action(socket, :new, %{"club_id" => club_id}) do
@@ -76,6 +65,7 @@ defmodule SportywebWeb.AccountLive.NewEdit do
     |> assign(:club, club)
     |> assign(:activate_opening_balance, false)
     |> assign(:is_relevant_for_income_statement, false)
+    |> assign(:activate_account_type, false)
   end
 
   @impl true

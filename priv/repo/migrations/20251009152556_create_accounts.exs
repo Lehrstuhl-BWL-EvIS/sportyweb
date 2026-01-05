@@ -7,6 +7,7 @@ defmodule Sportyweb.Repo.Migrations.CreateAccounts do
       add :account_number, :string, null: false
       add :name, :string, null: false
       add :class, :string, null: false
+      add :type, :string, null: false
       add :archive_date, :date, null: true
       add :opening_balance, :money_with_currency, null: true
       add :is_relevant_for_income_statement, :boolean, null: true

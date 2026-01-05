@@ -135,7 +135,7 @@ defmodule SportywebWeb.EntryLive.FormComponent do
     account = Accounting.get_account!(entry_params["account_id"])
 
     entry_type =
-      Accounting.determine_entry_type(socket.assigns.entry.transaction.type, account.class)
+      Accounting.determine_entry_type(socket.assigns.entry.transaction.type, account.type)
 
     entry_params =
       Enum.into(entry_params, %{

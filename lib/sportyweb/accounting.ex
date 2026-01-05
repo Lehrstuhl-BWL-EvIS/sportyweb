@@ -141,7 +141,7 @@ defmodule Sportyweb.Accounting do
       {:ok, transaction} = create_transaction_from_ui(transaction_attrs)
 
       account = get_account!(transaction_attrs["account_id"])
-      entry_type = determine_entry_type(transaction.type, account.class)
+      entry_type = determine_entry_type(transaction.type, account.type)
 
       entry_attrs = %{
         "account_id" => transaction_attrs["account_id"],
@@ -194,7 +194,7 @@ defmodule Sportyweb.Accounting do
 
       if entry == nil do
         account = get_account!(attrs["account_id"])
-        entry_type = determine_entry_type(transaction.type, account.class)
+        entry_type = determine_entry_type(transaction.type, account.type)
 
         entry_attrs = %{
           "account_id" => attrs["account_id"],
@@ -571,6 +571,7 @@ defmodule Sportyweb.Accounting do
           account_number: a.account_number,
           name: a.name,
           class: a.class,
+          type: a.type,
           archive_date: a.archive_date,
           opening_balance: a.opening_balance,
           debit:
@@ -602,7 +603,7 @@ defmodule Sportyweb.Accounting do
           determine_account_balance(
             account.debit,
             account.credit,
-            account.account_number,
+            account.type,
             account.opening_balance
           )
 
@@ -615,11 +616,11 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Returns a clubs list of accounts starting with specific digits excluding archived accounts.
+  Returns a clubs list of accounts from a given account type excluding archived accounts.
 
   ## Examples
 
-      iex> list_accounts(["4%", "70%", "71%", "74%", "770%", "771%", "773%", "774%", "775%","78%"], 1)
+      iex> list_accounts(["Einnahmen"], 1)
       [%Account{}, ...]
 
   """
@@ -631,7 +632,7 @@ defmodule Sportyweb.Accounting do
       from(
         a in Account,
         where: a.club_id == ^club_id,
-        where: fragment("? LIKE ANY(?)", a.account_number, ^options),
+        where: fragment("? LIKE ANY(?)", a.type, ^options),
         where: a.archive_date > ^date or is_nil(a.archive_date),
         order_by: [a.account_number]
       )
@@ -728,6 +729,7 @@ defmodule Sportyweb.Accounting do
           account_number: a.account_number,
           name: a.name,
           class: a.class,
+          type: a.type,
           archive_date: a.archive_date,
           opening_balance: a.opening_balance,
           is_relevant_for_income_statement: a.is_relevant_for_income_statement,
@@ -757,7 +759,7 @@ defmodule Sportyweb.Accounting do
       determine_account_balance(
         account.debit,
         account.credit,
-        account.account_number,
+        account.type,
         account.opening_balance
       )
 
@@ -908,224 +910,208 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Determines the usable account's for a given type of transaction according to the first digits of their account number.
+  Determines the type of an account according to it's class or given type.
+
+  ## Examples
+
+      iex> determine_account_type("Weitere Einnahmen und Ausgaben", "Einnahmen")
+      "Einnahmen"
+
+  """
+  def determine_account_type(account_class, account_type) do
+    case account_class do
+      "Anlagevermögen" -> "Aktiva"
+      "Umlaufvermögen" -> "Aktiva"
+      "Eigen-/Fremdkapital" -> "Passiva"
+      "Fremdkapital" -> "Passiva"
+      "Einnahmen" -> "Einnahmen"
+      "Ausgaben" -> "Ausgaben"
+      "Weitere Einnahmen und Ausgaben" -> account_type
+      "Vortrags-, Kapital-, Korrektur- und statistische Konten" -> account_type
+      "" -> "Aktiva"
+    end
+  end
+
+  @doc """
+  Determines the usable account types for a given type of transaction.
 
   ## Examples
 
       iex> determine_accounts("Einnahme")
-      ["4%", "70%", "71%", "74%", "770%", "771%", "773%", "774%", "775%","78%"]
+      ["Einnahmen"]
 
   """
 
   def determine_usable_accounts(transaction_type) do
     case transaction_type do
       "Einnahme" ->
-        ["4%", "70%", "71%", "74%", "770%", "771%", "773%", "774%", "775%", "78%"]
+        ["Einnahmen"]
 
       "Ausgabe" ->
-        ["5%", "6%", "772%", "776%", "777%", "778%", "79%"]
+        ["Ausgaben"]
     end
   end
 
   # Returns a list of selected accounts from the SKR 42 chart of accounts that is used for an import.
   defp get_import_accounts() do
     [
-      %{account_number: "17000", name: "Bank (Postbank)", class: "Umlaufvermögen"},
-      %{account_number: "18000", name: "Bank", class: "Umlaufvermögen"},
-      %{account_number: "16000", name: "Kasse", class: "Umlaufvermögen"},
-      %{account_number: "16100", name: "Nebenkasse 1", class: "Umlaufvermögen"},
-      %{account_number: "40000", name: "Echte Mitgliedsbeiträge", class: "Einnahmen"},
-      %{account_number: "40100", name: "Aufnahmegebühren", class: "Einnahmen"},
-      %{account_number: "43340", name: "Erlöse 7 % USt", class: "Einnahmen"},
-      %{account_number: "44000", name: "Erlöse 19 % USt", class: "Einnahmen"},
-      %{account_number: "42900", name: "Erlöse 0 % USt", class: "Einnahmen"},
+      %{
+        account_number: "17000",
+        name: "Bank (Postbank)",
+        class: "Umlaufvermögen",
+        type: "Aktiva"
+      },
+      %{account_number: "18000", name: "Bank", class: "Umlaufvermögen", type: "Aktiva"},
+      %{account_number: "16000", name: "Kasse", class: "Umlaufvermögen", type: "Aktiva"},
+      %{account_number: "16100", name: "Nebenkasse 1", class: "Umlaufvermögen", type: "Aktiva"},
+      %{
+        account_number: "40000",
+        name: "Echte Mitgliedsbeiträge",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
+      %{account_number: "40100", name: "Aufnahmegebühren", class: "Einnahmen", type: "Einnahmen"},
+      %{account_number: "43340", name: "Erlöse 7 % USt", class: "Einnahmen", type: "Einnahmen"},
+      %{account_number: "44000", name: "Erlöse 19 % USt", class: "Einnahmen", type: "Einnahmen"},
+      %{account_number: "42900", name: "Erlöse 0 % USt", class: "Einnahmen", type: "Einnahmen"},
       %{
         account_number: "40450",
         name: "Geldzuwendungen gegen Zuwendungsbestätigung",
-        class: "Einnahmen"
+        class: "Einnahmen",
+        type: "Einnahmen"
       },
-      %{account_number: "42010", name: "Erlöse aus Eintrittsgeldern", class: "Einnahmen"},
+      %{
+        account_number: "42010",
+        name: "Erlöse aus Eintrittsgeldern",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
       %{
         account_number: "42030",
         name: "Erlöse aus Teilnehmer-/Nutzungsgebühren",
-        class: "Einnahmen"
+        class: "Einnahmen",
+        type: "Einnahmen"
       },
-      %{account_number: "42050", name: "Erlöse aus Veranstaltungen", class: "Einnahmen"},
+      %{
+        account_number: "42050",
+        name: "Erlöse aus Veranstaltungen",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
       %{
         account_number: "48280",
         name: "Zuschüsse von Verbänden und Behörden",
-        class: "Einnahmen"
+        class: "Einnahmen",
+        type: "Einnahmen"
       },
       %{
         account_number: "48620",
         name: "Erlöse aus Vermietung und Verpachtung 19 % USt",
-        class: "Einnahmen"
+        class: "Einnahmen",
+        type: "Einnahmen"
       },
       %{
         account_number: "48630",
         name: "Erlöse aus Vermietung und Verpachtung 7 % USt",
-        class: "Einnahmen"
+        class: "Einnahmen",
+        type: "Einnahmen"
       },
       %{
         account_number: "49270",
         name: "Erträge aus der Auflösung einer steuerlichen Rücklage nach § 6b Abs. 3 EStG ",
-        class: "Einnahmen"
+        class: "Einnahmen",
+        type: "Einnahmen"
       },
-      %{account_number: "63250", name: "Gas, Strom, Wasser", class: "Ausgaben"},
-      %{account_number: "63300", name: "Reinigung", class: "Ausgaben"},
-      %{account_number: "60040", name: "Übungsleiterpauschale", class: "Ausgaben"},
-      %{account_number: "60020", name: "Ehrenamtspauschale", class: "Ausgaben"},
+      %{account_number: "63250", name: "Gas, Strom, Wasser", class: "Ausgaben", type: "Ausgaben"},
+      %{account_number: "63300", name: "Reinigung", class: "Ausgaben", type: "Ausgaben"},
+      %{
+        account_number: "60040",
+        name: "Übungsleiterpauschale",
+        class: "Ausgaben",
+        type: "Ausgaben"
+      },
+      %{account_number: "60020", name: "Ehrenamtspauschale", class: "Ausgaben", type: "Ausgaben"},
       %{
         account_number: "62050",
         name: "Abschreibungen auf den Geschäfts- oder Firmenwert",
-        class: "Ausgaben"
+        class: "Ausgaben",
+        type: "Ausgaben"
       },
       %{
         account_number: "63100",
         name: "Miete (unbewegliche Wirtschaftsgüter)",
-        class: "Ausgaben"
+        class: "Ausgaben",
+        type: "Ausgaben"
       },
-      %{account_number: "68150", name: "Bürobedarf", class: "Ausgaben"},
-      %{account_number: "64000", name: "Versicherungen", class: "Ausgaben"},
+      %{account_number: "68150", name: "Bürobedarf", class: "Ausgaben", type: "Ausgaben"},
+      %{account_number: "64000", name: "Versicherungen", class: "Ausgaben", type: "Ausgaben"},
       %{
         account_number: "69220",
         name: "Einstellungen in die steuerliche Rücklage nach § 6b Abs. 3 EStG",
-        class: "Ausgaben"
+        class: "Ausgaben",
+        type: "Ausgaben"
       },
       %{
         account_number: "69270",
         name: "Einstellungen in sonstige steuerliche Rücklagen",
-        class: "Ausgaben"
+        class: "Ausgaben",
+        type: "Ausgaben"
       },
       %{
         account_number: "70200",
         name: "Zins- und Dividendenerträge",
-        class: "Weitere Einnahmen und Ausgaben"
+        class: "Weitere Einnahmen und Ausgaben",
+        type: "Einnahmen"
       },
       %{
         account_number: "73000",
         name: "Zinsen und ähnliche Aufwendungen",
-        class: "Weitere Einnahmen und Ausgaben"
+        class: "Weitere Einnahmen und Ausgaben",
+        type: "Ausgaben"
       },
       %{
         account_number: "76000",
         name: "Körperschaftsteuer",
-        class: "Weitere Einnahmen und Ausgaben"
+        class: "Weitere Einnahmen und Ausgaben",
+        type: "Ausgaben"
       },
-      %{account_number: "76100", name: "Gewerbesteuer", class: "Weitere Einnahmen und Ausgaben"}
+      %{
+        account_number: "76100",
+        name: "Gewerbesteuer",
+        class: "Weitere Einnahmen und Ausgaben",
+        type: "Ausgaben"
+      }
     ]
   end
 
-  # Controls how an account's balance is calculated based on debit and credit values and it's account number
-  def determine_account_balance(debit, credit, account_number, opening_balance) do
-    first_digit = String.to_integer(String.at(account_number, 0))
-    second_digit = String.to_integer(String.at(account_number, 1))
-    third_digit = String.to_integer(String.at(account_number, 2))
-
-    # Accounts from account class 9 are not used for single-entry bookkeeping and their balance is not calculated uniformly within the class
-    # Currently it's not possible to create entries for this account class through the UI
-    # Because of that their debit and credit values are always 0. Their balance eqals their opening balance
+  # Controls how an account's balance is calculated based on debit and credit values and it's account type
+  def determine_account_balance(debit, credit, account_type, opening_balance) do
     balance =
-      if credit == Decimal.new(0) && debit == Decimal.new(0) do
-        opening_balance.amount
-      else
-        # Add opening balance to the balance
-        Decimal.add(
-          opening_balance.amount,
-          calculate_account_balance(first_digit, second_digit, third_digit, debit, credit)
-        )
-      end
+      Decimal.add(
+        opening_balance.amount,
+        calculate_account_balance(account_type, debit, credit)
+      )
 
     Money.new(:EUR, balance)
   end
 
-  # Calculates an account's balance based on debit and credit values and it's account number
+  # Calculates an account's balance based on debit and credit values and it's account type
   defp calculate_account_balance(
-         first_digit,
-         _second_digit,
-         _third_digit,
+         account_type,
          debit,
          credit
        )
-       when first_digit in [0, 1] do
+       when account_type in ["Aktiva", "Ausgaben"] do
     Decimal.sub(debit, credit)
   end
 
   defp calculate_account_balance(
-         first_digit,
-         _second_digit,
-         _third_digit,
+         account_type,
          debit,
          credit
        )
-       when first_digit in [2, 3] do
+       when account_type in ["Passiva", "Einnahmen"] do
     Decimal.sub(credit, debit)
-  end
-
-  defp calculate_account_balance(
-         first_digit,
-         _second_digit,
-         _third_digit,
-         debit,
-         credit
-       )
-       when first_digit in [4] do
-    Decimal.sub(credit, debit)
-  end
-
-  defp calculate_account_balance(
-         first_digit,
-         _second_digit,
-         _third_digit,
-         debit,
-         credit
-       )
-       when first_digit in [5, 6] do
-    Decimal.sub(debit, credit)
-  end
-
-  defp calculate_account_balance(
-         first_digit,
-         second_digit,
-         _third_digit,
-         debit,
-         credit
-       )
-       when first_digit == 7 and second_digit in [0, 1, 4, 8] do
-    Decimal.sub(credit, debit)
-  end
-
-  defp calculate_account_balance(
-         first_digit,
-         second_digit,
-         _third_digit,
-         debit,
-         credit
-       )
-       when first_digit == 7 and second_digit in [2, 3, 5, 6, 9] do
-    Decimal.sub(debit, credit)
-  end
-
-  defp calculate_account_balance(
-         first_digit,
-         second_digit,
-         third_digit,
-         debit,
-         credit
-       )
-       when first_digit == 7 and second_digit == 7 and third_digit in [0, 1, 3, 4, 5] do
-    Decimal.sub(credit, debit)
-  end
-
-  defp calculate_account_balance(
-         first_digit,
-         second_digit,
-         third_digit,
-         debit,
-         credit
-       )
-       when first_digit == 7 and second_digit == 7 and third_digit in [2, 6, 7, 8, 9] do
-    Decimal.sub(debit, credit)
   end
 
   alias Sportyweb.Accounting.Entry
@@ -1250,34 +1236,28 @@ defmodule Sportyweb.Accounting do
     cond do
       transaction_type == "Einnahme" and
           account_type in [
-            "Anlagevermögen",
-            "Umlaufvermögen",
+            "Aktiva",
             "Ausgaben"
           ] ->
         "S"
 
       transaction_type == "Einnahme" and
           account_type in [
-            "Eigen-/Fremdkapital",
-            "Fremdkapital",
-            "Einnahmen",
-            "Weitere Einnahmen und Ausgaben"
+            "Passiva",
+            "Einnahmen"
           ] ->
         "H"
 
       transaction_type == "Ausgabe" and
           account_type in [
-            "Eigen-/Fremdkapital",
-            "Fremdkapital",
-            "Ausgaben",
-            "Weitere Einnahmen und Ausgaben"
+            "Passiva",
+            "Ausgaben"
           ] ->
         "S"
 
       transaction_type == "Ausgabe" and
           account_type in [
-            "Anlagevermögen",
-            "Umlaufvermögen",
+            "Aktiva",
             "Einnahmen"
           ] ->
         "H"
@@ -1576,7 +1556,7 @@ defmodule Sportyweb.Accounting do
     revenues_and_expenses ++ profit_loss
   end
 
-  # Determines debit and credit values for every nominal account for all entries in a given period of time +/- 10 days
+  # Determines debit and credit values for every nominal account for all entries in a given period of time
   defp get_income_statement_data(start_date, end_date, club_id, type) do
     query =
       from(
@@ -1587,13 +1567,14 @@ defmodule Sportyweb.Accounting do
         where: club.id == ^club_id,
         where: t.payment_date >= ^start_date and t.payment_date <= ^end_date,
         where: a.is_relevant_for_income_statement == true,
-        where: a.class in ["Einnahmen", "Ausgaben", "Weitere Einnahmen und Ausgaben"],
+        where: a.type in ["Einnahmen", "Ausgaben"],
         where: e.sphere in [1, 2, 3, 4],
         where: t.type == ^type,
         select: %{
           id: a.id,
           account_number: a.account_number,
           name: a.name,
+          type: a.type,
           opening_balance: a.opening_balance,
           debit_sphere_1:
             sum(
@@ -1701,7 +1682,7 @@ defmodule Sportyweb.Accounting do
         determine_account_balance(
           account.debit_sphere_1,
           account.credit_sphere_1,
-          account.account_number,
+          account.type,
           account.opening_balance
         )
 
@@ -1709,7 +1690,7 @@ defmodule Sportyweb.Accounting do
         determine_account_balance(
           account.debit_sphere_2,
           account.credit_sphere_2,
-          account.account_number,
+          account.type,
           account.opening_balance
         )
 
@@ -1717,7 +1698,7 @@ defmodule Sportyweb.Accounting do
         determine_account_balance(
           account.debit_sphere_3,
           account.credit_sphere_3,
-          account.account_number,
+          account.type,
           account.opening_balance
         )
 
@@ -1725,7 +1706,7 @@ defmodule Sportyweb.Accounting do
         determine_account_balance(
           account.debit_sphere_4,
           account.credit_sphere_4,
-          account.account_number,
+          account.type,
           account.opening_balance
         )
 
@@ -1733,7 +1714,7 @@ defmodule Sportyweb.Accounting do
         determine_account_balance(
           account.debit_total,
           account.credit_total,
-          account.account_number,
+          account.type,
           account.opening_balance
         )
 

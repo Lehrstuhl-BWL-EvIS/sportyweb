@@ -13,6 +13,7 @@ defmodule Sportyweb.Accounting.Account do
 
     field :name, :string, default: ""
     field :class, :string, default: ""
+    field :type, :string, default: ""
     field :account_number, :string, default: ""
     field :archive_date, :date, default: nil
     field :is_relevant_for_income_statement, :boolean, default: nil
@@ -29,6 +30,8 @@ defmodule Sportyweb.Accounting.Account do
     timestamps(type: :utc_datetime)
   end
 
+  def type_options, do: ["Aktiva", "Passiva", "Einnahmen", "Ausgaben"]
+
   @doc false
   def changeset(account, attrs) do
     account
@@ -37,6 +40,7 @@ defmodule Sportyweb.Accounting.Account do
       :account_number,
       :name,
       :class,
+      :type,
       :archive_date,
       :balance,
       :opening_balance,
@@ -54,7 +58,9 @@ defmodule Sportyweb.Accounting.Account do
       "Weitere Einnahmen und Ausgaben",
       "Vortrags-, Kapital-, Korrektur- und statistische Konten"
     ])
+    |> validate_inclusion(:type, type_options())
     |> maybe_set_default_relevance_for_income_statement()
+    |> maybe_set_relevance_for_income_statement_null()
     |> unsafe_validate_unique([:account_number, :club_id], Sportyweb.Repo,
       message: "Konto existiert bereits"
     )
@@ -72,12 +78,43 @@ defmodule Sportyweb.Accounting.Account do
     end)
   end
 
-  defp valid_account_number?(account_number) do
-    Regex.match?(~r/^[0-79]\d{4}$/, account_number)
+  def is_relevant_for_income_statement?(account_class) do
+    account_class in ["Einnahmen", "Ausgaben", "Weitere Einnahmen und Ausgaben"]
+  end
+
+  def activate_account_type?(account_class) do
+    account_class in [
+      "Weitere Einnahmen und Ausgaben",
+      "Vortrags-, Kapital-, Korrektur- und statistische Konten"
+    ]
+  end
+
+  def activate_opening_balance?(account_class) do
+    account_class in [
+      "Anlagevermögen",
+      "Umlaufvermögen",
+      "Eigen-/Fremdkapital",
+      "Fremdkapital",
+      "Vortrags-, Kapital-, Korrektur- und statistische Konten"
+    ]
   end
 
   def is_archived?(account, %Date{} = date \\ Date.utc_today()) do
     account.archive_date && Date.compare(date, account.archive_date) != :lt
+  end
+
+  defp valid_account_number?(account_number) do
+    Regex.match?(~r/^[0-79]\d{4}$/, account_number)
+  end
+
+  # An account can be changed as long as it has no associated entries
+  # If it is changed from a nominal to a real account, the attribute is_relevant_for_income_statement is set back to nil manually to keep the database consistent
+  defp maybe_set_relevance_for_income_statement_null(changeset) do
+    if get_field(changeset, :type) in ["Aktiva", "Passiva"] do
+      put_change(changeset, :is_relevant_for_income_statement, nil)
+    else
+      changeset
+    end
   end
 
   # Sets default for attribute is_relevant_for_income_statement when it is a nominal account
