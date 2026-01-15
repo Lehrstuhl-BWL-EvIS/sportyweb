@@ -287,7 +287,8 @@ defmodule Sportyweb.AccountingTest do
         name: "some updated name",
         class: "Eigen-/Fremdkapital",
         account_number: "23456",
-        archive_date: ~D[2025-11-18]
+        archive_date: ~D[2025-11-18],
+        type: "Passiva"
       }
 
       assert {:ok, %Account{} = account} = Accounting.update_account(account, update_attrs)
