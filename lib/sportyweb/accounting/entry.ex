@@ -39,6 +39,8 @@ defmodule Sportyweb.Accounting.Entry do
     |> cast(attrs, [:transaction_id, :account_id, :type, :amount, :sphere])
     |> validate_required([:transaction_id, :account_id, :type, :amount])
     |> validate_currency(:amount, :EUR)
+    |> validate_inclusion(:type, ["S", "H"])
+    |> validate_inclusion(:sphere, [1, 2, 3, 4, 9])
     |> foreign_key_constraint(:transaction_id)
     |> foreign_key_constraint(:account_id)
     |> validate_amount(:amount)
