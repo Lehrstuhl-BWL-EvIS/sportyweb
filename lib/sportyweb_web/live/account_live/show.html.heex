@@ -12,6 +12,8 @@
     <:item title="Kontonummer">{@account.account_number}</:item>
     <:item title="Name">{@account.name}</:item>
     <:item title="Kontoklasse">{@account.class}</:item>
+    <:item title="Art">{@account.type}</:item>
+    <:item title="Anfangsbestand">{@account.opening_balance}</:item>
     <:item title="Saldo">{@account.balance}</:item>
     <:item :if={Account.is_archived?(@account)} title="Archiviert">
       <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
