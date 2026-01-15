@@ -61,7 +61,6 @@ defmodule Sportyweb.Accounting.Account do
     ])
     |> validate_inclusion(:type, type_options())
     |> maybe_set_default_relevance_for_income_statement()
-    |> maybe_set_relevance_for_income_statement_null()
     |> unsafe_validate_unique([:account_number, :club_id], Sportyweb.Repo,
       message: "Konto existiert bereits"
     )
@@ -103,16 +102,6 @@ defmodule Sportyweb.Accounting.Account do
 
   defp valid_account_number?(account_number) do
     Regex.match?(~r/^[0-79]\d{4}$/, account_number)
-  end
-
-  # An account can be changed as long as it has no associated entries
-  # If it is changed from a nominal to a real account, the attribute is_relevant_for_income_statement is set back to nil manually to keep the database consistent
-  defp maybe_set_relevance_for_income_statement_null(changeset) do
-    if get_field(changeset, :type) in ["Aktiva", "Passiva"] do
-      put_change(changeset, :is_relevant_for_income_statement, nil)
-    else
-      changeset
-    end
   end
 
   # Sets default for attribute is_relevant_for_income_statement when it is a nominal account
