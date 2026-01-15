@@ -67,6 +67,7 @@ defmodule Sportyweb.Accounting.Transaction do
     |> foreign_key_constraint(:contact_id)
     |> foreign_key_constraint(:contract_id)
     |> validate_amount(:amount)
+    |> validate_inclusion(:type, ["Einnahme", "Ausgabe"])
   end
 
   @doc """
@@ -112,5 +113,6 @@ defmodule Sportyweb.Accounting.Transaction do
     |> foreign_key_constraint(:contact_id)
     |> foreign_key_constraint(:contract_id)
     |> validate_amount(:amount)
+    |> validate_inclusion(:type, ["Einnahme", "Ausgabe"])
   end
 end
