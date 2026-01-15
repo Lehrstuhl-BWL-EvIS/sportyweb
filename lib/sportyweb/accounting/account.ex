@@ -4,6 +4,7 @@ defmodule Sportyweb.Accounting.Account do
 
   alias Sportyweb.Organization.Club
   alias Sportyweb.Accounting.Entry
+  alias Sportyweb.Accounting
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -13,7 +14,7 @@ defmodule Sportyweb.Accounting.Account do
 
     field :name, :string, default: ""
     field :class, :string, default: ""
-    field :type, :string, default: ""
+    field :type, :string
     field :account_number, :string, default: ""
     field :archive_date, :date, default: nil
     field :is_relevant_for_income_statement, :boolean, default: nil
@@ -46,7 +47,7 @@ defmodule Sportyweb.Accounting.Account do
       :opening_balance,
       :is_relevant_for_income_statement
     ])
-    |> validate_required([:club_id, :account_number, :name, :class])
+    |> validate_required([:club_id, :account_number, :name, :class, :type, :opening_balance])
     |> validate_length(:name, max: 40)
     |> validate_inclusion(:class, [
       "Anlagevermögen",
@@ -76,10 +77,13 @@ defmodule Sportyweb.Accounting.Account do
         [account_number: "muss fünfstellig sein und darf nicht mit 8 beginnen"]
       end
     end)
+    |> validate_class()
+    |> validate_type()
+    |> validate_opening_balance()
   end
 
-  def is_relevant_for_income_statement?(account_class) do
-    account_class in ["Einnahmen", "Ausgaben", "Weitere Einnahmen und Ausgaben"]
+  def is_relevant_for_income_statement?(account_type) do
+    account_type in ["Einnahmen", "Ausgaben"]
   end
 
   def activate_account_type?(account_class) do
@@ -89,14 +93,8 @@ defmodule Sportyweb.Accounting.Account do
     ]
   end
 
-  def activate_opening_balance?(account_class) do
-    account_class in [
-      "Anlagevermögen",
-      "Umlaufvermögen",
-      "Eigen-/Fremdkapital",
-      "Fremdkapital",
-      "Vortrags-, Kapital-, Korrektur- und statistische Konten"
-    ]
+  def activate_opening_balance?(account_type) do
+    account_type in ["Aktiva", "Passiva"]
   end
 
   def is_archived?(account, %Date{} = date \\ Date.utc_today()) do
@@ -120,12 +118,93 @@ defmodule Sportyweb.Accounting.Account do
   # Sets default for attribute is_relevant_for_income_statement when it is a nominal account
   # Nominal accounts are usually relevant for the income statement
   defp maybe_set_default_relevance_for_income_statement(changeset) do
-    class = get_field(changeset, :class)
+    type = get_field(changeset, :type)
     is_relevant_for_income_statement = get_field(changeset, :is_relevant_for_income_statement)
 
-    if class in ["Einnahmen", "Ausgaben", "Weitere Einnahmen und Ausgaben"] and
+    if type in ["Einnahmen", "Ausgaben"] and
          is_nil(is_relevant_for_income_statement) do
       put_change(changeset, :is_relevant_for_income_statement, true)
+    else
+      changeset
+    end
+  end
+
+  # Validates if the opening balance for nominal accounts is 0,00€
+  defp validate_opening_balance(changeset) do
+    if changeset do
+      opening_balance = get_field(changeset, :opening_balance)
+      type = get_field(changeset, :type)
+
+      if type in ["Einnahmen", "Ausgaben"] and opening_balance != Money.new(:EUR, 0) do
+        add_error(changeset, :opening_balance, "muss 0,00€ sein")
+      else
+        changeset
+      end
+    else
+      changeset
+    end
+  end
+
+  # Validates if the account's type is valid based on it's class
+  defp validate_type(changeset) do
+    if changeset do
+      type = get_field(changeset, :type)
+      class = get_field(changeset, :class)
+
+      valid_types =
+        case class do
+          "Anlagevermögen" ->
+            ["Aktiva"]
+
+          "Umlaufvermögen" ->
+            ["Aktiva"]
+
+          "Eigen-/Fremdkapital" ->
+            ["Passiva"]
+
+          "Fremdkapital" ->
+            ["Passiva"]
+
+          "Einnahmen" ->
+            ["Einnahmen"]
+
+          "Ausgaben" ->
+            ["Ausgaben"]
+
+          "Weitere Einnahmen und Ausgaben" ->
+            ["Einnahmen", "Ausgaben"]
+
+          "Vortrags-, Kapital-, Korrektur- und statistische Konten" ->
+            ["Aktiva", "Passiva", "Einnahmen", "Ausgaben"]
+
+          "" ->
+            []
+        end
+
+      if class != nil and type != nil and type not in valid_types do
+        add_error(changeset, :type, "Invalide Art für ausgewählte Kontoklasse")
+      else
+        changeset
+      end
+    else
+      changeset
+    end
+  end
+
+  # Validates if the account's class is valid based on it's account number
+  defp validate_class(changeset) do
+    class = get_field(changeset, :class)
+    account_number = get_field(changeset, :account_number)
+
+    if class not in ["", nil] and String.length(account_number) == 5 do
+      expected_class = Accounting.determine_account_class(account_number)
+      class = get_field(changeset, :class)
+
+      if expected_class != class do
+        add_error(changeset, :class, "muss '#{expected_class}' sein")
+      else
+        changeset
+      end
     else
       changeset
     end

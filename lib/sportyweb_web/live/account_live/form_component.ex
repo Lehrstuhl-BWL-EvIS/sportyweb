@@ -32,7 +32,7 @@ defmodule SportywebWeb.AccountLive.FormComponent do
                   />
                 </div>
               <% end %>
-              <%= if @action == :edit && Enum.any?(@account.entries) do %>
+              <%= if @action == :edit do %>
                 <div class="col-span-12 md:col-span-6 opacity-70">
                   <.input
                     field={@form[:account_number]}
@@ -40,16 +40,6 @@ defmodule SportywebWeb.AccountLive.FormComponent do
                     label="Kontonummer"
                     phx-change="validate_number"
                     readonly
-                  />
-                </div>
-              <% end %>
-              <%= if @action == :edit && not Enum.any?(@account.entries) do %>
-                <div class="col-span-12 md:col-span-6">
-                  <.input
-                    field={@form[:account_number]}
-                    type="number"
-                    label="Kontonummer"
-                    phx-change="validate_number"
                   />
                 </div>
               <% end %>
@@ -76,41 +66,26 @@ defmodule SportywebWeb.AccountLive.FormComponent do
                   />
                 </div>
               <% else %>
-                <div class={
-                  if @activate_account_type && not Enum.any?(@account.entries) do
-                    "col-span-12 md:col-span-6"
-                  else
-                    "col-span-12 md:col-span-6 opacity-70"
-                  end
-                }>
+                <div class="col-span-12 md:col-span-6 opacity-70">
                   <.input
                     field={@form[:type]}
                     type="select"
                     label="Art"
                     options={Account.type_options()}
-                    disabled={Enum.any?(@account.entries) || not @activate_account_type}
+                    disabled
                   />
                 </div>
               <% end %>
               <%= if @activate_opening_balance == true do %>
                 <div class="col-span-12 md:col-span-6">
-                  <.input
-                    field={@form[:opening_balance]}
-                    type="text"
-                    label="Anfangsbestand (optional)"
-                  />
+                  <.input field={@form[:opening_balance]} type="text" label="Anfangsbestand" />
                   <.input_description>
                     Das €-Zeichen kann, muss aber nicht angegeben werden.
                   </.input_description>
                 </div>
               <% else %>
                 <div class="opacity-70 col-span-12 md:col-span-6">
-                  <.input
-                    field={@form[:opening_balance]}
-                    type="text"
-                    label="Anfangsbestand (optional)"
-                    readonly
-                  />
+                  <.input field={@form[:opening_balance]} type="text" label="Anfangsbestand" readonly />
                   <.input_description>
                     Das €-Zeichen kann, muss aber nicht angegeben werden.
                   </.input_description>
@@ -182,7 +157,7 @@ defmodule SportywebWeb.AccountLive.FormComponent do
 
   @impl true
   def update(%{account: account} = assigns, socket) do
-    is_relevant_for_income_statement = Account.is_relevant_for_income_statement?(account.class)
+    is_relevant_for_income_statement = Account.is_relevant_for_income_statement?(account.type)
     activate_account_type = Account.activate_account_type?(account.class)
 
     {:ok,
@@ -214,12 +189,12 @@ defmodule SportywebWeb.AccountLive.FormComponent do
       |> Map.put(:action, :insert)
 
     is_relevant_for_income_statement =
-      Account.is_relevant_for_income_statement?(account_params["class"])
+      Account.is_relevant_for_income_statement?(account_params["type"])
 
     activate_account_type =
       Account.activate_account_type?(account_params["class"])
 
-    activate_opening_balance = Account.activate_opening_balance?(account_params["class"])
+    activate_opening_balance = Account.activate_opening_balance?(account_params["type"])
 
     {:noreply,
      socket
@@ -232,14 +207,36 @@ defmodule SportywebWeb.AccountLive.FormComponent do
   @impl true
   def handle_event("validate", %{"account" => account_params}, socket) do
     account_params =
-      account_params
-      |> Map.put(
-        "type",
-        Accounting.determine_account_type(account_params["class"], account_params["type"])
-      )
+      if socket.assigns.action == :new do
+        account_params
+        |> Map.put(
+          "type",
+          Accounting.determine_account_type(account_params["class"], account_params["type"])
+        )
+      else
+        account_params
+      end
 
-    changeset = Accounting.change_account(socket.assigns.account, account_params)
-    {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
+    if socket.assigns.action == :new do
+      is_relevant_for_income_statement =
+        Account.is_relevant_for_income_statement?(account_params["type"])
+
+      activate_opening_balance = Account.activate_opening_balance?(account_params["type"])
+
+      changeset = Accounting.change_account(socket.assigns.account, account_params)
+
+      {:noreply,
+       socket
+       |> assign(form: to_form(changeset, action: :validate))
+       |> assign(:is_relevant_for_income_statement, is_relevant_for_income_statement)
+       |> assign(:activate_opening_balance, activate_opening_balance)}
+    else
+      changeset = Accounting.change_account(socket.assigns.account, account_params)
+
+      {:noreply,
+       socket
+       |> assign(form: to_form(changeset, action: :validate))}
+    end
   end
 
   def handle_event("save", %{"account" => account_params}, socket) do
@@ -247,11 +244,6 @@ defmodule SportywebWeb.AccountLive.FormComponent do
   end
 
   defp save_account(socket, :edit, account_params) do
-    account_type =
-      Accounting.determine_account_type(account_params["class"], account_params["type"])
-
-    account_params = account_params |> Map.put("type", account_type)
-
     case Accounting.update_account(socket.assigns.account, account_params) do
       {:ok, _account} ->
         {:noreply,
