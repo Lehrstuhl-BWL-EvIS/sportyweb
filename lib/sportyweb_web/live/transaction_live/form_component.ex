@@ -39,6 +39,15 @@ defmodule SportywebWeb.TransactionLive.FormComponent do
           >
             <.input_grids>
               <.input_grid>
+                <div class="col-span-12">
+                  <.input
+                    field={@form[:name]}
+                    type="text"
+                    label="Name"
+                    phx-change="validate"
+                    phx-update="ignore"
+                  />
+                </div>
                 <div class="col-span-12 md:col-span-6">
                   <.input field={@form[:receipt_number]} type="text" label="Belegnummer (optional)" />
                 </div>
