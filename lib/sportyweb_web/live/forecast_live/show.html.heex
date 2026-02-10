@@ -6,6 +6,7 @@
   <div>
     <.icon name="hero-light-bulb" class="w-12 h-12 mt-2 mb-4 text-amber-500" />
   </div>
+
   <div>
     <p>
       Durch neue Mitgliedschaften oder Kündigungen, Änderungen an Gebühren und Zuschüssen,
@@ -32,12 +33,15 @@
       <:col :let={{_id, transaction}} label="Name">
         {format_string_field(transaction.name)}
       </:col>
+
       <:col :let={{_id, transaction}} label="Betrag">
         {transaction.amount}
       </:col>
+
       <:col :let={{_id, transaction}} label="Erstellungsdatum">
         {format_date_field_dmy(transaction.creation_date)}
       </:col>
+
       <:col :let={{_id, transaction}} label="Kontakt">
         <.link
           navigate={~p"/contacts/#{transaction.contract.contact}"}

@@ -19,6 +19,7 @@
 <.card class="mt-5">
   <%= if !Enum.any?(@roles) do %>
     <p>Noch besitzt niemand in diesem Verein eine Rolle.</p>
+
     <p class="text-red-500">Diese Nachricht sollten Sie nur als Sportyweb Administrator sehen.</p>
   <% else %>
     <.table
@@ -27,16 +28,21 @@
       row_click={&JS.navigate(~p"/clubs/#{@club.id}/roles/#{&1}/edit")}
     >
       <:col :let={role} label="Mitarbeiter">{role.name}</:col>
+
       <:col :let={role} label="Rollen">
         <%= if String.length(role.clubroles) > 0 do %>
           <p class="font-semibold underline">Verein:</p>
+
           <p class="mt-2">{role.clubroles}</p>
         <% end %>
+
         <%= if String.length(role.departmentroles) > 0 do %>
           <p class="mt-2 font-semibold underline">Abteilung:</p>
+
           <p class="mt-2">{role.departmentroles}</p>
         <% end %>
       </:col>
+
       <:action :let={role}>
         <.link navigate={~p"/clubs/#{@club.id}/roles/#{role}/edit"}>Bearbeiten</.link>
       </:action>

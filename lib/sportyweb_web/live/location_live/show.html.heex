@@ -12,23 +12,29 @@
     <:item :if={Club.is_main_location?(@club, @location)} title="Hauptstandort">
       <.icon name="hero-check-badge" class="inline-block w-[20px] text-green-800" />
     </:item>
+
     <:item title="Referenznummer">
       {format_string_field(@location.reference_number)}
     </:item>
+
     <:item title="Beschreibung">
       {format_string_field(@location.description)}
     </:item>
+
     <:item title="Adresse">
       <SportywebWeb.PolymorphicLive.PostalAddressesShowComponent.render postal_addresses={
         @location.postal_addresses
       } />
     </:item>
+
     <:item title="E-Mail">
       {format_struct_list(@location.emails, :address)}
     </:item>
+
     <:item title="Telefon">
       {format_struct_list(@location.phones, :number)}
     </:item>
+
     <:item title="Notizen">
       <SportywebWeb.PolymorphicLive.NotesShowComponent.render notes={@location.notes} />
     </:item>
@@ -71,9 +77,11 @@
       <:col :let={{_id, equipment}} label="Name">
         {format_string_field(equipment.name)}
       </:col>
+
       <:col :let={{_id, equipment}} label="Ref.nr.">
         {format_string_field(equipment.reference_number)}
       </:col>
+
       <:col :let={{_id, equipment}} label="Beschreibung">
         <div class="max-w-[200px] truncate overflow-hidden">
           {format_string_field(equipment.description)}

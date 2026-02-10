@@ -90,8 +90,10 @@ defmodule SportywebWeb.SubsidyLive.FormComponent do
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
+
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
+
             <.button
               :if={show_delete_button?(@subsidy)}
               class="bg-rose-700 hover:bg-rose-800"

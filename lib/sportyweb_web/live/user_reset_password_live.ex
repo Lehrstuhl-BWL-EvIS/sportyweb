@@ -18,7 +18,6 @@ defmodule SportywebWeb.UserResetPasswordLive do
           <.error :if={@form.errors[:password] != nil}>
             Bitte überprüfen Sie ihre Eingaben.
           </.error>
-
           <.input field={@form[:password]} type="password" label="Neues Passwort" required />
           <.input
             field={@form[:password_confirmation]}
@@ -31,7 +30,6 @@ defmodule SportywebWeb.UserResetPasswordLive do
           </:actions>
         </.simple_form>
       </.card>
-
       <SportywebWeb.UserRegistrationLoginLinksComponent.render />
     </div>
     """

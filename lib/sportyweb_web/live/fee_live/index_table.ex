@@ -16,15 +16,19 @@ defmodule SportywebWeb.FeeLive.IndexTableComponent do
             <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
           <% end %>
         </:col>
+
         <:col :let={fee} label="Ref.nr.">
           {format_string_field(fee.reference_number)}
         </:col>
+
         <:col :let={fee} label="Grundbetrag">
           {fee.amount}
         </:col>
+
         <:col :let={fee} label="Einmalzahlung">
           {fee.amount_one_time}
         </:col>
+
         <:col :let={fee} label="Alter">
           {fee.minimum_age_in_years}&nbsp;-&nbsp;{fee.maximum_age_in_years}
         </:col>

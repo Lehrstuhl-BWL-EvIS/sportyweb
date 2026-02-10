@@ -9,22 +9,112 @@
 
 <.card>
   <.list>
+    <:item title="Art">
+      {format_string_field(@transaction.type)}
+    </:item>
+
     <:item title="Betrag">
       {@transaction.amount}
     </:item>
+
+    <:item title="Belegnummer">
+      {format_string_field(@transaction.receipt_number)}
+    </:item>
+
     <:item title="Erstellungsdatum">
       {format_date_field_dmy(@transaction.creation_date)}
     </:item>
+
     <:item title="Zahlungsdatum">
       {format_date_field_dmy(@transaction.payment_date)}
     </:item>
+
+    <:item title="Fälligkeitsdatum">
+      {format_date_field_dmy(@transaction.due_date)}
+    </:item>
+
+    <:item title="Finanzkonto">
+      <%= if @financial_account do %>
+        {"#{@financial_account.account_number} #{format_string_field(@financial_account.name)}"}
+      <% else %>
+        {format_string_field(@financial_account)}
+      <% end %>
+    </:item>
+
     <:item title="Kontakt">
-      <.link
-        navigate={~p"/contacts/#{@transaction.contract.contact}"}
-        class="text-indigo-600 hover:underline"
-      >
-        {format_string_field(@transaction.contract.contact.name)}
-      </.link>
+      <%= if @transaction.contact_id do %>
+        <.link
+          navigate={~p"/contacts/#{@transaction.contact_id}"}
+          class="text-indigo-600 hover:underline"
+        >
+          {format_string_field(@transaction.contact.name)}
+        </.link>
+      <% else %>
+        {format_string_field(@transaction.contact)}
+      <% end %>
+    </:item>
+
+    <:item title="Mitgliedschaftsvertrag">
+      <%= if @transaction.contract_id do %>
+        <.link
+          navigate={~p"/contracts/#{@transaction.contract_id}"}
+          class="text-indigo-600 hover:underline"
+        >
+          {format_string_field(@transaction.contract.fee.name)}
+        </.link>
+      <% else %>
+        {format_string_field(@transaction.contract)}
+      <% end %>
     </:item>
   </.list>
 </.card>
+
+<%= if Enum.any?(@streams.entries.inserts) do %>
+  <br /> <br />
+  <.header>
+    {"Buchungen"}
+    <:actions>
+      <.link navigate={~p"/transactions/#{@transaction}/entries/new"}>
+        <.button>Buchung erstellen</.button>
+      </.link>
+    </:actions>
+  </.header>
+
+  <.card>
+    <.table
+      id="entries"
+      rows={@streams.entries}
+      row_click={
+        fn {_id, entry} -> JS.navigate(~p"/transactions/#{@transaction}/entries/#{entry}") end
+      }
+    >
+      <:col :let={{_id, entry}} label="Konto">
+        {"#{entry.account.account_number} #{format_string_field(entry.account.name)}"}
+        <%= if Account.is_archived?(entry.account) do %>
+          <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
+        <% end %>
+      </:col>
+
+      <:col :let={{_id, entry}} label="Betrag">
+        {entry.amount}
+      </:col>
+
+      <:col :let={{_id, entry}} label="Sphäre">
+        {format_string_field(Sportyweb.Accounting.Entry.sphere(entry.sphere))}
+      </:col>
+
+      <:action :let={{_id, entry}}>
+        <.link navigate={~p"/transactions/#{@transaction}/entries/#{entry}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  </.card>
+<% else %>
+  <br /> <br />
+  <.header>
+    {"Buchungen"}
+  </.header>
+
+  <.card>
+    <p>Bisher wurden noch keine Buchungen erstellt.</p>
+  </.card>
+<% end %>

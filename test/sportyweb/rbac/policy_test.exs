@@ -17,7 +17,10 @@ defmodule Sportyweb.RBAC.PolicyTest do
     # ApplicationRole & UserApplicationRole
     applicationrole = application_role_fixture()
 
-    user_application_role_fixture(%{user_id: app_admin.id, applicationrole_id: applicationrole.id})
+    user_application_role_fixture(%{
+      user_id: app_admin.id,
+      applicationrole_id: applicationrole.id
+    })
 
     # Club
     club = club_fixture()

@@ -2,6 +2,8 @@ defmodule Sportyweb.Organization.Club do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Sportyweb.Accounting.Account
+  alias Sportyweb.Accounting.Transaction
   alias Sportyweb.Asset.Location
   alias Sportyweb.Calendar.Event
   alias Sportyweb.Finance.Fee
@@ -33,7 +35,8 @@ defmodule Sportyweb.Organization.Club do
     has_many :events, Event
     has_many :subsidies, Subsidy, preload_order: [asc: :name]
     # This line has to be below "has_many :all_contracts"!
-    has_many :transactions, through: [:all_contracts, :transactions]
+    has_many :accounts, Account
+    has_many :transactions, Transaction
     has_many :locations, Location, preload_order: [asc: :name]
     many_to_many :contracts, Contract, join_through: ClubContract
     many_to_many :emails, Email, join_through: ClubEmail

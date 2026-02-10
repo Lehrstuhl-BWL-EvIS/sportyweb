@@ -78,8 +78,10 @@ defmodule SportywebWeb.ClubLive.FormComponent do
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
+
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
+
             <.button
               :if={@club.id}
               class="bg-rose-700 hover:bg-rose-800"

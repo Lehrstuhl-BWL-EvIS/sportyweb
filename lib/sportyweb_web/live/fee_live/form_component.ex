@@ -144,6 +144,7 @@ defmodule SportywebWeb.FeeLive.FormComponent do
                     <li :if={Enum.any?(@fee.contracts)}>
                       Sie wird in {Enum.count(@fee.contracts)} Verträgen verwendet.
                     </li>
+
                     <li :if={Enum.any?(@fee.ancestors)}>
                       Sie dient {Enum.count(@fee.ancestors)} anderen Gebühren als Nachfolger.
                     </li>
@@ -170,8 +171,10 @@ defmodule SportywebWeb.FeeLive.FormComponent do
           <:actions>
             <div>
               <.button phx-disable-with="Speichern...">Speichern</.button>
+
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
+
             <.button
               :if={show_delete_button?(@fee)}
               class="bg-rose-700 hover:bg-rose-800"

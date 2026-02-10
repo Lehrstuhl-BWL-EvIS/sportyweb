@@ -78,4 +78,56 @@ defmodule SportywebWeb.CommonValidations do
       changeset
     end
   end
+
+  @doc """
+  Validates that the amount of the given field is greater than 0.
+
+  The type of the field must be Money.Ecto.Composite.Type, as defined by https://github.com/kipcole9/money
+
+  ## Examples
+
+      changeset
+      |> validate_amount(:amount)
+
+  """
+  def validate_amount(changeset, field) do
+    case get_field(changeset, field) do
+      %Money{} = money ->
+        if Money.positive?(money) do
+          changeset
+        else
+          add_error(changeset, field, "The amount has to be greater than 0")
+        end
+
+      _ ->
+        changeset
+    end
+  end
+
+  @doc """
+  Validates that the date value of date_field is smaller or equal to the current date.
+
+  Takes a custom error message as optional parameter.
+
+  In the example below, the value of the payment_date field
+  must be smaller or equal to the current date.
+
+  ## Examples
+
+      changeset
+      |> validate_date_not_in_future(:payment_date, "Custom error")
+
+  """
+  def validate_date_not_in_future(changeset, date_field, message \\ "Error!") do
+    date_value = get_field(changeset, date_field)
+    today = Date.utc_today()
+
+    if date_value &&
+         Date.compare(date_value, today) == :gt do
+      changeset
+      |> add_error(date_field, message)
+    else
+      changeset
+    end
+  end
 end

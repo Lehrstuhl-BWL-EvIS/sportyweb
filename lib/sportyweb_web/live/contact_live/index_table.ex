@@ -13,6 +13,7 @@ defmodule SportywebWeb.ContactLive.IndexTableComponent do
         <:col :let={contact} label="Name">
           {format_string_field(contact.name)}
         </:col>
+
         <:col :let={contact} label="Art">
           {get_key_for_value(Contact.get_valid_types(), contact.type)}
         </:col>

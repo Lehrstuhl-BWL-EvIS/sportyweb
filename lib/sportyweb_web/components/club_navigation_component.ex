@@ -85,8 +85,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
             if(@club_navigation_current_item == :finances, do: @classes_menu_item_active)
           ]}
         >
-          <.icon name="hero-banknotes" class={@classes_icon} />
-          <span class="truncate">Finanzen</span>
+          <.icon name="hero-banknotes" class={@classes_icon} /> <span class="truncate">Finanzen</span>
           <.icon
             name="hero-chevron-right"
             class={Enum.join([@classes_chevron, if(@show_submenu_finances, do: "rotate-90")], " ")}
@@ -96,16 +95,47 @@ defmodule SportywebWeb.ClubNavigationComponent do
         <ul class={["mb-1 px-2", if(!@show_submenu_finances, do: "hidden")]}>
           <li>
             <.link
+              navigate={~p"/clubs/#{@club}/accounts"}
+              class={[
+                @classes_menu_item,
+                @classes_submenu_item,
+                if(@club_navigation_current_item == :accounts, do: @classes_menu_item_active)
+              ]}
+            >
+              <span class="truncate">Kontenplan</span>
+            </.link>
+          </li>
+
+          <li>
+            <.link
               navigate={~p"/clubs/#{@club}/transactions"}
               class={[
                 @classes_menu_item,
                 @classes_submenu_item,
-                if(@club_navigation_current_item == :transactions, do: @classes_menu_item_active)
+                if(@club_navigation_current_item == :transactions,
+                  do: @classes_menu_item_active
+                )
               ]}
             >
               <span class="truncate">Transaktionen</span>
             </.link>
           </li>
+
+          <li>
+            <.link
+              navigate={~p"/clubs/#{@club}/income_statements"}
+              class={[
+                @classes_menu_item,
+                @classes_submenu_item,
+                if(@club_navigation_current_item == :income_statements,
+                  do: @classes_menu_item_active
+                )
+              ]}
+            >
+              <span class="truncate">EÜR</span>
+            </.link>
+          </li>
+
           <li>
             <.link
               navigate={~p"/clubs/#{@club}/forecasts"}
@@ -118,6 +148,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
               <span class="truncate">Prognose</span>
             </.link>
           </li>
+
           <li>
             <.link
               navigate={~p"/clubs/#{@club}/fees"}
@@ -130,6 +161,7 @@ defmodule SportywebWeb.ClubNavigationComponent do
               <span class="truncate">Gebühren</span>
             </.link>
           </li>
+
           <li>
             <.link
               navigate={~p"/clubs/#{@club}/subsidies"}
@@ -163,8 +195,11 @@ defmodule SportywebWeb.ClubNavigationComponent do
   def update(assigns, socket) do
     show_submenu_finances =
       assigns.club_navigation_current_item == :transactions ||
+        assigns.club_navigation_current_item == :entries ||
         assigns.club_navigation_current_item == :forecasts ||
         assigns.club_navigation_current_item == :fees ||
+        assigns.club_navigation_current_item == :accounts ||
+        assigns.club_navigation_current_item == :income_statements ||
         assigns.club_navigation_current_item == :subsidies
 
     {:ok,

@@ -21,7 +21,6 @@ defmodule SportywebWeb.UserForgotPasswordLive do
           </:actions>
         </.simple_form>
       </.card>
-
       <SportywebWeb.UserRegistrationLoginLinksComponent.render />
     </div>
     """

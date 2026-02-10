@@ -16,7 +16,6 @@ defmodule SportywebWeb.UserConfirmationLive do
           </:actions>
         </.simple_form>
       </.card>
-
       <SportywebWeb.UserRegistrationLoginLinksComponent.render />
     </div>
     """

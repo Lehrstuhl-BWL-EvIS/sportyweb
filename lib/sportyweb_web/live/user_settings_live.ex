@@ -6,9 +6,11 @@ defmodule SportywebWeb.UserSettingsLive do
   def render(assigns) do
     ~H"""
     <.header>Nutzereinstellungen</.header>
+
     <.card>
       <%= if @current_user.confirmed_at == nil do %>
         <p class="text-red-500">Bitte bestätigen Sie ihr Konto.</p>
+
         <.button class="mt-4" phx-click={JS.push("send_instructions")}>
           Bestätigungslink anfordern
         </.button>

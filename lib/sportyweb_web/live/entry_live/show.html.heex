@@ -1,0 +1,32 @@
+<%= if show_edit_button?(@entry.account.account_number) do %>
+  <.header>
+    {@page_title}
+    <:actions>
+      <.link navigate={~p"/transactions/#{@transaction}/entries/#{@entry}/edit"}>
+        <.button>Buchung bearbeiten</.button>
+      </.link>
+    </:actions>
+  </.header>
+<% else %>
+  <.header>
+    {@page_title}
+  </.header>
+<% end %>
+<.card>
+  <.list>
+    <:item title="Konto">
+      {"#{@entry.account.account_number} #{format_string_field(@entry.account.name)}"}
+      <%= if Account.is_archived?(@entry.account) do %>
+        <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
+      <% end %>
+    </:item>
+
+    <:item title="Betrag">
+      {@entry.amount}
+    </:item>
+
+    <:item title="Sphäre">
+      {format_string_field(Sportyweb.Accounting.Entry.sphere(@entry.sphere))}
+    </:item>
+  </.list>
+</.card>

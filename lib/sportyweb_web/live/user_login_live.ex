@@ -34,6 +34,7 @@ defmodule SportywebWeb.UserLoginLive do
               Passwort vergessen?
             </.link>
           </:actions>
+
           <:actions>
             <.button phx-disable-with="Anmeldevorgang..." class="w-full">
               Anmelden <span aria-hidden="true">→</span>

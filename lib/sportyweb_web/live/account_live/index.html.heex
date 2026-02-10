@@ -1,0 +1,43 @@
+<.header>
+  {@page_title}
+  <:actions>
+    <.link patch={~p"/clubs/#{@club}/accounts/new"}>
+      <.button>Konto erstellen</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.card>
+  <%= if Enum.any?(@streams.accounts.inserts) do %>
+    <.table
+      id="accounts"
+      rows={@streams.accounts}
+      row_click={fn {_id, account} -> JS.navigate(~p"/accounts/#{account}") end}
+    >
+      <:col :let={{_id, account}} label="Kontonummer">
+        {account.account_number}
+        <%= if Account.is_archived?(account) do %>
+          <.icon name="hero-archive-box" class="ml-1 inline-block w-[20px] text-zinc-800" />
+        <% end %>
+      </:col>
+      <:col :let={{_id, account}} label="Name">{account.name}</:col>
+      <:col :let={{_id, account}} label="Kontenklasse">{account.class}</:col>
+      <:col :let={{_id, account}} label="Saldo">{account.balance}</:col>
+      <:action :let={{_id, account}}>
+        <.link navigate={~p"/accounts/#{account}"}>Anzeigen</.link>
+      </:action>
+    </.table>
+  <% else %>
+    <p class="mb-3">
+      Bisher wurden noch keine Konten erstellt.
+    </p>
+    <p>
+      Konten können individuell erstellt werden und/oder aus dem Kontenrahmen SKR 42 für die Gewinnermittlung nach § 4 Abs. 3 EStG importiert werden.
+      Der Import des Kontenrahmens ist nur möglich, sofern noch keine eigenen Konten erstellt wurden.
+    </p>
+    <br />
+    <div>
+      <.button phx-click="import">Kontenrahmen importieren</.button>
+    </div>
+  <% end %>
+</.card>

@@ -6,15 +6,11 @@
         <div class="flex items-center">
           <.link navigate={~p"/clubs"} class="flex items-center">
             <svg viewBox="0 0 80 140" fill="#374151" stroke="black" stroke-width=".5" class="h-12">
-              <path d="M60 30 l-13-13 l13-13 l13 13 z" />
-              <path d="M40 30 v16 l-16,16 v-16 z" />
-              <path d="M40 30 h40 l-40,40 z" />
-              <path d="M55 95 v-40 l-40,40 z" />
-              <path d="M55 76 v40 l20,-20 z" />
-              <path d="M55 115 v20 l-10,-10 z" />
+              <path d="M60 30 l-13-13 l13-13 l13 13 z" /> <path d="M40 30 v16 l-16,16 v-16 z" />
+              <path d="M40 30 h40 l-40,40 z" /> <path d="M55 95 v-40 l-40,40 z" />
+              <path d="M55 76 v40 l20,-20 z" /> <path d="M55 115 v20 l-10,-10 z" />
               <path d="M16 94 h-14 v14 z" />
             </svg>
-
             <span class="ml-3 text-xl font-bold text-zinc-700">Sportyweb</span>
           </.link>
         </div>
@@ -165,8 +161,7 @@
       <!-- Set the col-span classes based on whether a user is logged in, in which case the navigation (sidebar) is visible. -->
       <main class={"lg:block #{if show_club_navigation(assigns), do: ~c"lg:col-span-9", else: ~c"lg:col-span-12"}"}>
         <div>
-          <.flash_group flash={@flash} />
-          {@inner_content}
+          <.flash_group flash={@flash} /> {@inner_content}
         </div>
       </main>
     </div>

@@ -199,14 +199,41 @@ defmodule SportywebWeb.Router do
 
       live "/contracts/:id", ContractLive.Show, :show
 
-      # Transaction (Each belongs to a contract)
+      # Transaction (Each belongs to a club)
 
       live "/transactions", TransactionLive.Index, :index_root
       live "/clubs/:club_id/transactions", TransactionLive.Index, :index
 
+      live "/clubs/:club_id/transactions/new", TransactionLive.NewEdit, :new
       live "/transactions/:id/edit", TransactionLive.NewEdit, :edit
 
       live "/transactions/:id", TransactionLive.Show, :show
+
+      # Entry (Each belongs to an account and to a transaction)
+
+      live "/transactions/:transaction_id/entries/new", EntryLive.NewEdit, :new
+      live "/transactions/:transaction_id/entries/:id/edit", EntryLive.NewEdit, :edit
+
+      live "/transactions/:transaction_id/entries/:id", EntryLive.Show, :show
+      live "/entries/:id/show/edit", EntryLive.Show, :edit
+
+      # Account (Each belongs to a club)
+
+      live "/accounts", AccountLive.Index, :index_root
+      live "/clubs/:club_id/accounts", AccountLive.Index, :index
+
+      live "/clubs/:club_id/accounts/new", AccountLive.NewEdit, :new
+      live "/accounts/:id/edit", AccountLive.NewEdit, :edit
+
+      live "/accounts/:id", AccountLive.Show, :show
+
+      # Income Statements
+
+      live "/clubs/:club_id/income_statements", IncomeStatementLive.NewEdit, :new
+
+      live "/clubs/:club_id/income_statements/start/:start_date/end/:end_date",
+           IncomeStatementLive.Show,
+           :show
 
       # Fees (Polymorphic)
 

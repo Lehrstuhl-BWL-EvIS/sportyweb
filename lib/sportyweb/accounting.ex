@@ -4,6 +4,7 @@ defmodule Sportyweb.Accounting do
   """
 
   import Ecto.Query, warn: false
+  import Ecto.Changeset
   alias Sportyweb.Repo
 
   alias Sportyweb.Accounting.Transaction
@@ -26,11 +27,9 @@ defmodule Sportyweb.Accounting do
     query =
       from(
         t in Transaction,
-        join: contract in assoc(t, :contract),
-        join: contact in assoc(contract, :contact),
-        join: club in assoc(contract, :club),
+        join: club in assoc(t, :club),
         where: club.id == ^club_id,
-        order_by: [t.creation_date, t.name, contact.name]
+        order_by: [desc_nulls_first: t.payment_date]
       )
 
     Repo.all(query)
@@ -86,7 +85,25 @@ defmodule Sportyweb.Accounting do
   end
 
   @doc """
-  Creates a transaction.
+  Creates a transaction from the UI.
+
+  ## Examples
+
+      iex> create_transaction_from_ui(%{field: value})
+      {:ok, %Transaction{}}
+
+      iex> create_transaction_from_ui(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_transaction_from_ui(attrs \\ %{}) do
+    %Transaction{}
+    |> Transaction.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Creates a transaction from the system.
 
   ## Examples
 
@@ -99,8 +116,44 @@ defmodule Sportyweb.Accounting do
   """
   def create_transaction(attrs \\ %{}) do
     %Transaction{}
-    |> Transaction.changeset(attrs)
+    |> Transaction.changeset_system(attrs)
     |> Repo.insert()
+  end
+
+  @doc """
+  Creates a transaction and the associated entry for a financial account.
+
+  ## Examples
+
+      iex> create_transaction_and_entry(%{field: value})
+      {:ok, %Transaction{}}
+
+      iex> create_transaction_and_entry(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_transaction_and_entry(attrs) do
+    Repo.transaction(fn ->
+      transaction_attrs =
+        attrs
+        |> Map.put("creation_date", Date.utc_today())
+
+      {:ok, transaction} = create_transaction_from_ui(transaction_attrs)
+
+      account = get_account!(transaction_attrs["account_id"])
+      entry_type = determine_entry_type(transaction.type, account.type)
+
+      entry_attrs = %{
+        "account_id" => transaction_attrs["account_id"],
+        "transaction_id" => transaction.id,
+        "amount" => transaction.amount,
+        "type" => entry_type
+      }
+
+      {:ok, _entry} = create_financial_account_entry(entry_attrs)
+
+      transaction
+    end)
   end
 
   @doc """
@@ -119,6 +172,48 @@ defmodule Sportyweb.Accounting do
     transaction
     |> Transaction.changeset(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Updates a transaction and the associated entry for a financial account.
+
+  ## Examples
+
+      iex> update_transaction_and_entry(%{field: value})
+      {:ok, %Transaction{}}
+
+      iex> update_transaction_and_entry(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_transaction_and_entry(transaction, attrs) do
+    Repo.transaction(fn ->
+      {:ok, transaction} = update_transaction(transaction, attrs)
+
+      entry = get_financial_account_entry(transaction.id)
+
+      if entry == nil do
+        account = get_account!(attrs["account_id"])
+        entry_type = determine_entry_type(transaction.type, account.type)
+
+        entry_attrs = %{
+          "account_id" => attrs["account_id"],
+          "transaction_id" => transaction.id,
+          "amount" => transaction.amount,
+          "type" => entry_type
+        }
+
+        {:ok, _entry} = create_financial_account_entry(entry_attrs)
+      else
+        entry_attrs = %{
+          "account_id" => attrs["account_id"]
+        }
+
+        {:ok, _entry} = update_entry(entry, entry_attrs)
+      end
+
+      transaction
+    end)
   end
 
   @doc """
@@ -448,5 +543,1252 @@ defmodule Sportyweb.Accounting do
       Date.compare(date, start_date) != :lt && Date.compare(date, end_date) != :gt
     end)
     |> Enum.to_list()
+  end
+
+  alias Sportyweb.Accounting.Account
+
+  @doc """
+  Returns a clubs list of accounts including the account's balance.
+
+  ## Examples
+
+      iex> list_accounts(1)
+      [%Account{}, ...]
+
+  """
+
+  def list_accounts(club_id) do
+    query =
+      from(
+        a in Account,
+        join: club in assoc(a, :club),
+        left_join: e in assoc(a, :entries),
+        where: club.id == ^club_id,
+        group_by: a.id,
+        select: %{
+          id: a.id,
+          club_id: a.club_id,
+          account_number: a.account_number,
+          name: a.name,
+          class: a.class,
+          type: a.type,
+          archive_date: a.archive_date,
+          opening_balance: a.opening_balance,
+          debit:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.amount
+              )
+            ),
+          credit:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.amount
+              )
+            )
+        },
+        order_by: [a.account_number]
+      )
+
+    accounts = Repo.all(query)
+
+    # Calculate balance and add it to maps
+    accounts =
+      Enum.map(accounts, fn account ->
+        balance =
+          determine_account_balance(
+            account.debit,
+            account.credit,
+            account.type,
+            account.opening_balance
+          )
+
+        account
+        |> Map.put(:balance, balance)
+      end)
+
+    # Transform maps into structs
+    Enum.map(accounts, fn account -> struct(Account, account) end)
+  end
+
+  @doc """
+  Returns a clubs list of accounts from a given account type excluding archived accounts.
+
+  ## Examples
+
+      iex> list_accounts(["Einnahmen"], 1)
+      [%Account{}, ...]
+
+  """
+
+  def list_accounts(options, club_id) do
+    date = Date.utc_today()
+
+    query =
+      from(
+        a in Account,
+        where: a.club_id == ^club_id,
+        where: fragment("? LIKE ANY(?)", a.type, ^options),
+        where: a.archive_date > ^date or is_nil(a.archive_date),
+        order_by: [a.account_number]
+      )
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Returns a clubs list of financial accounts.
+
+  ## Examples
+
+      iex> list_financial_accounts()
+      [%Account{}, ...]
+
+  """
+
+  def list_financial_accounts(club_id) do
+    date = Date.utc_today()
+
+    query =
+      from(
+        a in Account,
+        join: club in assoc(a, :club),
+        where: club.id == ^club_id,
+        where: fragment("?::int BETWEEN ? AND ?", a.account_number, 15_500, 18_899),
+        where: a.archive_date > ^date or is_nil(a.archive_date),
+        order_by: [a.account_number]
+      )
+
+    Repo.all(query)
+  end
+
+  @doc """
+  Gets a single account.
+
+  Raises `Ecto.NoResultsError` if the Account does not exist.
+
+  ## Examples
+
+      iex> get_account!(123)
+      %Account{}
+
+      iex> get_account!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_account!(id), do: Repo.get!(Account, id)
+
+  @doc """
+  Gets a single account. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Account does not exist.
+
+  ## Examples
+
+      iex> get_account!(123, [:club])
+      %Account{}
+
+      iex> get_account!(456, [:club])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_account!(id, preloads) do
+    Account
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
+  Gets a single account and its balance.
+
+  Raises `Ecto.NoResultsError` if the Account does not exist.
+
+  ## Examples
+
+      iex> get_account!(123)
+      %Account{}
+
+      iex> get_account!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_account_and_balance!(id, preloads) do
+    query =
+      from(
+        a in Account,
+        left_join: entry in assoc(a, :entries),
+        where: a.id == ^id,
+        group_by: a.id,
+        select: %{
+          id: a.id,
+          club_id: a.club_id,
+          account_number: a.account_number,
+          name: a.name,
+          class: a.class,
+          type: a.type,
+          archive_date: a.archive_date,
+          opening_balance: a.opening_balance,
+          is_relevant_for_income_statement: a.is_relevant_for_income_statement,
+          debit:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' THEN (?) .amount ELSE 0 END",
+                entry.type,
+                entry.amount
+              )
+            ),
+          credit:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' THEN (?) .amount ELSE 0 END",
+                entry.type,
+                entry.amount
+              )
+            )
+        }
+      )
+
+    account = Repo.one(query)
+
+    # Calculate balance and add it to map
+    balance =
+      determine_account_balance(
+        account.debit,
+        account.credit,
+        account.type,
+        account.opening_balance
+      )
+
+    account = struct(Account, account)
+
+    account
+    |> Map.put(:balance, balance)
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
+  Gets the financial account of an entry belonging to a specific transaction. Preloads associations.
+
+  ## Examples
+
+      iex> get_financial_account(123, [:entries])
+      %Account{}
+
+      iex> get_financial_account(456, [:entries])
+      nil
+
+  """
+  def get_financial_account(transaction_id, preloads) do
+    query =
+      from(
+        a in Account,
+        join: entry in assoc(a, :entries),
+        where:
+          entry.transaction_id == ^transaction_id and entry.account_id == a.id and
+            fragment("?::int BETWEEN ? AND ?", a.account_number, 15_500, 18_899)
+      )
+
+    financial_account = Repo.one(query)
+
+    financial_account
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
+  Creates a account.
+
+  ## Examples
+
+      iex> create_account(%{field: value})
+      {:ok, %Account{}}
+
+      iex> create_account(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_account(attrs \\ %{}) do
+    %Account{}
+    |> Account.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Prototypically imports selected accounts of the SKR 42 chart of accounts.
+
+  ## Examples
+
+      iex> import_accounts(club_id)
+      {:ok}
+
+  """
+  def import_accounts(club_id) do
+    accounts = get_import_accounts()
+
+    accounts =
+      Enum.map(accounts, fn account ->
+        Enum.into(account, %{
+          :club_id => club_id
+        })
+      end)
+
+    Enum.each(accounts, fn account -> create_account(account) end)
+  end
+
+  @doc """
+  Updates a account.
+
+  ## Examples
+
+      iex> update_account(account, %{field: new_value})
+      {:ok, %Account{}}
+
+      iex> update_account(account, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_account(%Account{} = account, attrs) do
+    account
+    |> Account.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a account.
+
+  ## Examples
+
+      iex> delete_account(account)
+      {:ok, %Account{}}
+
+      iex> delete_account(account)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_account(%Account{} = account) do
+    Repo.delete(account)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking account changes.
+
+  ## Examples
+
+      iex> change_account(account)
+      %Ecto.Changeset{data: %Account{}}
+
+  """
+  def change_account(%Account{} = account, attrs \\ %{}) do
+    Account.changeset(account, attrs)
+  end
+
+  @doc """
+  Determines the class of an account according to the first digit of it's account number.
+
+  ## Examples
+
+      iex> determine_account_class(15560)
+      "Umlaufvermögen"
+
+  """
+  def determine_account_class(account_number) do
+    case String.first(account_number) do
+      "0" -> "Anlagevermögen"
+      "1" -> "Umlaufvermögen"
+      "2" -> "Eigen-/Fremdkapital"
+      "3" -> "Fremdkapital"
+      "4" -> "Einnahmen"
+      "5" -> "Ausgaben"
+      "6" -> "Ausgaben"
+      "7" -> "Weitere Einnahmen und Ausgaben"
+      "8" -> ""
+      "9" -> "Vortrags-, Kapital-, Korrektur- und statistische Konten"
+    end
+  end
+
+  @doc """
+  Determines the type of an account according to it's class or given type.
+
+  ## Examples
+
+      iex> determine_account_type("Weitere Einnahmen und Ausgaben", "Einnahmen")
+      "Einnahmen"
+
+  """
+  def determine_account_type(account_class, account_type) do
+    case account_class do
+      "Anlagevermögen" -> "Aktiva"
+      "Umlaufvermögen" -> "Aktiva"
+      "Eigen-/Fremdkapital" -> "Passiva"
+      "Fremdkapital" -> "Passiva"
+      "Einnahmen" -> "Einnahmen"
+      "Ausgaben" -> "Ausgaben"
+      "Weitere Einnahmen und Ausgaben" -> account_type
+      "Vortrags-, Kapital-, Korrektur- und statistische Konten" -> account_type
+      "" -> "Aktiva"
+    end
+  end
+
+  @doc """
+  Determines the usable account types for a given type of transaction.
+
+  ## Examples
+
+      iex> determine_accounts("Einnahme")
+      ["Einnahmen"]
+
+  """
+
+  def determine_usable_accounts(transaction_type) do
+    case transaction_type do
+      "Einnahme" ->
+        ["Einnahmen"]
+
+      "Ausgabe" ->
+        ["Ausgaben"]
+    end
+  end
+
+  # Returns a list of selected accounts from the SKR 42 chart of accounts that is used for an import.
+  defp get_import_accounts() do
+    [
+      %{
+        account_number: "17000",
+        name: "Bank (Postbank)",
+        class: "Umlaufvermögen",
+        type: "Aktiva"
+      },
+      %{account_number: "18000", name: "Bank", class: "Umlaufvermögen", type: "Aktiva"},
+      %{account_number: "16000", name: "Kasse", class: "Umlaufvermögen", type: "Aktiva"},
+      %{account_number: "16100", name: "Nebenkasse 1", class: "Umlaufvermögen", type: "Aktiva"},
+      %{
+        account_number: "40000",
+        name: "Echte Mitgliedsbeiträge",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
+      %{account_number: "40100", name: "Aufnahmegebühren", class: "Einnahmen", type: "Einnahmen"},
+      %{account_number: "43340", name: "Erlöse 7 % USt", class: "Einnahmen", type: "Einnahmen"},
+      %{account_number: "44000", name: "Erlöse 19 % USt", class: "Einnahmen", type: "Einnahmen"},
+      %{account_number: "42900", name: "Erlöse 0 % USt", class: "Einnahmen", type: "Einnahmen"},
+      %{
+        account_number: "40450",
+        name: "Geldzuwendungen gegen Zuwendungsbestätigung",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
+      %{
+        account_number: "42010",
+        name: "Erlöse aus Eintrittsgeldern",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
+      %{
+        account_number: "42030",
+        name: "Erlöse aus Teilnehmer-/Nutzungsgebühren",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
+      %{
+        account_number: "42050",
+        name: "Erlöse aus Veranstaltungen",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
+      %{
+        account_number: "48280",
+        name: "Zuschüsse von Verbänden und Behörden",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
+      %{
+        account_number: "48620",
+        name: "Erlöse aus Vermietung und Verpachtung 19 % USt",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
+      %{
+        account_number: "48630",
+        name: "Erlöse aus Vermietung und Verpachtung 7 % USt",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
+      %{
+        account_number: "49270",
+        name: "Erträge aus der Auflösung einer steuerlichen Rücklage nach § 6b Abs. 3 EStG ",
+        class: "Einnahmen",
+        type: "Einnahmen"
+      },
+      %{account_number: "63250", name: "Gas, Strom, Wasser", class: "Ausgaben", type: "Ausgaben"},
+      %{account_number: "63300", name: "Reinigung", class: "Ausgaben", type: "Ausgaben"},
+      %{
+        account_number: "60040",
+        name: "Übungsleiterpauschale",
+        class: "Ausgaben",
+        type: "Ausgaben"
+      },
+      %{account_number: "60020", name: "Ehrenamtspauschale", class: "Ausgaben", type: "Ausgaben"},
+      %{
+        account_number: "62050",
+        name: "Abschreibungen auf den Geschäfts- oder Firmenwert",
+        class: "Ausgaben",
+        type: "Ausgaben"
+      },
+      %{
+        account_number: "63100",
+        name: "Miete (unbewegliche Wirtschaftsgüter)",
+        class: "Ausgaben",
+        type: "Ausgaben"
+      },
+      %{account_number: "68150", name: "Bürobedarf", class: "Ausgaben", type: "Ausgaben"},
+      %{account_number: "64000", name: "Versicherungen", class: "Ausgaben", type: "Ausgaben"},
+      %{
+        account_number: "69220",
+        name: "Einstellungen in die steuerliche Rücklage nach § 6b Abs. 3 EStG",
+        class: "Ausgaben",
+        type: "Ausgaben"
+      },
+      %{
+        account_number: "69270",
+        name: "Einstellungen in sonstige steuerliche Rücklagen",
+        class: "Ausgaben",
+        type: "Ausgaben"
+      },
+      %{
+        account_number: "70200",
+        name: "Zins- und Dividendenerträge",
+        class: "Weitere Einnahmen und Ausgaben",
+        type: "Einnahmen"
+      },
+      %{
+        account_number: "73000",
+        name: "Zinsen und ähnliche Aufwendungen",
+        class: "Weitere Einnahmen und Ausgaben",
+        type: "Ausgaben"
+      },
+      %{
+        account_number: "76000",
+        name: "Körperschaftsteuer",
+        class: "Weitere Einnahmen und Ausgaben",
+        type: "Ausgaben"
+      },
+      %{
+        account_number: "76100",
+        name: "Gewerbesteuer",
+        class: "Weitere Einnahmen und Ausgaben",
+        type: "Ausgaben"
+      }
+    ]
+  end
+
+  # Controls how an account's balance is calculated based on debit and credit values and it's account type
+  def determine_account_balance(debit, credit, account_type, opening_balance) do
+    balance =
+      Decimal.add(
+        opening_balance.amount,
+        calculate_account_balance(account_type, debit, credit)
+      )
+
+    Money.new(:EUR, balance)
+  end
+
+  # Calculates an account's balance based on debit and credit values and it's account type
+  defp calculate_account_balance(
+         account_type,
+         debit,
+         credit
+       )
+       when account_type in ["Aktiva", "Ausgaben"] do
+    Decimal.sub(debit, credit)
+  end
+
+  defp calculate_account_balance(
+         account_type,
+         debit,
+         credit
+       )
+       when account_type in ["Passiva", "Einnahmen"] do
+    Decimal.sub(credit, debit)
+  end
+
+  alias Sportyweb.Accounting.Entry
+
+  @doc """
+  Returns a transactions list of entries. Preloads associations.
+
+  ## Examples
+
+      iex> list_entries(1, )
+      [%Entry{}, ...]
+
+  """
+  def list_entries(transaction_id, preloads) do
+    query =
+      from(
+        e in Entry,
+        join: transaction in assoc(e, :transaction),
+        join: account in assoc(e, :account),
+        where: transaction.id == ^transaction_id,
+        order_by: [e.account_id]
+      )
+
+    entries = Repo.all(query)
+
+    entries
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
+  Gets a single entry.
+
+  Raises `Ecto.NoResultsError` if the Entry does not exist.
+
+  ## Examples
+
+      iex> get_entry!(123)
+      %Entry{}
+
+      iex> get_entry!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_entry!(id), do: Repo.get!(Entry, id)
+
+  @doc """
+  Gets a single entry. Preloads associations.
+
+  Raises `Ecto.NoResultsError` if the Entry does not exist.
+
+  ## Examples
+
+      iex> get_entry!(123, [:transaction, :account])
+      %Entry{}
+
+      iex> get_entry!(123, [:transaction, :account])
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_entry!(id, preloads) do
+    Entry
+    |> Repo.get!(id)
+    |> Repo.preload(preloads)
+  end
+
+  @doc """
+  Gets an entry for the financial account of a specific transaction.
+
+  ## Examples
+
+      iex> get_financial_account_entry(123)
+      %Entry{}
+
+      iex> get_financial_account_entry(456)
+      nil
+
+  """
+  def get_financial_account_entry(transaction_id) do
+    query =
+      from(
+        e in Entry,
+        join: account in assoc(e, :account),
+        where:
+          e.transaction_id == ^transaction_id and
+            fragment("?::int BETWEEN ? AND ?", account.account_number, 15_500, 18_899)
+      )
+
+    Repo.one(query)
+  end
+
+  @doc """
+  Gets the total amount of all entries belonging to a single transaction.
+
+  ## Examples
+
+      iex> get_entries_amount_total(123)
+      %Transaction{}
+
+  """
+  def get_entries_amount_total(transaction_id) do
+    query =
+      from(e in Entry,
+        where: e.transaction_id == ^transaction_id,
+        select: sum(fragment("(?) .amount", e.amount))
+      )
+
+    total_entries_amount = Sportyweb.Repo.one(query) || Decimal.new("0")
+
+    total_entries_amount
+  end
+
+  @doc """
+  Determines the type of an entry according to the type of transaction and type of account.
+
+  ## Examples
+
+      iex> determine_entry_type("Einnahme","Umlaufvermögen")
+      "S"
+
+  """
+  def determine_entry_type(transaction_type, account_type) do
+    cond do
+      transaction_type == "Einnahme" and
+          account_type in [
+            "Aktiva",
+            "Ausgaben"
+          ] ->
+        "S"
+
+      transaction_type == "Einnahme" and
+          account_type in [
+            "Passiva",
+            "Einnahmen"
+          ] ->
+        "H"
+
+      transaction_type == "Ausgabe" and
+          account_type in [
+            "Passiva",
+            "Ausgaben"
+          ] ->
+        "S"
+
+      transaction_type == "Ausgabe" and
+          account_type in [
+            "Aktiva",
+            "Einnahmen"
+          ] ->
+        "H"
+    end
+  end
+
+  @doc """
+  Creates a entry.
+
+  ## Examples
+
+      iex> create_entry(%{field: value})
+      {:ok, %Entry{}}
+
+      iex> create_entry(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_entry(attrs \\ %{}) do
+    %Entry{}
+    |> Entry.changeset(attrs)
+    |> validate_allowed_entry_amount_create(:amount)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Creates an entry for a financial account.
+
+  ## Examples
+
+      iex> create_financial_account_entry(%{field: value})
+      {:ok, %Entry{}}
+
+      iex> create_financial_account_entry(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_financial_account_entry(attrs \\ %{}) do
+    %Entry{}
+    |> Entry.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a entry.
+
+  ## Examples
+
+      iex> update_entry(entry, %{field: new_value})
+      {:ok, %Entry{}}
+
+      iex> update_entry(entry, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_entry(%Entry{} = entry, attrs) do
+    entry
+    |> Entry.changeset(attrs)
+    |> validate_allowed_entry_amount_update(:amount)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a entry.
+
+  ## Examples
+
+      iex> delete_entry(entry)
+      {:ok, %Entry{}}
+
+      iex> delete_entry(entry)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_entry(%Entry{} = entry) do
+    Repo.delete(entry)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking entry changes.
+
+  ## Examples
+
+      iex> change_entry(entry)
+      %Ecto.Changeset{data: %Entry{}}
+
+  """
+  def change_entry(%Entry{} = entry, attrs \\ %{}) do
+    entry
+    |> Entry.changeset(attrs)
+  end
+
+  @doc """
+  Checks if adding an entry would exceed the total amount of a transaction.
+
+  ## Examples
+
+      iex> validate_allowed_entry_amount(%Ecto.Changeset{data: %Entry{}}, :amount)
+      %Ecto.Changeset{data: %Entry{}}
+
+  """
+  def validate_allowed_entry_amount_create(changeset, field) do
+    amount = get_field(changeset, field)
+
+    case amount do
+      %Money{currency: _currency, amount: amount} ->
+        transaction_id = get_field(changeset, :transaction_id)
+
+        transaction = get_transaction!(transaction_id)
+        transaction_amount = transaction.amount.amount
+
+        total_entries_amount = get_entries_amount_total(transaction_id)
+
+        financial_account_entry_amount =
+          case financial_account_entry = get_financial_account_entry(transaction.id) do
+            nil ->
+              Decimal.new(0)
+
+            _ ->
+              financial_account_entry.amount.amount
+          end
+
+        # Subtract the amount of the entry to a financial account from the total amount of a transaction's entries
+        total = Decimal.sub(total_entries_amount, financial_account_entry_amount)
+
+        # Add the amount of the entry that is being added
+        new_total = Decimal.add(amount, total)
+
+        # Check if new_total would exceed the transaction's amount
+        if Decimal.compare(new_total, transaction_amount) == :gt do
+          add_error(changeset, :amount, "Gesamtbetrag der Transaktion überschritten")
+        else
+          changeset
+        end
+
+      nil ->
+        changeset
+
+      _ ->
+        changeset
+    end
+  end
+
+  @doc """
+  Checks if changing an entry would exceed the total amount of a transaction.
+
+  ## Examples
+
+      iex> validate_allowed_entry_amount_update(%Ecto.Changeset{data: %Entry{}}, :amount)
+      %Ecto.Changeset{data: %Entry{}}
+
+  """
+  def validate_allowed_entry_amount_update(changeset, field) do
+    amount = get_field(changeset, field)
+
+    case amount do
+      %Money{currency: _currency, amount: amount} ->
+        transaction_id = get_field(changeset, :transaction_id)
+        entry_id = get_field(changeset, :id)
+
+        transaction = get_transaction!(transaction_id)
+        transaction_amount = transaction.amount.amount
+
+        entry = get_entry!(entry_id)
+        entry_amount = entry.amount.amount
+
+        total_entries_amount = get_entries_amount_total(transaction_id)
+
+        # Subtract the entry's current amount
+        updated_entries_amount = Decimal.sub(total_entries_amount, entry_amount)
+
+        financial_account_entry_amount =
+          case financial_account_entry = get_financial_account_entry(transaction.id) do
+            nil ->
+              Decimal.new(0)
+
+            _ ->
+              financial_account_entry.amount.amount
+          end
+
+        # Subtract the amount of the entry to a financial account from the total amount of a transaction's entries
+        total = Decimal.sub(updated_entries_amount, financial_account_entry_amount)
+
+        # Add the amount of the entry that is being added
+        new_total = Decimal.add(amount, total)
+
+        # Check if new_total would exceed the transaction's amount
+        if Decimal.compare(new_total, transaction_amount) == :gt do
+          add_error(changeset, :amount, "Gesamtbetrag der Transaktion überschritten")
+        else
+          changeset
+        end
+
+      nil ->
+        changeset
+
+      _ ->
+        changeset
+    end
+  end
+
+  @doc """
+  Determines the amount of entries associated to sphere nine in a given period of time +/- 10 days.
+
+  """
+  def determine_entries_in_sphere_nine(start_date, end_date, club_id) do
+    query =
+      from(
+        e in Entry,
+        join: transaction in assoc(e, :transaction),
+        join: club in assoc(transaction, :club),
+        where: club.id == ^club_id,
+        where: transaction.payment_date >= ^start_date and transaction.payment_date <= ^end_date,
+        where: e.sphere == 9
+      )
+
+    Repo.aggregate(query, :count, :id)
+  end
+
+  @doc """
+  Returns a list of maps with the following data:
+  - balances for nominal accounts and per sphere and overall in a given period of time
+  - the resulting profit or loss.
+
+  """
+
+  def determine_income_statement(start_date, end_date, club_id) do
+    revenues =
+      start_date
+      |> get_income_statement_data(end_date, club_id, "Einnahme")
+      |> list_account_balances_for_spheres()
+      |> calculate_total_balances("Einnahmen")
+      |> add_header("Einnahmen")
+
+    expenses =
+      start_date
+      |> get_income_statement_data(end_date, club_id, "Ausgabe")
+      |> list_account_balances_for_spheres()
+      |> calculate_total_balances("Ausgaben")
+      |> add_header("Ausgaben")
+
+    revenues_and_expenses = revenues ++ expenses
+    revenue_total = List.last(revenues)
+    expense_total = List.last(expenses)
+
+    # Calculate profit/loss with summarized revenues and expenses
+    profit_loss = [
+      %{
+        id: "profit_loss",
+        name: "Gewinn / Verlust",
+        account_number: nil,
+        balance_sphere_1:
+          Money.new(
+            :EUR,
+            Decimal.sub(
+              revenue_total.balance_sphere_1.amount,
+              expense_total.balance_sphere_1.amount
+            )
+          ),
+        balance_sphere_2:
+          Money.new(
+            :EUR,
+            Decimal.sub(
+              revenue_total.balance_sphere_2.amount,
+              expense_total.balance_sphere_2.amount
+            )
+          ),
+        balance_sphere_3:
+          Money.new(
+            :EUR,
+            Decimal.sub(
+              revenue_total.balance_sphere_3.amount,
+              expense_total.balance_sphere_3.amount
+            )
+          ),
+        balance_sphere_4:
+          Money.new(
+            :EUR,
+            Decimal.sub(
+              revenue_total.balance_sphere_4.amount,
+              expense_total.balance_sphere_4.amount
+            )
+          ),
+        balance_total:
+          Money.new(
+            :EUR,
+            Decimal.sub(
+              revenue_total.balance_total.amount,
+              expense_total.balance_total.amount
+            )
+          )
+      }
+    ]
+
+    # Add profit/loss to list
+    revenues_and_expenses ++ profit_loss
+  end
+
+  # Determines debit and credit values for every nominal account for all entries in a given period of time
+  defp get_income_statement_data(start_date, end_date, club_id, type) do
+    query =
+      from(
+        a in Account,
+        join: club in assoc(a, :club),
+        join: e in assoc(a, :entries),
+        join: t in assoc(e, :transaction),
+        where: club.id == ^club_id,
+        where: t.payment_date >= ^start_date and t.payment_date <= ^end_date,
+        where: a.is_relevant_for_income_statement == true,
+        where: a.type in ["Einnahmen", "Ausgaben"],
+        where: e.sphere in [1, 2, 3, 4],
+        where: t.type == ^type,
+        select: %{
+          id: a.id,
+          account_number: a.account_number,
+          name: a.name,
+          type: a.type,
+          opening_balance: a.opening_balance,
+          debit_sphere_1:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' AND ? = 1 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          credit_sphere_1:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' AND ? = 1 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          debit_sphere_2:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' AND ? = 2 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          credit_sphere_2:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' AND ? = 2 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          debit_sphere_3:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' AND ? = 3 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          credit_sphere_3:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' AND ? = 3 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          debit_sphere_4:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' AND ? = 4 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          credit_sphere_4:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' AND ? = 4 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          debit_total:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'S' AND ? <> 9 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            ),
+          credit_total:
+            sum(
+              fragment(
+                "CASE WHEN ? = 'H' AND ? <> 9 THEN (?) .amount ELSE 0 END",
+                e.type,
+                e.sphere,
+                e.amount
+              )
+            )
+        },
+        group_by: [a.id],
+        order_by: [a.account_number]
+      )
+
+    Repo.all(query)
+  end
+
+  # Lists the account's overall balances and balances for every sphere
+  defp list_account_balances_for_spheres(income_statement_data) do
+    # Calculate balances for every account and every sphere als well as the account's total balance
+    Enum.map(income_statement_data, fn account ->
+      balance_sphere_1 =
+        determine_account_balance(
+          account.debit_sphere_1,
+          account.credit_sphere_1,
+          account.type,
+          account.opening_balance
+        )
+
+      balance_sphere_2 =
+        determine_account_balance(
+          account.debit_sphere_2,
+          account.credit_sphere_2,
+          account.type,
+          account.opening_balance
+        )
+
+      balance_sphere_3 =
+        determine_account_balance(
+          account.debit_sphere_3,
+          account.credit_sphere_3,
+          account.type,
+          account.opening_balance
+        )
+
+      balance_sphere_4 =
+        determine_account_balance(
+          account.debit_sphere_4,
+          account.credit_sphere_4,
+          account.type,
+          account.opening_balance
+        )
+
+      balance_total =
+        determine_account_balance(
+          account.debit_total,
+          account.credit_total,
+          account.type,
+          account.opening_balance
+        )
+
+      # Add balances and drop debit and credit values
+      account
+      |> Map.put(:balance_sphere_1, balance_sphere_1)
+      |> Map.drop([:debit_sphere_1, :credit_sphere_1])
+      |> Map.put(:balance_sphere_2, balance_sphere_2)
+      |> Map.drop([:debit_sphere_2, :credit_sphere_2])
+      |> Map.put(:balance_sphere_3, balance_sphere_3)
+      |> Map.drop([:debit_sphere_3, :credit_sphere_3])
+      |> Map.put(:balance_sphere_4, balance_sphere_4)
+      |> Map.drop([:debit_sphere_4, :credit_sphere_4])
+      |> Map.put(:balance_total, balance_total)
+      |> Map.drop([:debit_total, :credit_total])
+    end)
+  end
+
+  # Adds an header line for an income statement
+  defp add_header(income_statement_data, type) do
+    header = %{
+      id: "header" <> type,
+      name: type,
+      account_number: nil,
+      balance_sphere_1: nil,
+      balance_sphere_2: nil,
+      balance_sphere_3: nil,
+      balance_sphere_4: nil,
+      balance_total: nil
+    }
+
+    [header | income_statement_data]
+  end
+
+  # Calculates total balances for spheres and a total balance for all spheres
+  defp calculate_total_balances(income_statement_data, type) do
+    total_balance = Money.new(:EUR, 0)
+
+    sum_sphere_1 =
+      Enum.reduce(income_statement_data, total_balance.amount, fn account, sum ->
+        Decimal.add(sum, account.balance_sphere_1.amount)
+      end)
+
+    sum_sphere_2 =
+      Enum.reduce(income_statement_data, total_balance.amount, fn account, sum ->
+        Decimal.add(sum, account.balance_sphere_2.amount)
+      end)
+
+    sum_sphere_3 =
+      Enum.reduce(income_statement_data, total_balance.amount, fn account, sum ->
+        Decimal.add(sum, account.balance_sphere_3.amount)
+      end)
+
+    sum_sphere_4 =
+      Enum.reduce(income_statement_data, total_balance.amount, fn account, sum ->
+        Decimal.add(sum, account.balance_sphere_4.amount)
+      end)
+
+    sum_spheres_total =
+      Enum.reduce(income_statement_data, total_balance.amount, fn account, sum ->
+        Decimal.add(sum, account.balance_total.amount)
+      end)
+
+    total = %{
+      id: "total" <> type,
+      name: "Summe " <> type,
+      account_number: nil,
+      balance_sphere_1: Money.new(:EUR, sum_sphere_1),
+      balance_sphere_2: Money.new(:EUR, sum_sphere_2),
+      balance_sphere_3: Money.new(:EUR, sum_sphere_3),
+      balance_sphere_4: Money.new(:EUR, sum_sphere_4),
+      balance_total: Money.new(:EUR, sum_spheres_total)
+    }
+
+    List.insert_at(income_statement_data, -1, total)
   end
 end

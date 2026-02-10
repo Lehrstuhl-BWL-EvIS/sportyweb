@@ -132,6 +132,7 @@ defmodule SportywebWeb.ContactLive.FormComponent do
 
               <.cancel_button navigate={@navigate}>Abbrechen</.cancel_button>
             </div>
+
             <.button
               :if={@contact.id}
               class="bg-rose-700 hover:bg-rose-800"
