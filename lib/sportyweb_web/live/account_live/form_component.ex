@@ -44,7 +44,7 @@ defmodule SportywebWeb.AccountLive.FormComponent do
                 </div>
               <% end %>
               <div class="opacity-70 col-span-12 md:col-span-6">
-                <.input field={@form[:class]} type="text" label="Kontoklasse" readonly />
+                <.input field={@form[:class]} type="text" label="Kontenklasse" readonly />
               </div>
               <div class="col-span-12 md:col-span-6">
                 <.input field={@form[:name]} type="text" label="Name" phx-update="ignore" />

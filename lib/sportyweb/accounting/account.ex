@@ -171,7 +171,7 @@ defmodule Sportyweb.Accounting.Account do
         end
 
       if class != nil and type != nil and type not in valid_types do
-        add_error(changeset, :type, "Invalide Art für ausgewählte Kontoklasse")
+        add_error(changeset, :type, "Invalide Art für ausgewählte Kontenklasse")
       else
         changeset
       end
